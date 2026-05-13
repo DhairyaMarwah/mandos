@@ -1,0 +1,1729 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Mandos · A Product & Strategic Review</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Geist:wght@300;400;500;600;700;800&family=Geist+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --bg: #000000;
+    --surface: #0A0A0A;
+    --surface-2: #111111;
+    --ink: #EDEDED;
+    --ink-2: #9A9A9A;
+    --ink-3: #5C5C5C;
+    --line-solid: #1A1A1A;
+    --dashed: rgba(255, 255, 255, 0.12);
+    --dashed-strong: rgba(255, 255, 255, 0.18);
+    --accent: #47A8FF;
+    --warn: #B8654A;
+    --good: #6B8E63;
+  }
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  html { scroll-behavior: smooth; }
+  body {
+    background: var(--bg);
+    color: var(--ink);
+    font-family: 'Geist', -apple-system, BlinkMacSystemFont, sans-serif;
+    font-weight: 400;
+    font-size: 15px;
+    line-height: 1.55;
+    font-feature-settings: "ss01", "ss02", "cv11";
+    -webkit-font-smoothing: antialiased;
+    text-rendering: optimizeLegibility;
+  }
+
+  .container { max-width: 1240px; margin: 0 auto; padding: 0 64px; }
+  @media (max-width: 768px) { .container { padding: 0 24px; } }
+
+  /* ---------- NAVBAR ---------- */
+  .navbar {
+    position: sticky;
+    top: 0;
+    z-index: 50;
+    background: rgba(0, 0, 0, 0.78);
+    backdrop-filter: blur(20px);
+    -webkit-backdrop-filter: blur(20px);
+    border-bottom: 1.2px dashed var(--dashed);
+  }
+  .nav-row {
+    display: flex; align-items: center; justify-content: space-between;
+    padding: 14px 0;
+  }
+  .nav-brand {
+    display: flex; align-items: center; gap: 12px;
+    font-family: 'Geist', sans-serif;
+    font-weight: 600;
+    font-size: 16px;
+    letter-spacing: -0.015em;
+    color: var(--ink);
+  }
+  .nav-brand .nav-dot {
+    width: 6px; height: 6px;
+    background: var(--accent);
+    border-radius: 50%;
+  }
+  .nav-brand .sub {
+    color: var(--ink-3);
+    font-weight: 400;
+    font-size: 14px;
+    letter-spacing: 0;
+  }
+  .nav-links {
+    display: flex; align-items: center; gap: 28px;
+  }
+  @media (max-width: 700px) { .nav-links { display: none; } }
+  .nav-links a {
+    font-family: 'Geist Mono', monospace;
+    font-size: 11px;
+    letter-spacing: 0.14em;
+    text-transform: uppercase;
+    color: var(--ink-2);
+    text-decoration: none;
+    transition: color 0.15s;
+  }
+  .nav-links a:hover { color: var(--ink); }
+  .nav-meta {
+    font-family: 'Geist Mono', monospace;
+    font-size: 11px;
+    letter-spacing: 0.14em;
+    text-transform: uppercase;
+    color: var(--ink-3);
+  }
+  .nav-meta .pill {
+    display: inline-block;
+    padding: 4px 10px;
+    border: 1.2px dashed var(--dashed-strong);
+    border-radius: 999px;
+    color: var(--accent);
+  }
+
+  /* ---------- TYPE PRIMITIVES ---------- */
+  .kicker {
+    font-family: 'Geist Mono', monospace;
+    font-size: 11px;
+    letter-spacing: 0.14em;
+    text-transform: uppercase;
+    color: var(--ink-3);
+    font-weight: 400;
+  }
+  .kicker.accent { color: var(--accent); }
+  h1, h2, h3, h4, h5 {
+    font-family: 'Geist', sans-serif;
+    font-weight: 600;
+    letter-spacing: -0.025em;
+    color: var(--ink);
+    line-height: 1.05;
+  }
+  p { color: var(--ink); }
+  p + p { margin-top: 1em; }
+  em { font-style: italic; }
+  strong { font-weight: 600; color: var(--ink); }
+
+  /* ---------- SECTION HEADER (WHITEBIRD STYLE) ---------- */
+  /* Two-line title left + description right, inside a dashed surround */
+  .section-block {
+    border: 1.2px dashed var(--dashed);
+    border-radius: 22px;
+    background: var(--surface);
+    margin-bottom: 56px;
+  }
+  .section-block-head {
+    padding: 32px 36px;
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 40px;
+    align-items: center;
+  }
+  @media (max-width: 800px) {
+    .section-block-head { grid-template-columns: 1fr; gap: 16px; padding: 28px; }
+  }
+  .section-block-title h2 {
+    font-size: clamp(34px, 4.5vw, 52px);
+    line-height: 1.02;
+    letter-spacing: -0.035em;
+    font-weight: 600;
+    color: var(--ink);
+  }
+  .section-block-title .sub-line {
+    font-size: clamp(34px, 4.5vw, 52px);
+    line-height: 1.02;
+    letter-spacing: -0.035em;
+    font-weight: 500;
+    color: var(--ink-2);
+    display: block;
+    margin-top: 2px;
+  }
+  .section-block-desc p {
+    font-size: 16px;
+    line-height: 1.5;
+    color: var(--ink-2);
+  }
+  .section-block-desc p strong { color: var(--ink); font-weight: 500; }
+
+  /* DASHED DIVIDER (used inside section-block) */
+  .dashed-divider {
+    height: 0;
+    border-top: 1.2px dashed var(--dashed);
+    width: 100%;
+  }
+  .dashed-divider-thick {
+    height: 0;
+    border-top: 1.2px dashed var(--dashed-strong);
+    width: 100%;
+  }
+
+  /* ---------- COVER ---------- */
+  .cover {
+    min-height: 86vh;
+    display: flex; flex-direction: column;
+    justify-content: center;
+    padding: 80px 0;
+  }
+  .cover-kicker {
+    display: flex; align-items: center; gap: 10px;
+    margin-bottom: 56px;
+  }
+  .cover-kicker .dot { width: 5px; height: 5px; background: var(--accent); border-radius: 50%; }
+  h1.display {
+    font-size: clamp(54px, 7.5vw, 104px);
+    font-weight: 600;
+    letter-spacing: -0.04em;
+    line-height: 0.98;
+  }
+  h1.display .accent { color: var(--accent); font-weight: 500; }
+  .cover-sub {
+    font-size: 19px;
+    line-height: 1.45;
+    color: var(--ink-2);
+    max-width: 560px;
+    margin-top: 36px;
+  }
+  .cover-sub strong { color: var(--ink); font-weight: 500; }
+
+  /* ---------- SECTION ---------- */
+  section { padding: 88px 0; }
+
+  /* ---------- PROSE INSIDE SECTION-BLOCK ---------- */
+  .section-prose {
+    padding: 36px 40px;
+  }
+  .section-prose .roman {
+    font-family: 'Geist Mono', monospace;
+    font-size: 11px;
+    color: var(--accent);
+    letter-spacing: 0.14em;
+    margin-bottom: 16px;
+    font-weight: 500;
+  }
+  .section-prose p {
+    font-size: 16.5px;
+    line-height: 1.65;
+    color: var(--ink);
+    margin-bottom: 1em;
+    max-width: 760px;
+  }
+  .section-prose p:last-child { margin-bottom: 0; }
+  .section-prose p.first {
+    font-size: 19px;
+    line-height: 1.55;
+    color: var(--ink-2);
+  }
+  .section-prose p.first strong { color: var(--ink); }
+
+  /* ---------- OBSERVATIONS ---------- */
+  .obs {
+    border: 1.2px dashed var(--dashed);
+    border-radius: 18px;
+    overflow: hidden;
+    background: var(--surface);
+    margin-bottom: 24px;
+  }
+  .obs-head {
+    padding: 22px 28px;
+    border-bottom: 1.2px dashed var(--dashed);
+    display: grid;
+    grid-template-columns: 36px 1fr auto;
+    gap: 16px;
+    align-items: baseline;
+  }
+  .obs-num {
+    font-family: 'Geist Mono', monospace;
+    font-size: 12px;
+    color: var(--accent);
+    font-weight: 500;
+    letter-spacing: 0.08em;
+  }
+  .obs-title {
+    font-family: 'Geist', sans-serif;
+    font-size: 19px;
+    font-weight: 600;
+    letter-spacing: -0.015em;
+    color: var(--ink);
+  }
+  .obs-severity {
+    font-family: 'Geist Mono', monospace;
+    font-size: 9.5px;
+    letter-spacing: 0.14em;
+    text-transform: uppercase;
+    padding: 4px 8px;
+    border-radius: 4px;
+  }
+  .obs-severity.high {
+    background: rgba(184, 101, 74, 0.12);
+    color: var(--warn);
+    border: 1px solid rgba(184, 101, 74, 0.25);
+  }
+  .obs-severity.med {
+    background: rgba(71, 168, 255, 0.1);
+    color: var(--accent);
+    border: 1px solid rgba(71, 168, 255, 0.25);
+  }
+  .obs-body {
+    display: grid;
+    grid-template-columns: 1fr 1fr 1fr;
+    gap: 0;
+  }
+  @media (max-width: 800px) { .obs-body { grid-template-columns: 1fr; } }
+  .obs-cell {
+    padding: 22px 28px;
+    border-right: 1.2px dashed var(--dashed);
+  }
+  .obs-cell:last-child { border-right: none; }
+  @media (max-width: 800px) {
+    .obs-cell { border-right: none; border-bottom: 1.2px dashed var(--dashed); }
+    .obs-cell:last-child { border-bottom: none; }
+  }
+  .obs-cell-label {
+    font-family: 'Geist Mono', monospace;
+    font-size: 9.5px;
+    letter-spacing: 0.16em;
+    text-transform: uppercase;
+    color: var(--ink-3);
+    margin-bottom: 8px;
+  }
+  .obs-cell p {
+    font-size: 13.5px;
+    line-height: 1.55;
+    color: var(--ink-2);
+  }
+  .obs-cell p strong { color: var(--ink); font-weight: 500; }
+
+  /* ---------- WHAT'S WORKING ---------- */
+  .working {
+    margin-top: 32px;
+    padding: 32px 36px;
+    border: 1.2px dashed var(--dashed);
+    border-radius: 18px;
+    background: var(--surface);
+  }
+  .working-head {
+    display: flex; align-items: baseline; gap: 14px;
+    margin-bottom: 20px;
+  }
+  .working-h {
+    font-size: 19px;
+    font-weight: 600;
+    letter-spacing: -0.015em;
+  }
+  .working-dot {
+    width: 7px; height: 7px;
+    background: var(--good);
+    border-radius: 50%;
+  }
+  .working-grid {
+    display: grid; grid-template-columns: repeat(2, 1fr); gap: 18px 32px;
+  }
+  @media (max-width: 700px) { .working-grid { grid-template-columns: 1fr; } }
+  .working-item {
+    display: grid; grid-template-columns: 20px 1fr; gap: 12px;
+    font-size: 14px;
+    color: var(--ink-2);
+    line-height: 1.5;
+    align-items: baseline;
+  }
+  .working-item::before {
+    content: '✓';
+    color: var(--good);
+    font-size: 12px;
+    line-height: 1.3;
+  }
+  .working-item strong { color: var(--ink); font-weight: 500; }
+
+  /* ---------- USER SCENARIO ---------- */
+  .scenario {
+    margin: 40px 0 0;
+    padding: 0;
+    border: 1.2px dashed var(--dashed);
+    border-radius: 20px;
+    background: var(--surface);
+    overflow: hidden;
+  }
+  .scenario-head {
+    padding: 36px 40px 28px;
+  }
+  .scenario-kicker {
+    display: flex; align-items: center; gap: 10px;
+    margin-bottom: 16px;
+  }
+  .scenario-h {
+    font-family: 'Geist', sans-serif;
+    font-size: 30px;
+    line-height: 1.2;
+    letter-spacing: -0.02em;
+    font-weight: 600;
+    margin-bottom: 8px;
+    max-width: 600px;
+  }
+  .scenario-meta {
+    font-family: 'Geist Mono', monospace;
+    font-size: 11px;
+    color: var(--ink-3);
+    letter-spacing: 0.08em;
+  }
+  .scenario-body {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+  }
+  @media (max-width: 800px) { .scenario-body { grid-template-columns: 1fr; } }
+  .scenario-col {
+    padding: 32px 40px;
+    border-right: 1.2px dashed var(--dashed);
+  }
+  .scenario-col:last-child { border-right: none; }
+  @media (max-width: 800px) {
+    .scenario-col { border-right: none; border-bottom: 1.2px dashed var(--dashed); }
+    .scenario-col:last-child { border-bottom: none; }
+  }
+  .scenario-col h5 {
+    font-family: 'Geist Mono', monospace;
+    font-size: 10.5px;
+    letter-spacing: 0.14em;
+    text-transform: uppercase;
+    color: var(--ink-3);
+    margin-bottom: 16px;
+    font-weight: 500;
+  }
+  .scenario-col p {
+    font-size: 15.5px;
+    line-height: 1.65;
+    color: var(--ink-2);
+    margin-bottom: 1em;
+  }
+  .scenario-col p strong { color: var(--ink); font-weight: 500; }
+  .scenario-col.bad h5 { color: var(--warn); }
+  .scenario-col.good h5 { color: var(--accent); }
+
+  /* ---------- PER-SCREEN REVIEW ---------- */
+  .review-list {
+    border: 1.2px dashed var(--dashed);
+    border-radius: 22px;
+    background: var(--surface);
+    overflow: hidden;
+    margin-top: 32px;
+  }
+  .review {
+    display: grid;
+    grid-template-columns: 280px 1fr;
+    gap: 56px;
+    align-items: start;
+    padding: 44px 40px;
+    border-bottom: 1.2px dashed var(--dashed);
+  }
+  .review:last-child { border-bottom: none; }
+  @media (max-width: 980px) {
+    .review { grid-template-columns: 1fr; gap: 32px; padding: 32px 24px; }
+  }
+  .review-screen { position: relative; }
+  .phone {
+    position: relative;
+    width: 240px;
+    margin: 0 auto;
+    border-radius: 36px;
+    overflow: hidden;
+    border: 1px solid rgba(255, 255, 255, 0.08);
+  }
+  .phone img { width: 100%; height: auto; display: block; }
+  .pin {
+    position: absolute;
+    width: 22px; height: 22px;
+    border-radius: 50%;
+    background: var(--accent);
+    color: #000;
+    font-weight: 600;
+    font-size: 11px;
+    font-family: 'Geist Mono', monospace;
+    display: flex; align-items: center; justify-content: center;
+    box-shadow: 0 0 0 2px #000;
+    z-index: 5;
+    animation: none !important;
+    transition: none !important;
+  }
+  @media (max-width: 768px) {
+    .pin { animation: none !important; transition: none !important; }
+  }
+  .review-content { padding-top: 4px; }
+  .review-num {
+    font-family: 'Geist Mono', monospace;
+    font-size: 10.5px;
+    letter-spacing: 0.14em;
+    color: var(--ink-3);
+    text-transform: uppercase;
+    margin-bottom: 12px;
+  }
+  .review-h {
+    font-family: 'Geist', sans-serif;
+    font-size: 26px;
+    line-height: 1.2;
+    letter-spacing: -0.02em;
+    font-weight: 600;
+    margin-bottom: 20px;
+    max-width: 580px;
+  }
+  .review-body p {
+    font-size: 15.5px;
+    line-height: 1.65;
+    color: var(--ink);
+    margin-bottom: 1em;
+    max-width: 600px;
+  }
+  .review-callouts {
+    margin-top: 20px;
+    padding-top: 20px;
+    border-top: 1.2px dashed var(--dashed);
+  }
+  .callout {
+    display: grid; grid-template-columns: 22px 1fr; gap: 14px;
+    margin-bottom: 12px;
+    align-items: baseline;
+  }
+  .callout-num {
+    font-family: 'Geist Mono', monospace;
+    font-size: 11px;
+    color: var(--accent);
+    font-weight: 500;
+  }
+  .callout p {
+    font-size: 14px;
+    line-height: 1.55;
+    color: var(--ink-2);
+    margin: 0;
+  }
+  .recommendation {
+    margin-top: 24px;
+    padding: 20px 24px;
+    border: 1.2px dashed var(--dashed-strong);
+    border-radius: 12px;
+    max-width: 600px;
+  }
+  .rec-label {
+    font-family: 'Geist Mono', monospace;
+    font-size: 10px;
+    letter-spacing: 0.14em;
+    color: var(--accent);
+    text-transform: uppercase;
+    margin-bottom: 10px;
+    font-weight: 500;
+  }
+  .rec-text {
+    font-family: 'Geist', sans-serif;
+    font-size: 15px;
+    line-height: 1.6;
+    color: var(--ink);
+  }
+  .rec-text strong { color: var(--ink); font-weight: 500; }
+
+  /* ---------- COMPARISON ---------- */
+  .compare {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    margin: 32px 0;
+    border: 1.2px dashed var(--dashed);
+    border-radius: 18px;
+    overflow: hidden;
+    background: var(--surface);
+  }
+  @media (max-width: 700px) { .compare { grid-template-columns: 1fr; } }
+  .compare-col {
+    padding: 36px 32px;
+    border-right: 1.2px dashed var(--dashed);
+  }
+  .compare-col:last-child { border-right: none; }
+  @media (max-width: 700px) {
+    .compare-col { border-right: none; border-bottom: 1.2px dashed var(--dashed); }
+    .compare-col:last-child { border-bottom: none; }
+  }
+  .compare-label {
+    font-family: 'Geist Mono', monospace;
+    font-size: 10.5px;
+    letter-spacing: 0.14em;
+    text-transform: uppercase;
+    color: var(--ink-3);
+    margin-bottom: 24px;
+  }
+  .compare-col.right .compare-label { color: var(--accent); }
+  .compare-row {
+    display: grid;
+    grid-template-columns: 14px 1fr;
+    gap: 12px;
+    padding: 14px 0;
+    border-bottom: 1.2px dashed var(--dashed);
+    align-items: baseline;
+    font-size: 15.5px;
+    line-height: 1.5;
+  }
+  .compare-row:last-child { border-bottom: none; }
+  .compare-row .dot { color: var(--ink-3); font-size: 18px; line-height: 1; }
+  .compare-col.right .compare-row .dot { color: var(--accent); }
+  .compare-col p { font-size: 15.5px; color: var(--ink-2); }
+  .compare-col.right p { color: var(--ink); }
+
+  /* ---------- PROPOSAL ---------- */
+  .proposal {
+    border: 1.2px dashed var(--dashed);
+    border-radius: 22px;
+    overflow: hidden;
+    background: var(--surface);
+    margin-bottom: 24px;
+  }
+  .proposal-head {
+    padding: 32px 40px;
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 40px;
+    align-items: center;
+    border-bottom: 1.2px dashed var(--dashed);
+  }
+  @media (max-width: 800px) {
+    .proposal-head { grid-template-columns: 1fr; gap: 16px; padding: 28px; }
+  }
+  .proposal-roman {
+    font-family: 'Geist Mono', monospace;
+    font-size: 11px;
+    color: var(--accent);
+    letter-spacing: 0.14em;
+    margin-bottom: 10px;
+    font-weight: 500;
+  }
+  .proposal-head h3 {
+    font-family: 'Geist', sans-serif;
+    font-size: clamp(28px, 3.6vw, 40px);
+    line-height: 1.06;
+    letter-spacing: -0.03em;
+    font-weight: 600;
+    color: var(--ink);
+  }
+  .proposal-head h3 .muted {
+    color: var(--ink-2);
+    font-weight: 500;
+    display: block;
+  }
+  .proposal-head .hint {
+    font-size: 15px;
+    line-height: 1.5;
+    color: var(--ink-2);
+    max-width: 380px;
+  }
+  .proposal-head .hint strong { color: var(--ink); font-weight: 500; }
+  .proposal-grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+  }
+  @media (max-width: 800px) { .proposal-grid { grid-template-columns: 1fr; } }
+  .proposal-cell {
+    padding: 24px 28px;
+    border-right: 1.2px dashed var(--dashed);
+  }
+  .proposal-cell:last-child { border-right: none; }
+  @media (max-width: 800px) {
+    .proposal-cell { border-right: none; border-bottom: 1.2px dashed var(--dashed); }
+    .proposal-cell:last-child { border-bottom: none; }
+  }
+  .proposal-cell h4 {
+    font-family: 'Geist Mono', monospace;
+    font-size: 10.5px;
+    letter-spacing: 0.14em;
+    text-transform: uppercase;
+    color: var(--accent);
+    margin-bottom: 12px;
+    font-weight: 500;
+  }
+  .proposal-cell p {
+    font-size: 14.5px;
+    line-height: 1.6;
+    color: var(--ink-2);
+  }
+  .proposal-cell p strong { color: var(--ink); font-weight: 500; }
+
+  /* ---------- REFERENCES ---------- */
+  .refs {
+    margin: 40px 0 0;
+    border: 1.2px dashed var(--dashed);
+    border-radius: 22px;
+    background: var(--surface);
+    overflow: hidden;
+  }
+  .refs-head {
+    padding: 32px 40px;
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 40px;
+    align-items: center;
+    border-bottom: 1.2px dashed var(--dashed);
+  }
+  @media (max-width: 800px) {
+    .refs-head { grid-template-columns: 1fr; gap: 16px; padding: 28px; }
+  }
+  .refs-head h3 {
+    font-family: 'Geist', sans-serif;
+    font-size: clamp(28px, 3.4vw, 40px);
+    line-height: 1.06;
+    letter-spacing: -0.03em;
+    font-weight: 600;
+  }
+  .refs-head h3 .muted { color: var(--ink-2); font-weight: 500; display: block; }
+  .refs-head p { font-size: 15px; line-height: 1.5; color: var(--ink-2); max-width: 380px; }
+  .refs-grid {
+    display: grid;
+    grid-template-columns: repeat(5, 1fr);
+  }
+  @media (max-width: 1000px) { .refs-grid { grid-template-columns: repeat(2, 1fr); } }
+  @media (max-width: 600px) { .refs-grid { grid-template-columns: 1fr; } }
+  .ref-card {
+    padding: 24px 24px;
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+    min-height: 200px;
+    border-right: 1.2px dashed var(--dashed);
+    border-bottom: 1.2px dashed var(--dashed);
+  }
+  .ref-card:last-child { border-right: none; }
+  @media (max-width: 1000px) {
+    .ref-card:nth-child(2n) { border-right: none; }
+    .ref-card { border-right: 1.2px dashed var(--dashed); }
+  }
+  @media (max-width: 600px) {
+    .ref-card { border-right: none; }
+  }
+  .ref-name {
+    font-family: 'Geist', sans-serif;
+    font-weight: 600;
+    font-size: 17px;
+    letter-spacing: -0.01em;
+  }
+  .ref-did {
+    font-family: 'Geist Mono', monospace;
+    font-size: 10.5px;
+    text-transform: uppercase;
+    letter-spacing: 0.1em;
+    color: var(--ink-3);
+  }
+  .ref-lesson {
+    font-size: 13.5px;
+    line-height: 1.55;
+    color: var(--ink-2);
+    margin-top: auto;
+  }
+  .ref-lesson strong { color: var(--ink); font-weight: 500; }
+
+  /* ---------- PULL ---------- */
+  .pull {
+    font-family: 'Geist', sans-serif;
+    font-weight: 500;
+    font-size: clamp(24px, 3.4vw, 36px);
+    line-height: 1.25;
+    letter-spacing: -0.025em;
+    color: var(--ink);
+    max-width: 880px;
+    margin: 40px 0;
+    padding: 36px 40px;
+    border: 1.2px dashed var(--dashed);
+    border-radius: 18px;
+    background: var(--surface);
+  }
+  .pull em { color: var(--accent); font-weight: 500; font-style: italic; }
+
+  /* ---------- CLOSING ---------- */
+  .closing {
+    padding: 120px 0 96px;
+    border-top: 1.2px dashed var(--dashed);
+  }
+  .closing h2 {
+    font-family: 'Geist', sans-serif;
+    font-weight: 600;
+    font-size: clamp(72px, 11vw, 168px);
+    line-height: 0.94;
+    letter-spacing: -0.045em;
+    color: var(--ink);
+    margin-bottom: 36px;
+  }
+  .closing h2 em { color: var(--accent); font-weight: 500; font-style: italic; }
+  .closing p {
+    font-size: 19px;
+    line-height: 1.5;
+    color: var(--ink-2);
+    max-width: 560px;
+  }
+  .closing p strong { color: var(--ink); font-weight: 500; }
+
+  /* ---------- PRINT / PDF ---------- */
+  @page { margin: 0; }
+  @media print {
+    html, body {
+      background: #000000 !important;
+      -webkit-print-color-adjust: exact !important;
+      print-color-adjust: exact !important;
+      color-adjust: exact !important;
+    }
+    .navbar {
+      position: relative !important;
+      backdrop-filter: none !important;
+      -webkit-backdrop-filter: none !important;
+      background: #000000 !important;
+    }
+    .cover { min-height: 0 !important; padding: 96px 0 120px !important; page-break-after: always; }
+    section { padding: 72px 0 !important; page-break-inside: avoid; }
+    .section-block, .obs, .proposal, .review, .scenario, .working, .refs, .compare, .pull, .recommendation, .ref-card {
+      page-break-inside: avoid;
+      break-inside: avoid;
+    }
+    .review-list { page-break-inside: auto; }
+    .review { page-break-inside: avoid; break-inside: avoid; }
+    .closing { page-break-before: always; }
+    a { color: inherit; text-decoration: none; }
+  }
+</style>
+</head>
+<body>
+
+<!-- NAVBAR -->
+<nav class="navbar">
+  <div class="container">
+    <div class="nav-row">
+      <div class="nav-brand">
+        <span class="nav-dot"></span>
+        <span>Mandos</span>
+        <span class="sub">/ Product & Strategic Review</span>
+      </div>
+      <div class="nav-links">
+        <a href="#framing">I. Framing</a>
+        <a href="#observations">II. Observations</a>
+        <a href="#proposal">III. Proposal</a>
+        <a href="#closing">Find the night</a>
+      </div>
+      <div class="nav-meta">
+        <span class="pill">Draft</span>
+      </div>
+    </div>
+  </div>
+</nav>
+
+<!-- COVER -->
+<section class="cover">
+  <div class="container">
+    <div class="cover-kicker">
+      <span class="kicker">Mandos</span>
+      <span class="dot"></span>
+      <span class="kicker">Product & strategic review</span>
+    </div>
+    <h1 class="display">A read on the<br>current app, and<br><span class="accent">where I'd take it</span>.</h1>
+    <p class="cover-sub">An outside walk-through of the Mandos app. What's working, what isn't, and the strategic direction <strong>I want to bring into the designer call</strong>.</p>
+  </div>
+</section>
+
+<!-- I. FRAMING -->
+<section id="framing">
+  <div class="container">
+    <div class="section-block">
+      <div class="section-block-head">
+        <div class="section-block-title">
+          <h2>The intent.</h2>
+          <span class="sub-line">A note before we begin.</span>
+        </div>
+        <div class="section-block-desc">
+          <p>This document is the structured outside read I want to bring into our designer conversation. The intent is to make the gaps in the current app legible, then commit to a strategic direction that's actually defensible.</p>
+        </div>
+      </div>
+      <div class="dashed-divider"></div>
+      <div class="section-prose">
+        <div class="roman">I.</div>
+        <p>Part II walks the current app screen by screen. Part III is a strategic proposal for where the product could go next. <strong>None of the proposed direction sits in the product today.</strong> It's the lens I'd like us to evaluate together before the designer call.</p>
+        <p>I walked the app the way a real user would. Saturday evening. Switched themes twice. Ran the booking flow. Tried to connect Instagram. Opened the partner page. Tested search with a half dozen queries. The patterns below came from that.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- II. OBSERVATIONS -->
+<section id="observations">
+  <div class="container">
+    <div class="section-block">
+      <div class="section-block-head">
+        <div class="section-block-title">
+          <h2>Six patterns.</h2>
+          <span class="sub-line">Across every screen.</span>
+        </div>
+        <div class="section-block-desc">
+          <p>Before walking individual surfaces, the brand-level patterns that kept repeating. Each is named with what it is, why it matters to a user, and what the cost is if left in place.</p>
+        </div>
+      </div>
+    </div>
+
+    <!-- OBSERVATIONS -->
+    <div class="obs-list">
+
+      <div class="obs">
+        <div class="obs-head">
+          <span class="obs-num">01</span>
+          <span class="obs-title">The visual identity is user-controlled, not author-controlled.</span>
+          <span class="obs-severity high">High</span>
+        </div>
+        <div class="obs-body">
+          <div class="obs-cell">
+            <div class="obs-cell-label">What I observed</div>
+            <p>Settings holds a Customize Theme surface that lets users repaint primary, border, surface, and background colours across the whole app. Across the 16 screens reviewed, the accent shifts between orange, pink, and purple. The price label inside the screen looks like a preview of how a paid component might appear. The real issue is the feature existing at all.</p>
+          </div>
+          <div class="obs-cell">
+            <div class="obs-cell-label">Why it matters</div>
+            <p>Brand identity is the asset that lets a user recognise the product from across a room. <strong>If every user runs a different version of the brand, no recognition is possible.</strong> The feature also lets users make the app look genuinely bad in their own hands.</p>
+          </div>
+          <div class="obs-cell">
+            <div class="obs-cell-label">What it costs</div>
+            <p>Brand equity at exactly the moment we want to invest in it. <strong>Recommend: remove the feature entirely.</strong> Replace with a system Light/Dark switch tied to iOS preferences.</p>
+          </div>
+        </div>
+      </div>
+
+      <div class="obs">
+        <div class="obs-head">
+          <span class="obs-num">02</span>
+          <span class="obs-title">The catalog is empty for an app pitched on Hong Kong nightlife.</span>
+          <span class="obs-severity high">High</span>
+        </div>
+        <div class="obs-body">
+          <div class="obs-cell">
+            <div class="obs-cell-label">What I observed</div>
+            <p>The Events tab shows <strong>one event for the entire month</strong>. Search returns sparse results. The Rewards shop is empty. The catalog is thin across every supply-side surface.</p>
+          </div>
+          <div class="obs-cell">
+            <div class="obs-cell-label">Why it matters</div>
+            <p>Hong Kong runs hundreds of events a week. Time Out HK, Sassy HK, and Magnetic Mag all carry these. The user opens Mandos to find their night and is told there isn't one. <strong>The product can't out-design a content problem.</strong></p>
+          </div>
+          <div class="obs-cell">
+            <div class="obs-cell-label">What it costs</div>
+            <p>User trust on the first session. Even if the app is beautiful, a thin inventory tells the user the platform isn't where the action is. Worth treating supply as urgently as design.</p>
+          </div>
+        </div>
+      </div>
+
+      <div class="obs">
+        <div class="obs-head">
+          <span class="obs-num">03</span>
+          <span class="obs-title">The mental model is "browse a directory," not "find your night."</span>
+          <span class="obs-severity high">High</span>
+        </div>
+        <div class="obs-body">
+          <div class="obs-cell">
+            <div class="obs-cell-label">What I observed</div>
+            <p>Four top-level tabs sort by venue type (Discover, Events, Clubs, Bars). The same taxonomy repeats inside the map. Search filters offer "Sort by Name A–Z" and "Sort by Lighting."</p>
+          </div>
+          <div class="obs-cell">
+            <div class="obs-cell-label">Why it matters</div>
+            <p>A user opening the app on a Saturday isn't thinking "let me find a club." They're thinking "what's happening tonight, who's out, where should I go?" The app forces them to translate intent into taxonomy.</p>
+          </div>
+          <div class="obs-cell">
+            <div class="obs-cell-label">What it costs</div>
+            <p>This is the biggest single thing holding the product back. <strong>The architecture is right for Yelp, wrong for nightlife.</strong> Fixing this opens up most of the proposals in Part III.</p>
+          </div>
+        </div>
+      </div>
+
+      <div class="obs">
+        <div class="obs-head">
+          <span class="obs-num">04</span>
+          <span class="obs-title">Integrations are placeholders, surfaced as features.</span>
+          <span class="obs-severity med">Medium</span>
+        </div>
+        <div class="obs-body">
+          <div class="obs-cell">
+            <div class="obs-cell-label">What I observed</div>
+            <p>"Connect Instagram" opens a sheet asking for a profile URL. "Become a Partner" opens the marketing website as a full webview, header and menu rendered inside the app.</p>
+          </div>
+          <div class="obs-cell">
+            <div class="obs-cell-label">Why it matters</div>
+            <p>Users notice when integrations are paper-thin. The Instagram URL field signals "we haven't built this yet." The partner webview signals "we couldn't ship this natively." Both screens make the app feel earlier than it is.</p>
+          </div>
+          <div class="obs-cell">
+            <div class="obs-cell-label">What it costs</div>
+            <p>Perceived engineering quality. Easier fix: remove these entries until they're real. Half-integrations are worse than no integration in this kind of consumer social product.</p>
+          </div>
+        </div>
+      </div>
+
+      <div class="obs">
+        <div class="obs-head">
+          <span class="obs-num">05</span>
+          <span class="obs-title">The most differentiated idea, Mandos Coins, is invisible.</span>
+          <span class="obs-severity med">Medium</span>
+        </div>
+        <div class="obs-body">
+          <div class="obs-cell">
+            <div class="obs-cell-label">What I observed</div>
+            <p>Coins exist as a balance on a Rewards page. The shop is empty. The screen is framed as a loyalty program (Shop / My rewards / Bundles / Tickets / Drinks).</p>
+          </div>
+          <div class="obs-cell">
+            <div class="obs-cell-label">Why it matters</div>
+            <p>The coin is potentially Mandos's most differentiated mechanic, but only if it's a <strong>social currency</strong> (buy a stranger a drink, tip the DJ, gift a friend), not a discount voucher. The framing today positions Mandos as a loyalty card.</p>
+          </div>
+          <div class="obs-cell">
+            <div class="obs-cell-label">What it costs</div>
+            <p>The product's most ownable behaviour. Reframing this is mostly a positioning exercise. The infrastructure already exists. Detailed proposal in Part III.</p>
+          </div>
+        </div>
+      </div>
+
+      <div class="obs">
+        <div class="obs-head">
+          <span class="obs-num">06</span>
+          <span class="obs-title">The app doesn't feel native. It feels transactional.</span>
+          <span class="obs-severity high">High</span>
+        </div>
+        <div class="obs-body">
+          <div class="obs-cell">
+            <div class="obs-cell-label">What I observed</div>
+            <p>No iOS Liquid Glass surfaces. No Dynamic Island use. No haptic pairings on key interactions. Modal sheets use Apply/Clear buttons instead of live preview with swipe-to-dismiss. The booking flow reads like a Stripe Checkout in dark mode. The partner page is a webview.</p>
+          </div>
+          <div class="obs-cell">
+            <div class="obs-cell-label">Why it matters</div>
+            <p>Right now the app feels like Airbnb's booking flow or a banking app, which is the wrong reference for nightlife. <strong>Every surface should feel native to iOS</strong>: Liquid Glass blur, contextual transitions, haptics, Dynamic Island as a real surface. That's the difference between a utility a user tolerates and an app they actually want to open.</p>
+          </div>
+          <div class="obs-cell">
+            <div class="obs-cell-label">What it costs</div>
+            <p>Perceived quality, which is most of the brand at this stage. <strong>Native craft is also a moat.</strong> No competitor has built a nightlife app around Dynamic Island and Live Activities yet. Closing this gap moves the product up a tier without changing the feature set.</p>
+          </div>
+        </div>
+      </div>
+
+    </div>
+
+    <!-- WHAT'S WORKING -->
+    <div class="working">
+      <div class="working-head">
+        <div class="working-dot"></div>
+        <div class="working-h">Worth acknowledging: what's already in good shape</div>
+      </div>
+      <div class="working-grid">
+        <div class="working-item"><div><strong>The booking and checkout flow.</strong> Apple Pay integration is in, the ticket flow works end-to-end.</div></div>
+        <div class="working-item"><div><strong>The map view exists.</strong> Even underused, it's the strongest seed for the proposal in Part III.</div></div>
+        <div class="working-item"><div><strong>Coin infrastructure is built.</strong> Earning, balance, ledger, the system is real. Only the framing needs work.</div></div>
+        <div class="working-item"><div><strong>Partner network of 30+ venues.</strong> Real B2B traction. The supply problem is solvable from here.</div></div>
+        <div class="working-item"><div><strong>1,500 users without marketing.</strong> Means the core idea has organic pull. Worth investing into properly.</div></div>
+        <div class="working-item"><div><strong>The brand has a name and a foothold.</strong> The carrot sprout is a recognisable starting point even if it isn't the destination.</div></div>
+      </div>
+    </div>
+
+    <!-- USER SCENARIO -->
+    <div class="scenario">
+      <div class="scenario-head">
+        <div class="scenario-kicker">
+          <span class="kicker accent">A grounded scenario</span>
+        </div>
+        <div class="scenario-h">Maya, 23, opens Mandos on a Saturday at 9:47pm.</div>
+        <div class="scenario-meta">Wong Chuk Hang · Heading toward Central · Two friends already at a bar in LKF</div>
+      </div>
+      <div class="dashed-divider"></div>
+      <div class="scenario-body">
+        <div class="scenario-col bad">
+          <h5>How it plays today</h5>
+          <p>She opens the app. The home screen loads a news article about Anyma in Los Angeles. She taps Events. One event listed for the entire month. She taps the map. Venues with no people on it. She closes Mandos and opens Instagram to text her friends.</p>
+          <p><strong>The app didn't know she was out, didn't know who her friends were, didn't know what music she likes. It showed her a magazine instead.</strong></p>
+        </div>
+        <div class="scenario-col good">
+          <h5>How it should play</h5>
+          <p>She opens the app. A single action sits on Home: <strong>I'm out</strong>. She taps it. The map fills with her friends' avatars. Two at Boomerang, one walking toward Fay. A small card appears: "DJ Wong Kar at Sing Sing tonight, 4 from your network going."</p>
+          <p><strong>She didn't have to type a word. The app oriented her to the night and disappeared.</strong></p>
+        </div>
+      </div>
+    </div>
+
+    <!-- PER-SCREEN BLOCK INTRO -->
+    <div class="section-block" style="margin-top: 56px;">
+      <div class="section-block-head">
+        <div class="section-block-title">
+          <h2>Per-screen notes.</h2>
+          <span class="sub-line">Sixteen surfaces, one pass.</span>
+        </div>
+        <div class="section-block-desc">
+          <p>Brief observation against each screen, with the recommended starting position below it. Severity is implied by language. Most of these are tightening passes, not rebuilds.</p>
+        </div>
+      </div>
+    </div>
+
+    <!-- PER-SCREEN REVIEWS -->
+    <div class="review-list">
+
+      <!-- 1. HOME -->
+      <div class="review">
+        <div class="review-screen">
+          <div class="phone">
+            <img src="screens/SCR-20260514-dozy.jpeg" alt="Home tab">
+            <div class="pin" style="top: 6%; left: 6%;">1</div>
+            <div class="pin" style="top: 19%; left: 4%;">2</div>
+            <div class="pin" style="top: 75%; left: 8%;">3</div>
+          </div>
+        </div>
+        <div class="review-content">
+          <div class="review-num">Screen 01 · Home</div>
+          <h3 class="review-h">A magazine front page when the user came to go out</h3>
+          <div class="review-body">
+            <p>The first surface a new user sees is a news carousel followed by an EDM News row. Three top-bar elements compete for attention (Location, Shop, Notification), four sub-tabs sit underneath, then a news hero. By the time the user can do anything actionable, they've parsed eight UI decisions.</p>
+            <div class="review-callouts">
+              <div class="callout"><div class="callout-num">1</div><p>Three-CTA top bar with no hierarchy.</p></div>
+              <div class="callout"><div class="callout-num">2</div><p>Four sub-tabs sort by venue type. Wrong mental model for the moment a user opens the app.</p></div>
+              <div class="callout"><div class="callout-num">3</div><p>News is a second hero. Users consume news elsewhere. It shouldn't be Mandos's job.</p></div>
+            </div>
+            <div class="recommendation">
+              <div class="rec-label">Starting position</div>
+              <div class="rec-text">Home collapses into a <strong>single map-first surface</strong> showing live venues and presence. The news row retires. If it lives anywhere, it's inside individual venue pages as context.</div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- 2. SEARCH -->
+      <div class="review">
+        <div class="review-screen">
+          <div class="phone">
+            <img src="screens/SCR-20260514-dpis.png" alt="Search">
+            <div class="pin" style="top: 25%; left: 22%;">1</div>
+            <div class="pin" style="top: 70%; left: 32%;">2</div>
+          </div>
+        </div>
+        <div class="review-content">
+          <div class="review-num">Screen 02 · Search</div>
+          <h3 class="review-h">The empty state is the experience</h3>
+          <div class="review-body">
+            <p>Typing a single letter returns one result on a sea of black. No recent searches, no trending tonight, no nearby venues, no suggested queries. To a new user, the void below the first result reads as "this product is sparse."</p>
+            <div class="review-callouts">
+              <div class="callout"><div class="callout-num">1</div><p>Sparse result with nothing else surfaced.</p></div>
+              <div class="callout"><div class="callout-num">2</div><p>Black void carries unintentional weight.</p></div>
+            </div>
+            <div class="recommendation">
+              <div class="rec-label">Starting position</div>
+              <div class="rec-text">Default search shows <strong>tonight's live picks</strong>. Three venues with energy readings, recent searches, and a "near you" row. The screen is never blank.</div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- 3. EVENTS -->
+      <div class="review">
+        <div class="review-screen">
+          <div class="phone">
+            <img src="screens/SCR-20260514-dpmn.png" alt="Events">
+            <div class="pin" style="top: 28%; left: 6%;">1</div>
+            <div class="pin" style="top: 60%; left: 6%;">2</div>
+          </div>
+        </div>
+        <div class="review-content">
+          <div class="review-num">Screen 03 · Events</div>
+          <h3 class="review-h">"This Month · 1 Event" sets a tone the rest of the product has to overcome</h3>
+          <div class="review-body">
+            <p>One event for the entire month. Hong Kong runs hundreds of events a week. This is a supply-side problem more than a UI one. The Filter / Trending / Popular row repeats across tabs without functional difference.</p>
+            <div class="review-callouts">
+              <div class="callout"><div class="callout-num">1</div><p>Single event signals an empty city.</p></div>
+              <div class="callout"><div class="callout-num">2</div><p>Filter chips lack semantic differentiation.</p></div>
+            </div>
+            <div class="recommendation">
+              <div class="rec-label">Starting position</div>
+              <div class="rec-text">A feed sorted by <strong>social proof</strong> ("your network is going"), not by category. In parallel, a content-sourcing push to widen inventory through partnerships with Time Out HK, Sassy HK, Magnetic Mag.</div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- 4. EVENT DETAIL -->
+      <div class="review">
+        <div class="review-screen">
+          <div class="phone">
+            <img src="screens/SCR-20260514-dppe.jpeg" alt="Event detail">
+            <div class="pin" style="top: 3%; right: 4%;">1</div>
+            <div class="pin" style="top: 50%; left: 6%;">2</div>
+          </div>
+        </div>
+        <div class="review-content">
+          <div class="review-num">Screen 04 · Event detail</div>
+          <h3 class="review-h">Strong hero, generic frame</h3>
+          <div class="review-body">
+            <p>The promoter has supplied a beautiful poster. The app stamps a Mandos logo and a Gallery pill over it. Below the hero, the page becomes a database printout. The question that matters ("is this worth my night?") goes unanswered.</p>
+            <div class="review-callouts">
+              <div class="callout"><div class="callout-num">1</div><p>Mandos branding sits on top of user-supplied creative.</p></div>
+              <div class="callout"><div class="callout-num">2</div><p>No social proof, no music preview, no venue energy.</p></div>
+            </div>
+            <div class="recommendation">
+              <div class="rec-label">Starting position</div>
+              <div class="rec-text">Hero stays untouched. Below it, surface <strong>who from the user's network is going</strong>, a music preview, and the venue's current energy. Book becomes one of two CTAs. The other is <strong>save to your night</strong>.</div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- 5. BOOKING -->
+      <div class="review">
+        <div class="review-screen">
+          <div class="phone">
+            <img src="screens/SCR-20260514-dptv.png" alt="Booking summary">
+            <div class="pin" style="top: 14%; left: 8%;">1</div>
+            <div class="pin" style="top: 65%; left: 6%;">2</div>
+          </div>
+        </div>
+        <div class="review-content">
+          <div class="review-num">Screen 05 · Booking summary</div>
+          <h3 class="review-h">A clean checkout that doesn't feel like Mandos</h3>
+          <div class="review-body">
+            <p>The booking flow works. It just looks like Stripe Checkout in dark mode. There's nothing on this screen that signals Mandos. The coin balance the user has accumulated doesn't show up at the highest-leverage point of sale.</p>
+            <div class="review-callouts">
+              <div class="callout"><div class="callout-num">1</div><p>"Booking Summary" is back-office language for an emotionally positive moment.</p></div>
+              <div class="callout"><div class="callout-num">2</div><p>Coin discount and coin-earn preview are absent.</p></div>
+            </div>
+            <div class="recommendation">
+              <div class="rec-label">Starting position</div>
+              <div class="rec-text">The ticket itself becomes the screen. A designed object the user wants to keep. <strong>Apply coins in one tap.</strong> Apple Pay as the primary, biometric-fired action.</div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- 6. CLUBS (THEMED) -->
+      <div class="review">
+        <div class="review-screen">
+          <div class="phone">
+            <img src="screens/SCR-20260514-dpyn.png" alt="Clubs tab, pink theme">
+            <div class="pin" style="top: 14%; right: 22%;">1</div>
+            <div class="pin" style="top: 30%; left: 50%;">2</div>
+          </div>
+        </div>
+        <div class="review-content">
+          <div class="review-num">Screen 06 · Clubs (themed)</div>
+          <h3 class="review-h">Same wireframe, different colour</h3>
+          <div class="review-body">
+            <p>The accent is pink here because the user chose a different theme. The architecture matches the Home tab. Chip rows, hero card, filter pills. The Boomerang logo crashes into a pure-white background block because Mandos doesn't control how venue assets present themselves.</p>
+            <div class="review-callouts">
+              <div class="callout"><div class="callout-num">1</div><p>Accent colour is user-defined. Not a brand asset.</p></div>
+              <div class="callout"><div class="callout-num">2</div><p>Venue logos uncontrolled in their visual treatment.</p></div>
+            </div>
+            <div class="recommendation">
+              <div class="rec-label">Starting position</div>
+              <div class="rec-text">A single canonical theme. <strong>Venue assets wrap in a Mandos-controlled card frame</strong> with consistent ratio, background, and type treatment for the venue name.</div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- 7. FILTER -->
+      <div class="review">
+        <div class="review-screen">
+          <div class="phone">
+            <img src="screens/SCR-20260514-dpzy.png" alt="Filter sheet">
+            <div class="pin" style="top: 47%; left: 8%;">1</div>
+            <div class="pin" style="top: 60%; left: 50%;">2</div>
+          </div>
+        </div>
+        <div class="review-content">
+          <div class="review-num">Screen 07 · Filter sheet</div>
+          <h3 class="review-h">Filters that don't match how users decide</h3>
+          <div class="review-body">
+            <p>Sort by Name A–Z, Sort by Lighting, six rating sort orders. These are CRM-style filters for a moment that's emotionally decisive. The user opening this sheet is asking "what's alive nearby." The sheet doesn't ask that question back.</p>
+            <div class="review-callouts">
+              <div class="callout"><div class="callout-num">1</div><p>"Lighting" as a filter is unusual. Worth challenging which user need it serves.</p></div>
+              <div class="callout"><div class="callout-num">2</div><p>"Closest" or "most alive right now," the sorts users would actually use, aren't there.</p></div>
+            </div>
+            <div class="recommendation">
+              <div class="rec-label">Starting position</div>
+              <div class="rec-text">Three intent chips inline with the venue list: <strong>Near me · Tonight · My vibe</strong>. The modal sheet retires. "My vibe" leans on Spotify taste once that connect is real.</div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- 8. CLUB DETAIL -->
+      <div class="review">
+        <div class="review-screen">
+          <div class="phone">
+            <img src="screens/SCR-20260514-dqca.png" alt="Boomerang detail">
+            <div class="pin" style="top: 18%; left: 32%;">1</div>
+            <div class="pin" style="top: 88%; left: 6%;">2</div>
+          </div>
+        </div>
+        <div class="review-content">
+          <div class="review-num">Screen 08 · Club detail</div>
+          <h3 class="review-h">A logo on white where a venue should be</h3>
+          <div class="review-body">
+            <p>Boomerang's page leads with a black-and-white logo on a pure-white hero. That communicates the brand mark, not the room. Below the hero, five sub-tabs (About, Events, Gallery, Reviews, More) split what should be one connected scroll.</p>
+            <div class="review-callouts">
+              <div class="callout"><div class="callout-num">1</div><p>Hero shows the logo, not the venue's feel.</p></div>
+              <div class="callout"><div class="callout-num">2</div><p>Five sub-tabs fragment a single story.</p></div>
+            </div>
+            <div class="recommendation">
+              <div class="rec-label">Starting position</div>
+              <div class="rec-text">Hero becomes a <strong>live or curated photograph</strong>. Logo overlays subtly. One scrollable canvas below with live status, upcoming events, the venue's playlist, and gallery embedded in flow.</div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- 9. MAP -->
+      <div class="review">
+        <div class="review-screen">
+          <div class="phone">
+            <img src="screens/SCR-20260514-dqln.png" alt="Map">
+            <div class="pin" style="top: 30%; left: 30%;">1</div>
+            <div class="pin" style="top: 86%; left: 8%;">2</div>
+          </div>
+        </div>
+        <div class="review-content">
+          <div class="review-num">Screen 09 · Map</div>
+          <h3 class="review-h">The strongest surface, used the least</h3>
+          <div class="review-body">
+            <p>The map is the most interesting screen in the product, and I think the entire app should be built around it. Today it's framed as a sub-tab. Pins stack on top of each other in one cluster, the 2D/3D toggle does little work, and the bottom tab bar pulls the user out of the spatial view.</p>
+            <div class="review-callouts">
+              <div class="callout"><div class="callout-num">1</div><p>Pins collide. No hierarchy by activity.</p></div>
+              <div class="callout"><div class="callout-num">2</div><p>Bottom tabs framing breaks immersion.</p></div>
+            </div>
+            <div class="recommendation">
+              <div class="rec-label">Starting position</div>
+              <div class="rec-text">The map becomes <strong>home</strong>. Edge to edge. Pins sized by live activity. Presence layer comes once the "I'm out" behaviour in Part III ships. The four-tab bar shrinks to a floating action.</div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- 10. PROFILE -->
+      <div class="review">
+        <div class="review-screen">
+          <div class="phone">
+            <img src="screens/SCR-20260514-dqsl.png" alt="Profile">
+            <div class="pin" style="top: 50%; left: 38%;">1</div>
+            <div class="pin" style="top: 78%; left: 8%;">2</div>
+          </div>
+        </div>
+        <div class="review-content">
+          <div class="review-num">Screen 10 · Profile</div>
+          <h3 class="review-h">The profile asks the user to do the work</h3>
+          <div class="review-body">
+            <p>Default state: initials on a gradient and a 12% completion bar. The screen's value is gated behind a form. There's no music, no past nights, no friends visible. Nothing that signals what the profile is for in this app.</p>
+            <div class="review-callouts">
+              <div class="callout"><div class="callout-num">1</div><p>Placeholder hero instead of something to be proud of.</p></div>
+              <div class="callout"><div class="callout-num">2</div><p>Completion meter signals "fill this in or the product won't work."</p></div>
+            </div>
+            <div class="recommendation">
+              <div class="rec-label">Starting position</div>
+              <div class="rec-text">Profile becomes <strong>You</strong>. Saved venues, your music auto-pulled, past nights as artifacts. Populated by behaviour, not by form-filling. Completion meter retires.</div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- 11. PROFILE COMPLETION -->
+      <div class="review">
+        <div class="review-screen">
+          <div class="phone">
+            <img src="screens/SCR-20260514-dqwh.png" alt="Profile completion list">
+            <div class="pin" style="top: 30%; left: 8%;">1</div>
+            <div class="pin" style="top: 90%; left: 8%;">2</div>
+          </div>
+        </div>
+        <div class="review-content">
+          <div class="review-num">Screen 11 · Profile completion</div>
+          <h3 class="review-h">An onboarding form, shipped as a feature</h3>
+          <div class="review-body">
+            <p>Eight basic-info fields above a Nightlife Preferences section. The order is inverted. The demographic data is the boring half, and the music half is what would actually help personalisation. DOB and gender are requested for a discovery app. Worth challenging both.</p>
+            <div class="review-callouts">
+              <div class="callout"><div class="callout-num">1</div><p>Heavy demographic ask up front.</p></div>
+              <div class="callout"><div class="callout-num">2</div><p>The most useful signal, music, is buried.</p></div>
+            </div>
+            <div class="recommendation">
+              <div class="rec-label">Starting position</div>
+              <div class="rec-text">Onboarding asks one thing: <strong>connect Spotify</strong>. Everything else (photo, bio, name) becomes opt-in later, prompted by context rather than gated upfront.</div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- 12. INSTAGRAM -->
+      <div class="review">
+        <div class="review-screen">
+          <div class="phone">
+            <img src="screens/SCR-20260514-drcf.png" alt="Instagram URL field">
+            <div class="pin" style="top: 75%; left: 30%;">1</div>
+          </div>
+        </div>
+        <div class="review-content">
+          <div class="review-num">Screen 12 · Instagram connect</div>
+          <h3 class="review-h">A text field labelled as an integration</h3>
+          <div class="review-body">
+            <p>The "Connect Instagram" surface is a bottom sheet asking for a profile URL. It's a placeholder. The product feels more truthful if half-integrations like this are removed until they're real.</p>
+            <div class="review-callouts">
+              <div class="callout"><div class="callout-num">1</div><p>The URL field is the whole integration.</p></div>
+            </div>
+            <div class="recommendation">
+              <div class="rec-label">Starting position</div>
+              <div class="rec-text">Either <strong>build the real Instagram OAuth</strong> (friend graph, profile import), or remove the entry point until the work is done. Same applies to any other "connect" surface that's a string field today.</div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- 13. REWARDS -->
+      <div class="review">
+        <div class="review-screen">
+          <div class="phone">
+            <img src="screens/SCR-20260514-dryj.png" alt="Mandos rewards">
+            <div class="pin" style="top: 25%; left: 18%;">1</div>
+            <div class="pin" style="top: 60%; left: 32%;">2</div>
+          </div>
+        </div>
+        <div class="review-content">
+          <div class="review-num">Screen 13 · Rewards</div>
+          <h3 class="review-h">The coin is positioned as a loyalty point</h3>
+          <div class="review-body">
+            <p>The Rewards page treats coins like Starbucks Stars. Accumulate, redeem at a shop. The shop is empty. This framing is the single biggest framing mistake in the product, and the highest-leverage thing to reposition without rewriting code.</p>
+            <div class="review-callouts">
+              <div class="callout"><div class="callout-num">1</div><p>Shop-and-redeem framing positions Mandos as a discount card.</p></div>
+              <div class="callout"><div class="callout-num">2</div><p>Empty shop next to a 100-coin balance reads as currency-with-no-purpose.</p></div>
+            </div>
+            <div class="recommendation">
+              <div class="rec-label">Starting position</div>
+              <div class="rec-text">Coins become a <strong>social currency</strong>. Send a drink, tip the DJ, gift a friend, unlock entry. The metaphor shifts from "shop" to "wallet of social moves." Detailed in Part III.</div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- 14. PARTNER -->
+      <div class="review">
+        <div class="review-screen">
+          <div class="phone">
+            <img src="screens/SCR-20260514-dsdb.png" alt="Partner page in webview">
+            <div class="pin" style="top: 9%; left: 6%;">1</div>
+            <div class="pin" style="top: 30%; left: 30%;">2</div>
+          </div>
+        </div>
+        <div class="review-content">
+          <div class="review-num">Screen 14 · Become a Partner</div>
+          <h3 class="review-h">A website opened inside the app</h3>
+          <div class="review-body">
+            <p>The Become-a-Partner screen loads the marketing website in a full webview. The site's own MANDOS header and hamburger menu render inside the iOS app. The seams show. This is the screen where the app feels least native.</p>
+            <div class="review-callouts">
+              <div class="callout"><div class="callout-num">1</div><p>The site's logo and menu are visible inside the app shell.</p></div>
+              <div class="callout"><div class="callout-num">2</div><p>Partner onboarding is high-value and deserves a native flow.</p></div>
+            </div>
+            <div class="recommendation">
+              <div class="rec-label">Starting position</div>
+              <div class="rec-text">A <strong>native three-step form</strong> for partner onboarding. Move it out of consumer Settings entirely into a dedicated "Mandos for Venues" entry. Different audience, different surface.</div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- 15. SETTINGS -->
+      <div class="review">
+        <div class="review-screen">
+          <div class="phone">
+            <img src="screens/SCR-20260514-dsoq.png" alt="Settings">
+            <div class="pin" style="top: 50%; left: 38%;">1</div>
+            <div class="pin" style="top: 64%; left: 8%;">2</div>
+          </div>
+        </div>
+        <div class="review-content">
+          <div class="review-num">Screen 15 · Settings</div>
+          <h3 class="review-h">A settings menu carrying more weight than it should</h3>
+          <div class="review-body">
+            <p>Settings holds Rewards, Refer & Earn, Saved List, Customize Theme, Become a Partner, Support. Half of these deserve to be first-class surfaces. The other half don't belong in consumer settings at all.</p>
+            <div class="review-callouts">
+              <div class="callout"><div class="callout-num">1</div><p>Customize Theme is the source of brand inconsistency across screens.</p></div>
+              <div class="callout"><div class="callout-num">2</div><p>Become a Partner buried at the bottom of consumer settings.</p></div>
+            </div>
+            <div class="recommendation">
+              <div class="rec-label">Starting position</div>
+              <div class="rec-text">Settings becomes minimal. Notifications, privacy, support, sign out. <strong>Customize Theme is removed.</strong> Rewards and Saved List elevate to their own surfaces in the main app.</div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- 16. CUSTOMIZE THEME -->
+      <div class="review">
+        <div class="review-screen">
+          <div class="phone">
+            <img src="screens/SCR-20260514-dsrd.png" alt="Customize colours">
+            <div class="pin" style="top: 30%; right: 18%;">1</div>
+          </div>
+        </div>
+        <div class="review-content">
+          <div class="review-num">Screen 16 · Customize colours</div>
+          <h3 class="review-h">Theme customization. Kill it.</h3>
+          <div class="review-body">
+            <p>The Customize Theme screen exposes primary, border, surface, and background colour controls. The price label inside it appears to be a preview of how a paid component might look. The real issue is the feature existing for users to touch at all. The screenshots in this review use three different accents (orange, pink, purple) for the same screens because of this single feature.</p>
+            <div class="review-callouts">
+              <div class="callout"><div class="callout-num">1</div><p>Every user can repaint the brand. No recognition is possible.</p></div>
+            </div>
+            <div class="recommendation">
+              <div class="rec-label">Starting position</div>
+              <div class="rec-text"><strong>Remove the feature.</strong> Replace with a Light/Dark switch tied to iOS system preference. Re-direct the engineering hours toward the proposal in Part III.</div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+    </div>
+  </div>
+</section>
+
+<!-- III. PROPOSAL -->
+<section id="proposal">
+  <div class="container">
+    <div class="section-block">
+      <div class="section-block-head">
+        <div class="section-block-title">
+          <h2>Where I'd take it.</h2>
+          <span class="sub-line">A strategic proposal.</span>
+        </div>
+        <div class="section-block-desc">
+          <p>This is the strategic direction I'd like to bring into our designer call. None of this is in the current app. It's the lens I think gives Mandos something durable to own.</p>
+        </div>
+      </div>
+      <div class="dashed-divider"></div>
+      <div class="section-prose">
+        <div class="roman">III.</div>
+        <p class="first">The strongest version of Mandos isn't a better venue directory. It's a <strong>presence-and-discovery layer on top of nightlife</strong>. A way to see who's out, where the energy is, what your night could become. The point isn't to list bars. It's to make the night legible.</p>
+        <p>Six pieces carry the product forward. A defining user behaviour, a map-first architecture, a coin economy reframed as social currency, a music layer, a morning artifact, and a discovery feed for when users aren't ready to commit yet. Together they form one loop.</p>
+      </div>
+    </div>
+
+    <!-- TODAY VS TOMORROW -->
+    <div class="compare">
+      <div class="compare-col">
+        <div class="compare-label">Today · how it feels</div>
+        <div class="compare-row"><span class="dot">·</span><p>Browse a directory of bars and clubs</p></div>
+        <div class="compare-row"><span class="dot">·</span><p>Coins as loyalty points, redeemed at a shop</p></div>
+        <div class="compare-row"><span class="dot">·</span><p>A profile built by form-filling</p></div>
+        <div class="compare-row"><span class="dot">·</span><p>Four taxonomic tabs and a map sub-page</p></div>
+        <div class="compare-row"><span class="dot">·</span><p>Feels like a banking flow in dark mode</p></div>
+        <div class="compare-row"><span class="dot">·</span><p>The night ends when you close the app</p></div>
+      </div>
+      <div class="compare-col right">
+        <div class="compare-label">Tomorrow · what it could be</div>
+        <div class="compare-row"><span class="dot">·</span><p>Find your night. Who's out, where, what's playing</p></div>
+        <div class="compare-row"><span class="dot">·</span><p>Coins as social moves. Drink, song, tip, gift</p></div>
+        <div class="compare-row"><span class="dot">·</span><p>A profile built by behaviour and music taste</p></div>
+        <div class="compare-row"><span class="dot">·</span><p>One map. Presence in the corner. Whole product visible</p></div>
+        <div class="compare-row"><span class="dot">·</span><p>iOS Liquid Glass, Dynamic Island, haptics throughout</p></div>
+        <div class="compare-row"><span class="dot">·</span><p>The night ends with a receipt. Your Sunday morning artifact</p></div>
+      </div>
+    </div>
+
+    <!-- PROPOSALS -->
+
+    <div class="proposal">
+      <div class="proposal-head">
+        <div>
+          <div class="proposal-roman">Proposal i</div>
+          <h3>The behaviour.<span class="muted">"I'm out."</span></h3>
+        </div>
+        <div class="hint">A single defining gesture. <strong>The one signal the app is missing today.</strong></div>
+      </div>
+      <div class="proposal-grid">
+        <div class="proposal-cell">
+          <h4>Why this matters</h4>
+          <p>Today, the app has no signal for when a user is actually out. <strong>That single missing data point is what makes everything else feel generic.</strong> No "tonight," no presence, no urgency.</p>
+        </div>
+        <div class="proposal-cell">
+          <h4>How it works</h4>
+          <p>One button. The user taps it when heading out. Their presence appears on the map for three hours, then quietly goes invisible. <strong>Mandos is "on" only when you are.</strong></p>
+        </div>
+        <div class="proposal-cell">
+          <h4>What it unlocks</h4>
+          <p>Live who's-out map. Friend-arrival nudges. Music-overlap discovery inside venues. A reason for the app to send a meaningful notification. <strong>Every other proposal builds on this.</strong></p>
+        </div>
+      </div>
+    </div>
+
+    <div class="proposal">
+      <div class="proposal-head">
+        <div>
+          <div class="proposal-roman">Proposal ii</div>
+          <h3>The architecture.<span class="muted">Map-first.</span></h3>
+        </div>
+        <div class="hint">Single canvas, no tabs. <strong>The map is the product.</strong></div>
+      </div>
+      <div class="proposal-grid">
+        <div class="proposal-cell">
+          <h4>Why this matters</h4>
+          <p>The four taxonomic tabs treat nightlife the way Yelp treats restaurants. Nightlife isn't a list. It's a moment in space. <strong>A map represents that intuitively. Tabs do not.</strong></p>
+        </div>
+        <div class="proposal-cell">
+          <h4>How it works</h4>
+          <p>The map fills the screen, edge to edge. Pins are sized by live activity. Friends appear when they're "out." Filter chips inline (<strong>Tonight · Near me · My vibe</strong>). No modal sheets. A coin pocket and presence state in the corner of every screen.</p>
+        </div>
+        <div class="proposal-cell">
+          <h4>What it unlocks</h4>
+          <p>A first-glance signal of where the night is happening. A reason to open the app without a task in mind. <strong>The first Dynamic Island Live Activity in a nightlife app.</strong> Your current venue and song persisting in the corner of your phone.</p>
+        </div>
+      </div>
+    </div>
+
+    <div class="proposal">
+      <div class="proposal-head">
+        <div>
+          <div class="proposal-roman">Proposal iii</div>
+          <h3>The economy.<span class="muted">Coins as verbs.</span></h3>
+        </div>
+        <div class="hint">Social currency, not loyalty points. <strong>The most ownable thing in the product.</strong></div>
+      </div>
+      <div class="proposal-grid">
+        <div class="proposal-cell">
+          <h4>Why this matters</h4>
+          <p>Today, coins are a balance redeemed at an empty shop. Pure loyalty framing. Loyalty programs are commodity. <strong>Social currency isn't.</strong> No other nightlife app has this lane.</p>
+        </div>
+        <div class="proposal-cell">
+          <h4>How it works</h4>
+          <p>Coins become actions you do <em>to other people</em>. <strong>Buy a stranger a drink, send a song, tip the DJ, gift a friend, unlock priority entry.</strong> The currency stops being a number on a page and becomes a verb in the night.</p>
+        </div>
+        <div class="proposal-cell">
+          <h4>What it unlocks</h4>
+          <p>An anonymous-social mechanic nobody else has shipped. The slow-reveal pattern (drink, song, emoji, meeting) becomes Mandos's signature. <strong>Coins go from cost centre to engagement driver.</strong></p>
+        </div>
+      </div>
+    </div>
+
+    <div class="proposal">
+      <div class="proposal-head">
+        <div>
+          <div class="proposal-roman">Proposal iv</div>
+          <h3>The music layer.<span class="muted">The room's soundtrack.</span></h3>
+        </div>
+        <div class="hint">Spotify, bridged to the floor. <strong>Music as the deepest signal.</strong></div>
+      </div>
+      <div class="proposal-grid">
+        <div class="proposal-cell">
+          <h4>Why this matters</h4>
+          <p>Music taste is the deepest, fastest signal for who someone is and where they want to be. <strong>Mandos has no signal for it today.</strong> A real Spotify connect changes the personalisation layer entirely.</p>
+        </div>
+        <div class="proposal-cell">
+          <h4>How it works</h4>
+          <p>OAuth into Spotify. Top-100 import. Music-overlap matching surfaces "this person at the bar shares 80% of your taste." A small ambient tag at partner venues turns "what's playing now" into a savable card. <strong>The DJ becomes part of the app loop.</strong></p>
+        </div>
+        <div class="proposal-cell">
+          <h4>What it unlocks</h4>
+          <p>The deepest social opener nobody else offers. Music as the first message. Saved-at-Mandos songs land in Spotify automatically, making Mandos the bridge between the room and the streaming app. <strong>Quiet brand reach into Spotify itself.</strong></p>
+        </div>
+      </div>
+    </div>
+
+    <div class="proposal">
+      <div class="proposal-head">
+        <div>
+          <div class="proposal-roman">Proposal v</div>
+          <h3>The artifact.<span class="muted">The receipt.</span></h3>
+        </div>
+        <div class="hint">Sunday morning. <strong>Free distribution, every weekend.</strong></div>
+      </div>
+      <div class="proposal-grid">
+        <div class="proposal-cell">
+          <h4>Why this matters</h4>
+          <p>Nights end. Most apps end with them. <strong>The right artifact at Sunday morning is the strongest organic-distribution mechanic available to this category.</strong> Stories, screenshots, shared moments. All of it sits unclaimed today.</p>
+        </div>
+        <div class="proposal-cell">
+          <h4>How it works</h4>
+          <p>Auto-generated Polaroid-style record of the night. Venues, friends, songs, coins spent, photos. <strong>Designed object</strong>, not a debrief screen. Templates per venue. Shareable to Instagram Stories in two taps.</p>
+        </div>
+        <div class="proposal-cell">
+          <h4>What it unlocks</h4>
+          <p>Free brand walks into the user's followers every Sunday morning. <strong>The loop closes.</strong> Last night's receipt becomes next weekend's plan. Mandos becomes the only app where the night persists past last call.</p>
+        </div>
+      </div>
+    </div>
+
+    <div class="proposal">
+      <div class="proposal-head">
+        <div>
+          <div class="proposal-roman">Proposal vi</div>
+          <h3>The discovery layer.<span class="muted">A live feed.</span></h3>
+        </div>
+        <div class="hint">Random grid, Pinterest energy. <strong>The revenue model lives here.</strong></div>
+      </div>
+      <div class="proposal-grid">
+        <div class="proposal-cell">
+          <h4>Why this matters</h4>
+          <p>The map answers "where is the night happening." But users also want to <strong>browse what nightlife actually looks like</strong>, the way they scroll Pinterest before a holiday. Today, the app's home is news articles. Nobody opens an app to read news.</p>
+        </div>
+        <div class="proposal-cell">
+          <h4>How it works</h4>
+          <p>A random-sized masonry grid, not a uniform one. The randomness <em>is</em> the energy. Live clips from venues, receipt artifacts from users, recap videos from creators. Three rails of content: <strong>venues post directly, users share receipts, creators we partner with publish nights.</strong></p>
+        </div>
+        <div class="proposal-cell">
+          <h4>What it unlocks</h4>
+          <p>A creator and influencer layer scene-makers can be followed inside. <strong>A real revenue model: venues and brands pay to amplify their cards in the grid</strong>, the way Pinterest sells promoted pins. The brand exists for users who aren't out yet, on quiet Tuesdays scrolling at home.</p>
+        </div>
+      </div>
+    </div>
+
+    <div class="pull">
+      <em>I'm out</em> · the map · the coin as a verb · music as opener · the receipt · the feed.<br>Six pieces. One loop. <em>The loop is the product.</em>
+    </div>
+
+    <!-- REFERENCES -->
+    <div class="refs">
+      <div class="refs-head">
+        <div>
+          <h3>Reference shelf.<span class="muted">Products worth studying.</span></h3>
+        </div>
+        <p>Each of these did one thing exceptionally well that Mandos can borrow conviction from. None are competitors. They're the right neighbours.</p>
+      </div>
+      <div class="refs-grid">
+        <div class="ref-card">
+          <div class="ref-name">Snapchat</div>
+          <div class="ref-did">Presence-only social</div>
+          <p class="ref-lesson"><strong>You appear when you're using it</strong>, not always. Mandos's "I'm out" is the nightlife version of the same logic.</p>
+        </div>
+        <div class="ref-card">
+          <div class="ref-name">Strava</div>
+          <div class="ref-did">Social proof via activity</div>
+          <p class="ref-lesson"><strong>"3 friends ran here today"</strong> beats any algorithm. Mandos's venue cards should carry the same network-anchored proof.</p>
+        </div>
+        <div class="ref-card">
+          <div class="ref-name">Pinterest</div>
+          <div class="ref-did">Random grid as discovery</div>
+          <p class="ref-lesson"><strong>The masonry layout is the feature.</strong> Random sizing creates the energy that uniform grids can't. The model for Mandos's feed.</p>
+        </div>
+        <div class="ref-card">
+          <div class="ref-name">Hinge</div>
+          <div class="ref-did">Slow-reveal mechanic</div>
+          <p class="ref-lesson"><strong>"Designed to be deleted"</strong> reframed the category. Mandos's anonymous-drink slow-reveal is the same posture for nightlife.</p>
+        </div>
+        <div class="ref-card">
+          <div class="ref-name">Partiful</div>
+          <div class="ref-did">Designed objects, not forms</div>
+          <p class="ref-lesson">Invitation cards as <strong>beautiful artifacts</strong>, not data forms. Mandos's receipt and event detail should feel the same.</p>
+        </div>
+      </div>
+    </div>
+
+  </div>
+</section>
+
+<!-- CLOSING -->
+<section class="closing" id="closing">
+  <div class="container">
+    <h2><em>Find</em> the night.</h2>
+    <p>If the product becomes what's proposed in Part III, it earns a single line, and the line earns the product. <strong>Everything else (the map, the coin, the receipt, the feed) reinforces that one promise.</strong> That's the work I'd like us to take into the designer call.</p>
+  </div>
+</section>
+
+</body>
+</html>
