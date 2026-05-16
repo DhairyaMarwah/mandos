@@ -26,7 +26,6 @@
     --good: #4ADE80;
     --good-soft: rgba(74,222,128,0.12);
     --warn: #FBBF24;
-    --purple: #C084FC;
   }
   * { margin: 0; padding: 0; box-sizing: border-box; }
   html { scroll-behavior: smooth; }
@@ -34,21 +33,16 @@
     background: var(--bg);
     color: var(--ink);
     font-family: 'Geist', -apple-system, BlinkMacSystemFont, sans-serif;
-    font-weight: 400;
-    font-size: 15px;
-    line-height: 1.55;
+    font-weight: 400; font-size: 15px; line-height: 1.55;
     font-feature-settings: "ss01","ss02","cv11","tnum";
-    -webkit-font-smoothing: antialiased;
-    text-rendering: optimizeLegibility;
+    -webkit-font-smoothing: antialiased; text-rendering: optimizeLegibility;
     overflow-x: hidden;
   }
   .mono { font-family: 'Geist Mono', monospace; font-variant-numeric: tabular-nums; }
-  .container { max-width: 1380px; margin: 0 auto; padding: 0 48px; }
+  .container { max-width: 1240px; margin: 0 auto; padding: 0 48px; }
   @media (max-width: 768px) { .container { padding: 0 20px; } }
-
   body::before {
-    content: '';
-    position: fixed; inset: 0;
+    content: ''; position: fixed; inset: 0;
     background:
       radial-gradient(ellipse 60% 50% at 20% 0%, rgba(71,168,255,0.08), transparent 60%),
       radial-gradient(ellipse 50% 40% at 80% 100%, rgba(71,168,255,0.04), transparent 60%);
@@ -56,46 +50,34 @@
   }
   body > * { position: relative; z-index: 1; }
   body::after {
-    content: '';
-    position: fixed; inset: 0;
+    content: ''; position: fixed; inset: 0;
     background-image:
       linear-gradient(rgba(255,255,255,0.015) 1px, transparent 1px),
       linear-gradient(90deg, rgba(255,255,255,0.015) 1px, transparent 1px);
-    background-size: 40px 40px;
-    pointer-events: none; z-index: 0;
+    background-size: 40px 40px; pointer-events: none; z-index: 0;
     mask-image: radial-gradient(ellipse at center, black 30%, transparent 80%);
   }
 
-  /* ===== SRC LINK ===== */
   .src {
-    display: inline-flex;
-    align-items: center;
-    font-family: 'Geist Mono', monospace;
-    font-size: 9px;
-    font-weight: 500;
-    color: var(--ink-3);
-    text-decoration: none;
-    margin-left: 6px;
-    padding: 2px 6px;
-    border: 1px dashed var(--dashed);
-    border-radius: 3px;
-    transition: all .15s;
-    letter-spacing: 0.04em;
-    vertical-align: middle;
-    line-height: 1;
+    display: inline-flex; align-items: center;
+    font-family: 'Geist Mono', monospace; font-size: 9px; font-weight: 500;
+    color: var(--ink-3); text-decoration: none;
+    margin-left: 6px; padding: 2px 6px;
+    border: 1px dashed var(--dashed); border-radius: 3px;
+    transition: all .15s; letter-spacing: 0.04em;
+    vertical-align: middle; line-height: 1;
   }
   .src:hover { color: var(--accent); border-color: var(--accent); background: rgba(71,168,255,0.06); }
 
-  /* ===== NAVBAR ===== */
+  /* NAVBAR */
   .navbar {
     position: sticky; top: 0; z-index: 100;
     background: rgba(5,5,7,0.78);
-    backdrop-filter: blur(20px);
-    -webkit-backdrop-filter: blur(20px);
+    backdrop-filter: blur(20px); -webkit-backdrop-filter: blur(20px);
     border-bottom: 1.2px dashed var(--dashed);
   }
   .nav-row { display: flex; align-items: center; justify-content: space-between; padding: 14px 0; }
-  .nav-brand { display: flex; align-items: center; gap: 12px; font-family: 'Geist'; font-weight: 600; font-size: 15px; letter-spacing: -0.012em; color: var(--ink); }
+  .nav-brand { display: flex; align-items: center; gap: 12px; font-weight: 600; font-size: 15px; letter-spacing: -0.012em; color: var(--ink); }
   .nav-brand .nav-dot {
     width: 7px; height: 7px;
     background: var(--accent); border-radius: 50%;
@@ -109,13 +91,8 @@
   .nav-brand .sub { color: var(--ink-3); font-weight: 400; font-size: 14px; }
   .nav-links { display: flex; gap: 24px; }
   @media (max-width: 800px) { .nav-links { display: none; } }
-  .nav-links a {
-    font-family: 'Geist Mono', monospace; font-size: 11px;
-    letter-spacing: 0.14em; text-transform: uppercase;
-    color: var(--ink-2); text-decoration: none; transition: color .15s;
-  }
+  .nav-links a { font-family: 'Geist Mono', monospace; font-size: 11px; letter-spacing: 0.14em; text-transform: uppercase; color: var(--ink-2); text-decoration: none; transition: color .15s; }
   .nav-links a:hover { color: var(--accent); }
-  .nav-meta { display: flex; gap: 10px; align-items: center; }
   .nav-pill {
     font-family: 'Geist Mono', monospace; font-size: 10.5px;
     letter-spacing: 0.14em; text-transform: uppercase;
@@ -129,52 +106,33 @@
     animation: pulse-dot 1.6s ease-in-out infinite;
   }
 
-  /* ===== TOP-LEVEL TABS ===== */
+  /* TOP-LEVEL TABS */
   .top-tabs {
-    margin: 64px 0 56px;
-    padding: 12px;
+    margin: 56px 0 48px;
+    padding: 10px;
     border: 1.2px dashed var(--dashed);
     border-radius: 20px;
     background: var(--surface);
-    display: grid;
-    grid-template-columns: 1fr 1fr;
-    gap: 6px;
+    display: grid; grid-template-columns: 1fr 1fr; gap: 6px;
   }
   .top-tab {
     border: 1.2px dashed transparent;
     background: transparent;
-    padding: 28px 32px;
+    padding: 24px 28px;
     border-radius: 14px;
-    text-align: left;
-    cursor: pointer;
-    transition: all .25s;
-    display: flex; flex-direction: column; gap: 8px;
+    text-align: left; cursor: pointer; transition: all .25s;
+    display: flex; flex-direction: column; gap: 6px;
     color: var(--ink-2);
   }
   .top-tab:hover { color: var(--ink); background: rgba(255,255,255,0.02); }
-  .top-tab.active {
-    background: var(--surface-2);
-    border-color: var(--accent);
-    color: var(--ink);
-  }
-  .top-tab .top-tab-num {
-    font-family: 'Geist Mono', monospace;
-    font-size: 11px;
-    letter-spacing: 0.14em;
-    color: var(--ink-3);
-  }
+  .top-tab.active { background: var(--surface-2); border-color: var(--accent); color: var(--ink); }
+  .top-tab .top-tab-num { font-family: 'Geist Mono', monospace; font-size: 11px; letter-spacing: 0.14em; color: var(--ink-3); }
   .top-tab.active .top-tab-num { color: var(--accent); }
   .top-tab .top-tab-title {
-    font-family: 'Geist'; font-weight: 600;
-    font-size: clamp(28px, 3.4vw, 40px);
-    letter-spacing: -0.025em;
-    line-height: 1.05;
+    font-weight: 600; font-size: clamp(24px, 3vw, 32px);
+    letter-spacing: -0.025em; line-height: 1.05;
   }
-  .top-tab .top-tab-sub {
-    font-size: 14px;
-    color: var(--ink-3);
-    margin-top: 4px;
-  }
+  .top-tab .top-tab-sub { font-size: 13.5px; color: var(--ink-3); }
   .top-tab.active .top-tab-sub { color: var(--ink-2); }
   .top-panel { display: none; }
   .top-panel.active { display: block; animation: fadein .25s ease-out; }
@@ -183,43 +141,50 @@
     to { opacity: 1; transform: translateY(0); }
   }
 
-  /* ===== TYPE PRIMITIVES ===== */
-  .kicker {
-    font-family: 'Geist Mono', monospace; font-size: 11px;
-    letter-spacing: 0.16em; text-transform: uppercase; color: var(--ink-3);
-  }
-  h1, h2, h3, h4 {
-    font-family: 'Geist', sans-serif; font-weight: 600;
-    letter-spacing: -0.025em; color: var(--ink); line-height: 1.05;
-  }
-  p { color: var(--ink); }
+  h1, h2, h3, h4 { font-weight: 600; letter-spacing: -0.025em; color: var(--ink); line-height: 1.05; }
   strong { color: var(--ink); font-weight: 500; }
 
-  /* ===== USE CASE PANEL ===== */
+  /* SECTION HEAD */
+  .sec { margin-bottom: 48px; }
+  .sec-kicker {
+    font-family: 'Geist Mono', monospace; font-size: 11px;
+    letter-spacing: 0.16em; text-transform: uppercase;
+    color: var(--ink-3); margin-bottom: 16px;
+    display: flex; align-items: center; gap: 12px;
+  }
+  .sec-kicker::before { content: ''; width: 32px; height: 1px; background: var(--ink-3); }
+  .sec-kicker.accent { color: var(--accent); }
+  .sec-kicker.accent::before { background: var(--accent); }
+  .sec h2 {
+    font-size: clamp(28px, 3.4vw, 42px);
+    line-height: 1.05; margin-bottom: 12px;
+  }
+  .sec h2 .muted { color: var(--ink-2); font-weight: 500; }
+  .sec h2 .accent { color: var(--accent); font-weight: 500; }
+  .sec-lede { font-size: 16px; line-height: 1.55; color: var(--ink-2); max-width: 720px; margin-bottom: 28px; }
+  .sec-lede strong { color: var(--ink); font-weight: 500; }
+
+  /* USE CASE */
   .usecase {
     border: 1.2px dashed var(--dashed);
-    border-radius: 22px;
+    border-radius: 20px;
     background: var(--surface);
     overflow: hidden;
-    margin-bottom: 56px;
   }
   .usecase-head {
-    padding: 28px 32px;
+    padding: 24px 28px;
     border-bottom: 1.2px dashed var(--dashed);
-    display: grid; grid-template-columns: 1fr 1fr; gap: 40px; align-items: center;
   }
-  @media (max-width: 800px) { .usecase-head { grid-template-columns: 1fr; gap: 16px; padding: 24px; } }
-  .usecase-title h2 { font-size: clamp(28px, 3.4vw, 40px); }
-  .usecase-title .muted { color: var(--ink-2); font-weight: 500; display: block; }
-  .usecase-desc p { font-size: 15px; line-height: 1.55; color: var(--ink-2); }
+  .usecase-head p { font-size: 15px; line-height: 1.55; color: var(--ink-2); }
+  .usecase-head p strong { color: var(--ink); }
   .usecase-body { display: grid; grid-template-columns: 1fr 1fr; }
   @media (max-width: 800px) { .usecase-body { grid-template-columns: 1fr; } }
-  .usecase-col { padding: 28px 32px; }
+  .usecase-col { padding: 24px 28px; }
   .usecase-col + .usecase-col { border-left: 1.2px dashed var(--dashed); }
   @media (max-width: 800px) { .usecase-col + .usecase-col { border-left: none; border-top: 1.2px dashed var(--dashed); } }
   .usecase-col-head {
     display: flex; align-items: center; gap: 10px;
-    margin-bottom: 16px;
+    margin-bottom: 14px;
     font-family: 'Geist Mono', monospace; font-size: 11px;
     letter-spacing: 0.14em; text-transform: uppercase;
   }
@@ -228,7 +193,7 @@
   .usecase-col-head::before { content: ''; width: 6px; height: 6px; border-radius: 50%; }
   .usecase-col.good .usecase-col-head::before { background: var(--good); box-shadow: 0 0 8px var(--good); }
   .usecase-col.bad .usecase-col-head::before { background: var(--bad); box-shadow: 0 0 8px var(--bad); }
-  .usecase-list { display: flex; flex-direction: column; gap: 12px; }
+  .usecase-list { display: flex; flex-direction: column; gap: 10px; }
   .usecase-item {
     display: grid; grid-template-columns: 16px 1fr; gap: 10px;
     font-size: 14px; line-height: 1.5; color: var(--ink-2);
@@ -236,60 +201,106 @@
   .usecase-col.good .usecase-item::before { content: '✓'; color: var(--good); font-size: 12px; }
   .usecase-col.bad .usecase-item::before { content: '!'; color: var(--bad); font-size: 13px; font-weight: 700; }
 
-  /* ===== STACK VS ===== */
-  .stack-vs {
-    display: grid; grid-template-columns: 1fr 80px 1fr;
-    margin: 0 0 32px;
+  /* MIGRATION PHASES */
+  .phases {
+    display: grid; grid-template-columns: repeat(3, 1fr); gap: 16px;
+  }
+  @media (max-width: 1000px) { .phases { grid-template-columns: 1fr; } }
+  .phase {
     border: 1.2px dashed var(--dashed);
-    border-radius: 18px; overflow: hidden;
+    border-radius: 20px;
+    overflow: hidden;
+    background: var(--surface);
+    display: flex; flex-direction: column;
+  }
+  .phase.p1 { border-color: rgba(74,222,128,0.3); }
+  .phase.p2 { border-color: rgba(71,168,255,0.3); }
+  .phase.p3 { border-color: rgba(154,154,154,0.25); }
+  .phase-head {
+    padding: 22px 24px;
+    border-bottom: 1.2px dashed var(--dashed);
+  }
+  .phase-tag {
+    font-family: 'Geist Mono', monospace; font-size: 10.5px;
+    letter-spacing: 0.14em; text-transform: uppercase;
+    margin-bottom: 10px;
+    display: inline-flex; align-items: center; gap: 8px;
+  }
+  .phase.p1 .phase-tag { color: var(--good); }
+  .phase.p2 .phase-tag { color: var(--accent); }
+  .phase.p3 .phase-tag { color: var(--ink-2); }
+  .phase-tag::before { content: ''; width: 6px; height: 6px; border-radius: 50%; }
+  .phase.p1 .phase-tag::before { background: var(--good); box-shadow: 0 0 8px var(--good); }
+  .phase.p2 .phase-tag::before { background: var(--accent); box-shadow: 0 0 8px var(--accent); }
+  .phase.p3 .phase-tag::before { background: var(--ink-2); }
+  .phase-title {
+    font-size: 22px; font-weight: 600; letter-spacing: -0.02em; margin-bottom: 6px;
+  }
+  .phase-sub { font-size: 13.5px; color: var(--ink-2); line-height: 1.5; }
+  .phase-items { padding: 0; flex: 1; display: flex; flex-direction: column; }
+  .phase-item {
+    padding: 18px 24px;
+    border-bottom: 1.2px dashed var(--dashed);
+    display: flex; flex-direction: column; gap: 6px;
+  }
+  .phase-item:last-child { border-bottom: none; }
+  .phase-item-name {
+    font-size: 14.5px; font-weight: 600; color: var(--ink);
+    display: flex; align-items: center; gap: 8px; flex-wrap: wrap;
+  }
+  .phase-arrow {
+    font-family: 'Geist Mono', monospace;
+    color: var(--ink-3); font-weight: 400;
+  }
+  .phase-item-desc { font-size: 13px; color: var(--ink-2); line-height: 1.5; }
+  .phase-item-meta {
+    display: flex; gap: 16px; margin-top: 6px;
+    font-family: 'Geist Mono', monospace; font-size: 11px;
+  }
+  .phase-meta-label { color: var(--ink-3); }
+  .phase-meta-val { color: var(--ink); font-weight: 500; }
+  .phase.p1 .phase-item-meta .phase-meta-val.save { color: var(--good); }
+  .phase.p2 .phase-item-meta .phase-meta-val.save { color: var(--accent); }
+
+  /* COST KILLERS */
+  .killers {
+    display: grid; grid-template-columns: repeat(4, 1fr); gap: 12px;
+  }
+  @media (max-width: 900px) { .killers { grid-template-columns: 1fr 1fr; } }
+  @media (max-width: 600px) { .killers { grid-template-columns: 1fr; } }
+  .killer {
+    padding: 20px 22px;
+    border: 1.2px dashed var(--dashed);
+    border-radius: 14px;
     background: var(--surface);
   }
-  @media (max-width: 800px) { .stack-vs { grid-template-columns: 1fr; } }
-  .stack-col { padding: 28px 32px; }
-  .stack-col + .stack-col { border-left: 1.2px dashed var(--dashed); }
-  @media (max-width: 800px) { .stack-col + .stack-col { border-left: none; border-top: 1.2px dashed var(--dashed); } }
-  .stack-label {
+  .killer-num {
     font-family: 'Geist Mono', monospace; font-size: 10px;
-    letter-spacing: 0.16em; text-transform: uppercase;
-    color: var(--ink-3); margin-bottom: 10px;
+    letter-spacing: 0.14em; color: var(--bad);
+    margin-bottom: 10px;
+    display: flex; align-items: center; gap: 6px;
   }
-  .stack-name {
-    font-family: 'Geist'; font-size: 22px; font-weight: 600;
-    letter-spacing: -0.02em; margin-bottom: 6px;
-  }
-  .stack-name.bad { color: var(--bad); }
-  .stack-name.good { color: var(--accent); }
-  .stack-desc { font-size: 13.5px; color: var(--ink-2); line-height: 1.5; }
-  .stack-vs-mid {
-    display: flex; flex-direction: column; align-items: center; justify-content: center;
-    border-left: 1.2px dashed var(--dashed); border-right: 1.2px dashed var(--dashed);
-    background: var(--bg);
-  }
-  @media (max-width: 800px) { .stack-vs-mid { display: none; } }
-  .stack-vs-mid span {
-    font-family: 'Geist Mono', monospace; font-size: 11px;
-    letter-spacing: 0.2em; color: var(--ink-3);
-    transform: rotate(-90deg);
-  }
+  .killer-num::before { content: ''; width: 5px; height: 5px; background: var(--bad); border-radius: 50%; }
+  .killer h4 { font-size: 16px; font-weight: 600; margin-bottom: 6px; letter-spacing: -0.015em; }
+  .killer p { font-size: 12.5px; color: var(--ink-2); line-height: 1.5; }
+  .killer p strong { color: var(--ink); }
 
-  /* ===== CONTROL PANEL ===== */
+  /* CONTROL PANEL */
   .control-panel {
     border: 1.2px dashed var(--dashed);
     border-radius: 18px;
     background: var(--surface);
     overflow: hidden;
-    margin-bottom: 56px;
   }
   .control-head {
-    padding: 22px 32px;
+    padding: 20px 28px;
     display: flex; align-items: center; justify-content: space-between;
     border-bottom: 1.2px dashed var(--dashed);
   }
   .control-head-label { font-family: 'Geist Mono', monospace; font-size: 11px; letter-spacing: 0.14em; text-transform: uppercase; color: var(--ink-3); }
   .control-head-live {
     display: flex; align-items: center; gap: 8px;
-    font-family: 'Geist Mono', monospace; font-size: 10.5px;
-    letter-spacing: 0.12em; color: var(--accent);
+    font-family: 'Geist Mono', monospace; font-size: 10.5px; color: var(--accent);
   }
   .control-head-live::before {
     content: ''; width: 6px; height: 6px; border-radius: 50%;
@@ -298,24 +309,15 @@
   }
   .control-body { display: grid; grid-template-columns: 1.4fr 1fr; }
   @media (max-width: 900px) { .control-body { grid-template-columns: 1fr; } }
-  .sliders { padding: 28px 32px; border-right: 1.2px dashed var(--dashed); }
+  .sliders { padding: 24px 28px; border-right: 1.2px dashed var(--dashed); }
   @media (max-width: 900px) { .sliders { border-right: none; border-bottom: 1.2px dashed var(--dashed); } }
-  .slider-block { margin-bottom: 26px; }
+  .slider-block { margin-bottom: 22px; }
   .slider-block:last-child { margin-bottom: 0; }
-  .slider-row {
-    display: flex; align-items: baseline; justify-content: space-between;
-    margin-bottom: 6px;
-  }
+  .slider-row { display: flex; align-items: baseline; justify-content: space-between; margin-bottom: 6px; }
   .slider-name { font-size: 14px; color: var(--ink); font-weight: 500; }
-  .slider-hint {
-    display: block; font-size: 11.5px; color: var(--ink-3);
-    font-weight: 400; margin-top: 2px;
-  }
-  .slider-value {
-    font-family: 'Geist Mono', monospace; font-size: 22px; font-weight: 600;
-    color: var(--accent); letter-spacing: -0.02em;
-  }
-  .slider-value .unit { font-size: 13px; color: var(--ink-3); font-weight: 400; margin-left: 4px; }
+  .slider-hint { display: block; font-size: 11.5px; color: var(--ink-3); font-weight: 400; margin-top: 2px; }
+  .slider-value { font-family: 'Geist Mono', monospace; font-size: 20px; font-weight: 600; color: var(--accent); letter-spacing: -0.02em; }
+  .slider-value .unit { font-size: 12px; color: var(--ink-3); font-weight: 400; margin-left: 4px; }
   .slider-track-wrap { position: relative; margin-top: 10px; }
   input[type="range"] {
     width: 100%; height: 4px; border-radius: 2px;
@@ -325,281 +327,112 @@
   input[type="range"]::-webkit-slider-thumb {
     -webkit-appearance: none; appearance: none;
     width: 18px; height: 18px;
-    background: var(--ink); border: 2px solid var(--accent); border-radius: 50%;
-    cursor: grab;
+    background: var(--ink); border: 2px solid var(--accent); border-radius: 50%; cursor: grab;
     box-shadow: 0 0 0 4px rgba(71,168,255,0.12), 0 0 14px var(--accent-glow);
   }
   input[type="range"]::-moz-range-thumb {
     width: 18px; height: 18px;
-    background: var(--ink); border: 2px solid var(--accent); border-radius: 50%;
-    cursor: grab;
+    background: var(--ink); border: 2px solid var(--accent); border-radius: 50%; cursor: grab;
   }
-  .slider-scale {
-    display: flex; justify-content: space-between;
-    margin-top: 8px;
-    font-family: 'Geist Mono', monospace; font-size: 10px;
-    color: var(--ink-3); letter-spacing: 0.06em;
-  }
+  .slider-scale { display: flex; justify-content: space-between; margin-top: 8px; font-family: 'Geist Mono', monospace; font-size: 10px; color: var(--ink-3); letter-spacing: 0.06em; }
 
-  /* ===== COST READOUT ===== */
-  .cost-display { padding: 28px 32px; display: flex; flex-direction: column; gap: 22px; }
+  /* COST READOUT */
+  .cost-display { padding: 24px 28px; display: flex; flex-direction: column; gap: 18px; }
   .cost-row { display: grid; grid-template-columns: 1fr auto; align-items: baseline; gap: 16px; }
-  .cost-row.divider { border-top: 1.2px dashed var(--dashed); padding-top: 18px; }
+  .cost-row.divider { border-top: 1.2px dashed var(--dashed); padding-top: 16px; }
   .cost-label { font-family: 'Geist Mono', monospace; font-size: 10.5px; letter-spacing: 0.14em; text-transform: uppercase; color: var(--ink-3); }
-  .cost-amount { font-family: 'Geist Mono', monospace; font-size: 28px; font-weight: 600; letter-spacing: -0.02em; color: var(--ink); }
+  .cost-amount { font-family: 'Geist Mono', monospace; font-size: 26px; font-weight: 600; letter-spacing: -0.02em; color: var(--ink); }
   .cost-amount.bad { color: var(--bad); }
   .cost-amount.good { color: var(--accent); }
-  .cost-amount .currency { font-size: 16px; color: var(--ink-3); font-weight: 400; margin-right: 2px; }
-  .cost-amount .per { font-size: 12px; color: var(--ink-3); font-weight: 400; margin-left: 4px; letter-spacing: 0.04em; }
+  .cost-amount .currency { font-size: 15px; color: var(--ink-3); font-weight: 400; margin-right: 2px; }
+  .cost-amount .per { font-size: 11px; color: var(--ink-3); font-weight: 400; margin-left: 4px; letter-spacing: 0.04em; }
   .savings-row {
     background: rgba(74,222,128,0.05);
     border: 1.2px dashed rgba(74,222,128,0.25);
-    border-radius: 12px; padding: 18px 22px;
+    border-radius: 12px; padding: 16px 20px;
     display: flex; align-items: center; justify-content: space-between;
-    margin-top: 4px;
   }
   .savings-label { font-family: 'Geist Mono', monospace; font-size: 11px; letter-spacing: 0.12em; text-transform: uppercase; color: var(--good); }
-  .savings-amount { font-family: 'Geist Mono', monospace; font-size: 22px; font-weight: 600; color: var(--good); }
-  .savings-multiplier { font-family: 'Geist Mono', monospace; font-size: 12px; color: var(--good); margin-left: 8px; letter-spacing: 0.06em; }
+  .savings-amount { font-family: 'Geist Mono', monospace; font-size: 20px; font-weight: 600; color: var(--good); }
+  .savings-multiplier { font-family: 'Geist Mono', monospace; font-size: 11px; color: var(--good); margin-left: 8px; }
 
-  /* ===== INNER TABS ===== */
-  .tab-bar {
-    border: 1.2px dashed var(--dashed);
-    border-radius: 16px;
-    padding: 8px;
-    background: var(--surface);
-    display: flex; gap: 4px;
-    margin-bottom: 32px;
-    overflow-x: auto; flex-wrap: wrap;
-  }
-  .tab-btn {
-    flex: 1 1 auto; min-width: 140px;
-    background: transparent;
-    border: 1.2px dashed transparent;
-    border-radius: 10px;
-    padding: 14px 18px;
-    color: var(--ink-2);
-    font-family: 'Geist Mono', monospace; font-size: 11px;
-    letter-spacing: 0.14em; text-transform: uppercase;
-    cursor: pointer; text-align: center; transition: all .2s;
-    display: flex; flex-direction: column; gap: 4px;
-  }
-  .tab-btn .tab-num { font-family: 'Geist Mono', monospace; font-size: 9.5px; color: var(--ink-3); }
-  .tab-btn:hover { color: var(--ink); }
-  .tab-btn.active { background: var(--surface-2); border-color: var(--accent); color: var(--accent); }
-  .tab-btn.active .tab-num { color: var(--accent); }
-  .tab-panel { display: none; animation: fadein .25s ease-out; }
-  .tab-panel.active { display: block; }
-
-  /* ===== COMPARE GRID (component lists) ===== */
-  .compare {
-    display: grid; grid-template-columns: 1fr 1fr;
-    border: 1.2px dashed var(--dashed);
-    border-radius: 18px; background: var(--surface); overflow: hidden;
-  }
-  @media (max-width: 800px) { .compare { grid-template-columns: 1fr; } }
-  .compare-col + .compare-col { border-left: 1.2px dashed var(--dashed); }
-  @media (max-width: 800px) { .compare-col + .compare-col { border-left: none; border-top: 1.2px dashed var(--dashed); } }
-  .compare-col-head {
-    padding: 22px 28px;
-    border-bottom: 1.2px dashed var(--dashed);
-    display: flex; align-items: center; justify-content: space-between;
-  }
-  .compare-tag {
-    font-family: 'Geist Mono', monospace; font-size: 10px;
-    letter-spacing: 0.14em; text-transform: uppercase;
-    padding: 4px 8px; border-radius: 4px;
-  }
-  .compare-tag.bad { background: var(--bad-soft); color: var(--bad); border: 1px solid rgba(255,90,90,0.25); }
-  .compare-tag.good { background: var(--accent-soft); color: var(--accent); border: 1px solid rgba(71,168,255,0.3); }
-  .compare-col-name { font-family: 'Geist'; font-size: 18px; font-weight: 600; letter-spacing: -0.015em; }
-  .compare-item {
-    padding: 18px 28px;
-    border-bottom: 1.2px dashed var(--dashed);
-    display: grid; grid-template-columns: 36px 1fr auto;
-    gap: 12px; align-items: baseline;
-  }
-  .compare-item:last-child { border-bottom: none; }
-  .compare-num { font-family: 'Geist Mono', monospace; font-size: 10.5px; color: var(--ink-3); }
-  .compare-item-content { font-size: 14.5px; line-height: 1.55; }
-  .compare-item-content strong { color: var(--ink); font-weight: 600; display: block; margin-bottom: 2px; }
-  .compare-item-content span { color: var(--ink-2); font-size: 13.5px; }
-  .compare-metric { font-family: 'Geist Mono', monospace; font-size: 12px; font-weight: 500; text-align: right; }
-  .compare-metric.bad { color: var(--bad); }
-  .compare-metric.good { color: var(--accent); }
-  .compare-metric.neutral { color: var(--ink-2); }
-  .compare-metric small {
-    display: block; font-size: 10px; color: var(--ink-3);
-    letter-spacing: 0.06em; text-transform: uppercase; margin-top: 2px;
-  }
-
-  /* ===== PRICING TABLE (proper table) ===== */
+  /* PRICING TABLE */
   .price-table-wrap {
     border: 1.2px dashed var(--dashed);
     border-radius: 18px;
     background: var(--surface);
     overflow-x: auto;
-    margin-bottom: 24px;
+    margin-bottom: 20px;
   }
   .price-table-head {
-    padding: 22px 28px;
+    padding: 20px 28px;
     border-bottom: 1.2px dashed var(--dashed);
     display: flex; align-items: center; justify-content: space-between;
   }
-  .price-table {
-    width: 100%;
-    border-collapse: collapse;
-    font-size: 13.5px;
-    min-width: 640px;
+  .price-table-head .name { font-size: 17px; font-weight: 600; letter-spacing: -0.015em; }
+  .price-tag {
+    font-family: 'Geist Mono', monospace; font-size: 11px;
+    letter-spacing: 0.14em; text-transform: uppercase;
+    padding: 4px 10px; border-radius: 4px;
   }
+  .price-tag.bad { background: var(--bad-soft); color: var(--bad); border: 1px solid rgba(255,90,90,0.25); }
+  .price-tag.good { background: var(--accent-soft); color: var(--accent); border: 1px solid rgba(71,168,255,0.3); }
+  .price-table { width: 100%; border-collapse: collapse; font-size: 13.5px; min-width: 640px; }
   .price-table thead th {
-    text-align: left;
-    padding: 14px 24px;
-    font-family: 'Geist Mono', monospace;
-    font-size: 10.5px;
-    letter-spacing: 0.14em;
-    text-transform: uppercase;
-    color: var(--ink-3);
-    font-weight: 500;
+    text-align: left; padding: 14px 24px;
+    font-family: 'Geist Mono', monospace; font-size: 10.5px;
+    letter-spacing: 0.14em; text-transform: uppercase;
+    color: var(--ink-3); font-weight: 500;
     border-bottom: 1.2px dashed var(--dashed);
     background: rgba(255,255,255,0.015);
   }
-  .price-table thead th:last-child { text-align: right; }
-  .price-table thead th:nth-child(3) { text-align: right; }
+  .price-table thead th:nth-child(3), .price-table thead th:last-child { text-align: right; }
   .price-table tbody tr { border-bottom: 1.2px dashed var(--dashed); transition: background .12s; }
   .price-table tbody tr:hover { background: rgba(71,168,255,0.03); }
   .price-table tbody tr:last-child { border-bottom: none; }
-  .price-table tbody td {
-    padding: 14px 24px;
-    vertical-align: top;
-  }
-  .price-table tbody td.tnum {
-    font-family: 'Geist Mono', monospace;
-    text-align: right;
-    color: var(--ink-2);
-  }
-  .price-table tbody td:last-child {
-    text-align: right;
-    color: var(--ink);
-    font-weight: 500;
-  }
-  .price-svc strong {
-    display: block; font-weight: 600; color: var(--ink);
-    font-size: 14px; margin-bottom: 2px;
-  }
-  .price-svc span {
-    display: block; font-size: 12px; color: var(--ink-3);
-    font-family: 'Geist Mono', monospace;
-  }
-  .price-unit {
-    font-family: 'Geist Mono', monospace;
-    font-size: 12.5px;
-    color: var(--ink-2);
-  }
-  .price-table tfoot tr {
-    border-top: 1.5px dashed var(--dashed-strong);
-    background: rgba(71,168,255,0.04);
-  }
+  .price-table tbody td { padding: 13px 24px; vertical-align: top; }
+  .price-table tbody td.tnum { font-family: 'Geist Mono', monospace; text-align: right; color: var(--ink-2); }
+  .price-table tbody td:last-child { text-align: right; color: var(--ink); font-weight: 500; }
+  .price-svc strong { display: block; font-weight: 600; color: var(--ink); font-size: 13.5px; margin-bottom: 2px; }
+  .price-svc span { display: block; font-size: 11.5px; color: var(--ink-3); font-family: 'Geist Mono', monospace; }
+  .price-unit { font-family: 'Geist Mono', monospace; font-size: 12px; color: var(--ink-2); }
+  .price-table tfoot tr { border-top: 1.5px dashed var(--dashed-strong); background: rgba(71,168,255,0.04); }
   .price-table tfoot td {
-    padding: 18px 24px;
-    font-family: 'Geist Mono', monospace;
-    font-size: 14px;
-    font-weight: 600;
+    padding: 16px 24px; font-family: 'Geist Mono', monospace; font-size: 13px; font-weight: 600;
   }
-  .price-table tfoot td:first-child {
-    color: var(--ink-2);
-    letter-spacing: 0.14em;
-    text-transform: uppercase;
-    font-size: 11px;
-  }
-  .price-table tfoot td:last-child {
-    text-align: right;
-    color: var(--ink);
-    font-size: 18px;
-  }
+  .price-table tfoot td:first-child { color: var(--ink-2); letter-spacing: 0.14em; text-transform: uppercase; font-size: 11px; }
+  .price-table tfoot td:last-child { text-align: right; color: var(--ink); font-size: 17px; }
   .price-table.good tfoot td:last-child { color: var(--accent); }
   .price-table.bad tfoot td:last-child { color: var(--bad); }
 
-  /* ===== ARCH DIAGRAM ===== */
-  .arch-diagram {
-    padding: 24px 28px;
-    font-family: 'Geist Mono', monospace; font-size: 11.5px;
-    line-height: 1.7; color: var(--ink-2);
-    overflow-x: auto; white-space: pre;
-    background: var(--bg); border-top: 1.2px dashed var(--dashed);
-  }
-  .arch-diagram .accent { color: var(--accent); }
-  .arch-diagram .bad { color: var(--bad); }
-
-  /* ===== LATENCY ===== */
-  .latency-block { padding: 28px; }
-  .latency-row {
-    display: grid; grid-template-columns: 140px 1fr 80px;
-    gap: 16px; align-items: center; margin-bottom: 12px;
-  }
-  .latency-name { font-family: 'Geist Mono', monospace; font-size: 11.5px; color: var(--ink-2); }
-  .latency-track {
-    height: 22px;
-    background: rgba(255,255,255,0.03);
-    border: 1.2px dashed var(--dashed);
-    border-radius: 4px; overflow: hidden; position: relative;
-  }
-  .latency-fill {
-    height: 100%; width: 0%;
-    transition: width 0.4s cubic-bezier(0.22, 1, 0.36, 1);
-    position: relative;
-  }
-  .latency-fill.bad { background: var(--bad); }
-  .latency-fill.good { background: var(--accent); }
-  .latency-fill::after {
-    content: ''; position: absolute;
-    right: 0; top: 0; bottom: 0;
-    width: 2px; background: rgba(255,255,255,0.4);
-    box-shadow: 0 0 6px rgba(255,255,255,0.6);
-  }
-  .latency-ms { font-family: 'Geist Mono', monospace; font-size: 12px; color: var(--ink-2); text-align: right; }
-  .latency-total {
-    display: flex; justify-content: space-between;
-    padding: 18px 0 0;
-    margin-top: 20px;
-    border-top: 1.2px dashed var(--dashed-strong);
-  }
-  .latency-total-label { font-family: 'Geist Mono', monospace; font-size: 11px; letter-spacing: 0.12em; text-transform: uppercase; color: var(--ink-3); }
-  .latency-total-val { font-family: 'Geist Mono', monospace; font-size: 28px; font-weight: 600; letter-spacing: -0.02em; }
-  .latency-total-val.bad { color: var(--bad); }
-  .latency-total-val.good { color: var(--accent); }
-
-  /* ===== COST CHART ===== */
-  .cost-chart-wrap {
-    padding: 32px 28px;
-    border: 1.2px dashed var(--dashed);
+  /* RDS CALLOUT */
+  .rds {
+    margin-top: 24px;
+    padding: 28px 32px;
+    border: 1.2px dashed var(--dashed-strong);
     border-radius: 18px;
+    background: linear-gradient(180deg, rgba(255,90,90,0.04), transparent 80%);
+  }
+  .rds-label { font-family: 'Geist Mono', monospace; font-size: 11px; letter-spacing: 0.14em; text-transform: uppercase; color: var(--bad); margin-bottom: 10px; }
+  .rds h3 { font-size: 22px; font-weight: 600; margin-bottom: 10px; letter-spacing: -0.02em; line-height: 1.2; }
+  .rds h3 .accent { color: var(--accent); }
+  .rds p { font-size: 14px; color: var(--ink-2); line-height: 1.55; margin-bottom: 20px; }
+  .rds p strong { color: var(--ink); }
+  .rds-alts { display: grid; grid-template-columns: repeat(3, 1fr); gap: 14px; }
+  @media (max-width: 800px) { .rds-alts { grid-template-columns: 1fr; } }
+  .rds-alt {
+    padding: 16px 18px;
+    border: 1.2px dashed var(--dashed);
+    border-radius: 12px;
     background: var(--surface);
-    margin-top: 32px;
   }
-  .cost-chart-head {
-    display: flex; justify-content: space-between; align-items: baseline;
-    margin-bottom: 28px; flex-wrap: wrap; gap: 12px;
-  }
-  .cost-chart-h { font-family: 'Geist'; font-size: 17px; font-weight: 600; letter-spacing: -0.015em; }
-  .cost-chart-legend { display: flex; gap: 24px; }
-  .legend-item { display: flex; align-items: center; gap: 8px; font-family: 'Geist Mono', monospace; font-size: 11px; color: var(--ink-2); }
-  .legend-swatch { width: 12px; height: 2px; border-radius: 1px; }
-  .legend-swatch.bad { background: var(--bad); }
-  .legend-swatch.good { background: var(--accent); }
-  .cost-chart-svg { width: 100%; height: 320px; overflow: visible; }
-  .cost-chart-svg .grid-line { stroke: rgba(255,255,255,0.06); stroke-width: 1; stroke-dasharray: 2 4; }
-  .cost-chart-svg .axis-label { fill: var(--ink-3); font-family: 'Geist Mono', monospace; font-size: 10px; letter-spacing: 0.06em; }
-  .cost-chart-svg .line-bad { stroke: var(--bad); stroke-width: 2; fill: none; filter: drop-shadow(0 0 6px rgba(255,90,90,0.3)); }
-  .cost-chart-svg .line-good { stroke: var(--accent); stroke-width: 2; fill: none; filter: drop-shadow(0 0 6px var(--accent-glow)); }
-  .cost-chart-svg .area-bad { fill: rgba(255,90,90,0.05); }
-  .cost-chart-svg .area-good { fill: rgba(71,168,255,0.05); }
-  .cost-chart-svg .marker-line { stroke: var(--accent); stroke-width: 1; stroke-dasharray: 3 3; }
-  .cost-chart-svg .marker-dot { fill: var(--ink); stroke-width: 2; }
+  .rds-alt-name { font-size: 15px; font-weight: 600; color: var(--ink); margin-bottom: 4px; display: flex; align-items: center; gap: 6px; flex-wrap: wrap; }
+  .rds-alt-price { font-family: 'Geist Mono', monospace; font-size: 13px; color: var(--accent); font-weight: 500; margin-bottom: 8px; }
+  .rds-alt-desc { font-size: 12px; color: var(--ink-2); line-height: 1.5; }
 
-  /* ===== MEDIA CALLOUT ===== */
+  /* MEDIA CALLOUT */
   .media-callout {
-    margin-top: 32px;
+    margin-top: 24px;
     padding: 28px 32px;
     border: 1.2px dashed var(--dashed-strong);
     border-radius: 18px;
@@ -607,264 +440,149 @@
     display: grid; grid-template-columns: 1.4fr 1fr; gap: 32px; align-items: center;
   }
   @media (max-width: 800px) { .media-callout { grid-template-columns: 1fr; gap: 16px; } }
-  .media-callout-label { font-family: 'Geist Mono', monospace; font-size: 11px; letter-spacing: 0.14em; text-transform: uppercase; color: var(--bad); margin-bottom: 10px; }
-  .media-callout h3 { font-size: 24px; font-weight: 600; letter-spacing: -0.02em; line-height: 1.15; margin-bottom: 10px; }
+  .media-label { font-family: 'Geist Mono', monospace; font-size: 11px; letter-spacing: 0.14em; text-transform: uppercase; color: var(--bad); margin-bottom: 10px; }
+  .media-callout h3 { font-size: 22px; font-weight: 600; letter-spacing: -0.02em; line-height: 1.15; margin-bottom: 10px; }
   .media-callout h3 .accent { color: var(--accent); }
-  .media-callout p { font-size: 14.5px; line-height: 1.55; color: var(--ink-2); }
-  .media-callout p strong { color: var(--ink); font-weight: 500; }
-  .media-callout-stats { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; }
-  .media-stat { padding: 18px 20px; border: 1.2px dashed var(--dashed); border-radius: 12px; background: var(--surface); }
+  .media-callout p { font-size: 14px; line-height: 1.55; color: var(--ink-2); }
+  .media-callout p strong { color: var(--ink); }
+  .media-stats { display: grid; grid-template-columns: 1fr 1fr; gap: 14px; }
+  .media-stat { padding: 16px 18px; border: 1.2px dashed var(--dashed); border-radius: 12px; background: var(--surface); }
   .media-stat-label { font-family: 'Geist Mono', monospace; font-size: 10px; letter-spacing: 0.12em; text-transform: uppercase; color: var(--ink-3); margin-bottom: 6px; }
-  .media-stat-val { font-family: 'Geist Mono', monospace; font-size: 24px; font-weight: 600; letter-spacing: -0.02em; color: var(--ink); }
+  .media-stat-val { font-family: 'Geist Mono', monospace; font-size: 22px; font-weight: 600; letter-spacing: -0.02em; color: var(--ink); }
   .media-stat-val.bad { color: var(--bad); }
   .media-stat-val.good { color: var(--accent); }
-  .media-stat-val .unit { font-size: 12px; color: var(--ink-3); font-weight: 400; margin-left: 4px; }
 
-  /* ===== SIMULATOR ===== */
-  .simulator {
+  /* REAL-TIME OPTIONS (inline section) */
+  .rt-options { display: grid; grid-template-columns: repeat(3, 1fr); gap: 12px; }
+  @media (max-width: 800px) { .rt-options { grid-template-columns: 1fr; } }
+  .rt-opt {
+    padding: 20px 22px;
     border: 1.2px dashed var(--dashed);
-    border-radius: 22px;
+    border-radius: 14px;
     background: var(--surface);
-    overflow: hidden;
-    margin: 56px 0;
   }
-  .sim-head {
-    padding: 28px 32px;
-    border-bottom: 1.2px dashed var(--dashed);
-    display: grid; grid-template-columns: 1fr auto;
-    gap: 32px; align-items: center;
-  }
-  @media (max-width: 700px) { .sim-head { grid-template-columns: 1fr; gap: 18px; } }
-  .sim-title { font-size: 26px; font-weight: 600; letter-spacing: -0.025em; line-height: 1.1; margin-bottom: 6px; }
-  .sim-title .muted { color: var(--ink-2); font-weight: 500; }
-  .sim-sub { font-size: 14px; color: var(--ink-2); max-width: 520px; }
-  .sim-btn {
-    background: var(--accent); color: #000; border: none;
-    border-radius: 999px; padding: 14px 24px;
-    font-family: 'Geist'; font-size: 14px; font-weight: 600;
-    letter-spacing: -0.01em; cursor: pointer;
-    display: inline-flex; align-items: center; gap: 10px;
-    transition: all .2s;
-  }
-  .sim-btn:hover { transform: translateY(-1px); box-shadow: 0 0 24px var(--accent-glow); }
-  .sim-btn:disabled { opacity: 0.5; cursor: not-allowed; transform: none; box-shadow: none; }
-  .sim-btn-icon { width: 14px; height: 14px; background: #000; clip-path: polygon(0 0, 100% 50%, 0 100%); }
-  .sim-cold-toggle {
-    display: flex; align-items: center; gap: 12px;
-    font-family: 'Geist Mono', monospace; font-size: 11px;
-    letter-spacing: 0.1em; text-transform: uppercase;
-    color: var(--ink-2); margin-top: 12px;
-  }
-  .sim-cold-toggle input { accent-color: var(--accent); }
-  .sim-body { display: grid; grid-template-columns: 1fr 1fr; }
-  @media (max-width: 800px) { .sim-body { grid-template-columns: 1fr; } }
-  .sim-col { padding: 28px 32px; }
-  .sim-col + .sim-col { border-left: 1.2px dashed var(--dashed); }
-  @media (max-width: 800px) { .sim-col + .sim-col { border-left: none; border-top: 1.2px dashed var(--dashed); } }
-  .sim-stack-head {
-    display: flex; align-items: center; justify-content: space-between;
-    margin-bottom: 18px; padding-bottom: 14px;
-    border-bottom: 1.2px dashed var(--dashed);
-  }
-  .sim-stack-name { font-family: 'Geist'; font-size: 15px; font-weight: 600; }
-  .sim-stack-name.bad { color: var(--bad); }
-  .sim-stack-name.good { color: var(--accent); }
-  .sim-stack-tag { font-family: 'Geist Mono', monospace; font-size: 10px; letter-spacing: 0.14em; text-transform: uppercase; color: var(--ink-3); }
-  .sim-phases { display: flex; flex-direction: column; gap: 8px; }
-  .sim-phase {
-    display: grid; grid-template-columns: 140px 1fr 56px;
-    gap: 12px; align-items: center;
-    opacity: 0.3; transition: opacity 0.25s;
-  }
-  .sim-phase.active, .sim-phase.done { opacity: 1; }
-  .sim-phase-name { font-family: 'Geist Mono', monospace; font-size: 11px; color: var(--ink-2); }
-  .sim-phase.done .sim-phase-name { color: var(--ink); }
-  .sim-phase-bar {
-    height: 14px;
-    background: rgba(255,255,255,0.04);
-    border: 1.2px dashed var(--dashed);
-    border-radius: 3px; position: relative; overflow: hidden;
-  }
-  .sim-phase-fill {
-    position: absolute; left: 0; top: 0; bottom: 0;
-    width: 0%; background: var(--ink-2);
-    transition: width 0.3s linear;
-  }
-  .sim-phase.bad .sim-phase-fill { background: var(--bad); }
-  .sim-phase.good .sim-phase-fill { background: var(--accent); }
-  .sim-phase.cold .sim-phase-fill {
-    background: repeating-linear-gradient(45deg, var(--bad), var(--bad) 4px, rgba(255,90,90,0.5) 4px, rgba(255,90,90,0.5) 8px);
-  }
-  .sim-phase-time { font-family: 'Geist Mono', monospace; font-size: 11px; color: var(--ink-2); text-align: right; }
-  .sim-phase.done .sim-phase-time { color: var(--ink); }
-  .sim-total {
-    margin-top: 24px; padding-top: 18px;
-    border-top: 1.2px dashed var(--dashed-strong);
-    display: flex; align-items: baseline; justify-content: space-between;
-  }
-  .sim-total-label { font-family: 'Geist Mono', monospace; font-size: 11px; letter-spacing: 0.14em; text-transform: uppercase; color: var(--ink-3); }
-  .sim-total-val { font-family: 'Geist Mono', monospace; font-size: 32px; font-weight: 600; letter-spacing: -0.025em; color: var(--ink); }
-  .sim-total-val.bad { color: var(--bad); }
-  .sim-total-val.good { color: var(--accent); }
-  .sim-total-val .unit { font-size: 14px; color: var(--ink-3); font-weight: 400; margin-left: 4px; }
-  .sim-verdict {
-    padding: 24px 32px;
-    border-top: 1.2px dashed var(--dashed);
-    background: rgba(71,168,255,0.04);
-    display: flex; align-items: center; justify-content: space-between;
-    gap: 24px; flex-wrap: wrap;
-  }
-  .sim-verdict-label { font-family: 'Geist Mono', monospace; font-size: 11px; letter-spacing: 0.14em; text-transform: uppercase; color: var(--accent); }
-  .sim-verdict-val { font-family: 'Geist'; font-size: 22px; font-weight: 600; letter-spacing: -0.02em; }
-  .sim-verdict-val .delta { color: var(--accent); }
+  .rt-opt-num { font-family: 'Geist Mono', monospace; font-size: 10px; letter-spacing: 0.14em; color: var(--accent); margin-bottom: 10px; }
+  .rt-opt h4 { font-size: 16px; font-weight: 600; margin-bottom: 4px; display: flex; align-items: center; gap: 8px; flex-wrap: wrap; }
+  .rt-opt-price { font-family: 'Geist Mono', monospace; font-size: 12.5px; color: var(--accent); font-weight: 500; margin-bottom: 8px; }
+  .rt-opt p { font-size: 13px; color: var(--ink-2); line-height: 1.5; }
 
-  /* ===== TOPOLOGY DIAGRAM ===== */
+  /* TOPOLOGY */
   .topology {
     border: 1.2px dashed var(--dashed);
     border-radius: 22px;
     background: var(--surface);
     overflow: hidden;
-    margin: 56px 0;
   }
   .topology-head {
-    padding: 32px 36px;
+    padding: 28px 32px;
     border-bottom: 1.2px dashed var(--dashed);
     display: grid; grid-template-columns: 1fr auto; gap: 32px; align-items: end;
   }
   @media (max-width: 800px) { .topology-head { grid-template-columns: 1fr; gap: 20px; } }
-  .topology-head h2 { font-size: clamp(28px, 3.4vw, 40px); }
-  .topology-head h2 .muted { color: var(--ink-2); font-weight: 500; }
-  .topology-head p { font-size: 14px; color: var(--ink-2); margin-top: 8px; max-width: 580px; line-height: 1.5; }
+  .topology-head h3 { font-size: clamp(22px, 2.8vw, 32px); font-weight: 600; letter-spacing: -0.025em; line-height: 1.1; }
+  .topology-head h3 .muted { color: var(--ink-2); font-weight: 500; }
+  .topology-head p { font-size: 13.5px; color: var(--ink-2); margin-top: 8px; max-width: 560px; line-height: 1.5; }
   .topology-stats { display: flex; gap: 24px; }
   .topology-stat { text-align: right; }
   .topology-stat-label { font-family: 'Geist Mono', monospace; font-size: 10px; letter-spacing: 0.14em; text-transform: uppercase; color: var(--ink-3); margin-bottom: 4px; }
-  .topology-stat-val { font-family: 'Geist Mono', monospace; font-size: 20px; font-weight: 600; color: var(--accent); }
+  .topology-stat-val { font-family: 'Geist Mono', monospace; font-size: 18px; font-weight: 600; color: var(--accent); }
   .topology-grid {
-    padding: 40px 36px;
-    display: grid;
-    grid-template-columns: 1fr 1fr 1fr 1fr;
-    gap: 24px;
-    position: relative;
+    padding: 32px 32px;
+    display: grid; grid-template-columns: 1fr 1fr 1fr 1fr; gap: 20px;
   }
   @media (max-width: 1100px) { .topology-grid { grid-template-columns: 1fr 1fr; } }
   @media (max-width: 700px) { .topology-grid { grid-template-columns: 1fr; } }
   .topology-col-head {
     font-family: 'Geist Mono', monospace; font-size: 10px;
     letter-spacing: 0.16em; text-transform: uppercase;
-    color: var(--ink-3); margin-bottom: 16px;
+    color: var(--ink-3); margin-bottom: 14px;
     padding-bottom: 12px; border-bottom: 1.2px dashed var(--dashed);
     display: flex; align-items: center; justify-content: space-between;
   }
   .topology-col-head .stage-num { color: var(--accent); }
-  .topology-col-cards { display: flex; flex-direction: column; gap: 10px; }
+  .topology-col-cards { display: flex; flex-direction: column; gap: 8px; }
   .topology-card {
-    padding: 14px 16px;
+    padding: 12px 14px;
     border: 1.2px dashed var(--dashed);
-    border-radius: 12px;
+    border-radius: 10px;
     background: var(--surface-2);
-    position: relative;
-    display: grid;
-    grid-template-columns: 1fr auto;
-    gap: 8px;
-    align-items: center;
+    display: grid; grid-template-columns: 1fr auto; gap: 8px; align-items: center;
   }
   .topology-card.user { border-color: rgba(74,222,128,0.25); background: linear-gradient(135deg, rgba(74,222,128,0.04), transparent); }
-  .topology-card.edge { border-color: rgba(192,132,252,0.25); background: linear-gradient(135deg, rgba(192,132,252,0.04), transparent); }
-  .topology-card.compute { border-color: rgba(71,168,255,0.25); background: linear-gradient(135deg, rgba(71,168,255,0.04), transparent); }
-  .topology-card.billing { border-color: var(--dashed-strong); }
-  .topology-card-name { font-family: 'Geist'; font-size: 14px; font-weight: 600; color: var(--ink); }
-  .topology-card-sub { font-size: 11px; color: var(--ink-3); font-family: 'Geist Mono', monospace; margin-top: 2px; }
-  .topology-card-val { font-family: 'Geist Mono', monospace; font-size: 14px; font-weight: 600; color: var(--ink); text-align: right; }
+  .topology-card.edge { border-color: rgba(192,132,252,0.22); background: linear-gradient(135deg, rgba(192,132,252,0.03), transparent); }
+  .topology-card.compute { border-color: rgba(71,168,255,0.22); background: linear-gradient(135deg, rgba(71,168,255,0.03), transparent); }
+  .topology-card-name { font-size: 13px; font-weight: 600; color: var(--ink); }
+  .topology-card-sub { font-size: 10.5px; color: var(--ink-3); font-family: 'Geist Mono', monospace; margin-top: 2px; }
+  .topology-card-val { font-family: 'Geist Mono', monospace; font-size: 13px; font-weight: 600; color: var(--ink); text-align: right; }
   .topology-card-val.muted { color: var(--ink-2); }
-  .topology-card-val .unit { font-size: 10px; color: var(--ink-3); font-weight: 400; margin-left: 3px; display: block; margin-top: 2px; letter-spacing: 0.04em; }
   .topology-card.billing .topology-card-val { color: var(--accent); }
+  .topology-card.billing.zero .topology-card-val { color: var(--good); }
   .topology-card.billing.total {
     border-color: var(--accent);
     background: rgba(71,168,255,0.06);
-    margin-top: 8px;
+    margin-top: 6px;
   }
   .topology-card.billing.total .topology-card-name { color: var(--accent); }
-  .topology-card.billing.total .topology-card-val { font-size: 18px; }
-  .topology-card.billing.zero .topology-card-val { color: var(--good); }
+  .topology-card.billing.total .topology-card-val { font-size: 16px; }
   .topology-footer {
-    padding: 24px 36px;
+    padding: 22px 32px;
     border-top: 1.2px dashed var(--dashed);
     background: rgba(0,0,0,0.2);
-    display: grid; grid-template-columns: 1fr 1fr 1fr 1fr;
-    gap: 24px;
+    display: grid; grid-template-columns: repeat(4, 1fr); gap: 24px;
   }
   @media (max-width: 800px) { .topology-footer { grid-template-columns: 1fr 1fr; } }
-  .topology-foot-stat { }
   .topology-foot-label { font-family: 'Geist Mono', monospace; font-size: 10px; letter-spacing: 0.12em; text-transform: uppercase; color: var(--ink-3); margin-bottom: 4px; }
-  .topology-foot-val { font-family: 'Geist Mono', monospace; font-size: 22px; font-weight: 600; color: var(--ink); letter-spacing: -0.02em; }
+  .topology-foot-val { font-family: 'Geist Mono', monospace; font-size: 20px; font-weight: 600; color: var(--ink); letter-spacing: -0.02em; }
   .topology-foot-val.good { color: var(--good); }
   .topology-foot-val.accent { color: var(--accent); }
 
-  /* ===== SOURCES ===== */
+  /* SOURCES */
   .sources {
     border: 1.2px dashed var(--dashed);
     border-radius: 18px;
-    padding: 28px 32px;
+    padding: 24px 28px;
     background: var(--surface);
-    margin: 56px 0;
   }
   .sources-head {
     display: flex; align-items: baseline; justify-content: space-between;
-    margin-bottom: 20px; padding-bottom: 16px;
+    margin-bottom: 16px; padding-bottom: 14px;
     border-bottom: 1.2px dashed var(--dashed);
     flex-wrap: wrap; gap: 12px;
   }
-  .sources h3 { font-size: 17px; font-weight: 600; letter-spacing: -0.015em; }
+  .sources h3 { font-size: 15px; font-weight: 600; letter-spacing: -0.015em; }
   .sources-tag { font-family: 'Geist Mono', monospace; font-size: 10px; letter-spacing: 0.14em; color: var(--ink-3); text-transform: uppercase; }
-  .sources-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 12px 24px; }
+  .sources-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 10px 24px; }
   @media (max-width: 900px) { .sources-grid { grid-template-columns: repeat(2, 1fr); } }
   @media (max-width: 600px) { .sources-grid { grid-template-columns: 1fr; } }
   .sources-grid a {
-    display: flex; flex-direction: column; gap: 2px;
-    padding: 12px 0;
-    font-family: 'Geist Mono', monospace; font-size: 11px;
-    color: var(--ink-2); text-decoration: none;
-    transition: all .15s;
+    display: flex; flex-direction: column; gap: 2px; padding: 10px 0;
+    font-family: 'Geist Mono', monospace; font-size: 10.5px;
+    color: var(--ink-2); text-decoration: none; transition: all .15s;
   }
   .sources-grid a:hover { color: var(--accent); }
   .sources-grid a strong { color: var(--ink); font-weight: 500; font-family: 'Geist'; font-size: 13px; }
 
-  /* ===== PRODUCT PANEL PLACEHOLDER ===== */
+  /* PRODUCT PLACEHOLDER */
   .product-placeholder {
-    padding: 120px 0;
-    text-align: center;
+    padding: 100px 32px; text-align: center;
     border: 1.2px dashed var(--dashed);
     border-radius: 22px;
     background: var(--surface);
   }
-  .product-placeholder h2 { font-size: 40px; margin-bottom: 12px; letter-spacing: -0.03em; }
+  .product-placeholder h2 { font-size: 36px; margin-bottom: 12px; }
   .product-placeholder h2 em { color: var(--accent); font-style: italic; font-weight: 500; }
-  .product-placeholder p { font-size: 16px; color: var(--ink-2); max-width: 500px; margin: 0 auto; }
-  .product-placeholder .next {
-    margin-top: 32px;
-    font-family: 'Geist Mono', monospace;
-    font-size: 11px;
-    letter-spacing: 0.16em;
-    text-transform: uppercase;
-    color: var(--ink-3);
-  }
+  .product-placeholder p { font-size: 15px; color: var(--ink-2); max-width: 500px; margin: 0 auto; }
+  .product-placeholder .next { margin-top: 24px; font-family: 'Geist Mono', monospace; font-size: 11px; letter-spacing: 0.16em; text-transform: uppercase; color: var(--ink-3); }
 
-  /* ===== FOOTER ===== */
-  .footer { padding: 64px 0; border-top: 1.2px dashed var(--dashed); text-align: center; }
+  /* FOOTER */
+  .footer { padding: 56px 0; border-top: 1.2px dashed var(--dashed); text-align: center; }
   .footer p { font-family: 'Geist Mono', monospace; font-size: 11px; letter-spacing: 0.14em; text-transform: uppercase; color: var(--ink-3); }
   .footer a { color: var(--accent); text-decoration: none; }
   .footer a:hover { text-decoration: underline; }
-
-  section { padding: 0; }
-  .section-h2 { font-size: clamp(28px, 3.4vw, 40px); font-weight: 600; letter-spacing: -0.025em; line-height: 1.1; margin-bottom: 12px; }
-  .section-h2 .muted { color: var(--ink-2); font-weight: 500; }
-  .section-lede { font-size: 16px; color: var(--ink-2); max-width: 720px; margin-bottom: 32px; }
-  .section-lede strong { color: var(--ink); font-weight: 500; }
 </style>
 </head>
 <body>
 
-<!-- ===== NAVBAR ===== -->
 <nav class="navbar">
   <div class="container">
     <div class="nav-row">
@@ -875,483 +593,370 @@
       </div>
       <div class="nav-links">
         <a href="index.html">← Review</a>
-        <a href="#sim">Simulator</a>
+        <a href="#migrate">Migrate</a>
+        <a href="#pricing">Pricing</a>
         <a href="#topology">Topology</a>
         <a href="#sources">Sources</a>
       </div>
-      <div class="nav-meta"><span class="nav-pill">Cited pricing</span></div>
+      <span class="nav-pill">Cited pricing</span>
     </div>
   </div>
 </nav>
 
 <div class="container">
 
-  <!-- ===== TOP-LEVEL TABS ===== -->
   <div class="top-tabs">
     <button class="top-tab active" data-top="engineering">
       <span class="top-tab-num">01 · Active</span>
       <span class="top-tab-title">Engineering</span>
-      <span class="top-tab-sub">Stack, cost, performance, real-time. Verifiable.</span>
+      <span class="top-tab-sub">Phased migration. Easy wins first. Verifiable pricing.</span>
     </button>
     <button class="top-tab" data-top="product">
       <span class="top-tab-num">02</span>
       <span class="top-tab-title">Product</span>
-      <span class="top-tab-sub">Roadmap, behaviour design, growth. Next.</span>
+      <span class="top-tab-sub">Behaviour, growth, monetisation. Next.</span>
     </button>
   </div>
 
-  <!-- ===== ENGINEERING PANEL ===== -->
   <div class="top-panel active" id="top-engineering">
 
-    <!-- ===== USE CASE ===== -->
-    <div class="usecase">
-      <div class="usecase-head">
-        <div class="usecase-title">
-          <h2>Your use case first.<span class="muted">Then the recommendation.</span></h2>
-        </div>
-        <div class="usecase-desc">
-          <p>Mandos is a Hong Kong nightlife app with <strong>real-time presence</strong>, <strong>media-heavy content</strong> (event posters, venue photos, user-uploaded clips, soon video previews), <strong>transactional bookings</strong> via Stripe, and a 1,500-user base targeting 100K+ MAU. The infra has to handle Friday-8pm spikes without dropping connections.</p>
-        </div>
-      </div>
-      <div class="usecase-body">
-        <div class="usecase-col good">
-          <div class="usecase-col-head">What's working today</div>
-          <div class="usecase-list">
-            <div class="usecase-item"><div><strong>Postgres + Prisma + TypeScript.</strong> The boring, correct choice. Keep all three.</div></div>
-            <div class="usecase-item"><div><strong>Stripe, Twilio, SendGrid, Firebase push.</strong> Right primitives for each job.</div></div>
-            <div class="usecase-item"><div><strong>Sentry + Jest.</strong> Real observability + a real test runner. Most early apps don't have either.</div></div>
-            <div class="usecase-item"><div><strong>The product ships.</strong> 1,500 users with no marketing means the stack isn't blocking growth right now.</div></div>
-            <div class="usecase-item"><div><strong>AWS Lambda is fine for sporadic workloads.</strong> Pay-per-request makes sense for low-traffic endpoints.</div></div>
+    <!-- USE CASE -->
+    <div class="sec">
+      <div class="sec-kicker">01 · Where you are</div>
+      <h2>Your stack today. <span class="muted">Honest read first.</span></h2>
+      <p class="sec-lede">Mandos runs <strong>Express + AWS Lambda + S3 + Socket.io + n8n + RDS Postgres</strong>. It works. 1,500 users, no marketing — the stack isn't blocking anything right now. The two parts that will hurt at scale are <strong>S3 egress on media</strong> and <strong>RDS over-provisioning</strong>. Everything else is fine for the moment.</p>
+
+      <div class="usecase">
+        <div class="usecase-body">
+          <div class="usecase-col good">
+            <div class="usecase-col-head">Keep as-is</div>
+            <div class="usecase-list">
+              <div class="usecase-item"><div><strong>Postgres + Prisma + TS.</strong> Boring, correct.</div></div>
+              <div class="usecase-item"><div><strong>Stripe · Twilio · SendGrid · Firebase push.</strong> Right primitives.</div></div>
+              <div class="usecase-item"><div><strong>Sentry + Jest.</strong> Real observability + test runner.</div></div>
+              <div class="usecase-item"><div><strong>Lambda for sporadic endpoints.</strong> Pay-per-request makes sense there.</div></div>
+            </div>
           </div>
-        </div>
-        <div class="usecase-col bad">
-          <div class="usecase-col-head">Where it will hurt at scale</div>
-          <div class="usecase-list">
-            <div class="usecase-item"><div><strong>S3 egress at $0.09/GB</strong><a href="https://aws.amazon.com/s3/pricing/" target="_blank" rel="noopener" class="src">src ↗</a>. With video clips and venue photos at 5-30 MB per session, this becomes your biggest line item past 50K MAU.</div></div>
-            <div class="usecase-item"><div><strong>Lambda cold starts.</strong> 500-1500ms on first hit. Painful for a snappy social product where every tap should feel instant.</div></div>
-            <div class="usecase-item"><div><strong>Socket.io on a single Node process.</strong> Caps around 10K concurrent connections. Friday-8pm spikes will hit this fast.</div></div>
-            <div class="usecase-item"><div><strong>n8n as production infra.</strong> Workflow tools become tech debt. Code-defined workflows scale better.</div></div>
-            <div class="usecase-item"><div><strong>Express + ad-hoc API layout.</strong> No type-safe client-server contract. Slows feature velocity as the team grows.</div></div>
+          <div class="usecase-col bad">
+            <div class="usecase-col-head">Worth swapping eventually</div>
+            <div class="usecase-list">
+              <div class="usecase-item"><div><strong>S3 egress at $0.09/GB.</strong> Largest growing line item.</div></div>
+              <div class="usecase-item"><div><strong>RDS over-provisioning.</strong> $150-500/mo for 1,500 users. Wildly oversized.</div></div>
+              <div class="usecase-item"><div><strong>Socket.io single-node ceiling.</strong> ~10K concurrent before sharding work.</div></div>
+              <div class="usecase-item"><div><strong>n8n as production infra.</strong> Workflow tools become tech debt.</div></div>
+            </div>
           </div>
         </div>
       </div>
     </div>
 
-    <!-- ===== STACK VS ===== -->
-    <div class="stack-vs">
-      <div class="stack-col">
-        <div class="stack-label">Current · what you're running today</div>
-        <div class="stack-name bad">AWS Lambda · Express · S3 · Socket.io · n8n</div>
-        <div class="stack-desc">Solid, conventional. Works for what it's serving today. Two pieces will become the bottleneck at scale: S3 egress on media, and Socket.io on a single Node host.</div>
-      </div>
-      <div class="stack-vs-mid"><span>vs</span></div>
-      <div class="stack-col">
-        <div class="stack-label">Recommended hybrid · the next stage</div>
-        <div class="stack-name good">Vercel Fluid · R2 · Pusher · Neon</div>
-        <div class="stack-desc">Vercel + Fluid Compute for DX and zero cold start. Cloudflare R2 for zero-egress media (the biggest single win). Pusher for real-time WebSockets. Neon for serverless Postgres. Migration is component-by-component, Prisma stays.</div>
+    <!-- COST KILLERS -->
+    <div class="sec">
+      <div class="sec-kicker">02 · The four cost killers</div>
+      <h2>Where the money leaks. <span class="muted">In order of leverage.</span></h2>
+      <p class="sec-lede">Four things on the current stack cost meaningfully more than they need to. Each has a low-effort swap. The other 80% of the stack stays exactly as it is.</p>
+
+      <div class="killers">
+        <div class="killer">
+          <div class="killer-num">01 · highest leverage</div>
+          <h4>S3 egress</h4>
+          <p>$0.09/GB on outbound media. <strong>Biggest line item past 50K MAU.</strong> R2 has zero egress.</p>
+        </div>
+        <div class="killer">
+          <div class="killer-num">02 · second biggest</div>
+          <h4>RDS Postgres</h4>
+          <p>db.t3.medium with multi-AZ + backups runs <strong>$200-500/mo</strong>. Neon Launch is $19.</p>
+        </div>
+        <div class="killer">
+          <div class="killer-num">03 · structural ceiling</div>
+          <h4>Socket.io single-node</h4>
+          <p>Caps around 10K concurrent. Sharding it is 2 weeks of work. Pusher is a drop-in.</p>
+        </div>
+        <div class="killer">
+          <div class="killer-num">04 · slow death</div>
+          <h4>Lambda cold starts</h4>
+          <p>~800ms on first hit. Hurts perceived speed. Only swap when growth justifies it.</p>
+        </div>
       </div>
     </div>
 
-    <!-- ===== CONTROL PANEL ===== -->
-    <div class="control-panel">
-      <div class="control-head">
-        <span class="control-head-label">Simulation controls · verified pricing</span>
-        <span class="control-head-live">Live calculation</span>
-      </div>
-      <div class="control-body">
-        <div class="sliders">
-          <div class="slider-block">
-            <div class="slider-row">
-              <div>
-                <span class="slider-name">Monthly Active Users</span>
-                <span class="slider-hint">Total users who open the app in a month</span>
+    <!-- MIGRATION PHASES -->
+    <div class="sec" id="migrate">
+      <div class="sec-kicker accent">03 · The path forward</div>
+      <h2>Phased migration. <span class="accent">No big-bang rewrite.</span></h2>
+      <p class="sec-lede">Three phases, smallest blast radius first. Phase 1 is a week of work and changes <strong>zero application code</strong> — just bucket URLs. Phase 3 is "only when growth justifies it." The team keeps shipping product throughout.</p>
+
+      <div class="phases">
+
+        <div class="phase p1">
+          <div class="phase-head">
+            <div class="phase-tag">Phase 1 · This week</div>
+            <div class="phase-title">Easy wins.</div>
+            <div class="phase-sub">Two swaps. Zero application-code changes. Real money saved on day one.</div>
+          </div>
+          <div class="phase-items">
+            <div class="phase-item">
+              <div class="phase-item-name">AWS S3 <span class="phase-arrow">→</span> Cloudflare R2<a href="https://developers.cloudflare.com/r2/pricing/" target="_blank" rel="noopener" class="src">src ↗</a></div>
+              <div class="phase-item-desc">S3-compatible API. Point the bucket URLs at R2, swap credentials. Existing aws-sdk code works unchanged. Then turn off S3 egress.</div>
+              <div class="phase-item-meta">
+                <div><span class="phase-meta-label">Saves</span> <span class="phase-meta-val save" id="phase1Save1">$1,547/mo</span></div>
+                <div><span class="phase-meta-label">Effort</span> <span class="phase-meta-val">~1 day</span></div>
               </div>
-              <span class="slider-value mono"><span id="mauVal">100,000</span><span class="unit">MAU</span></span>
             </div>
-            <div class="slider-track-wrap"><input type="range" id="mauSlider" min="0" max="100" value="60" step="1"></div>
-            <div class="slider-scale"><span>1K</span><span>10K</span><span>100K</span><span>500K</span><span>1M</span></div>
-          </div>
-          <div class="slider-block">
-            <div class="slider-row">
-              <div>
-                <span class="slider-name">App opens per user / month</span>
-                <span class="slider-hint">How often each user actually launches the app</span>
+            <div class="phase-item">
+              <div class="phase-item-name">n8n <span class="phase-arrow">→</span> Inngest<a href="https://www.inngest.com/pricing" target="_blank" rel="noopener" class="src">src ↗</a></div>
+              <div class="phase-item-desc">Rewrite the few real workflows as Inngest functions. Drop the n8n VM. Code-defined, versioned in git, retries baked in.</div>
+              <div class="phase-item-meta">
+                <div><span class="phase-meta-label">Saves</span> <span class="phase-meta-val save">~$50/mo</span></div>
+                <div><span class="phase-meta-label">Effort</span> <span class="phase-meta-val">~1 week</span></div>
               </div>
-              <span class="slider-value mono"><span id="sessVal">22</span><span class="unit">opens</span></span>
             </div>
-            <div class="slider-track-wrap"><input type="range" id="sessSlider" min="4" max="60" value="22" step="1"></div>
-            <div class="slider-scale"><span>4</span><span>20</span><span>40</span><span>60</span></div>
           </div>
-          <div class="slider-block">
-            <div class="slider-row">
-              <div>
-                <span class="slider-name">Media per session</span>
-                <span class="slider-hint">Posters · photos · video clips · receipts</span>
+        </div>
+
+        <div class="phase p2">
+          <div class="phase-head">
+            <div class="phase-tag">Phase 2 · This month</div>
+            <div class="phase-title">High leverage.</div>
+            <div class="phase-sub">Two swaps that change the structural ceiling. Both are drop-in: same Prisma, same client APIs.</div>
+          </div>
+          <div class="phase-items">
+            <div class="phase-item">
+              <div class="phase-item-name">RDS Postgres <span class="phase-arrow">→</span> Neon<a href="https://neon.tech/pricing" target="_blank" rel="noopener" class="src">src ↗</a></div>
+              <div class="phase-item-desc">Migrate via pg_dump. Same Prisma schema, same SQL. Get serverless autoscale + branching for previews. Massive cost drop.</div>
+              <div class="phase-item-meta">
+                <div><span class="phase-meta-label">Saves</span> <span class="phase-meta-val save" id="phase2Save1">$180/mo</span></div>
+                <div><span class="phase-meta-label">Effort</span> <span class="phase-meta-val">~3 days</span></div>
               </div>
-              <span class="slider-value mono"><span id="payloadVal">8</span><span class="unit">MB</span></span>
             </div>
-            <div class="slider-track-wrap"><input type="range" id="payloadSlider" min="0.5" max="50" value="8" step="0.5"></div>
-            <div class="slider-scale"><span>0.5</span><span>5</span><span>15</span><span>30</span><span>50</span></div>
-          </div>
-        </div>
-        <div class="cost-display">
-          <div class="cost-row">
-            <span class="cost-label">Current AWS stack</span>
-            <span class="cost-amount bad mono"><span class="currency">$</span><span id="costCurrent">5,420</span><span class="per">/mo</span></span>
-          </div>
-          <div class="cost-row divider">
-            <span class="cost-label">Recommended hybrid</span>
-            <span class="cost-amount good mono"><span class="currency">$</span><span id="costRecommended">880</span><span class="per">/mo</span></span>
-          </div>
-          <div class="savings-row">
-            <div>
-              <div class="savings-label">Monthly savings</div>
-              <div class="savings-amount mono">$<span id="savings">4,540</span><span class="savings-multiplier" id="multiplier">6.2× cheaper</span></div>
-            </div>
-            <div style="text-align: right;">
-              <div class="savings-label">Annual</div>
-              <div class="savings-amount mono">$<span id="savingsYear">54,480</span></div>
+            <div class="phase-item">
+              <div class="phase-item-name">Socket.io <span class="phase-arrow">→</span> Pusher Channels<a href="https://pusher.com/channels/pricing" target="_blank" rel="noopener" class="src">src ↗</a></div>
+              <div class="phase-item-desc">Pusher exposes a Socket.io-compatible client surface. Server SDK swap, channel naming swap. No sharding to maintain ever again.</div>
+              <div class="phase-item-meta">
+                <div><span class="phase-meta-label">Saves</span> <span class="phase-meta-val save">$300-$2K/mo at scale</span></div>
+                <div><span class="phase-meta-label">Effort</span> <span class="phase-meta-val">~1 week</span></div>
+              </div>
             </div>
           </div>
         </div>
+
+        <div class="phase p3">
+          <div class="phase-head">
+            <div class="phase-tag">Phase 3 · Only when growth justifies</div>
+            <div class="phase-title">Hot-path moves.</div>
+            <div class="phase-sub">Only when the cold start tax is actually hurting users. Not Week 1. Maybe Q3.</div>
+          </div>
+          <div class="phase-items">
+            <div class="phase-item">
+              <div class="phase-item-name">Lambda <span class="phase-arrow">→</span> Vercel Fluid<a href="https://vercel.com/docs/fluid-compute" target="_blank" rel="noopener" class="src">src ↗</a></div>
+              <div class="phase-item-desc">For hot endpoints where cold starts hurt UX. Leave low-traffic endpoints on Lambda — pay-per-request is still cheap there.</div>
+              <div class="phase-item-meta">
+                <div><span class="phase-meta-label">Wins</span> <span class="phase-meta-val">no cold start</span></div>
+                <div><span class="phase-meta-label">Effort</span> <span class="phase-meta-val">~2-3 weeks</span></div>
+              </div>
+            </div>
+            <div class="phase-item">
+              <div class="phase-item-name">Express <span class="phase-arrow">→</span> Next.js + tRPC</div>
+              <div class="phase-item-desc">Only for new endpoints. Get end-to-end types. Don't rewrite anything that already works.</div>
+              <div class="phase-item-meta">
+                <div><span class="phase-meta-label">Wins</span> <span class="phase-meta-val">type-safety</span></div>
+                <div><span class="phase-meta-label">Effort</span> <span class="phase-meta-val">incremental</span></div>
+              </div>
+            </div>
+          </div>
+        </div>
+
       </div>
     </div>
 
-    <!-- ===== INNER TABS ===== -->
-    <div class="tab-bar">
-      <button class="tab-btn active" data-tab="architecture"><span class="tab-num">01</span><span>Architecture</span></button>
-      <button class="tab-btn" data-tab="performance"><span class="tab-num">02</span><span>Performance</span></button>
-      <button class="tab-btn" data-tab="scale"><span class="tab-num">03</span><span>Pricing Table</span></button>
-      <button class="tab-btn" data-tab="dx"><span class="tab-num">04</span><span>Dev Experience</span></button>
-      <button class="tab-btn" data-tab="realtime"><span class="tab-num">05</span><span>Real-time</span></button>
-    </div>
+    <!-- LIVE CALCULATOR -->
+    <div class="sec" id="pricing">
+      <div class="sec-kicker">04 · The actual numbers</div>
+      <h2>What it costs. <span class="muted">Today vs. after Phase 1+2.</span></h2>
+      <p class="sec-lede">Live cost calculator. Move the sliders to see your numbers. <strong>Every unit price links to the vendor's pricing page</strong> so the founder can verify each row against the source. Don't trust the calculator — click the links.</p>
 
-    <!-- ARCHITECTURE -->
-    <div class="tab-panel active" id="tab-architecture">
-      <h2 class="section-h2">Architecture. <span class="muted">Component for component.</span></h2>
-      <p class="section-lede">What's in each stack and what replaces it on the other side. <strong>Every component links to its pricing page</strong> so the founder can verify each claim. The migration is per-component, not a rewrite.</p>
-
-      <div class="compare">
-        <div class="compare-col">
-          <div class="compare-col-head"><div class="compare-col-name">Current AWS stack</div><span class="compare-tag bad">Today</span></div>
-          <div>
-            <div class="compare-item"><span class="compare-num">01</span><div class="compare-item-content"><strong>Node.js + TypeScript + Express<a href="https://expressjs.com" target="_blank" rel="noopener" class="src">src ↗</a></strong><span>Conventional API server. No type-safe client contract.</span></div><div class="compare-metric neutral">OK<small>boring</small></div></div>
-            <div class="compare-item"><span class="compare-num">02</span><div class="compare-item-content"><strong>AWS Lambda<a href="https://aws.amazon.com/lambda/pricing/" target="_blank" rel="noopener" class="src">src ↗</a></strong><span>$0.20 / 1M reqs + $0.0000166667 / GB-s. Cold starts hurt.</span></div><div class="compare-metric bad">cold<small>800ms+</small></div></div>
-            <div class="compare-item"><span class="compare-num">03</span><div class="compare-item-content"><strong>API Gateway<a href="https://aws.amazon.com/api-gateway/pricing/" target="_blank" rel="noopener" class="src">src ↗</a></strong><span>$3.50 / 1M REST calls. Front for Lambda.</span></div><div class="compare-metric bad">$$<small>adds up</small></div></div>
-            <div class="compare-item"><span class="compare-num">04</span><div class="compare-item-content"><strong>AWS S3<a href="https://aws.amazon.com/s3/pricing/" target="_blank" rel="noopener" class="src">src ↗</a></strong><span>$0.023/GB storage. Egress $0.09/GB. The egress kills you.</span></div><div class="compare-metric bad">egress<small>$0.09/GB</small></div></div>
-            <div class="compare-item"><span class="compare-num">05</span><div class="compare-item-content"><strong>Socket.io on EC2<a href="https://aws.amazon.com/ec2/pricing/on-demand/" target="_blank" rel="noopener" class="src">src ↗</a></strong><span>Stateful WebSockets. Caps ~10K concurrent per process.</span></div><div class="compare-metric bad">caps<small>~10K</small></div></div>
-            <div class="compare-item"><span class="compare-num">06</span><div class="compare-item-content"><strong>RDS Postgres<a href="https://aws.amazon.com/rds/postgresql/pricing/" target="_blank" rel="noopener" class="src">src ↗</a></strong><span>db.t3.medium ~$50-80/mo baseline. Keep DB engine.</span></div><div class="compare-metric good">keep<small>good call</small></div></div>
-            <div class="compare-item"><span class="compare-num">07</span><div class="compare-item-content"><strong>ElastiCache Redis<a href="https://aws.amazon.com/elasticache/pricing/" target="_blank" rel="noopener" class="src">src ↗</a></strong><span>~$25-50/mo. Pay for idle capacity.</span></div><div class="compare-metric neutral">swap<small>to per-call</small></div></div>
-            <div class="compare-item"><span class="compare-num">08</span><div class="compare-item-content"><strong>n8n<a href="https://n8n.io/pricing/" target="_blank" rel="noopener" class="src">src ↗</a></strong><span>Visual workflow automation. Becomes infra debt.</span></div><div class="compare-metric bad">drop<small>brittle</small></div></div>
-            <div class="compare-item"><span class="compare-num">09</span><div class="compare-item-content"><strong>Firebase Admin (push)<a href="https://firebase.google.com/pricing" target="_blank" rel="noopener" class="src">src ↗</a></strong><span>Free for most push volumes.</span></div><div class="compare-metric good">keep<small>free</small></div></div>
-            <div class="compare-item"><span class="compare-num">10</span><div class="compare-item-content"><strong>Stripe · Twilio · SendGrid</strong><span>Payments + SMS + email. Standard, keep.</span></div><div class="compare-metric good">keep<small>correct</small></div></div>
+      <div class="control-panel">
+        <div class="control-head">
+          <span class="control-head-label">Simulation controls</span>
+          <span class="control-head-live">Live calculation</span>
+        </div>
+        <div class="control-body">
+          <div class="sliders">
+            <div class="slider-block">
+              <div class="slider-row">
+                <div>
+                  <span class="slider-name">Monthly Active Users</span>
+                  <span class="slider-hint">Total users who open the app in a month</span>
+                </div>
+                <span class="slider-value mono"><span id="mauVal">100,000</span><span class="unit">MAU</span></span>
+              </div>
+              <div class="slider-track-wrap"><input type="range" id="mauSlider" min="0" max="100" value="60" step="1"></div>
+              <div class="slider-scale"><span>1K</span><span>10K</span><span>100K</span><span>500K</span><span>1M</span></div>
+            </div>
+            <div class="slider-block">
+              <div class="slider-row">
+                <div>
+                  <span class="slider-name">App opens per user / month</span>
+                  <span class="slider-hint">How often each user actually launches the app</span>
+                </div>
+                <span class="slider-value mono"><span id="sessVal">22</span><span class="unit">opens</span></span>
+              </div>
+              <div class="slider-track-wrap"><input type="range" id="sessSlider" min="4" max="60" value="22" step="1"></div>
+              <div class="slider-scale"><span>4</span><span>20</span><span>40</span><span>60</span></div>
+            </div>
+            <div class="slider-block">
+              <div class="slider-row">
+                <div>
+                  <span class="slider-name">Media per session</span>
+                  <span class="slider-hint">Posters · photos · video clips · receipts</span>
+                </div>
+                <span class="slider-value mono"><span id="payloadVal">8</span><span class="unit">MB</span></span>
+              </div>
+              <div class="slider-track-wrap"><input type="range" id="payloadSlider" min="0.5" max="50" value="8" step="0.5"></div>
+              <div class="slider-scale"><span>0.5</span><span>5</span><span>15</span><span>30</span><span>50</span></div>
+            </div>
           </div>
-        </div>
-        <div class="compare-col">
-          <div class="compare-col-head"><div class="compare-col-name">Recommended hybrid</div><span class="compare-tag good">Proposed</span></div>
-          <div>
-            <div class="compare-item"><span class="compare-num">01</span><div class="compare-item-content"><strong>Next.js + tRPC<a href="https://trpc.io" target="_blank" rel="noopener" class="src">src ↗</a></strong><span>Type-safe client-server contract. App Router. RSC.</span></div><div class="compare-metric good">fast<small>+ types</small></div></div>
-            <div class="compare-item"><span class="compare-num">02</span><div class="compare-item-content"><strong>Vercel Fluid Compute<a href="https://vercel.com/docs/fluid-compute" target="_blank" rel="noopener" class="src">src ↗</a></strong><span>In-function concurrency. ~80% cheaper than Lambda. No cold start.</span></div><div class="compare-metric good">warm<small>~10ms</small></div></div>
-            <div class="compare-item"><span class="compare-num">03</span><div class="compare-item-content"><strong>Vercel Cron + Inngest<a href="https://www.inngest.com/pricing" target="_blank" rel="noopener" class="src">src ↗</a></strong><span>Cron free with Vercel. Inngest: 50K events free, then $20/mo.</span></div><div class="compare-metric good">$20<small>+free cron</small></div></div>
-            <div class="compare-item"><span class="compare-num">04</span><div class="compare-item-content"><strong>Cloudflare R2<a href="https://developers.cloudflare.com/r2/pricing/" target="_blank" rel="noopener" class="src">src ↗</a></strong><span>$0.015/GB storage. <strong>Zero egress.</strong> S3-compatible API.</span></div><div class="compare-metric good">$0<small>egress</small></div></div>
-            <div class="compare-item"><span class="compare-num">05</span><div class="compare-item-content"><strong>Pusher Channels<a href="https://pusher.com/channels/pricing" target="_blank" rel="noopener" class="src">src ↗</a></strong><span>Managed WebSockets. $49/mo for 200K daily messages. Drop-in replacement for Socket.io with the same client APIs.</span></div><div class="compare-metric good">$49<small>start</small></div></div>
-            <div class="compare-item"><span class="compare-num">06</span><div class="compare-item-content"><strong>Neon Postgres<a href="https://neon.tech/pricing" target="_blank" rel="noopener" class="src">src ↗</a></strong><span>Serverless Postgres. Branching for previews. $19/mo Launch tier.</span></div><div class="compare-metric good">$19<small>Launch</small></div></div>
-            <div class="compare-item"><span class="compare-num">07</span><div class="compare-item-content"><strong>Upstash Redis<a href="https://upstash.com/pricing" target="_blank" rel="noopener" class="src">src ↗</a></strong><span>$0.20 per 100K commands. No idle cost.</span></div><div class="compare-metric good">$0.20<small>per 100K</small></div></div>
-            <div class="compare-item"><span class="compare-num">08</span><div class="compare-item-content"><strong>Vercel AI Gateway<a href="https://vercel.com/docs/ai-gateway" target="_blank" rel="noopener" class="src">src ↗</a></strong><span>Route between models. Caching + obs. For when AI features land.</span></div><div class="compare-metric good">routed<small>+ cached</small></div></div>
-            <div class="compare-item"><span class="compare-num">09</span><div class="compare-item-content"><strong>Firebase Admin (push)<a href="https://firebase.google.com/pricing" target="_blank" rel="noopener" class="src">src ↗</a></strong><span>Keep. Works with the new stack.</span></div><div class="compare-metric good">keep<small>free</small></div></div>
-            <div class="compare-item"><span class="compare-num">10</span><div class="compare-item-content"><strong>Stripe · Twilio · SendGrid · Sentry</strong><span>All kept. Same APIs. No migration cost.</span></div><div class="compare-metric good">keep<small>no change</small></div></div>
-          </div>
-        </div>
-      </div>
-
-      <div class="compare" style="margin-top: 32px;">
-        <div class="compare-col">
-          <div class="compare-col-head"><div class="compare-col-name">Request flow · today</div><span class="compare-tag bad">~7 hops</span></div>
-          <div class="arch-diagram"><span class="bad">▼  USER (HK)</span>
-│
-▼  DNS lookup       ~30ms
-│
-▼  CloudFront edge  ~50ms (if used)
-│
-▼  API Gateway      ~30ms
-│
-▼  Lambda           <span class="bad">~800ms cold</span> / ~80ms warm
-│
-▼  RDS Postgres     ~60ms (us-east)
-│
-▼  S3 fetch         ~100ms + <span class="bad">$0.09/GB egress</span>
-│
-▼  Response back    ~80ms
-─────────────────────────────
-   Cold path:       <span class="bad">~1150ms</span>
-   Warm path:       ~430ms</div>
-        </div>
-        <div class="compare-col">
-          <div class="compare-col-head"><div class="compare-col-name">Request flow · proposed</div><span class="compare-tag good">~4 hops</span></div>
-          <div class="arch-diagram"><span class="accent">▼  USER (HK)</span>
-│
-▼  DNS lookup       ~30ms
-│
-▼  Vercel edge      <span class="accent">~10ms</span>
-│
-▼  Fluid Compute    <span class="accent">~40ms (warm always)</span>
-│
-▼  Neon Postgres    <span class="accent">~30ms (regional)</span>
-│
-▼  R2 cached        <span class="accent">~10ms · $0 egress</span>
-│
-▼  Response back    ~30ms
-─────────────────────────────
-   Always warm:     <span class="accent">~150ms</span>
-   Cold start:      <span class="accent">~none</span></div>
-        </div>
-      </div>
-    </div>
-
-    <!-- PERFORMANCE -->
-    <div class="tab-panel" id="tab-performance">
-      <h2 class="section-h2">Performance. <span class="muted">Where Lambda hurts, where Fluid wins.</span></h2>
-      <p class="section-lede">A request from a Hong Kong user, fired at both stacks. Lambda's <strong>cold start tax</strong> is the single biggest UX issue today, and it's structural<a href="https://aws.amazon.com/blogs/compute/operating-lambda-performance-optimization-part-1/" target="_blank" rel="noopener" class="src">src ↗</a>. Fluid Compute keeps functions warm across invocations<a href="https://vercel.com/docs/fluid-compute" target="_blank" rel="noopener" class="src">src ↗</a>.</p>
-
-      <div class="compare">
-        <div class="compare-col">
-          <div class="compare-col-head"><div class="compare-col-name">Latency · current (AWS)</div><span class="compare-tag bad">~430ms warm · ~1150ms cold</span></div>
-          <div class="latency-block">
-            <div class="latency-row"><span class="latency-name">DNS</span><div class="latency-track"><div class="latency-fill bad" style="width: 5%;"></div></div><span class="latency-ms">30ms</span></div>
-            <div class="latency-row"><span class="latency-name">CloudFront edge</span><div class="latency-track"><div class="latency-fill bad" style="width: 9%;"></div></div><span class="latency-ms">50ms</span></div>
-            <div class="latency-row"><span class="latency-name">API Gateway</span><div class="latency-track"><div class="latency-fill bad" style="width: 6%;"></div></div><span class="latency-ms">30ms</span></div>
-            <div class="latency-row"><span class="latency-name">Lambda cold</span><div class="latency-track"><div class="latency-fill bad" style="width: 70%;"></div></div><span class="latency-ms">800ms*</span></div>
-            <div class="latency-row"><span class="latency-name">RDS query</span><div class="latency-track"><div class="latency-fill bad" style="width: 8%;"></div></div><span class="latency-ms">60ms</span></div>
-            <div class="latency-row"><span class="latency-name">S3 fetch</span><div class="latency-track"><div class="latency-fill bad" style="width: 12%;"></div></div><span class="latency-ms">100ms</span></div>
-            <div class="latency-row"><span class="latency-name">Response</span><div class="latency-track"><div class="latency-fill bad" style="width: 10%;"></div></div><span class="latency-ms">80ms</span></div>
-            <div class="latency-total"><span class="latency-total-label">Cold path total</span><span class="latency-total-val bad mono">1.15<span class="unit">s</span></span></div>
-          </div>
-        </div>
-        <div class="compare-col">
-          <div class="compare-col-head"><div class="compare-col-name">Latency · recommended</div><span class="compare-tag good">~150ms · always warm</span></div>
-          <div class="latency-block">
-            <div class="latency-row"><span class="latency-name">DNS</span><div class="latency-track"><div class="latency-fill good" style="width: 20%;"></div></div><span class="latency-ms">30ms</span></div>
-            <div class="latency-row"><span class="latency-name">Vercel edge</span><div class="latency-track"><div class="latency-fill good" style="width: 7%;"></div></div><span class="latency-ms">10ms</span></div>
-            <div class="latency-row"><span class="latency-name">Fluid Compute</span><div class="latency-track"><div class="latency-fill good" style="width: 27%;"></div></div><span class="latency-ms">40ms</span></div>
-            <div class="latency-row"><span class="latency-name">Neon query</span><div class="latency-track"><div class="latency-fill good" style="width: 20%;"></div></div><span class="latency-ms">30ms</span></div>
-            <div class="latency-row"><span class="latency-name">R2 cached</span><div class="latency-track"><div class="latency-fill good" style="width: 7%;"></div></div><span class="latency-ms">10ms</span></div>
-            <div class="latency-row"><span class="latency-name">Response</span><div class="latency-track"><div class="latency-fill good" style="width: 20%;"></div></div><span class="latency-ms">30ms</span></div>
-            <div class="latency-row"><span class="latency-name">&nbsp;</span><div class="latency-track" style="opacity:0;"><div class="latency-fill" style="width: 0%;"></div></div><span class="latency-ms">&nbsp;</span></div>
-            <div class="latency-total"><span class="latency-total-label">Always warm</span><span class="latency-total-val good mono">150<span class="unit">ms</span></span></div>
+          <div class="cost-display">
+            <div class="cost-row">
+              <span class="cost-label">Today (AWS)</span>
+              <span class="cost-amount bad mono"><span class="currency">$</span><span id="costCurrent">5,420</span><span class="per">/mo</span></span>
+            </div>
+            <div class="cost-row divider">
+              <span class="cost-label">After Phase 1+2</span>
+              <span class="cost-amount good mono"><span class="currency">$</span><span id="costRecommended">880</span><span class="per">/mo</span></span>
+            </div>
+            <div class="savings-row">
+              <div>
+                <div class="savings-label">Monthly saving</div>
+                <div class="savings-amount mono">$<span id="savings">4,540</span><span class="savings-multiplier" id="multiplier">6.2× cheaper</span></div>
+              </div>
+              <div style="text-align: right;">
+                <div class="savings-label">Annual</div>
+                <div class="savings-amount mono">$<span id="savingsYear">54,480</span></div>
+              </div>
+            </div>
           </div>
         </div>
       </div>
     </div>
 
     <!-- PRICING TABLE -->
-    <div class="tab-panel" id="tab-scale">
-      <h2 class="section-h2">Pricing breakdown. <span class="muted">Unit price × quantity = cost. Every row cited.</span></h2>
-      <p class="section-lede">The math behind the cost numbers. Move the sliders above and watch the quantity column update. <strong>Every unit price links to the vendor's pricing page</strong> — if a number looks wrong, click <span class="mono" style="color:var(--accent);">src ↗</span> next to it and verify against the source.</p>
-
-      <!-- CURRENT STACK TABLE -->
+    <div class="sec">
       <div class="price-table-wrap">
         <div class="price-table-head">
-          <div class="compare-col-name">Current AWS stack · cost breakdown</div>
-          <span class="compare-tag bad" id="breakdownCurrentTotal">$5,420/mo</span>
+          <div class="name">Today · AWS stack</div>
+          <span class="price-tag bad" id="totalBadTag">$5,420/mo</span>
         </div>
         <table class="price-table bad">
           <thead>
-            <tr>
-              <th>Service</th>
-              <th>Unit price</th>
-              <th>Quantity</th>
-              <th>Cost / mo</th>
-            </tr>
+            <tr><th>Service</th><th>Unit price</th><th>Quantity</th><th>Cost / mo</th></tr>
           </thead>
           <tbody id="priceTableCurrent"></tbody>
           <tfoot>
-            <tr>
-              <td>Total</td>
-              <td></td>
-              <td></td>
-              <td id="priceTableCurrentTotal">$5,420</td>
-            </tr>
+            <tr><td>Total</td><td></td><td></td><td id="priceTableCurrentTotal">$5,420</td></tr>
           </tfoot>
         </table>
       </div>
 
-      <!-- RECOMMENDED STACK TABLE -->
       <div class="price-table-wrap">
         <div class="price-table-head">
-          <div class="compare-col-name">Recommended hybrid · cost breakdown</div>
-          <span class="compare-tag good" id="breakdownRecommendedTotal">$880/mo</span>
+          <div class="name">After Phase 1+2 · hybrid</div>
+          <span class="price-tag good" id="totalGoodTag">$880/mo</span>
         </div>
         <table class="price-table good">
           <thead>
-            <tr>
-              <th>Service</th>
-              <th>Unit price</th>
-              <th>Quantity</th>
-              <th>Cost / mo</th>
-            </tr>
+            <tr><th>Service</th><th>Unit price</th><th>Quantity</th><th>Cost / mo</th></tr>
           </thead>
           <tbody id="priceTableRecommended"></tbody>
           <tfoot>
-            <tr>
-              <td>Total</td>
-              <td></td>
-              <td></td>
-              <td id="priceTableRecommendedTotal">$880</td>
-            </tr>
+            <tr><td>Total</td><td></td><td></td><td id="priceTableRecommendedTotal">$880</td></tr>
           </tfoot>
         </table>
       </div>
 
-      <!-- COST CURVE CHART -->
-      <div class="cost-chart-wrap">
-        <div class="cost-chart-head">
-          <div class="cost-chart-h">Monthly cost vs MAU · log scale</div>
-          <div class="cost-chart-legend">
-            <span class="legend-item"><span class="legend-swatch bad"></span>Current AWS</span>
-            <span class="legend-item"><span class="legend-swatch good"></span>Recommended</span>
-          </div>
-        </div>
-        <svg class="cost-chart-svg" id="costChart" viewBox="0 0 800 320" preserveAspectRatio="none"></svg>
-      </div>
-
-      <!-- MEDIA CALLOUT -->
+      <!-- MEDIA EGRESS CALLOUT -->
       <div class="media-callout">
         <div>
-          <div class="media-callout-label">The biggest single line item</div>
+          <div class="media-label">Biggest single line item</div>
           <h3>S3 egress at $0.09/GB <span class="accent">→</span> R2 at $0/GB.</h3>
-          <p>Mandos serves event posters, venue photos, user clips, and (soon) short video previews. At your current slider position that's <strong id="mediaEgressGB">17,187 GB</strong> of egress per month. On S3 that's <strong id="mediaS3Cost">$1,547/mo</strong>. On R2 that's <strong>$0/mo egress</strong>. Storage cost is comparable. The egress is the savings.</p>
+          <p>With video clips and venue photos at 8MB+ per session, you're sending <strong id="mediaEgressGB">17,187 GB</strong> per month. On S3 that's <strong id="mediaS3Cost">$1,547/mo</strong>. On R2 that's <strong>$0/mo egress</strong>. Same API. Same Prisma. The change is in your bucket URL only.</p>
         </div>
-        <div class="media-callout-stats">
+        <div class="media-stats">
           <div class="media-stat">
-            <div class="media-stat-label">S3 egress / mo</div>
+            <div class="media-stat-label">S3 egress</div>
             <div class="media-stat-val bad mono">$<span id="mediaS3Val">1,547</span></div>
           </div>
           <div class="media-stat">
-            <div class="media-stat-label">R2 egress / mo</div>
+            <div class="media-stat-label">R2 egress</div>
             <div class="media-stat-val good mono">$0</div>
           </div>
         </div>
       </div>
-    </div>
 
-    <!-- DX -->
-    <div class="tab-panel" id="tab-dx">
-      <h2 class="section-h2">Developer experience. <span class="muted">What it feels like to ship.</span></h2>
-      <p class="section-lede">DX matters more than benchmarks at this stage. A team that can ship a feature in a day will out-execute a team waiting on infra. Both stacks deploy in production this week. One of them stops feeling good around month six.</p>
-
-      <div class="compare">
-        <div class="compare-col">
-          <div class="compare-col-head"><div class="compare-col-name">Current AWS DX</div><span class="compare-tag bad">friction grows</span></div>
-          <div>
-            <div class="compare-item"><span class="compare-num">01</span><div class="compare-item-content"><strong>Deploy speed</strong><span>Lambda via SAM/Serverless. ~3-5 min.</span></div><div class="compare-metric neutral">3-5min</div></div>
-            <div class="compare-item"><span class="compare-num">02</span><div class="compare-item-content"><strong>Preview deploys</strong><span>Manual setup. Per-PR stacks via CDK if invested.</span></div><div class="compare-metric bad">manual</div></div>
-            <div class="compare-item"><span class="compare-num">03</span><div class="compare-item-content"><strong>Rollback</strong><span>Lambda version pinning. Manageable but multi-step.</span></div><div class="compare-metric neutral">multi-step</div></div>
-            <div class="compare-item"><span class="compare-num">04</span><div class="compare-item-content"><strong>Local dev parity</strong><span>SAM local. Slow + flaky.</span></div><div class="compare-metric bad">flaky</div></div>
-            <div class="compare-item"><span class="compare-num">05</span><div class="compare-item-content"><strong>Observability</strong><span>CloudWatch (painful) + Sentry.</span></div><div class="compare-metric bad">painful</div></div>
-            <div class="compare-item"><span class="compare-num">06</span><div class="compare-item-content"><strong>Type safety client→server</strong><span>Manual. REST + zod-on-both-ends.</span></div><div class="compare-metric bad">manual</div></div>
-            <div class="compare-item"><span class="compare-num">07</span><div class="compare-item-content"><strong>Cost surprise risk</strong><span>S3 egress + Lambda runaway. Set billing alarms.</span></div><div class="compare-metric bad">medium</div></div>
+      <!-- RDS ALTERNATIVES -->
+      <div class="rds">
+        <div class="rds-label">Second biggest line item</div>
+        <h3>RDS Postgres → <span class="accent">three serverless alternatives</span>.</h3>
+        <p>RDS db.t3.medium runs ~$50/mo base, but multi-AZ + automated backups + 100 GB GP3 storage easily lands at <strong>$200-$500/mo</strong><a href="https://aws.amazon.com/rds/postgresql/pricing/" target="_blank" rel="noopener" class="src">src ↗</a>. For 1,500 users this is wildly over-provisioned. Three Postgres alternatives that keep <strong>Prisma + your existing schema</strong> intact:</p>
+        <div class="rds-alts">
+          <div class="rds-alt">
+            <div class="rds-alt-name">Neon<a href="https://neon.tech/pricing" target="_blank" rel="noopener" class="src">src ↗</a></div>
+            <div class="rds-alt-price">$19 / mo Launch tier</div>
+            <div class="rds-alt-desc">Serverless. Auto-pause when idle. Branching for previews. Strongest pick for Mandos's stage.</div>
           </div>
-        </div>
-        <div class="compare-col">
-          <div class="compare-col-head"><div class="compare-col-name">Recommended hybrid DX</div><span class="compare-tag good">stays good</span></div>
-          <div>
-            <div class="compare-item"><span class="compare-num">01</span><div class="compare-item-content"><strong>Deploy speed</strong><span>git push → live in ~90s on Vercel<a href="https://vercel.com/docs/deployments" target="_blank" rel="noopener" class="src">src ↗</a>.</span></div><div class="compare-metric good">90s</div></div>
-            <div class="compare-item"><span class="compare-num">02</span><div class="compare-item-content"><strong>Preview deploys</strong><span>Auto per-PR. Neon DB branching pairs with it.</span></div><div class="compare-metric good">auto</div></div>
-            <div class="compare-item"><span class="compare-num">03</span><div class="compare-item-content"><strong>Rollback</strong><span>One click in Vercel dashboard. Instant.</span></div><div class="compare-metric good">1-click</div></div>
-            <div class="compare-item"><span class="compare-num">04</span><div class="compare-item-content"><strong>Local dev parity</strong><span>next dev runs the same code that ships.</span></div><div class="compare-metric good">full</div></div>
-            <div class="compare-item"><span class="compare-num">05</span><div class="compare-item-content"><strong>Observability</strong><span>Vercel logs + traces + Sentry + Axiom. Single pane.</span></div><div class="compare-metric good">unified</div></div>
-            <div class="compare-item"><span class="compare-num">06</span><div class="compare-item-content"><strong>Type safety client→server</strong><span>tRPC + Prisma = end-to-end types, no codegen.</span></div><div class="compare-metric good">e2e</div></div>
-            <div class="compare-item"><span class="compare-num">07</span><div class="compare-item-content"><strong>Cost surprise risk</strong><span>Vercel per-invocation. R2 zero egress.</span></div><div class="compare-metric good">predictable</div></div>
+          <div class="rds-alt">
+            <div class="rds-alt-name">Supabase<a href="https://supabase.com/pricing" target="_blank" rel="noopener" class="src">src ↗</a></div>
+            <div class="rds-alt-price">$25 / mo Pro tier</div>
+            <div class="rds-alt-desc">Postgres + bundled Auth + Storage + Realtime. Heavier platform but consolidates services.</div>
+          </div>
+          <div class="rds-alt">
+            <div class="rds-alt-name">DigitalOcean Managed<a href="https://www.digitalocean.com/pricing/managed-databases" target="_blank" rel="noopener" class="src">src ↗</a></div>
+            <div class="rds-alt-price">$15 / mo · 1 GB tier</div>
+            <div class="rds-alt-desc">Predictable flat pricing, no surprise bills. Cheapest if you want plain managed Postgres without serverless magic.</div>
           </div>
         </div>
       </div>
     </div>
 
-    <!-- REAL-TIME -->
-    <div class="tab-panel" id="tab-realtime">
-      <h2 class="section-h2">Real-time. <span class="muted">Three drop-in options.</span></h2>
-      <p class="section-lede">Friday-8pm presence spike. Half the user base opens the app at once. Socket.io on a single Node host caps around 10K concurrent connections per process<a href="https://socket.io/docs/v4/performance-tuning/" target="_blank" rel="noopener" class="src">src ↗</a>. Three real options forward, each keeps Postgres + Prisma intact (no DB migration).</p>
+    <!-- REAL-TIME OPTIONS -->
+    <div class="sec">
+      <div class="sec-kicker">05 · Real-time</div>
+      <h2>Three drop-in WebSocket options. <span class="muted">All keep Postgres + Prisma.</span></h2>
+      <p class="sec-lede">When Socket.io's single-node ceiling actually hurts — when you're seeing dropped messages at Friday-8pm — these three are drop-in replacements. Pick by how managed you want it.</p>
 
-      <div class="compare">
-        <div class="compare-col">
-          <div class="compare-col-head"><div class="compare-col-name">Today · Socket.io single node</div><span class="compare-tag bad">ceiling</span></div>
-          <div>
-            <div class="compare-item"><span class="compare-num">01</span><div class="compare-item-content"><strong>0–10K concurrent</strong><span>Single Node process handles it. Fine.</span></div><div class="compare-metric good">OK</div></div>
-            <div class="compare-item"><span class="compare-num">02</span><div class="compare-item-content"><strong>10K–25K concurrent</strong><span>Memory pressure, GC pauses, dropped messages.</span></div><div class="compare-metric bad">degraded</div></div>
-            <div class="compare-item"><span class="compare-num">03</span><div class="compare-item-content"><strong>25K+ concurrent</strong><span>Process restarts. Users see disconnected map.</span></div><div class="compare-metric bad">breaks</div></div>
-            <div class="compare-item"><span class="compare-num">04</span><div class="compare-item-content"><strong>Shard with Redis adapter<a href="https://socket.io/docs/v4/redis-adapter/" target="_blank" rel="noopener" class="src">src ↗</a></strong><span>2 weeks of work. Cross-server latency. Brittle on deploy.</span></div><div class="compare-metric neutral">~2 weeks</div></div>
-          </div>
+      <div class="rt-options">
+        <div class="rt-opt">
+          <div class="rt-opt-num">01 · fastest to ship</div>
+          <h4>Pusher Channels<a href="https://pusher.com/channels/pricing" target="_blank" rel="noopener" class="src">src ↗</a></h4>
+          <div class="rt-opt-price">$49/mo Pro · 200K daily msgs · 500 concurrent</div>
+          <p>Managed WebSockets. Server SDK swap, channel naming swap. Same Socket.io-like client surface. <strong>Recommended pick.</strong></p>
         </div>
-        <div class="compare-col">
-          <div class="compare-col-head"><div class="compare-col-name">Recommended · three real options</div><span class="compare-tag good">managed</span></div>
-          <div>
-            <div class="compare-item"><span class="compare-num">01</span><div class="compare-item-content"><strong>Pusher Channels<a href="https://pusher.com/channels/pricing" target="_blank" rel="noopener" class="src">src ↗</a></strong><span>$49/mo for 200K daily messages, 500 concurrent. Managed. Fastest to ship. Same client APIs as Socket.io.</span></div><div class="compare-metric good">$49<small>start</small></div></div>
-            <div class="compare-item"><span class="compare-num">02</span><div class="compare-item-content"><strong>Ably<a href="https://ably.com/pricing" target="_blank" rel="noopener" class="src">src ↗</a></strong><span>Generous free tier, scale-grade SLAs. Alternative to Pusher.</span></div><div class="compare-metric good">free<small>start</small></div></div>
-            <div class="compare-item"><span class="compare-num">03</span><div class="compare-item-content"><strong>Cloudflare Durable Objects<a href="https://developers.cloudflare.com/durable-objects/platform/pricing/" target="_blank" rel="noopener" class="src">src ↗</a></strong><span>$0.15/M reqs + $12.50/M GB-s. One object per venue. Cheapest at scale, more work to onboard.</span></div><div class="compare-metric good">edge<small>auto-shard</small></div></div>
-          </div>
+        <div class="rt-opt">
+          <div class="rt-opt-num">02 · generous free tier</div>
+          <h4>Ably<a href="https://ably.com/pricing" target="_blank" rel="noopener" class="src">src ↗</a></h4>
+          <div class="rt-opt-price">Free up to 6M msgs/mo · scales</div>
+          <p>Alternative to Pusher. Bigger free tier, scale-grade SLAs. Worth comparing if you want a longer free runway.</p>
+        </div>
+        <div class="rt-opt">
+          <div class="rt-opt-num">03 · cheapest at scale</div>
+          <h4>Cloudflare Durable Objects<a href="https://developers.cloudflare.com/durable-objects/platform/pricing/" target="_blank" rel="noopener" class="src">src ↗</a></h4>
+          <div class="rt-opt-price">$0.15/M reqs + $12.50/M GB-s</div>
+          <p>One Object per venue. Auto-shards globally. Cheapest above 100K concurrent but heavier onboarding.</p>
         </div>
       </div>
     </div>
 
-    <!-- ===== LIVE SIMULATOR ===== -->
-    <section id="sim">
-      <div class="simulator">
-        <div class="sim-head">
-          <div>
-            <div class="sim-title">Live request simulation.<br><span class="muted">Lambda cold-path vs Fluid warm-path.</span></div>
-            <div class="sim-sub">Fire a request from Hong Kong, watch it traverse both stacks in real time. Toggle cold start to simulate Lambda's first-hit behavior.</div>
-            <label class="sim-cold-toggle"><input type="checkbox" id="coldStart" checked><span>Cold start mode</span></label>
-          </div>
-          <button class="sim-btn" id="simBtn"><span class="sim-btn-icon"></span>Send Request</button>
-        </div>
-        <div class="sim-body">
-          <div class="sim-col">
-            <div class="sim-stack-head">
-              <div class="sim-stack-name bad">Current Stack</div>
-              <div class="sim-stack-tag">Express · Lambda · S3</div>
-            </div>
-            <div class="sim-phases" id="simPhasesBad">
-              <div class="sim-phase bad" data-time="30"><span class="sim-phase-name">DNS lookup</span><div class="sim-phase-bar"><div class="sim-phase-fill"></div></div><span class="sim-phase-time">30ms</span></div>
-              <div class="sim-phase bad" data-time="50"><span class="sim-phase-name">CloudFront edge</span><div class="sim-phase-bar"><div class="sim-phase-fill"></div></div><span class="sim-phase-time">50ms</span></div>
-              <div class="sim-phase bad" data-time="30"><span class="sim-phase-name">API Gateway</span><div class="sim-phase-bar"><div class="sim-phase-fill"></div></div><span class="sim-phase-time">30ms</span></div>
-              <div class="sim-phase cold" data-time="800" data-warm="80"><span class="sim-phase-name">Lambda exec</span><div class="sim-phase-bar"><div class="sim-phase-fill"></div></div><span class="sim-phase-time">800ms</span></div>
-              <div class="sim-phase bad" data-time="60"><span class="sim-phase-name">RDS Postgres</span><div class="sim-phase-bar"><div class="sim-phase-fill"></div></div><span class="sim-phase-time">60ms</span></div>
-              <div class="sim-phase bad" data-time="100"><span class="sim-phase-name">S3 fetch</span><div class="sim-phase-bar"><div class="sim-phase-fill"></div></div><span class="sim-phase-time">100ms</span></div>
-              <div class="sim-phase bad" data-time="80"><span class="sim-phase-name">Response</span><div class="sim-phase-bar"><div class="sim-phase-fill"></div></div><span class="sim-phase-time">80ms</span></div>
-            </div>
-            <div class="sim-total"><span class="sim-total-label">Round trip</span><span class="sim-total-val bad mono"><span id="totalBad">1150</span><span class="unit">ms</span></span></div>
-          </div>
-          <div class="sim-col">
-            <div class="sim-stack-head">
-              <div class="sim-stack-name good">Recommended Stack</div>
-              <div class="sim-stack-tag">Next.js · Fluid · R2</div>
-            </div>
-            <div class="sim-phases" id="simPhasesGood">
-              <div class="sim-phase good" data-time="30"><span class="sim-phase-name">DNS lookup</span><div class="sim-phase-bar"><div class="sim-phase-fill"></div></div><span class="sim-phase-time">30ms</span></div>
-              <div class="sim-phase good" data-time="10"><span class="sim-phase-name">Vercel edge</span><div class="sim-phase-bar"><div class="sim-phase-fill"></div></div><span class="sim-phase-time">10ms</span></div>
-              <div class="sim-phase good" data-time="40"><span class="sim-phase-name">Fluid Compute</span><div class="sim-phase-bar"><div class="sim-phase-fill"></div></div><span class="sim-phase-time">40ms</span></div>
-              <div class="sim-phase good" data-time="30"><span class="sim-phase-name">Neon Postgres</span><div class="sim-phase-bar"><div class="sim-phase-fill"></div></div><span class="sim-phase-time">30ms</span></div>
-              <div class="sim-phase good" data-time="10"><span class="sim-phase-name">R2 cached</span><div class="sim-phase-bar"><div class="sim-phase-fill"></div></div><span class="sim-phase-time">10ms</span></div>
-              <div class="sim-phase good" data-time="30"><span class="sim-phase-name">Response</span><div class="sim-phase-bar"><div class="sim-phase-fill"></div></div><span class="sim-phase-time">30ms</span></div>
-              <div class="sim-phase" style="visibility: hidden;"><span class="sim-phase-name">spacer</span><div class="sim-phase-bar"><div class="sim-phase-fill"></div></div><span class="sim-phase-time">0</span></div>
-            </div>
-            <div class="sim-total"><span class="sim-total-label">Round trip</span><span class="sim-total-val good mono"><span id="totalGood">150</span><span class="unit">ms</span></span></div>
-          </div>
-        </div>
-        <div class="sim-verdict">
-          <div><div class="sim-verdict-label">Speedup factor</div><div class="sim-verdict-val"><span class="delta mono" id="verdictMultiplier">7.7×</span> faster on the recommended stack</div></div>
-          <div><div class="sim-verdict-label">Time saved per request</div><div class="sim-verdict-val"><span class="delta mono" id="verdictSaved">1.00</span> seconds</div></div>
-        </div>
-      </div>
-    </section>
+    <!-- TOPOLOGY -->
+    <div class="sec" id="topology">
+      <div class="sec-kicker">06 · What it looks like in production</div>
+      <h2>Live traffic topology. <span class="muted">15K concurrent users routing through the stack.</span></h2>
+      <p class="sec-lede">After Phase 1+2 is in. Move the MAU slider above and watch the numbers below scale. <strong>The Billing column is live</strong>, the regional split scales with concurrent users, the per-hour cost ties back to the table.</p>
 
-    <!-- ===== TRAFFIC TOPOLOGY ===== -->
-    <section id="topology">
       <div class="topology">
         <div class="topology-head">
           <div>
-            <h2><span id="concurrentUsers">15,000</span> active users right now.<br><span class="muted">Spread across the night. Hitting the recommended stack.</span></h2>
-            <p>What the request topology looks like at peak. Users in five regions hit Cloudflare's edge first, then route to Vercel Fluid, then to Neon Postgres, R2 storage, or Pusher for real-time. The billing column is live and ties back to the sliders above.</p>
+            <h3><span id="concurrentUsers">15,000</span> active right now.<br><span class="muted">Across 5 regions. Hitting the post-migration stack.</span></h3>
+            <p>Users in five regions hit Cloudflare's edge first, route to Vercel/Lambda, then to Neon Postgres, R2 storage, and Pusher for real-time. Billing updates with the sliders.</p>
           </div>
           <div class="topology-stats">
             <div class="topology-stat">
@@ -1371,136 +976,76 @@
         <div class="topology-grid">
 
           <div class="topology-col">
-            <div class="topology-col-head"><span>Stage 01 · Users</span><span class="stage-num">5 regions</span></div>
+            <div class="topology-col-head"><span>Users</span><span class="stage-num">5 regions</span></div>
             <div class="topology-col-cards">
-              <div class="topology-card user">
-                <div><div class="topology-card-name">Hong Kong</div><div class="topology-card-sub">flagship region</div></div>
-                <div class="topology-card-val" id="usersHK">4,200<span class="unit">users</span></div>
-              </div>
-              <div class="topology-card user">
-                <div><div class="topology-card-name">Bangkok</div><div class="topology-card-sub">growing</div></div>
-                <div class="topology-card-val" id="usersBKK">3,100<span class="unit">users</span></div>
-              </div>
-              <div class="topology-card user">
-                <div><div class="topology-card-name">Tokyo</div><div class="topology-card-sub">night scene</div></div>
-                <div class="topology-card-val" id="usersTYO">3,800<span class="unit">users</span></div>
-              </div>
-              <div class="topology-card user">
-                <div><div class="topology-card-name">Singapore</div><div class="topology-card-sub">expat heavy</div></div>
-                <div class="topology-card-val" id="usersSG">2,400<span class="unit">users</span></div>
-              </div>
-              <div class="topology-card user">
-                <div><div class="topology-card-name">Other</div><div class="topology-card-sub">KL, Taipei, etc</div></div>
-                <div class="topology-card-val" id="usersOther">1,500<span class="unit">users</span></div>
-              </div>
+              <div class="topology-card user"><div><div class="topology-card-name">Hong Kong</div><div class="topology-card-sub">flagship</div></div><div class="topology-card-val" id="usersHK">4,200</div></div>
+              <div class="topology-card user"><div><div class="topology-card-name">Bangkok</div><div class="topology-card-sub">growing</div></div><div class="topology-card-val" id="usersBKK">3,100</div></div>
+              <div class="topology-card user"><div><div class="topology-card-name">Tokyo</div><div class="topology-card-sub">night scene</div></div><div class="topology-card-val" id="usersTYO">3,800</div></div>
+              <div class="topology-card user"><div><div class="topology-card-name">Singapore</div><div class="topology-card-sub">expats</div></div><div class="topology-card-val" id="usersSG">2,400</div></div>
+              <div class="topology-card user"><div><div class="topology-card-name">Other</div><div class="topology-card-sub">KL, Taipei</div></div><div class="topology-card-val" id="usersOther">1,500</div></div>
             </div>
           </div>
 
           <div class="topology-col">
-            <div class="topology-col-head"><span>Stage 02 · Edge</span><span class="stage-num">~10ms</span></div>
+            <div class="topology-col-head"><span>Edge</span><span class="stage-num">~10ms</span></div>
             <div class="topology-col-cards">
-              <div class="topology-card edge">
-                <div><div class="topology-card-name">Cloudflare CDN</div><div class="topology-card-sub">300+ POPs · DDoS shield</div></div>
-                <div class="topology-card-val muted">free</div>
-              </div>
-              <div class="topology-card edge">
-                <div><div class="topology-card-name">Vercel Edge</div><div class="topology-card-sub">routes to nearest region</div></div>
-                <div class="topology-card-val muted">10ms</div>
-              </div>
-              <div class="topology-card edge">
-                <div><div class="topology-card-name">R2 Cache</div><div class="topology-card-sub">media at edge</div></div>
-                <div class="topology-card-val muted">$0 egress</div>
-              </div>
-              <div class="topology-card edge">
-                <div><div class="topology-card-name">Pusher Edge</div><div class="topology-card-sub">WebSocket fanout</div></div>
-                <div class="topology-card-val muted">~30ms</div>
-              </div>
-              <div class="topology-card edge">
-                <div><div class="topology-card-name">Rate limiting</div><div class="topology-card-sub">per IP / per user</div></div>
-                <div class="topology-card-val muted">CF Workers</div>
-              </div>
+              <div class="topology-card edge"><div><div class="topology-card-name">Cloudflare CDN</div><div class="topology-card-sub">DDoS + cache</div></div><div class="topology-card-val muted">free</div></div>
+              <div class="topology-card edge"><div><div class="topology-card-name">Vercel Edge</div><div class="topology-card-sub">routes regional</div></div><div class="topology-card-val muted">10ms</div></div>
+              <div class="topology-card edge"><div><div class="topology-card-name">R2 Cache</div><div class="topology-card-sub">media at edge</div></div><div class="topology-card-val muted">$0 egress</div></div>
+              <div class="topology-card edge"><div><div class="topology-card-name">Pusher Edge</div><div class="topology-card-sub">WS fanout</div></div><div class="topology-card-val muted">~30ms</div></div>
+              <div class="topology-card edge"><div><div class="topology-card-name">Rate limiting</div><div class="topology-card-sub">per IP/user</div></div><div class="topology-card-val muted">CF Workers</div></div>
             </div>
           </div>
 
           <div class="topology-col">
-            <div class="topology-col-head"><span>Stage 03 · Compute + Data</span><span class="stage-num">~80ms</span></div>
+            <div class="topology-col-head"><span>Compute + Data</span><span class="stage-num">~80ms</span></div>
             <div class="topology-col-cards">
-              <div class="topology-card compute">
-                <div><div class="topology-card-name">Vercel Fluid</div><div class="topology-card-sub">always warm</div></div>
-                <div class="topology-card-val muted">40ms</div>
-              </div>
-              <div class="topology-card compute">
-                <div><div class="topology-card-name">Neon Postgres</div><div class="topology-card-sub">read replicas</div></div>
-                <div class="topology-card-val muted">30ms</div>
-              </div>
-              <div class="topology-card compute">
-                <div><div class="topology-card-name">R2 Storage</div><div class="topology-card-sub">video clips, posters</div></div>
-                <div class="topology-card-val muted">10ms</div>
-              </div>
-              <div class="topology-card compute">
-                <div><div class="topology-card-name">Pusher Channels</div><div class="topology-card-sub">presence broadcast</div></div>
-                <div class="topology-card-val muted">30ms</div>
-              </div>
-              <div class="topology-card compute">
-                <div><div class="topology-card-name">Upstash Redis</div><div class="topology-card-sub">cache, session</div></div>
-                <div class="topology-card-val muted">5ms</div>
-              </div>
+              <div class="topology-card compute"><div><div class="topology-card-name">Vercel Fluid</div><div class="topology-card-sub">hot endpoints</div></div><div class="topology-card-val muted">40ms</div></div>
+              <div class="topology-card compute"><div><div class="topology-card-name">AWS Lambda</div><div class="topology-card-sub">cold endpoints</div></div><div class="topology-card-val muted">80ms</div></div>
+              <div class="topology-card compute"><div><div class="topology-card-name">Neon Postgres</div><div class="topology-card-sub">serverless</div></div><div class="topology-card-val muted">30ms</div></div>
+              <div class="topology-card compute"><div><div class="topology-card-name">R2 Storage</div><div class="topology-card-sub">media</div></div><div class="topology-card-val muted">10ms</div></div>
+              <div class="topology-card compute"><div><div class="topology-card-name">Upstash Redis</div><div class="topology-card-sub">cache</div></div><div class="topology-card-val muted">5ms</div></div>
             </div>
           </div>
 
           <div class="topology-col">
-            <div class="topology-col-head"><span>Stage 04 · Billing / hr</span><span class="stage-num">live</span></div>
+            <div class="topology-col-head"><span>Billing / hr</span><span class="stage-num">live</span></div>
             <div class="topology-col-cards">
-              <div class="topology-card billing">
-                <div><div class="topology-card-name">Compute</div><div class="topology-card-sub">Fluid invocations</div></div>
-                <div class="topology-card-val" id="billCompute">$0.42</div>
-              </div>
-              <div class="topology-card billing">
-                <div><div class="topology-card-name">Database</div><div class="topology-card-sub">Neon queries</div></div>
-                <div class="topology-card-val" id="billDB">$0.06</div>
-              </div>
-              <div class="topology-card billing">
-                <div><div class="topology-card-name">Real-time</div><div class="topology-card-sub">Pusher Channels</div></div>
-                <div class="topology-card-val" id="billRT">$0.18</div>
-              </div>
-              <div class="topology-card billing zero">
-                <div><div class="topology-card-name">Media egress</div><div class="topology-card-sub">R2 (saved vs S3)</div></div>
-                <div class="topology-card-val">$0.00</div>
-              </div>
-              <div class="topology-card billing total">
-                <div><div class="topology-card-name">Total / hour</div><div class="topology-card-sub">at this load</div></div>
-                <div class="topology-card-val" id="billTotal">$0.78</div>
-              </div>
+              <div class="topology-card billing"><div><div class="topology-card-name">Compute</div><div class="topology-card-sub">Fluid + Lambda</div></div><div class="topology-card-val" id="billCompute">$0.42</div></div>
+              <div class="topology-card billing"><div><div class="topology-card-name">Database</div><div class="topology-card-sub">Neon queries</div></div><div class="topology-card-val" id="billDB">$0.06</div></div>
+              <div class="topology-card billing"><div><div class="topology-card-name">Real-time</div><div class="topology-card-sub">Pusher</div></div><div class="topology-card-val" id="billRT">$0.18</div></div>
+              <div class="topology-card billing zero"><div><div class="topology-card-name">Media egress</div><div class="topology-card-sub">R2 vs S3</div></div><div class="topology-card-val">$0.00</div></div>
+              <div class="topology-card billing total"><div><div class="topology-card-name">Total / hr</div><div class="topology-card-sub">this load</div></div><div class="topology-card-val" id="billTotal">$0.78</div></div>
             </div>
           </div>
 
         </div>
         <div class="topology-footer">
-          <div class="topology-foot-stat">
-            <div class="topology-foot-label">Concurrent users</div>
+          <div>
+            <div class="topology-foot-label">Concurrent</div>
             <div class="topology-foot-val accent" id="footConcurrent">15,000</div>
           </div>
-          <div class="topology-foot-stat">
-            <div class="topology-foot-label">Avg P95 latency</div>
+          <div>
+            <div class="topology-foot-label">P95 latency</div>
             <div class="topology-foot-val accent">~180ms</div>
           </div>
-          <div class="topology-foot-stat">
+          <div>
             <div class="topology-foot-label">S3 egress saved / mo</div>
             <div class="topology-foot-val good" id="footEgressSaved">$1,547</div>
           </div>
-          <div class="topology-foot-stat">
-            <div class="topology-foot-label">If on AWS Lambda instead</div>
+          <div>
+            <div class="topology-foot-label">If on AWS instead / hr</div>
             <div class="topology-foot-val" style="color:var(--bad);" id="footAwsCostHr">$5.21 / hr</div>
           </div>
         </div>
       </div>
-    </section>
+    </div>
 
-    <!-- ===== SOURCES ===== -->
-    <section id="sources">
+    <!-- SOURCES -->
+    <div class="sec" id="sources">
       <div class="sources">
         <div class="sources-head">
-          <h3>Pricing sources · every claim above is verifiable</h3>
+          <h3>Pricing sources · every claim is verifiable</h3>
           <span class="sources-tag">As of May 2026</span>
         </div>
         <div class="sources-grid">
@@ -1511,35 +1056,30 @@
           <a href="https://aws.amazon.com/elasticache/pricing/" target="_blank" rel="noopener"><strong>AWS ElastiCache</strong>aws.amazon.com/elasticache/pricing</a>
           <a href="https://aws.amazon.com/ec2/pricing/on-demand/" target="_blank" rel="noopener"><strong>AWS EC2</strong>aws.amazon.com/ec2/pricing</a>
           <a href="https://vercel.com/pricing" target="_blank" rel="noopener"><strong>Vercel</strong>vercel.com/pricing</a>
-          <a href="https://vercel.com/docs/fluid-compute" target="_blank" rel="noopener"><strong>Vercel Fluid Compute</strong>vercel.com/docs/fluid-compute</a>
-          <a href="https://vercel.com/docs/ai-gateway" target="_blank" rel="noopener"><strong>Vercel AI Gateway</strong>vercel.com/docs/ai-gateway</a>
-          <a href="https://vercel.com/docs/cron-jobs" target="_blank" rel="noopener"><strong>Vercel Cron</strong>vercel.com/docs/cron-jobs</a>
+          <a href="https://vercel.com/docs/fluid-compute" target="_blank" rel="noopener"><strong>Vercel Fluid</strong>vercel.com/docs/fluid-compute</a>
           <a href="https://developers.cloudflare.com/r2/pricing/" target="_blank" rel="noopener"><strong>Cloudflare R2</strong>developers.cloudflare.com/r2/pricing</a>
-          <a href="https://developers.cloudflare.com/workers/platform/pricing/" target="_blank" rel="noopener"><strong>Cloudflare Workers</strong>developers.cloudflare.com/workers/platform/pricing</a>
-          <a href="https://developers.cloudflare.com/durable-objects/platform/pricing/" target="_blank" rel="noopener"><strong>Cloudflare Durable Objects</strong>developers.cloudflare.com/durable-objects/platform/pricing</a>
+          <a href="https://developers.cloudflare.com/durable-objects/platform/pricing/" target="_blank" rel="noopener"><strong>CF Durable Objects</strong>cloudflare.com/durable-objects/pricing</a>
           <a href="https://pusher.com/channels/pricing" target="_blank" rel="noopener"><strong>Pusher Channels</strong>pusher.com/channels/pricing</a>
           <a href="https://ably.com/pricing" target="_blank" rel="noopener"><strong>Ably</strong>ably.com/pricing</a>
           <a href="https://neon.tech/pricing" target="_blank" rel="noopener"><strong>Neon Postgres</strong>neon.tech/pricing</a>
+          <a href="https://supabase.com/pricing" target="_blank" rel="noopener"><strong>Supabase</strong>supabase.com/pricing</a>
+          <a href="https://www.digitalocean.com/pricing/managed-databases" target="_blank" rel="noopener"><strong>DigitalOcean Postgres</strong>digitalocean.com/managed-databases</a>
           <a href="https://upstash.com/pricing" target="_blank" rel="noopener"><strong>Upstash Redis</strong>upstash.com/pricing</a>
           <a href="https://www.inngest.com/pricing" target="_blank" rel="noopener"><strong>Inngest</strong>inngest.com/pricing</a>
           <a href="https://n8n.io/pricing/" target="_blank" rel="noopener"><strong>n8n</strong>n8n.io/pricing</a>
           <a href="https://firebase.google.com/pricing" target="_blank" rel="noopener"><strong>Firebase</strong>firebase.google.com/pricing</a>
           <a href="https://stripe.com/pricing" target="_blank" rel="noopener"><strong>Stripe</strong>stripe.com/pricing</a>
-          <a href="https://www.twilio.com/en-us/pricing" target="_blank" rel="noopener"><strong>Twilio</strong>twilio.com/pricing</a>
-          <a href="https://sendgrid.com/pricing/" target="_blank" rel="noopener"><strong>SendGrid</strong>sendgrid.com/pricing</a>
-          <a href="https://sentry.io/pricing/" target="_blank" rel="noopener"><strong>Sentry</strong>sentry.io/pricing</a>
         </div>
       </div>
-    </section>
+    </div>
 
   </div>
 
-  <!-- ===== PRODUCT PANEL ===== -->
   <div class="top-panel" id="top-product">
     <div class="product-placeholder">
       <h2><em>Product</em> next.</h2>
-      <p>This section will hold the product-side work: behaviour design, growth loops, monetisation paths, and how the "I'm out" mechanic ties to the revenue model. Drafting in parallel with the engineering proposal.</p>
-      <div class="next">Coming soon · linked from the review</div>
+      <p>This section will hold the product-side work: behaviour design, growth loops, monetisation paths, how the "I'm out" mechanic ties to revenue. Drafting in parallel with the engineering proposal.</p>
+      <div class="next">Coming soon</div>
     </div>
   </div>
 
@@ -1556,7 +1096,6 @@
     mauPosition: 60,
     sessPerMo: 22,
     payloadMB: 8,
-    simulating: false,
   };
 
   function positionToMAU(pos) {
@@ -1571,16 +1110,10 @@
     return Math.round(n).toString();
   }
   function fmtMoney(n) { return Math.round(n).toLocaleString(); }
-  function fmtMoneyDec(n) { return n.toFixed(2); }
-
-  // ====================================================================
-  //  COST MODEL · with quantity breakdowns for the table
-  // ====================================================================
 
   function currentStackCost(mau, sess, payloadMB) {
     const bandwidthGB = mau * sess * payloadMB / 1024;
     const reqsM = (mau * sess * 8) / 1_000_000;
-    // GB-s = 512MB × 200ms = 0.1 GB-s per req
     const gbs = reqsM * 1_000_000 * 0.1;
 
     const lambdaReqs = reqsM * 0.20;
@@ -1588,7 +1121,7 @@
     const apiGw = reqsM * 3.50;
     const s3Storage = (mau / 1000) * 1.8;
     const s3Egress = bandwidthGB * 0.09;
-    const rds = 80 + (mau / 1000) * 1.5;
+    const rds = 180 + (mau / 1000) * 1.5;
     const elasticache = 30 + (mau / 1000) * 0.7;
     const socketNodes = Math.ceil(mau / 8000);
     const socket = 60 + socketNodes * 40;
@@ -1596,15 +1129,15 @@
     const other = 80 + (mau / 1000) * 0.4;
 
     const rows = [
-      { name: 'AWS Lambda (requests)', detail: 'Function invocations', unit: '$0.20 / 1M reqs', unitLink: 'https://aws.amazon.com/lambda/pricing/', qty: reqsM.toFixed(2) + 'M reqs', amount: lambdaReqs },
-      { name: 'AWS Lambda (compute)', detail: '~200ms @ 512MB avg', unit: '$0.0000166667 / GB-s', unitLink: 'https://aws.amazon.com/lambda/pricing/', qty: fmt(gbs) + ' GB-s', amount: lambdaCompute },
+      { name: 'AWS Lambda (requests)', detail: 'function invocations', unit: '$0.20 / 1M reqs', unitLink: 'https://aws.amazon.com/lambda/pricing/', qty: reqsM.toFixed(2) + 'M reqs', amount: lambdaReqs },
+      { name: 'AWS Lambda (compute)', detail: '~200ms @ 512MB', unit: '$0.0000166667 / GB-s', unitLink: 'https://aws.amazon.com/lambda/pricing/', qty: fmt(gbs) + ' GB-s', amount: lambdaCompute },
       { name: 'API Gateway', detail: 'REST calls', unit: '$3.50 / 1M calls', unitLink: 'https://aws.amazon.com/api-gateway/pricing/', qty: reqsM.toFixed(2) + 'M calls', amount: apiGw },
-      { name: 'AWS S3 storage', detail: 'Object storage', unit: '$0.023 / GB', unitLink: 'https://aws.amazon.com/s3/pricing/', qty: fmt(mau * 0.04) + ' GB', amount: s3Storage },
-      { name: 'AWS S3 egress', detail: 'Outbound bandwidth', unit: '$0.09 / GB', unitLink: 'https://aws.amazon.com/s3/pricing/', qty: fmt(bandwidthGB) + ' GB', amount: s3Egress },
-      { name: 'RDS Postgres', detail: 'db.t3.medium + scaling', unit: '$50-80 / mo base', unitLink: 'https://aws.amazon.com/rds/postgresql/pricing/', qty: '1 instance', amount: rds },
+      { name: 'AWS S3 storage', detail: 'object storage', unit: '$0.023 / GB', unitLink: 'https://aws.amazon.com/s3/pricing/', qty: fmt(mau * 0.04) + ' GB', amount: s3Storage },
+      { name: 'AWS S3 egress', detail: 'outbound bandwidth', unit: '$0.09 / GB', unitLink: 'https://aws.amazon.com/s3/pricing/', qty: fmt(bandwidthGB) + ' GB', amount: s3Egress },
+      { name: 'RDS Postgres', detail: 'db.t3.medium + multi-AZ + backups', unit: '$180-500 / mo', unitLink: 'https://aws.amazon.com/rds/postgresql/pricing/', qty: '1 instance', amount: rds },
       { name: 'ElastiCache Redis', detail: 't3.micro + scaling', unit: '$25-50 / mo base', unitLink: 'https://aws.amazon.com/elasticache/pricing/', qty: '1 instance', amount: elasticache },
-      { name: 'Socket.io on EC2', detail: 't3.medium nodes for WS', unit: '$30 / node / mo', unitLink: 'https://aws.amazon.com/ec2/pricing/on-demand/', qty: socketNodes + ' nodes', amount: socket },
-      { name: 'n8n hosting', detail: 'Workflow automation', unit: '$50 / mo flat', unitLink: 'https://n8n.io/pricing/', qty: 'self-hosted', amount: n8n },
+      { name: 'Socket.io on EC2', detail: 't3.medium nodes', unit: '$30 / node / mo', unitLink: 'https://aws.amazon.com/ec2/pricing/on-demand/', qty: socketNodes + ' nodes', amount: socket },
+      { name: 'n8n hosting', detail: 'workflow automation', unit: '$50 / mo flat', unitLink: 'https://n8n.io/pricing/', qty: 'self-hosted', amount: n8n },
       { name: 'Twilio + SendGrid + Sentry', detail: 'SMS, email, monitoring', unit: 'usage-based', unitLink: '', qty: 'mixed', amount: other },
     ];
     const total = rows.reduce((s, r) => s + r.amount, 0);
@@ -1614,13 +1147,12 @@
   function recommendedStackCost(mau, sess, payloadMB) {
     const bandwidthGB = mau * sess * payloadMB / 1024;
     const reqsM = (mau * sess * 8) / 1_000_000;
-    // Fluid: $0.0000010833 / GB-s active. Faster boot, less GB-s consumed.
-    const gbs = reqsM * 1_000_000 * 0.04; // 40ms @ 1GB
-    const fluidCompute = gbs * 0.0000010833;
-    const vercelBase = 20;
+    // Phase 1+2: keep Lambda for cold, but R2 + Neon + Pusher
+    const gbs = reqsM * 1_000_000 * 0.1;
+    const lambda = reqsM * 0.20 + gbs * 0.0000166667;
+    const apiGw = reqsM * 3.50;
 
     const r2Storage = (mau / 1000) * 0.5;
-    const r2Egress = 0;
 
     let pusher = 0;
     if (mau < 5000) pusher = 49;
@@ -1639,32 +1171,26 @@
     const other = 80 + (mau / 1000) * 0.4;
 
     const rows = [
-      { name: 'Vercel base', detail: 'Pro plan', unit: '$20 / mo', unitLink: 'https://vercel.com/pricing', qty: '1 team', amount: vercelBase },
-      { name: 'Vercel Fluid Compute', detail: 'Function execution (40ms avg, warm)', unit: '$0.0000010833 / GB-s', unitLink: 'https://vercel.com/docs/fluid-compute', qty: fmt(gbs) + ' GB-s', amount: fluidCompute },
-      { name: 'Cloudflare R2 storage', detail: 'Object storage', unit: '$0.015 / GB', unitLink: 'https://developers.cloudflare.com/r2/pricing/', qty: fmt(mau * 0.04) + ' GB', amount: r2Storage },
-      { name: 'Cloudflare R2 egress', detail: 'Outbound bandwidth', unit: '$0 / GB', unitLink: 'https://developers.cloudflare.com/r2/pricing/', qty: fmt(bandwidthGB) + ' GB', amount: 0 },
-      { name: 'Pusher Channels', detail: 'Real-time WebSockets', unit: 'Pro tier scaled', unitLink: 'https://pusher.com/channels/pricing', qty: fmt(mau) + ' MAU', amount: pusher },
-      { name: 'Neon Postgres', detail: 'Serverless, branching', unit: 'Launch–Business', unitLink: 'https://neon.tech/pricing', qty: fmt(mau) + ' MAU', amount: neon },
-      { name: 'Upstash Redis', detail: 'Per-command pricing', unit: '$0.20 / 100K commands', unitLink: 'https://upstash.com/pricing', qty: fmt(upstashCommands * 100000) + ' cmds', amount: upstash },
-      { name: 'Inngest workflows', detail: 'Replaces n8n', unit: '$20 / mo', unitLink: 'https://www.inngest.com/pricing', qty: '1 team', amount: inngest },
-      { name: 'Twilio + SendGrid + Sentry', detail: 'SMS, email, monitoring', unit: 'usage-based', unitLink: '', qty: 'mixed', amount: other },
+      { name: 'AWS Lambda', detail: 'kept for low-traffic endpoints', unit: '$0.20 / 1M + GB-s', unitLink: 'https://aws.amazon.com/lambda/pricing/', qty: reqsM.toFixed(2) + 'M reqs', amount: lambda },
+      { name: 'API Gateway', detail: 'kept (paired with Lambda)', unit: '$3.50 / 1M calls', unitLink: 'https://aws.amazon.com/api-gateway/pricing/', qty: reqsM.toFixed(2) + 'M calls', amount: apiGw },
+      { name: 'Cloudflare R2 storage', detail: 'replaces S3', unit: '$0.015 / GB', unitLink: 'https://developers.cloudflare.com/r2/pricing/', qty: fmt(mau * 0.04) + ' GB', amount: r2Storage },
+      { name: 'Cloudflare R2 egress', detail: '<strong>zero egress</strong>', unit: '$0 / GB', unitLink: 'https://developers.cloudflare.com/r2/pricing/', qty: fmt(bandwidthGB) + ' GB', amount: 0 },
+      { name: 'Pusher Channels', detail: 'replaces Socket.io', unit: 'Pro tier scaled', unitLink: 'https://pusher.com/channels/pricing', qty: fmt(mau) + ' MAU', amount: pusher },
+      { name: 'Neon Postgres', detail: 'replaces RDS', unit: '$19 Launch → $399 Scale', unitLink: 'https://neon.tech/pricing', qty: fmt(mau) + ' MAU', amount: neon },
+      { name: 'Upstash Redis', detail: 'replaces ElastiCache', unit: '$0.20 / 100K commands', unitLink: 'https://upstash.com/pricing', qty: fmt(upstashCommands * 100000) + ' cmds', amount: upstash },
+      { name: 'Inngest', detail: 'replaces n8n', unit: '$20 / mo', unitLink: 'https://www.inngest.com/pricing', qty: '1 team', amount: inngest },
+      { name: 'Twilio + SendGrid + Sentry', detail: 'unchanged', unit: 'usage-based', unitLink: '', qty: 'mixed', amount: other },
     ];
     const total = rows.reduce((s, r) => s + r.amount, 0);
     return { total, rows };
   }
-
-  // ====================================================================
-  //  UI BINDINGS
-  // ====================================================================
 
   const mauSlider = document.getElementById('mauSlider');
   const sessSlider = document.getElementById('sessSlider');
   const payloadSlider = document.getElementById('payloadSlider');
 
   function updateSliderFill(input) {
-    const min = parseFloat(input.min);
-    const max = parseFloat(input.max);
-    const val = parseFloat(input.value);
+    const min = parseFloat(input.min), max = parseFloat(input.max), val = parseFloat(input.value);
     const pct = ((val - min) / (max - min)) * 100;
     input.style.setProperty('--fill', `${pct}%`);
   }
@@ -1691,23 +1217,29 @@
     document.getElementById('savingsYear').textContent = fmtMoney(savings * 12);
     document.getElementById('multiplier').textContent = `${multiplier.toFixed(1)}× cheaper`;
 
-    renderPriceTable('priceTableCurrent', current.rows, 'bad');
-    renderPriceTable('priceTableRecommended', rec.rows, 'good');
+    renderPriceTable('priceTableCurrent', current.rows);
+    renderPriceTable('priceTableRecommended', rec.rows);
     document.getElementById('priceTableCurrentTotal').textContent = '$' + fmtMoney(current.total);
     document.getElementById('priceTableRecommendedTotal').textContent = '$' + fmtMoney(rec.total);
-    document.getElementById('breakdownCurrentTotal').textContent = `$${fmtMoney(current.total)}/mo`;
-    document.getElementById('breakdownRecommendedTotal').textContent = `$${fmtMoney(rec.total)}/mo`;
+    document.getElementById('totalBadTag').textContent = `$${fmtMoney(current.total)}/mo`;
+    document.getElementById('totalGoodTag').textContent = `$${fmtMoney(rec.total)}/mo`;
 
+    // Media callout
     const bandwidthGB = mau * state.sessPerMo * state.payloadMB / 1024;
     document.getElementById('mediaEgressGB').textContent = fmt(bandwidthGB) + ' GB';
     document.getElementById('mediaS3Cost').textContent = '$' + fmtMoney(bandwidthGB * 0.09) + '/mo';
     document.getElementById('mediaS3Val').textContent = fmtMoney(bandwidthGB * 0.09);
 
-    renderCostChart();
+    // Phase savings
+    document.getElementById('phase1Save1').textContent = '$' + fmtMoney(bandwidthGB * 0.09) + '/mo';
+    const rdsCurrent = current.rows.find(r => r.name === 'RDS Postgres')?.amount || 0;
+    const neonCurrent = rec.rows.find(r => r.name === 'Neon Postgres')?.amount || 0;
+    document.getElementById('phase2Save1').textContent = '$' + fmtMoney(rdsCurrent - neonCurrent) + '/mo';
+
     updateTopology(mau, state.sessPerMo, state.payloadMB, current, rec);
   }
 
-  function renderPriceTable(elId, rows, tone) {
+  function renderPriceTable(elId, rows) {
     const tbody = document.getElementById(elId);
     tbody.innerHTML = rows.map(r => {
       const srcLink = r.unitLink ? `<a href="${r.unitLink}" target="_blank" rel="noopener" class="src">src ↗</a>` : '';
@@ -1722,103 +1254,33 @@
     }).join('');
   }
 
-  function renderCostChart() {
-    const svg = document.getElementById('costChart');
-    const W = 800, H = 320, padL = 60, padR = 24, padT = 24, padB = 36;
-    const innerW = W - padL - padR;
-    const innerH = H - padT - padB;
-    const samples = 30;
-    const points = [];
-    for (let i = 0; i <= samples; i++) {
-      const pos = (i / samples) * 100;
-      const mau = positionToMAU(pos);
-      const cur = currentStackCost(mau, state.sessPerMo, state.payloadMB).total;
-      const rec = recommendedStackCost(mau, state.sessPerMo, state.payloadMB).total;
-      points.push({ pos, mau, cur, rec });
-    }
-    const maxCost = Math.max(...points.map(p => p.cur)) * 1.05;
-    const logYMax = Math.log10(Math.max(100, maxCost));
-    const logYMin = Math.log10(20);
-    const yScale = (cost) => {
-      if (cost < 20) cost = 20;
-      const l = Math.log10(cost);
-      return padT + (1 - (l - logYMin) / (logYMax - logYMin)) * innerH;
-    };
-    const xScale = (pos) => padL + (pos / 100) * innerW;
-    let content = '';
-    const yTicks = [100, 500, 1000, 5000, 10000, 50000, 100000];
-    yTicks.forEach(c => {
-      if (c >= 20 && c <= maxCost * 1.2) {
-        const y = yScale(c);
-        content += `<line class="grid-line" x1="${padL}" y1="${y}" x2="${W-padR}" y2="${y}"/>`;
-        content += `<text class="axis-label" x="${padL - 8}" y="${y + 3}" text-anchor="end">$${c >= 1000 ? (c/1000) + 'K' : c}</text>`;
-      }
-    });
-    const xTicks = [{pos:0,label:'1K'},{pos:25,label:'10K'},{pos:50,label:'100K'},{pos:75,label:'500K'},{pos:100,label:'1M'}];
-    xTicks.forEach(t => {
-      const x = xScale(t.pos);
-      content += `<line class="grid-line" x1="${x}" y1="${padT}" x2="${x}" y2="${H-padB}"/>`;
-      content += `<text class="axis-label" x="${x}" y="${H - padB + 18}" text-anchor="middle">${t.label}</text>`;
-    });
-    const curPath = points.map((p,i) => (i===0?'M':'L') + xScale(p.pos) + ',' + yScale(p.cur)).join(' ');
-    const recPath = points.map((p,i) => (i===0?'M':'L') + xScale(p.pos) + ',' + yScale(p.rec)).join(' ');
-    const baseY = H - padB;
-    content += `<path class="area-bad" d="${curPath} L${xScale(100)},${baseY} L${xScale(0)},${baseY} Z"/>`;
-    content += `<path class="area-good" d="${recPath} L${xScale(100)},${baseY} L${xScale(0)},${baseY} Z"/>`;
-    content += `<path class="line-bad" d="${curPath}"/>`;
-    content += `<path class="line-good" d="${recPath}"/>`;
-    const mark = points.reduce((best, p) => Math.abs(p.pos - state.mauPosition) < Math.abs(best.pos - state.mauPosition) ? p : best, points[0]);
-    const mx = xScale(mark.pos);
-    content += `<line class="marker-line" x1="${mx}" y1="${padT}" x2="${mx}" y2="${H - padB}"/>`;
-    content += `<circle class="marker-dot" cx="${mx}" cy="${yScale(mark.cur)}" r="5" stroke="#FF5A5A"/>`;
-    content += `<circle class="marker-dot" cx="${mx}" cy="${yScale(mark.rec)}" r="5" stroke="#47A8FF"/>`;
-    svg.innerHTML = content;
-  }
-
   function updateTopology(mau, sess, payloadMB, current, rec) {
-    // Concurrent active is roughly 5% of MAU at peak hour, plus floor.
     const concurrent = Math.max(50, Math.round(mau * 0.05));
     document.getElementById('concurrentUsers').textContent = concurrent.toLocaleString();
     document.getElementById('footConcurrent').textContent = concurrent.toLocaleString();
-
-    // Regional split (approximate distribution)
-    document.getElementById('usersHK').innerHTML = Math.round(concurrent * 0.28).toLocaleString() + '<span class="unit">users</span>';
-    document.getElementById('usersBKK').innerHTML = Math.round(concurrent * 0.21).toLocaleString() + '<span class="unit">users</span>';
-    document.getElementById('usersTYO').innerHTML = Math.round(concurrent * 0.25).toLocaleString() + '<span class="unit">users</span>';
-    document.getElementById('usersSG').innerHTML = Math.round(concurrent * 0.16).toLocaleString() + '<span class="unit">users</span>';
-    document.getElementById('usersOther').innerHTML = Math.round(concurrent * 0.10).toLocaleString() + '<span class="unit">users</span>';
-
-    // Requests per second at peak. ~1 action per 5s per active user.
+    document.getElementById('usersHK').textContent = Math.round(concurrent * 0.28).toLocaleString();
+    document.getElementById('usersBKK').textContent = Math.round(concurrent * 0.21).toLocaleString();
+    document.getElementById('usersTYO').textContent = Math.round(concurrent * 0.25).toLocaleString();
+    document.getElementById('usersSG').textContent = Math.round(concurrent * 0.16).toLocaleString();
+    document.getElementById('usersOther').textContent = Math.round(concurrent * 0.10).toLocaleString();
     const rps = Math.round(concurrent / 5);
     document.getElementById('topoReqSec').textContent = rps.toLocaleString();
-
-    // Bandwidth per minute. payloadMB × rps × 60s / sessions ratio
     const bwPerMin = (rps * 60 * payloadMB / 1024).toFixed(1);
     document.getElementById('topoBw').textContent = bwPerMin + ' GB';
-
-    // Cost per hour for recommended stack at this load
     const recHourly = (rec.total / 730);
     document.getElementById('topoCostHr').textContent = '$' + recHourly.toFixed(2);
-
-    // Billing breakdown / hour
-    const fluidHourly = (rec.rows.find(r => r.name === 'Vercel Fluid Compute')?.amount || 0) / 730;
+    const fluidHourly = ((rec.rows.find(r => r.name === 'AWS Lambda')?.amount || 0) + (rec.rows.find(r => r.name === 'API Gateway')?.amount || 0)) / 730;
     const dbHourly = (rec.rows.find(r => r.name === 'Neon Postgres')?.amount || 0) / 730;
     const rtHourly = (rec.rows.find(r => r.name === 'Pusher Channels')?.amount || 0) / 730;
     document.getElementById('billCompute').textContent = '$' + fluidHourly.toFixed(2);
     document.getElementById('billDB').textContent = '$' + dbHourly.toFixed(2);
     document.getElementById('billRT').textContent = '$' + rtHourly.toFixed(2);
     document.getElementById('billTotal').textContent = '$' + recHourly.toFixed(2);
-
-    // What it would cost on AWS Lambda instead, per hour
-    const awsHourly = (current.total / 730);
-    document.getElementById('footAwsCostHr').textContent = '$' + awsHourly.toFixed(2) + ' / hr';
-
+    document.getElementById('footAwsCostHr').textContent = '$' + (current.total / 730).toFixed(2) + ' / hr';
     document.getElementById('footEgressSaved').textContent = '$' + fmtMoney(current.s3Egress);
   }
 
-  // ====================================================================
-  //  TABS
-  // ====================================================================
+  // Top-level tabs
   document.querySelectorAll('.top-tab').forEach(btn => {
     btn.addEventListener('click', () => {
       document.querySelectorAll('.top-tab').forEach(b => b.classList.remove('active'));
@@ -1829,101 +1291,10 @@
     });
   });
 
-  document.querySelectorAll('.tab-btn').forEach(btn => {
-    btn.addEventListener('click', () => {
-      document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
-      document.querySelectorAll('.tab-panel').forEach(p => p.classList.remove('active'));
-      btn.classList.add('active');
-      const tab = btn.dataset.tab;
-      document.getElementById('tab-' + tab).classList.add('active');
-      if (tab === 'scale') setTimeout(renderCostChart, 50);
-    });
-  });
-
-  // ====================================================================
-  //  SIMULATOR
-  // ====================================================================
-  const simBtn = document.getElementById('simBtn');
-  const coldStartChk = document.getElementById('coldStart');
-  const phasesBad = document.querySelectorAll('#simPhasesBad .sim-phase');
-  const phasesGood = document.querySelectorAll('#simPhasesGood .sim-phase');
-
-  function getPhaseDuration(phase, isCold) {
-    if (phase.classList.contains('cold')) {
-      return isCold ? parseInt(phase.dataset.time) : parseInt(phase.dataset.warm || phase.dataset.time);
-    }
-    return parseInt(phase.dataset.time);
-  }
-  function updatePhaseLabels(isCold) {
-    phasesBad.forEach(p => {
-      const dur = getPhaseDuration(p, isCold);
-      p.querySelector('.sim-phase-time').textContent = dur + 'ms';
-    });
-    phasesGood.forEach(p => {
-      const dur = parseInt(p.dataset.time);
-      if (p.style.visibility !== 'hidden') p.querySelector('.sim-phase-time').textContent = dur + 'ms';
-    });
-    const totalBad = Array.from(phasesBad).reduce((s, p) => s + getPhaseDuration(p, isCold), 0);
-    const totalGood = Array.from(phasesGood).reduce((s, p) => {
-      if (p.style.visibility === 'hidden') return s;
-      return s + parseInt(p.dataset.time);
-    }, 0);
-    document.getElementById('totalBad').textContent = totalBad.toLocaleString();
-    document.getElementById('totalGood').textContent = totalGood.toLocaleString();
-    const mult = totalBad / totalGood;
-    const saved = (totalBad - totalGood) / 1000;
-    document.getElementById('verdictMultiplier').textContent = mult.toFixed(1) + '×';
-    document.getElementById('verdictSaved').textContent = saved.toFixed(2);
-  }
-
-  coldStartChk.addEventListener('change', () => updatePhaseLabels(coldStartChk.checked));
-
-  function resetPhases() {
-    [...phasesBad, ...phasesGood].forEach(p => {
-      p.classList.remove('active', 'done');
-      const fill = p.querySelector('.sim-phase-fill');
-      fill.style.width = '0%';
-      fill.style.transition = 'none';
-    });
-    void document.body.offsetHeight;
-  }
-  function animatePhase(phase, durationMs) {
-    return new Promise(resolve => {
-      phase.classList.add('active');
-      const fill = phase.querySelector('.sim-phase-fill');
-      const realDur = Math.max(60, Math.min(durationMs * 1.2, 900));
-      fill.style.transition = `width ${realDur}ms linear`;
-      requestAnimationFrame(() => { fill.style.width = '100%'; });
-      setTimeout(() => { phase.classList.remove('active'); phase.classList.add('done'); resolve(); }, realDur);
-    });
-  }
-  async function runSequence(phases, isCold) {
-    for (const phase of phases) {
-      if (phase.style.visibility === 'hidden') continue;
-      const dur = phase.classList.contains('cold')
-        ? (isCold ? parseInt(phase.dataset.time) : parseInt(phase.dataset.warm || phase.dataset.time))
-        : parseInt(phase.dataset.time);
-      await animatePhase(phase, dur);
-    }
-  }
-  simBtn.addEventListener('click', async () => {
-    if (state.simulating) return;
-    state.simulating = true;
-    simBtn.disabled = true;
-    resetPhases();
-    const isCold = coldStartChk.checked;
-    updatePhaseLabels(isCold);
-    await Promise.all([runSequence(phasesBad, isCold), runSequence(phasesGood, isCold)]);
-    state.simulating = false;
-    simBtn.disabled = false;
-  });
-
   mauSlider.addEventListener('input', update);
   sessSlider.addEventListener('input', update);
   payloadSlider.addEventListener('input', update);
   update();
-  updatePhaseLabels(true);
-  window.addEventListener('resize', () => setTimeout(renderCostChart, 80));
 </script>
 </body>
 </html>
