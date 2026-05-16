@@ -620,39 +620,6 @@
   .media-stat-val.good { color: var(--accent); }
   .media-stat-val .unit { font-size: 12px; color: var(--ink-3); font-weight: 400; margin-left: 4px; }
 
-  /* ===== CONVEX CALLOUT (consolidation path) ===== */
-  .convex-callout {
-    margin-top: 32px;
-    padding: 32px 36px;
-    border: 1.2px dashed rgba(192,132,252,0.35);
-    border-radius: 22px;
-    background: linear-gradient(135deg, rgba(192,132,252,0.05), rgba(71,168,255,0.03));
-    display: grid;
-    grid-template-columns: 1fr 1fr;
-    gap: 40px;
-    align-items: center;
-  }
-  @media (max-width: 800px) { .convex-callout { grid-template-columns: 1fr; gap: 20px; } }
-  .convex-label {
-    font-family: 'Geist Mono', monospace; font-size: 11px;
-    letter-spacing: 0.14em; text-transform: uppercase; color: var(--purple); margin-bottom: 10px;
-    display: flex; align-items: center; gap: 8px;
-  }
-  .convex-label::before { content: ''; width: 6px; height: 6px; border-radius: 50%; background: var(--purple); box-shadow: 0 0 8px var(--purple); }
-  .convex-callout h3 { font-size: 24px; font-weight: 600; letter-spacing: -0.02em; line-height: 1.15; margin-bottom: 10px; }
-  .convex-callout h3 .accent { color: var(--purple); }
-  .convex-callout p { font-size: 14.5px; line-height: 1.55; color: var(--ink-2); }
-  .convex-callout p strong { color: var(--ink); font-weight: 500; }
-  .convex-stats { display: grid; grid-template-columns: 1fr 1fr; gap: 14px; }
-  .convex-stat {
-    padding: 16px 18px;
-    border: 1.2px dashed var(--dashed);
-    border-radius: 12px;
-    background: rgba(0,0,0,0.2);
-  }
-  .convex-stat-label { font-family: 'Geist Mono', monospace; font-size: 10px; letter-spacing: 0.12em; text-transform: uppercase; color: var(--ink-3); margin-bottom: 6px; }
-  .convex-stat-val { font-family: 'Geist Mono', monospace; font-size: 16px; font-weight: 600; color: var(--ink); }
-
   /* ===== SIMULATOR ===== */
   .simulator {
     border: 1.2px dashed var(--dashed);
@@ -980,8 +947,8 @@
       <div class="stack-vs-mid"><span>vs</span></div>
       <div class="stack-col">
         <div class="stack-label">Recommended hybrid · the next stage</div>
-        <div class="stack-name good">Vercel Fluid · R2 · Convex / Pusher · Neon</div>
-        <div class="stack-desc">Vercel + Fluid Compute for DX and zero cold start. Cloudflare R2 for zero-egress media (the biggest single win). Convex or Pusher for real-time. Neon for serverless Postgres. Migration is component-by-component.</div>
+        <div class="stack-name good">Vercel Fluid · R2 · Pusher · Neon</div>
+        <div class="stack-desc">Vercel + Fluid Compute for DX and zero cold start. Cloudflare R2 for zero-egress media (the biggest single win). Pusher for real-time WebSockets. Neon for serverless Postgres. Migration is component-by-component, Prisma stays.</div>
       </div>
     </div>
 
@@ -1087,40 +1054,12 @@
             <div class="compare-item"><span class="compare-num">02</span><div class="compare-item-content"><strong>Vercel Fluid Compute<a href="https://vercel.com/docs/fluid-compute" target="_blank" rel="noopener" class="src">src ↗</a></strong><span>In-function concurrency. ~80% cheaper than Lambda. No cold start.</span></div><div class="compare-metric good">warm<small>~10ms</small></div></div>
             <div class="compare-item"><span class="compare-num">03</span><div class="compare-item-content"><strong>Vercel Cron + Inngest<a href="https://www.inngest.com/pricing" target="_blank" rel="noopener" class="src">src ↗</a></strong><span>Cron free with Vercel. Inngest: 50K events free, then $20/mo.</span></div><div class="compare-metric good">$20<small>+free cron</small></div></div>
             <div class="compare-item"><span class="compare-num">04</span><div class="compare-item-content"><strong>Cloudflare R2<a href="https://developers.cloudflare.com/r2/pricing/" target="_blank" rel="noopener" class="src">src ↗</a></strong><span>$0.015/GB storage. <strong>Zero egress.</strong> S3-compatible API.</span></div><div class="compare-metric good">$0<small>egress</small></div></div>
-            <div class="compare-item"><span class="compare-num">05</span><div class="compare-item-content"><strong>Convex<a href="https://www.convex.dev/pricing" target="_blank" rel="noopener" class="src">src ↗</a> or Pusher<a href="https://pusher.com/channels/pricing" target="_blank" rel="noopener" class="src">src ↗</a></strong><span>Convex: reactive backend with built-in real-time. Pusher: managed WebSockets.</span></div><div class="compare-metric good">$25-$49<small>start</small></div></div>
+            <div class="compare-item"><span class="compare-num">05</span><div class="compare-item-content"><strong>Pusher Channels<a href="https://pusher.com/channels/pricing" target="_blank" rel="noopener" class="src">src ↗</a></strong><span>Managed WebSockets. $49/mo for 200K daily messages. Drop-in replacement for Socket.io with the same client APIs.</span></div><div class="compare-metric good">$49<small>start</small></div></div>
             <div class="compare-item"><span class="compare-num">06</span><div class="compare-item-content"><strong>Neon Postgres<a href="https://neon.tech/pricing" target="_blank" rel="noopener" class="src">src ↗</a></strong><span>Serverless Postgres. Branching for previews. $19/mo Launch tier.</span></div><div class="compare-metric good">$19<small>Launch</small></div></div>
             <div class="compare-item"><span class="compare-num">07</span><div class="compare-item-content"><strong>Upstash Redis<a href="https://upstash.com/pricing" target="_blank" rel="noopener" class="src">src ↗</a></strong><span>$0.20 per 100K commands. No idle cost.</span></div><div class="compare-metric good">$0.20<small>per 100K</small></div></div>
             <div class="compare-item"><span class="compare-num">08</span><div class="compare-item-content"><strong>Vercel AI Gateway<a href="https://vercel.com/docs/ai-gateway" target="_blank" rel="noopener" class="src">src ↗</a></strong><span>Route between models. Caching + obs. For when AI features land.</span></div><div class="compare-metric good">routed<small>+ cached</small></div></div>
             <div class="compare-item"><span class="compare-num">09</span><div class="compare-item-content"><strong>Firebase Admin (push)<a href="https://firebase.google.com/pricing" target="_blank" rel="noopener" class="src">src ↗</a></strong><span>Keep. Works with the new stack.</span></div><div class="compare-metric good">keep<small>free</small></div></div>
             <div class="compare-item"><span class="compare-num">10</span><div class="compare-item-content"><strong>Stripe · Twilio · SendGrid · Sentry</strong><span>All kept. Same APIs. No migration cost.</span></div><div class="compare-metric good">keep<small>no change</small></div></div>
-          </div>
-        </div>
-      </div>
-
-      <!-- CONVEX CONSOLIDATION CALLOUT -->
-      <div class="convex-callout">
-        <div>
-          <div class="convex-label">Alternative · all-in-one path</div>
-          <h3>Or consolidate with <span class="accent">Convex</span>.</h3>
-          <p><strong>Convex</strong><a href="https://www.convex.dev/pricing" target="_blank" rel="noopener" class="src">src ↗</a> is a reactive backend with type-safe functions, real-time queries, database, and file storage in one. <strong>For Mandos's real-time presence use case, Convex's reactivity model is purpose-built</strong> — every query auto-subscribes to changes and pushes updates to clients. Replaces Lambda + Postgres + Pusher + part of S3 in one platform.</p>
-          <p style="margin-top:12px;"><strong>Tradeoff:</strong> means leaving Prisma + Postgres for Convex's own DB. Heavier migration than a per-component swap. Best as a clean-slate or new-feature path, not a rip-and-replace.</p>
-        </div>
-        <div class="convex-stats">
-          <div class="convex-stat">
-            <div class="convex-stat-label">Free tier</div>
-            <div class="convex-stat-val">1M function calls</div>
-          </div>
-          <div class="convex-stat">
-            <div class="convex-stat-label">Pro tier</div>
-            <div class="convex-stat-val">$25 / mo</div>
-          </div>
-          <div class="convex-stat">
-            <div class="convex-stat-label">Real-time</div>
-            <div class="convex-stat-val">built-in</div>
-          </div>
-          <div class="convex-stat">
-            <div class="convex-stat-label">Type safety</div>
-            <div class="convex-stat-val">e2e TS</div>
           </div>
         </div>
       </div>
@@ -1330,8 +1269,8 @@
 
     <!-- REAL-TIME -->
     <div class="tab-panel" id="tab-realtime">
-      <h2 class="section-h2">Real-time. <span class="muted">Four options. Pick the right one.</span></h2>
-      <p class="section-lede">Friday-8pm presence spike. Half the user base opens the app at once. Socket.io on a single Node host caps around 10K concurrent connections per process<a href="https://socket.io/docs/v4/performance-tuning/" target="_blank" rel="noopener" class="src">src ↗</a>. Four real options forward with real pricing.</p>
+      <h2 class="section-h2">Real-time. <span class="muted">Three drop-in options.</span></h2>
+      <p class="section-lede">Friday-8pm presence spike. Half the user base opens the app at once. Socket.io on a single Node host caps around 10K concurrent connections per process<a href="https://socket.io/docs/v4/performance-tuning/" target="_blank" rel="noopener" class="src">src ↗</a>. Three real options forward, each keeps Postgres + Prisma intact (no DB migration).</p>
 
       <div class="compare">
         <div class="compare-col">
@@ -1344,12 +1283,11 @@
           </div>
         </div>
         <div class="compare-col">
-          <div class="compare-col-head"><div class="compare-col-name">Recommended · four real options</div><span class="compare-tag good">managed</span></div>
+          <div class="compare-col-head"><div class="compare-col-name">Recommended · three real options</div><span class="compare-tag good">managed</span></div>
           <div>
-            <div class="compare-item"><span class="compare-num">01</span><div class="compare-item-content"><strong>Convex<a href="https://www.convex.dev/pricing" target="_blank" rel="noopener" class="src">src ↗</a></strong><span>Reactive backend. Real-time built-in. Type-safe. Free 1M function calls, Pro $25/mo.</span></div><div class="compare-metric good">$25<small>reactive</small></div></div>
-            <div class="compare-item"><span class="compare-num">02</span><div class="compare-item-content"><strong>Pusher Channels<a href="https://pusher.com/channels/pricing" target="_blank" rel="noopener" class="src">src ↗</a></strong><span>$49/mo for 200K daily messages, 500 concurrent. Managed. Fastest to ship.</span></div><div class="compare-metric good">$49<small>start</small></div></div>
-            <div class="compare-item"><span class="compare-num">03</span><div class="compare-item-content"><strong>Ably<a href="https://ably.com/pricing" target="_blank" rel="noopener" class="src">src ↗</a></strong><span>Generous free tier, scale-grade SLAs.</span></div><div class="compare-metric good">free<small>start</small></div></div>
-            <div class="compare-item"><span class="compare-num">04</span><div class="compare-item-content"><strong>Cloudflare Durable Objects<a href="https://developers.cloudflare.com/durable-objects/platform/pricing/" target="_blank" rel="noopener" class="src">src ↗</a></strong><span>$0.15/M reqs + $12.50/M GB-s. One object per venue. Cheapest at scale.</span></div><div class="compare-metric good">edge<small>auto-shard</small></div></div>
+            <div class="compare-item"><span class="compare-num">01</span><div class="compare-item-content"><strong>Pusher Channels<a href="https://pusher.com/channels/pricing" target="_blank" rel="noopener" class="src">src ↗</a></strong><span>$49/mo for 200K daily messages, 500 concurrent. Managed. Fastest to ship. Same client APIs as Socket.io.</span></div><div class="compare-metric good">$49<small>start</small></div></div>
+            <div class="compare-item"><span class="compare-num">02</span><div class="compare-item-content"><strong>Ably<a href="https://ably.com/pricing" target="_blank" rel="noopener" class="src">src ↗</a></strong><span>Generous free tier, scale-grade SLAs. Alternative to Pusher.</span></div><div class="compare-metric good">free<small>start</small></div></div>
+            <div class="compare-item"><span class="compare-num">03</span><div class="compare-item-content"><strong>Cloudflare Durable Objects<a href="https://developers.cloudflare.com/durable-objects/platform/pricing/" target="_blank" rel="noopener" class="src">src ↗</a></strong><span>$0.15/M reqs + $12.50/M GB-s. One object per venue. Cheapest at scale, more work to onboard.</span></div><div class="compare-metric good">edge<small>auto-shard</small></div></div>
           </div>
         </div>
       </div>
@@ -1413,7 +1351,7 @@
         <div class="topology-head">
           <div>
             <h2><span id="concurrentUsers">15,000</span> active users right now.<br><span class="muted">Spread across the night. Hitting the recommended stack.</span></h2>
-            <p>What the request topology looks like at peak. Users in five regions hit Cloudflare's edge first, then route to Vercel Fluid, then to Neon Postgres, R2 storage, or Pusher / Convex for real-time. The billing column is live and ties back to the sliders above.</p>
+            <p>What the request topology looks like at peak. Users in five regions hit Cloudflare's edge first, then route to Vercel Fluid, then to Neon Postgres, R2 storage, or Pusher for real-time. The billing column is live and ties back to the sliders above.</p>
           </div>
           <div class="topology-stats">
             <div class="topology-stat">
@@ -1474,7 +1412,7 @@
                 <div class="topology-card-val muted">$0 egress</div>
               </div>
               <div class="topology-card edge">
-                <div><div class="topology-card-name">Convex Edge</div><div class="topology-card-sub">live subscriptions</div></div>
+                <div><div class="topology-card-name">Pusher Edge</div><div class="topology-card-sub">WebSocket fanout</div></div>
                 <div class="topology-card-val muted">~30ms</div>
               </div>
               <div class="topology-card edge">
@@ -1500,7 +1438,7 @@
                 <div class="topology-card-val muted">10ms</div>
               </div>
               <div class="topology-card compute">
-                <div><div class="topology-card-name">Convex / Pusher</div><div class="topology-card-sub">presence broadcast</div></div>
+                <div><div class="topology-card-name">Pusher Channels</div><div class="topology-card-sub">presence broadcast</div></div>
                 <div class="topology-card-val muted">30ms</div>
               </div>
               <div class="topology-card compute">
@@ -1522,7 +1460,7 @@
                 <div class="topology-card-val" id="billDB">$0.06</div>
               </div>
               <div class="topology-card billing">
-                <div><div class="topology-card-name">Real-time</div><div class="topology-card-sub">Pusher / Convex</div></div>
+                <div><div class="topology-card-name">Real-time</div><div class="topology-card-sub">Pusher Channels</div></div>
                 <div class="topology-card-val" id="billRT">$0.18</div>
               </div>
               <div class="topology-card billing zero">
@@ -1579,7 +1517,6 @@
           <a href="https://developers.cloudflare.com/r2/pricing/" target="_blank" rel="noopener"><strong>Cloudflare R2</strong>developers.cloudflare.com/r2/pricing</a>
           <a href="https://developers.cloudflare.com/workers/platform/pricing/" target="_blank" rel="noopener"><strong>Cloudflare Workers</strong>developers.cloudflare.com/workers/platform/pricing</a>
           <a href="https://developers.cloudflare.com/durable-objects/platform/pricing/" target="_blank" rel="noopener"><strong>Cloudflare Durable Objects</strong>developers.cloudflare.com/durable-objects/platform/pricing</a>
-          <a href="https://www.convex.dev/pricing" target="_blank" rel="noopener"><strong>Convex</strong>convex.dev/pricing</a>
           <a href="https://pusher.com/channels/pricing" target="_blank" rel="noopener"><strong>Pusher Channels</strong>pusher.com/channels/pricing</a>
           <a href="https://ably.com/pricing" target="_blank" rel="noopener"><strong>Ably</strong>ably.com/pricing</a>
           <a href="https://neon.tech/pricing" target="_blank" rel="noopener"><strong>Neon Postgres</strong>neon.tech/pricing</a>
