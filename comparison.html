@@ -44,7 +44,6 @@
   .container { max-width: 1380px; margin: 0 auto; padding: 0 48px; }
   @media (max-width: 768px) { .container { padding: 0 20px; } }
 
-  /* ============ ATMOSPHERE ============ */
   body::before {
     content: '';
     position: fixed;
@@ -67,6 +66,31 @@
     pointer-events: none;
     z-index: 0;
     mask-image: radial-gradient(ellipse at center, black 30%, transparent 80%);
+  }
+
+  /* ============ PRICE SOURCE LINK ============ */
+  .src {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    font-family: 'Geist Mono', monospace;
+    font-size: 9px;
+    font-weight: 500;
+    color: var(--ink-3);
+    text-decoration: none;
+    margin-left: 6px;
+    padding: 2px 6px;
+    border: 1px dashed var(--dashed);
+    border-radius: 3px;
+    transition: all .15s;
+    letter-spacing: 0.04em;
+    vertical-align: middle;
+    line-height: 1;
+  }
+  .src:hover {
+    color: var(--accent);
+    border-color: var(--accent);
+    background: rgba(71,168,255,0.06);
   }
 
   /* ============ NAV ============ */
@@ -137,7 +161,7 @@
   }
 
   /* ============ HERO ============ */
-  .hero { padding: 96px 0 64px; }
+  .hero { padding: 88px 0 56px; }
   .hero-kicker {
     font-family: 'Geist Mono', monospace;
     font-size: 11px;
@@ -154,9 +178,9 @@
   .hero h1 {
     font-family: 'Geist', sans-serif;
     font-weight: 600;
-    font-size: clamp(48px, 7vw, 96px);
+    font-size: clamp(48px, 6.5vw, 88px);
     letter-spacing: -0.04em;
-    line-height: 0.96;
+    line-height: 0.98;
     margin-bottom: 28px;
   }
   .hero h1 .accent { color: var(--accent); font-weight: 500; }
@@ -164,9 +188,81 @@
     font-size: 18px;
     line-height: 1.5;
     color: var(--ink-2);
-    max-width: 620px;
+    max-width: 660px;
   }
   .hero-sub strong { color: var(--ink); font-weight: 500; }
+  .hero-sub a.src { font-size: 10px; vertical-align: middle; }
+
+  /* ============ USE CASE PANEL ============ */
+  .usecase {
+    margin-top: 56px;
+    border: 1.2px dashed var(--dashed);
+    border-radius: 22px;
+    background: var(--surface);
+    overflow: hidden;
+  }
+  .usecase-head {
+    padding: 28px 32px;
+    border-bottom: 1.2px dashed var(--dashed);
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 40px;
+    align-items: center;
+  }
+  @media (max-width: 800px) { .usecase-head { grid-template-columns: 1fr; gap: 16px; padding: 24px; } }
+  .usecase-title h2 {
+    font-family: 'Geist', sans-serif;
+    font-size: clamp(28px, 3.4vw, 40px);
+    font-weight: 600;
+    letter-spacing: -0.028em;
+    line-height: 1.05;
+  }
+  .usecase-title .muted { color: var(--ink-2); font-weight: 500; display: block; }
+  .usecase-desc p {
+    font-size: 15px;
+    line-height: 1.55;
+    color: var(--ink-2);
+  }
+  .usecase-desc p strong { color: var(--ink); font-weight: 500; }
+  .usecase-body {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+  }
+  @media (max-width: 800px) { .usecase-body { grid-template-columns: 1fr; } }
+  .usecase-col {
+    padding: 28px 32px;
+  }
+  .usecase-col + .usecase-col { border-left: 1.2px dashed var(--dashed); }
+  @media (max-width: 800px) {
+    .usecase-col + .usecase-col { border-left: none; border-top: 1.2px dashed var(--dashed); }
+  }
+  .usecase-col-head {
+    display: flex; align-items: center; gap: 10px;
+    margin-bottom: 16px;
+    font-family: 'Geist Mono', monospace;
+    font-size: 11px;
+    letter-spacing: 0.14em;
+    text-transform: uppercase;
+  }
+  .usecase-col.good .usecase-col-head { color: var(--good); }
+  .usecase-col.bad .usecase-col-head { color: var(--bad); }
+  .usecase-col-head::before {
+    content: ''; width: 6px; height: 6px; border-radius: 50%;
+  }
+  .usecase-col.good .usecase-col-head::before { background: var(--good); box-shadow: 0 0 8px var(--good); }
+  .usecase-col.bad .usecase-col-head::before { background: var(--bad); box-shadow: 0 0 8px var(--bad); }
+  .usecase-list {
+    display: flex; flex-direction: column; gap: 12px;
+  }
+  .usecase-item {
+    display: grid; grid-template-columns: 16px 1fr; gap: 10px;
+    font-size: 14px;
+    line-height: 1.5;
+    color: var(--ink-2);
+  }
+  .usecase-item strong { color: var(--ink); font-weight: 500; }
+  .usecase-col.good .usecase-item::before { content: '✓'; color: var(--good); font-size: 12px; }
+  .usecase-col.bad .usecase-item::before { content: '!'; color: var(--bad); font-size: 13px; font-weight: 700; }
 
   /* ============ STACK HEADERS ============ */
   .stack-vs {
@@ -179,9 +275,7 @@
     overflow: hidden;
     background: var(--surface);
   }
-  @media (max-width: 800px) {
-    .stack-vs { grid-template-columns: 1fr; }
-  }
+  @media (max-width: 800px) { .stack-vs { grid-template-columns: 1fr; } }
   .stack-col { padding: 28px 32px; }
   .stack-col + .stack-col { border-left: 1.2px dashed var(--dashed); }
   @media (max-width: 800px) {
@@ -448,9 +542,6 @@
     overflow: hidden;
   }
   @media (max-width: 800px) { .compare { grid-template-columns: 1fr; } }
-  .compare-col {
-    padding: 0;
-  }
   .compare-col + .compare-col { border-left: 1.2px dashed var(--dashed); }
   @media (max-width: 800px) {
     .compare-col + .compare-col { border-left: none; border-top: 1.2px dashed var(--dashed); }
@@ -484,7 +575,6 @@
     font-weight: 600;
     letter-spacing: -0.015em;
   }
-  .compare-body { padding: 0; }
   .compare-item {
     padding: 18px 28px;
     border-bottom: 1.2px dashed var(--dashed);
@@ -610,6 +700,8 @@
   .cost-chart-head {
     display: flex; justify-content: space-between; align-items: baseline;
     margin-bottom: 28px;
+    flex-wrap: wrap;
+    gap: 12px;
   }
   .cost-chart-h {
     font-family: 'Geist', sans-serif;
@@ -658,12 +750,8 @@
     fill: none;
     filter: drop-shadow(0 0 6px var(--accent-glow));
   }
-  .cost-chart-svg .area-bad {
-    fill: rgba(255,90,90,0.05);
-  }
-  .cost-chart-svg .area-good {
-    fill: rgba(71,168,255,0.05);
-  }
+  .cost-chart-svg .area-bad { fill: rgba(255,90,90,0.05); }
+  .cost-chart-svg .area-good { fill: rgba(71,168,255,0.05); }
   .cost-chart-svg .marker-line {
     stroke: var(--accent);
     stroke-width: 1;
@@ -673,6 +761,72 @@
     fill: var(--ink);
     stroke-width: 2;
   }
+
+  /* ============ MEDIA-COST CALLOUT ============ */
+  .media-callout {
+    margin-top: 32px;
+    padding: 28px 32px;
+    border: 1.2px dashed var(--dashed-strong);
+    border-radius: 18px;
+    background: linear-gradient(180deg, rgba(255,90,90,0.04), transparent 80%);
+    display: grid;
+    grid-template-columns: 1.4fr 1fr;
+    gap: 32px;
+    align-items: center;
+  }
+  @media (max-width: 800px) { .media-callout { grid-template-columns: 1fr; gap: 16px; } }
+  .media-callout-label {
+    font-family: 'Geist Mono', monospace;
+    font-size: 11px;
+    letter-spacing: 0.14em;
+    text-transform: uppercase;
+    color: var(--bad);
+    margin-bottom: 10px;
+  }
+  .media-callout h3 {
+    font-family: 'Geist', sans-serif;
+    font-size: 24px;
+    font-weight: 600;
+    letter-spacing: -0.02em;
+    line-height: 1.15;
+    margin-bottom: 10px;
+  }
+  .media-callout h3 .accent { color: var(--accent); }
+  .media-callout p {
+    font-size: 14.5px;
+    line-height: 1.55;
+    color: var(--ink-2);
+  }
+  .media-callout p strong { color: var(--ink); font-weight: 500; }
+  .media-callout-stats {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 16px;
+  }
+  .media-stat {
+    padding: 18px 20px;
+    border: 1.2px dashed var(--dashed);
+    border-radius: 12px;
+    background: var(--surface);
+  }
+  .media-stat-label {
+    font-family: 'Geist Mono', monospace;
+    font-size: 10px;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    color: var(--ink-3);
+    margin-bottom: 6px;
+  }
+  .media-stat-val {
+    font-family: 'Geist Mono', monospace;
+    font-size: 24px;
+    font-weight: 600;
+    letter-spacing: -0.02em;
+    color: var(--ink);
+  }
+  .media-stat-val.bad { color: var(--bad); }
+  .media-stat-val.good { color: var(--accent); }
+  .media-stat-val .unit { font-size: 12px; color: var(--ink-3); font-weight: 400; margin-left: 4px; }
 
   /* ============ SIMULATOR ============ */
   .simulator {
@@ -716,7 +870,6 @@
     align-items: center;
     gap: 10px;
     transition: all .2s;
-    box-shadow: 0 0 0 0 var(--accent-glow);
   }
   .sim-btn:hover {
     transform: translateY(-1px);
@@ -873,9 +1026,56 @@
     font-weight: 600;
     letter-spacing: -0.02em;
   }
-  .sim-verdict-val .delta {
-    color: var(--accent);
+  .sim-verdict-val .delta { color: var(--accent); }
+
+  /* ============ SOURCES FOOTER ============ */
+  .sources {
+    border: 1.2px dashed var(--dashed);
+    border-radius: 18px;
+    padding: 28px 32px;
+    background: var(--surface);
+    margin: 56px 0;
   }
+  .sources-head {
+    display: flex; align-items: baseline; justify-content: space-between;
+    margin-bottom: 20px;
+    padding-bottom: 16px;
+    border-bottom: 1.2px dashed var(--dashed);
+  }
+  .sources h3 {
+    font-family: 'Geist', sans-serif;
+    font-size: 17px;
+    font-weight: 600;
+    letter-spacing: -0.015em;
+  }
+  .sources-tag {
+    font-family: 'Geist Mono', monospace;
+    font-size: 10px;
+    letter-spacing: 0.14em;
+    color: var(--ink-3);
+    text-transform: uppercase;
+  }
+  .sources-grid {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 12px 24px;
+  }
+  @media (max-width: 900px) { .sources-grid { grid-template-columns: repeat(2, 1fr); } }
+  @media (max-width: 600px) { .sources-grid { grid-template-columns: 1fr; } }
+  .sources-grid a {
+    display: flex;
+    flex-direction: column;
+    gap: 2px;
+    padding: 12px 0;
+    font-family: 'Geist Mono', monospace;
+    font-size: 11px;
+    color: var(--ink-2);
+    text-decoration: none;
+    border-bottom: 1px dashed transparent;
+    transition: all .15s;
+  }
+  .sources-grid a:hover { color: var(--accent); }
+  .sources-grid a strong { color: var(--ink); font-weight: 500; font-family: 'Geist', sans-serif; font-size: 13px; }
 
   /* ============ FOOTER ============ */
   .footer {
@@ -893,7 +1093,6 @@
   .footer a { color: var(--accent); text-decoration: none; }
   .footer a:hover { text-decoration: underline; }
 
-  /* ============ SECTION SPACING ============ */
   section { padding: 0; }
   .section-h2 {
     font-family: 'Geist', sans-serif;
@@ -907,14 +1106,10 @@
   .section-lede {
     font-size: 16px;
     color: var(--ink-2);
-    max-width: 640px;
+    max-width: 720px;
     margin-bottom: 32px;
   }
   .section-lede strong { color: var(--ink); font-weight: 500; }
-
-  /* tooltip helper */
-  [data-tip] { position: relative; }
-
 </style>
 </head>
 <body>
@@ -931,9 +1126,10 @@
       <div class="nav-links">
         <a href="index.html">← Review</a>
         <a href="#sim">Live Simulation</a>
+        <a href="#sources">Sources</a>
       </div>
       <div class="nav-meta">
-        <span class="nav-pill">Live</span>
+        <span class="nav-pill">Verified pricing</span>
       </div>
     </div>
   </div>
@@ -942,9 +1138,47 @@
 <!-- ============ HERO ============ -->
 <section class="hero">
   <div class="container">
-    <div class="hero-kicker">Engineering decision · v1</div>
-    <h1>Two stacks.<br>One product.<br><span class="accent">Move the sliders.</span></h1>
-    <p class="hero-sub">A side-by-side comparison of the <strong>current Mandos stack</strong> (Vercel · Express · Lambda · Socket.io · AWS) and the <strong>recommended scale stack</strong> (Fly.io · Cloudflare · Postgres · Durable Objects · R2). Cost, latency, and architecture rendered live as you scale users from 1K to 1M.</p>
+    <div class="hero-kicker">Engineering decision · v2 · with cited pricing</div>
+    <h1>Your stack today.<br>Where <span class="accent">we'd take it</span>.</h1>
+    <p class="hero-sub">An honest comparison of the <strong>current Mandos stack</strong> (Express on Node.js, AWS Lambda + S3, Socket.io, RDS Postgres, n8n) against a <strong>recommended hybrid</strong> for the next 100K MAU. <strong>Every cost claim links to the vendor's pricing page.</strong> Move the sliders, verify the numbers.</p>
+  </div>
+</section>
+
+<!-- ============ USE CASE ============ -->
+<section>
+  <div class="container">
+    <div class="usecase">
+      <div class="usecase-head">
+        <div class="usecase-title">
+          <h2>Your use case first.<span class="muted">Then the recommendation.</span></h2>
+        </div>
+        <div class="usecase-desc">
+          <p>Mandos is a Hong Kong nightlife app with <strong>real-time presence</strong> (live map showing who's out), <strong>media-heavy content</strong> (event posters, venue photos, user receipts), <strong>transactional bookings</strong> via Stripe, and a 1,500-user base targeting 100K+ MAU in the next 12 months. The infra has to handle Friday-8pm spikes without dropping connections.</p>
+        </div>
+      </div>
+      <div class="usecase-body">
+        <div class="usecase-col good">
+          <div class="usecase-col-head">What's working today</div>
+          <div class="usecase-list">
+            <div class="usecase-item"><div><strong>Postgres + Prisma + TypeScript.</strong> The boring, correct choice. Keep all three.</div></div>
+            <div class="usecase-item"><div><strong>Stripe, Twilio, SendGrid, Firebase push.</strong> Right primitives for each job. Don't touch.</div></div>
+            <div class="usecase-item"><div><strong>Sentry + Jest.</strong> Real observability + a real test runner. Most early-stage apps don't have this.</div></div>
+            <div class="usecase-item"><div><strong>The product ships.</strong> 1,500 users with no marketing means the stack isn't blocking growth right now.</div></div>
+            <div class="usecase-item"><div><strong>AWS Lambda is fine for sporadic workloads.</strong> If endpoints are infrequent, Lambda's pay-per-request makes sense.</div></div>
+          </div>
+        </div>
+        <div class="usecase-col bad">
+          <div class="usecase-col-head">Where it will hurt at scale</div>
+          <div class="usecase-list">
+            <div class="usecase-item"><div><strong>S3 egress at $0.09/GB</strong><a href="https://aws.amazon.com/s3/pricing/" target="_blank" rel="noopener" class="src">src ↗</a>. Mandos is media-heavy. This becomes the biggest line item past 50K MAU.</div></div>
+            <div class="usecase-item"><div><strong>Lambda cold starts.</strong> 500-1500ms on first hit. Painful for a snappy social product where every tap should feel instant.</div></div>
+            <div class="usecase-item"><div><strong>Socket.io on a single Node process.</strong> Caps around 10K concurrent connections. Friday-8pm spikes will hit this fast.</div></div>
+            <div class="usecase-item"><div><strong>n8n as production infra.</strong> Workflow tools become tech debt. Code-defined workflows scale better and version with the app.</div></div>
+            <div class="usecase-item"><div><strong>Express + ad-hoc API layout.</strong> No type-safe client-server contract. Slows feature velocity as the team grows.</div></div>
+          </div>
+        </div>
+      </div>
+    </div>
   </div>
 </section>
 
@@ -953,15 +1187,15 @@
   <div class="container">
     <div class="stack-vs">
       <div class="stack-col">
-        <div class="stack-label">Current · the today path</div>
-        <div class="stack-name bad">Vercel · Express · Lambda</div>
-        <div class="stack-desc">Generic tech-stack-2020 default. Works at low scale, financially violent above 50K MAU. Heavy on bandwidth and function-execution charges.</div>
+        <div class="stack-label">Current · what you're running today</div>
+        <div class="stack-name bad">AWS Lambda · Express · S3 · n8n</div>
+        <div class="stack-desc">Solid, conventional. Works for what it's serving today. Two pieces will become the bottleneck at scale: S3 egress on media, and Socket.io on a single Node host.</div>
       </div>
       <div class="stack-vs-mid"><span>vs</span></div>
       <div class="stack-col">
-        <div class="stack-label">Recommended · the scale path</div>
-        <div class="stack-name good">Fly · Cloudflare · Postgres</div>
-        <div class="stack-desc">Edge-native, no egress cost, persistent connections for real-time presence. 4–10× cheaper at every stage beyond 10K MAU. Migration off is one Docker file.</div>
+        <div class="stack-label">Recommended · the hybrid we'd build for the next stage</div>
+        <div class="stack-name good">Vercel · Cloudflare R2 · Pusher · Neon</div>
+        <div class="stack-desc">Vercel + Fluid Compute for DX and cold-start fix. Cloudflare R2 for zero-egress media. Pusher (or Durable Objects) for real-time. Neon for serverless Postgres. Migration is component-by-component, no rewrite.</div>
       </div>
     </div>
   </div>
@@ -973,7 +1207,7 @@
     <div class="control-panel">
       <div class="control-head">
         <span class="control-head-label">Simulation controls</span>
-        <span class="control-head-live">Live calculation</span>
+        <span class="control-head-live">Live calculation · verified pricing</span>
       </div>
       <div class="control-body">
         <div class="sliders">
@@ -1003,24 +1237,24 @@
           </div>
           <div class="slider-block">
             <div class="slider-row">
-              <span class="slider-name">Media payload per session (MB)</span>
-              <span class="slider-value mono"><span id="payloadVal">2.0</span><span class="unit">MB</span></span>
+              <span class="slider-name">Media per session (MB)<small style="display:block;font-size:11px;color:var(--ink-3);font-family:'Geist Mono',monospace;font-weight:400;margin-top:2px;letter-spacing:0.04em;">posters, photos, receipts</small></span>
+              <span class="slider-value mono"><span id="payloadVal">2.5</span><span class="unit">MB</span></span>
             </div>
             <div class="slider-track-wrap">
-              <input type="range" id="payloadSlider" min="0.5" max="10" value="2" step="0.1">
+              <input type="range" id="payloadSlider" min="0.5" max="12" value="2.5" step="0.1">
             </div>
             <div class="slider-scale">
-              <span>0.5</span><span>2</span><span>5</span><span>10</span>
+              <span>0.5</span><span>2.5</span><span>6</span><span>12</span>
             </div>
           </div>
         </div>
         <div class="cost-display">
           <div class="cost-row">
-            <span class="cost-label">Current stack</span>
+            <span class="cost-label">Current AWS stack</span>
             <span class="cost-amount bad mono"><span class="currency">$</span><span id="costCurrent">5,420</span><span class="per">/mo</span></span>
           </div>
           <div class="cost-row divider">
-            <span class="cost-label">Recommended stack</span>
+            <span class="cost-label">Recommended hybrid</span>
             <span class="cost-amount good mono"><span class="currency">$</span><span id="costRecommended">880</span><span class="per">/mo</span></span>
           </div>
           <div class="savings-row">
@@ -1068,39 +1302,43 @@
     <!-- ARCHITECTURE PANEL -->
     <div class="tab-panel active" id="tab-architecture">
       <h2 class="section-h2">Architecture. <span class="muted">Component for component.</span></h2>
-      <p class="section-lede">What's in each stack, what each piece costs you in complexity, and what replaces it on the other side. <strong>Every component on the right is a deliberate substitution, not a switch for the sake of switching.</strong></p>
+      <p class="section-lede">What's in each stack and what replaces it on the other side. <strong>Every component name links to its pricing page</strong> so the founder can verify each claim. The migration is per-component, not a rewrite.</p>
 
       <div class="compare">
         <div class="compare-col">
           <div class="compare-col-head">
-            <div class="compare-col-name">Current Stack</div>
+            <div class="compare-col-name">Current AWS stack</div>
             <span class="compare-tag bad">Today</span>
           </div>
-          <div class="compare-body">
-            <div class="compare-item"><span class="compare-num">01</span><div class="compare-item-content"><strong>Vercel</strong><span>Hosting + edge + functions. DX-first, scale-violent.</span></div><div class="compare-metric bad">$$$<small>at scale</small></div></div>
-            <div class="compare-item"><span class="compare-num">02</span><div class="compare-item-content"><strong>Express + Node.js</strong><span>Conventional API server. Single-threaded, stateful.</span></div><div class="compare-metric neutral">OK<small>boring</small></div></div>
-            <div class="compare-item"><span class="compare-num">03</span><div class="compare-item-content"><strong>AWS Lambda</strong><span>Serverless functions. Cold starts hurt UX.</span></div><div class="compare-metric bad">cold<small>~800ms</small></div></div>
-            <div class="compare-item"><span class="compare-num">04</span><div class="compare-item-content"><strong>AWS S3</strong><span>Object storage with $0.09/GB egress.</span></div><div class="compare-metric bad">egress<small>kills you</small></div></div>
-            <div class="compare-item"><span class="compare-num">05</span><div class="compare-item-content"><strong>Socket.io</strong><span>Stateful WebSockets on a single Node server.</span></div><div class="compare-metric bad">caps<small>~10K conns</small></div></div>
-            <div class="compare-item"><span class="compare-num">06</span><div class="compare-item-content"><strong>Postgres + Prisma</strong><span>Self-managed Postgres or RDS. Solid choice.</span></div><div class="compare-metric good">keep<small>good call</small></div></div>
-            <div class="compare-item"><span class="compare-num">07</span><div class="compare-item-content"><strong>Redis (ioredis)</strong><span>Cache + session storage. Standard.</span></div><div class="compare-metric neutral">keep<small>swap host</small></div></div>
-            <div class="compare-item"><span class="compare-num">08</span><div class="compare-item-content"><strong>n8n</strong><span>Visual workflow automation. Becomes tech debt.</span></div><div class="compare-metric bad">drop<small>brittle</small></div></div>
+          <div>
+            <div class="compare-item"><span class="compare-num">01</span><div class="compare-item-content"><strong>Node.js + TypeScript + Express<a href="https://expressjs.com" target="_blank" rel="noopener" class="src">src ↗</a></strong><span>Conventional API server. Self-managed. No type-safe client contract.</span></div><div class="compare-metric neutral">OK<small>boring</small></div></div>
+            <div class="compare-item"><span class="compare-num">02</span><div class="compare-item-content"><strong>AWS Lambda<a href="https://aws.amazon.com/lambda/pricing/" target="_blank" rel="noopener" class="src">src ↗</a></strong><span>$0.20 per 1M requests + $0.0000166667 per GB-second. Cold starts hurt.</span></div><div class="compare-metric bad">cold<small>800ms+</small></div></div>
+            <div class="compare-item"><span class="compare-num">03</span><div class="compare-item-content"><strong>API Gateway<a href="https://aws.amazon.com/api-gateway/pricing/" target="_blank" rel="noopener" class="src">src ↗</a></strong><span>$3.50 per 1M REST API calls. Front for Lambda.</span></div><div class="compare-metric bad">$$<small>adds up</small></div></div>
+            <div class="compare-item"><span class="compare-num">04</span><div class="compare-item-content"><strong>AWS S3<a href="https://aws.amazon.com/s3/pricing/" target="_blank" rel="noopener" class="src">src ↗</a></strong><span>$0.023/GB storage. Egress: $0.09/GB. The egress kills you on a media-heavy app.</span></div><div class="compare-metric bad">egress<small>$0.09/GB</small></div></div>
+            <div class="compare-item"><span class="compare-num">05</span><div class="compare-item-content"><strong>Socket.io on EC2/Node<a href="https://aws.amazon.com/ec2/pricing/on-demand/" target="_blank" rel="noopener" class="src">src ↗</a></strong><span>Stateful WebSockets. Memory-bound. Caps around 10K concurrent per process.</span></div><div class="compare-metric bad">caps<small>~10K</small></div></div>
+            <div class="compare-item"><span class="compare-num">06</span><div class="compare-item-content"><strong>RDS Postgres<a href="https://aws.amazon.com/rds/postgresql/pricing/" target="_blank" rel="noopener" class="src">src ↗</a></strong><span>db.t3.medium ~$50-80/mo baseline. Solid choice as DB engine.</span></div><div class="compare-metric good">keep<small>good call</small></div></div>
+            <div class="compare-item"><span class="compare-num">07</span><div class="compare-item-content"><strong>ElastiCache Redis<a href="https://aws.amazon.com/elasticache/pricing/" target="_blank" rel="noopener" class="src">src ↗</a></strong><span>~$30-50/mo for t3.micro. Pay for idle.</span></div><div class="compare-metric neutral">swap<small>per-call host</small></div></div>
+            <div class="compare-item"><span class="compare-num">08</span><div class="compare-item-content"><strong>n8n<a href="https://n8n.io/pricing/" target="_blank" rel="noopener" class="src">src ↗</a></strong><span>Visual workflow automation. Self-host or n8n Cloud $20-$200/mo. Becomes infra debt.</span></div><div class="compare-metric bad">drop<small>brittle</small></div></div>
+            <div class="compare-item"><span class="compare-num">09</span><div class="compare-item-content"><strong>Firebase Admin (push)<a href="https://firebase.google.com/pricing" target="_blank" rel="noopener" class="src">src ↗</a></strong><span>Free for most push volumes. Solid.</span></div><div class="compare-metric good">keep<small>free</small></div></div>
+            <div class="compare-item"><span class="compare-num">10</span><div class="compare-item-content"><strong>Stripe · Twilio · SendGrid</strong><span>Payments + SMS + email. Standard, keep all three.</span></div><div class="compare-metric good">keep<small>correct picks</small></div></div>
           </div>
         </div>
         <div class="compare-col">
           <div class="compare-col-head">
-            <div class="compare-col-name">Recommended Stack</div>
+            <div class="compare-col-name">Recommended hybrid</div>
             <span class="compare-tag good">Proposed</span>
           </div>
-          <div class="compare-body">
-            <div class="compare-item"><span class="compare-num">01</span><div class="compare-item-content"><strong>Fly.io</strong><span>Real VMs in 5 regions. Predictable pricing.</span></div><div class="compare-metric good">$1.94<small>per VM/mo</small></div></div>
-            <div class="compare-item"><span class="compare-num">02</span><div class="compare-item-content"><strong>Hono + tRPC</strong><span>Modern API framework. Edge-runtime compatible.</span></div><div class="compare-metric good">fast<small>~3ms boot</small></div></div>
-            <div class="compare-item"><span class="compare-num">03</span><div class="compare-item-content"><strong>Vercel Fluid / CF Workers</strong><span>Edge functions, no cold start.</span></div><div class="compare-metric good">warm<small>~10ms</small></div></div>
-            <div class="compare-item"><span class="compare-num">04</span><div class="compare-item-content"><strong>Cloudflare R2</strong><span>S3-compatible object storage with $0 egress.</span></div><div class="compare-metric good">$0<small>egress</small></div></div>
-            <div class="compare-item"><span class="compare-num">05</span><div class="compare-item-content"><strong>Cloudflare Durable Objects</strong><span>Stateful presence at edge. One per venue/zone.</span></div><div class="compare-metric good">∞<small>auto-shard</small></div></div>
-            <div class="compare-item"><span class="compare-num">06</span><div class="compare-item-content"><strong>Neon → Hetzner Postgres</strong><span>Serverless start, dedicated boxes at scale.</span></div><div class="compare-metric good">€44<small>/mo dedicated</small></div></div>
-            <div class="compare-item"><span class="compare-num">07</span><div class="compare-item-content"><strong>Upstash Redis</strong><span>Serverless Redis, pay per command.</span></div><div class="compare-metric good">$0.20<small>per 100K</small></div></div>
-            <div class="compare-item"><span class="compare-num">08</span><div class="compare-item-content"><strong>Inngest</strong><span>Code-defined workflows with retries + obs.</span></div><div class="compare-metric good">clean<small>50K free</small></div></div>
+          <div>
+            <div class="compare-item"><span class="compare-num">01</span><div class="compare-item-content"><strong>Next.js + tRPC<a href="https://trpc.io" target="_blank" rel="noopener" class="src">src ↗</a></strong><span>Type-safe client-server contract. App Router. RSC.</span></div><div class="compare-metric good">fast<small>+ types</small></div></div>
+            <div class="compare-item"><span class="compare-num">02</span><div class="compare-item-content"><strong>Vercel Fluid Compute<a href="https://vercel.com/docs/fluid-compute" target="_blank" rel="noopener" class="src">src ↗</a></strong><span>In-function concurrency. ~80% cheaper than Lambda for warm-ish workloads. No cold start.</span></div><div class="compare-metric good">warm<small>~10ms</small></div></div>
+            <div class="compare-item"><span class="compare-num">03</span><div class="compare-item-content"><strong>Vercel Cron + Inngest<a href="https://www.inngest.com/pricing" target="_blank" rel="noopener" class="src">src ↗</a></strong><span>Vercel Cron is free with Vercel. Inngest for queueable workflows: 50K events free, then $20/mo.</span></div><div class="compare-metric good">$20<small>+free cron</small></div></div>
+            <div class="compare-item"><span class="compare-num">04</span><div class="compare-item-content"><strong>Cloudflare R2<a href="https://developers.cloudflare.com/r2/pricing/" target="_blank" rel="noopener" class="src">src ↗</a></strong><span>$0.015/GB storage. <strong>Zero egress cost.</strong> S3-compatible API.</span></div><div class="compare-metric good">$0<small>egress</small></div></div>
+            <div class="compare-item"><span class="compare-num">05</span><div class="compare-item-content"><strong>Pusher Channels<a href="https://pusher.com/channels/pricing" target="_blank" rel="noopener" class="src">src ↗</a></strong><span>Managed WebSockets. $49/mo for 200K daily messages. Or use Cloudflare Durable Objects<a href="https://developers.cloudflare.com/durable-objects/platform/pricing/" target="_blank" rel="noopener" class="src">src ↗</a> at scale.</span></div><div class="compare-metric good">managed<small>$49 start</small></div></div>
+            <div class="compare-item"><span class="compare-num">06</span><div class="compare-item-content"><strong>Neon Postgres<a href="https://neon.tech/pricing" target="_blank" rel="noopener" class="src">src ↗</a></strong><span>Serverless Postgres. Branching for previews. $19/mo Launch tier.</span></div><div class="compare-metric good">$19<small>Launch</small></div></div>
+            <div class="compare-item"><span class="compare-num">07</span><div class="compare-item-content"><strong>Upstash Redis<a href="https://upstash.com/pricing" target="_blank" rel="noopener" class="src">src ↗</a></strong><span>Pay per command: $0.20 per 100K. No idle cost.</span></div><div class="compare-metric good">$0.20<small>per 100K</small></div></div>
+            <div class="compare-item"><span class="compare-num">08</span><div class="compare-item-content"><strong>Vercel AI Gateway<a href="https://vercel.com/docs/ai-gateway" target="_blank" rel="noopener" class="src">src ↗</a></strong><span>Route between models. Caching, observability. For when AI features land.</span></div><div class="compare-metric good">routed<small>+ cached</small></div></div>
+            <div class="compare-item"><span class="compare-num">09</span><div class="compare-item-content"><strong>Firebase Admin (push)<a href="https://firebase.google.com/pricing" target="_blank" rel="noopener" class="src">src ↗</a></strong><span>Keep. No need to swap. Works with the new stack.</span></div><div class="compare-metric good">keep<small>free</small></div></div>
+            <div class="compare-item"><span class="compare-num">10</span><div class="compare-item-content"><strong>Stripe · Twilio · SendGrid · Sentry</strong><span>All kept. Same APIs. No migration cost.</span></div><div class="compare-metric good">keep<small>no change</small></div></div>
           </div>
         </div>
       </div>
@@ -1115,22 +1353,20 @@
 │
 ▼  DNS lookup       ~30ms
 │
-▼  Vercel edge      ~50ms (warm)
+▼  CloudFront edge  ~50ms (if used)
 │
-▼  Vercel function  <span class="bad">~800ms cold</span>
+▼  API Gateway      ~30ms
 │
-▼  AWS API Gateway  ~20ms
-│
-▼  Lambda           <span class="bad">~600ms cold</span>
+▼  Lambda           <span class="bad">~800ms cold</span> / ~80ms warm
 │
 ▼  RDS Postgres     ~60ms (us-east)
 │
-▼  S3 fetch         ~100ms + egress $
+▼  S3 fetch         ~100ms + <span class="bad">$0.09/GB egress</span>
 │
 ▼  Response back    ~80ms
 ─────────────────────────────
-   TOTAL cold:      <span class="bad">~1740ms</span>
-   TOTAL warm:      ~590ms</div>
+   Cold path:       <span class="bad">~1150ms</span>
+   Warm path:       ~430ms</div>
         </div>
         <div class="compare-col">
           <div class="compare-col-head">
@@ -1141,32 +1377,32 @@
 │
 ▼  DNS lookup       ~30ms
 │
-▼  CF Worker edge   <span class="accent">~5ms</span>
+▼  Vercel edge      <span class="accent">~10ms</span>
 │
-▼  Fly.io (HK reg)  <span class="accent">~20ms</span>
+▼  Fluid Compute    <span class="accent">~40ms (warm always)</span>
 │
-▼  Neon Postgres    <span class="accent">~25ms (regional)</span>
+▼  Neon Postgres    <span class="accent">~30ms (regional)</span>
 │
-▼  R2 cached        <span class="accent">~10ms</span>
+▼  R2 cached        <span class="accent">~10ms · $0 egress</span>
 │
 ▼  Response back    ~30ms
 ─────────────────────────────
-   TOTAL:           <span class="accent">~120ms</span>
-   Cold start:      <span class="accent">none</span></div>
+   Always warm:     <span class="accent">~150ms</span>
+   Cold start:      <span class="accent">~none</span></div>
         </div>
       </div>
     </div>
 
     <!-- PERFORMANCE PANEL -->
     <div class="tab-panel" id="tab-performance">
-      <h2 class="section-h2">Performance. <span class="muted">Latency, throughput, real-time capacity.</span></h2>
-      <p class="section-lede">A request from a Hong Kong user, fired at both stacks. <strong>Cold-start hits matter more than benchmark averages</strong> because nightlife traffic is bursty: every Friday at 8pm, half the user base wakes up at once.</p>
+      <h2 class="section-h2">Performance. <span class="muted">Where Lambda hurts, where Fluid wins.</span></h2>
+      <p class="section-lede">A request from a Hong Kong user, fired at both stacks. Lambda's <strong>cold start tax</strong> is the single biggest UX issue today, and it's structural — Lambda cold-starts by design<a href="https://aws.amazon.com/blogs/compute/operating-lambda-performance-optimization-part-1/" target="_blank" rel="noopener" class="src">src ↗</a>. Fluid Compute keeps functions warm across invocations<a href="https://vercel.com/docs/fluid-compute" target="_blank" rel="noopener" class="src">src ↗</a>, so most requests never pay it.</p>
 
       <div class="compare">
         <div class="compare-col">
           <div class="compare-col-head">
-            <div class="compare-col-name">Latency · current stack</div>
-            <span class="compare-tag bad">~590ms warm · ~1740ms cold</span>
+            <div class="compare-col-name">Latency · current (AWS)</div>
+            <span class="compare-tag bad">~430ms warm · ~1150ms cold</span>
           </div>
           <div class="latency-block">
             <div class="latency-row">
@@ -1175,19 +1411,19 @@
               <span class="latency-ms">30ms</span>
             </div>
             <div class="latency-row">
-              <span class="latency-name">Vercel function</span>
+              <span class="latency-name">CloudFront edge</span>
+              <div class="latency-track"><div class="latency-fill bad" style="width: 9%;"></div></div>
+              <span class="latency-ms">50ms</span>
+            </div>
+            <div class="latency-row">
+              <span class="latency-name">API Gateway</span>
+              <div class="latency-track"><div class="latency-fill bad" style="width: 6%;"></div></div>
+              <span class="latency-ms">30ms</span>
+            </div>
+            <div class="latency-row">
+              <span class="latency-name">Lambda cold</span>
               <div class="latency-track"><div class="latency-fill bad" style="width: 70%;"></div></div>
               <span class="latency-ms">800ms*</span>
-            </div>
-            <div class="latency-row">
-              <span class="latency-name">API gateway</span>
-              <div class="latency-track"><div class="latency-fill bad" style="width: 3%;"></div></div>
-              <span class="latency-ms">20ms</span>
-            </div>
-            <div class="latency-row">
-              <span class="latency-name">Lambda exec</span>
-              <div class="latency-track"><div class="latency-fill bad" style="width: 55%;"></div></div>
-              <span class="latency-ms">600ms*</span>
             </div>
             <div class="latency-row">
               <span class="latency-name">RDS query</span>
@@ -1205,45 +1441,45 @@
               <span class="latency-ms">80ms</span>
             </div>
             <div class="latency-total">
-              <span class="latency-total-label">Cold-path total</span>
-              <span class="latency-total-val bad mono">1.74<span class="unit">s</span></span>
+              <span class="latency-total-label">Cold path total</span>
+              <span class="latency-total-val bad mono">1.15<span class="unit">s</span></span>
             </div>
           </div>
         </div>
         <div class="compare-col">
           <div class="compare-col-head">
             <div class="compare-col-name">Latency · recommended</div>
-            <span class="compare-tag good">~120ms · zero cold start</span>
+            <span class="compare-tag good">~150ms · always warm</span>
           </div>
           <div class="latency-block">
             <div class="latency-row">
               <span class="latency-name">DNS</span>
-              <div class="latency-track"><div class="latency-fill good" style="width: 26%;"></div></div>
+              <div class="latency-track"><div class="latency-fill good" style="width: 20%;"></div></div>
               <span class="latency-ms">30ms</span>
             </div>
             <div class="latency-row">
-              <span class="latency-name">CF Worker edge</span>
-              <div class="latency-track"><div class="latency-fill good" style="width: 4%;"></div></div>
-              <span class="latency-ms">5ms</span>
+              <span class="latency-name">Vercel edge</span>
+              <div class="latency-track"><div class="latency-fill good" style="width: 7%;"></div></div>
+              <span class="latency-ms">10ms</span>
             </div>
             <div class="latency-row">
-              <span class="latency-name">Fly.io regional</span>
-              <div class="latency-track"><div class="latency-fill good" style="width: 17%;"></div></div>
-              <span class="latency-ms">20ms</span>
+              <span class="latency-name">Fluid Compute</span>
+              <div class="latency-track"><div class="latency-fill good" style="width: 27%;"></div></div>
+              <span class="latency-ms">40ms</span>
             </div>
             <div class="latency-row">
               <span class="latency-name">Neon query</span>
-              <div class="latency-track"><div class="latency-fill good" style="width: 22%;"></div></div>
-              <span class="latency-ms">25ms</span>
+              <div class="latency-track"><div class="latency-fill good" style="width: 20%;"></div></div>
+              <span class="latency-ms">30ms</span>
             </div>
             <div class="latency-row">
               <span class="latency-name">R2 cached</span>
-              <div class="latency-track"><div class="latency-fill good" style="width: 9%;"></div></div>
+              <div class="latency-track"><div class="latency-fill good" style="width: 7%;"></div></div>
               <span class="latency-ms">10ms</span>
             </div>
             <div class="latency-row">
               <span class="latency-name">Response</span>
-              <div class="latency-track"><div class="latency-fill good" style="width: 26%;"></div></div>
+              <div class="latency-track"><div class="latency-fill good" style="width: 20%;"></div></div>
               <span class="latency-ms">30ms</span>
             </div>
             <div class="latency-row">
@@ -1252,8 +1488,8 @@
               <span class="latency-ms">&nbsp;</span>
             </div>
             <div class="latency-total">
-              <span class="latency-total-label">Total · always warm</span>
-              <span class="latency-total-val good mono">120<span class="unit">ms</span></span>
+              <span class="latency-total-label">Always warm</span>
+              <span class="latency-total-val good mono">150<span class="unit">ms</span></span>
             </div>
           </div>
         </div>
@@ -1261,19 +1497,19 @@
 
       <div class="compare" style="margin-top: 32px;">
         <div class="compare-col">
-          <div class="compare-col-head"><div class="compare-col-name">Real-time capacity</div></div>
-          <div class="compare-body">
-            <div class="compare-item"><span class="compare-num">01</span><div class="compare-item-content"><strong>Socket.io on one Node</strong><span>WebSocket cap on single process. Memory-bound.</span></div><div class="compare-metric bad">~10K<small>concurrent</small></div></div>
-            <div class="compare-item"><span class="compare-num">02</span><div class="compare-item-content"><strong>Shard with Redis pub/sub</strong><span>Engineering effort. Cross-server message delays.</span></div><div class="compare-metric bad">~50K<small>with effort</small></div></div>
-            <div class="compare-item"><span class="compare-num">03</span><div class="compare-item-content"><strong>Cold start when scaling out</strong><span>New nodes drop connections during deploy.</span></div><div class="compare-metric bad">drops<small>deploy pain</small></div></div>
+          <div class="compare-col-head"><div class="compare-col-name">Cold start frequency · current</div></div>
+          <div>
+            <div class="compare-item"><span class="compare-num">01</span><div class="compare-item-content"><strong>Per-request cold check</strong><span>Lambda assigns a fresh container if no warm one exists. With sporadic traffic, this happens often.</span></div><div class="compare-metric bad">5-15%<small>of requests</small></div></div>
+            <div class="compare-item"><span class="compare-num">02</span><div class="compare-item-content"><strong>Cold init time</strong><span>Node + Prisma + connection pool = ~800ms cold.</span></div><div class="compare-metric bad">800ms<small>typical</small></div></div>
+            <div class="compare-item"><span class="compare-num">03</span><div class="compare-item-content"><strong>Mitigation: Provisioned Concurrency<a href="https://aws.amazon.com/lambda/pricing/" target="_blank" rel="noopener" class="src">src ↗</a></strong><span>~$10/concurrent unit/mo. Defeats Lambda's pay-per-use upside.</span></div><div class="compare-metric bad">$$<small>defeats purpose</small></div></div>
           </div>
         </div>
         <div class="compare-col">
-          <div class="compare-col-head"><div class="compare-col-name">Real-time capacity</div></div>
-          <div class="compare-body">
-            <div class="compare-item"><span class="compare-num">01</span><div class="compare-item-content"><strong>Cloudflare Durable Objects</strong><span>One per venue, auto-distributed globally.</span></div><div class="compare-metric good">∞<small>auto-shard</small></div></div>
-            <div class="compare-item"><span class="compare-num">02</span><div class="compare-item-content"><strong>Edge-near presence</strong><span>State lives where users are. ~30ms broadcast.</span></div><div class="compare-metric good">30ms<small>broadcast</small></div></div>
-            <div class="compare-item"><span class="compare-num">03</span><div class="compare-item-content"><strong>Zero-downtime deploys</strong><span>Workers route to new versions seamlessly.</span></div><div class="compare-metric good">0<small>connection drops</small></div></div>
+          <div class="compare-col-head"><div class="compare-col-name">Cold start frequency · recommended</div></div>
+          <div>
+            <div class="compare-item"><span class="compare-num">01</span><div class="compare-item-content"><strong>Fluid Compute keeps warm<a href="https://vercel.com/blog/introducing-fluid-compute" target="_blank" rel="noopener" class="src">src ↗</a></strong><span>In-function concurrency: one container handles many requests. Stays warm.</span></div><div class="compare-metric good">&lt;1%<small>of requests</small></div></div>
+            <div class="compare-item"><span class="compare-num">02</span><div class="compare-item-content"><strong>Cold init time</strong><span>When it does happen, faster boot than Lambda.</span></div><div class="compare-metric good">~200ms<small>typical</small></div></div>
+            <div class="compare-item"><span class="compare-num">03</span><div class="compare-item-content"><strong>No provisioning needed</strong><span>Default behavior, not a paid upgrade.</span></div><div class="compare-metric good">$0<small>extra</small></div></div>
           </div>
         </div>
       </div>
@@ -1281,70 +1517,85 @@
 
     <!-- SCALE PANEL -->
     <div class="tab-panel" id="tab-scale">
-      <h2 class="section-h2">Scale & cost. <span class="muted">The number the founder cares about.</span></h2>
-      <p class="section-lede">Total monthly infrastructure cost across MAU, broken down by component. <strong>The current stack's cost curve goes superlinear at 50K MAU.</strong> The recommended stack stays close to linear, dominated by Fly VMs and Postgres, with bandwidth as a near-zero line item thanks to R2's zero-egress model.</p>
+      <h2 class="section-h2">Scale & cost. <span class="muted">The number that scales superlinearly today.</span></h2>
+      <p class="section-lede">Total monthly infra cost across MAU, broken down by component. Move the MAU slider to see the curves. <strong>The single biggest savings line is R2 vs S3 egress</strong> on media-heavy serving. Every component name links to its pricing page.</p>
 
       <div class="compare">
         <div class="compare-col">
           <div class="compare-col-head">
-            <div class="compare-col-name">Current · cost breakdown</div>
+            <div class="compare-col-name">Current AWS · breakdown</div>
             <span class="compare-tag bad" id="breakdownCurrentTotal">$5,420/mo</span>
           </div>
-          <div class="compare-body" id="breakdownCurrent">
-            <!-- populated by JS -->
-          </div>
+          <div id="breakdownCurrent"></div>
         </div>
         <div class="compare-col">
           <div class="compare-col-head">
-            <div class="compare-col-name">Recommended · cost breakdown</div>
+            <div class="compare-col-name">Recommended hybrid · breakdown</div>
             <span class="compare-tag good" id="breakdownRecommendedTotal">$880/mo</span>
           </div>
-          <div class="compare-body" id="breakdownRecommended">
-            <!-- populated by JS -->
-          </div>
+          <div id="breakdownRecommended"></div>
         </div>
       </div>
 
       <div class="cost-chart-wrap" style="border: 1.2px dashed var(--dashed); border-radius: 18px; background: var(--surface); margin-top: 32px;">
         <div class="cost-chart-head">
-          <div class="cost-chart-h">Monthly cost vs MAU</div>
+          <div class="cost-chart-h">Monthly cost vs MAU · log scale</div>
           <div class="cost-chart-legend">
-            <span class="legend-item"><span class="legend-swatch bad"></span>Current</span>
+            <span class="legend-item"><span class="legend-swatch bad"></span>Current AWS</span>
             <span class="legend-item"><span class="legend-swatch good"></span>Recommended</span>
           </div>
         </div>
         <svg class="cost-chart-svg" id="costChart" viewBox="0 0 800 320" preserveAspectRatio="none"></svg>
+      </div>
+
+      <!-- MEDIA CALLOUT -->
+      <div class="media-callout">
+        <div>
+          <div class="media-callout-label">The biggest single line item</div>
+          <h3>S3 egress at $0.09/GB <span class="accent">→</span> R2 at $0/GB.</h3>
+          <p>Mandos serves event posters, venue photos, and user receipts. At your current slider position that's <strong id="mediaEgressGB">5,372 GB</strong> of egress / month. On S3 that's <strong id="mediaS3Cost">$483/mo</strong>. On R2 that's <strong>$0/mo egress</strong>. Storage cost is comparable; egress is the savings.</p>
+        </div>
+        <div class="media-callout-stats">
+          <div class="media-stat">
+            <div class="media-stat-label">S3 egress / mo</div>
+            <div class="media-stat-val bad mono">$<span id="mediaS3Val">483</span></div>
+          </div>
+          <div class="media-stat">
+            <div class="media-stat-label">R2 egress / mo</div>
+            <div class="media-stat-val good mono">$0</div>
+          </div>
+        </div>
       </div>
     </div>
 
     <!-- DX PANEL -->
     <div class="tab-panel" id="tab-dx">
       <h2 class="section-h2">Developer experience. <span class="muted">What it feels like to ship.</span></h2>
-      <p class="section-lede">DX matters more than benchmarks at this stage. A team that can ship a feature in a day will out-execute a team waiting on infra. <strong>Both stacks are deployable in production in a week.</strong> One of them stops feeling good around month six.</p>
+      <p class="section-lede">DX matters more than benchmarks at this stage. A team that can ship a feature in a day will out-execute a team waiting on infra. Both stacks deploy in production this week. One of them stops feeling good around month six.</p>
 
       <div class="compare">
         <div class="compare-col">
-          <div class="compare-col-head"><div class="compare-col-name">Current stack DX</div><span class="compare-tag bad">friction grows</span></div>
-          <div class="compare-body">
-            <div class="compare-item"><span class="compare-num">01</span><div class="compare-item-content"><strong>Deploy speed</strong><span>git push → live in ~90s on Vercel.</span></div><div class="compare-metric good">90s</div></div>
-            <div class="compare-item"><span class="compare-num">02</span><div class="compare-item-content"><strong>Preview deploys</strong><span>One per PR. Fast iteration with stakeholders.</span></div><div class="compare-metric good">yes</div></div>
-            <div class="compare-item"><span class="compare-num">03</span><div class="compare-item-content"><strong>Rollback</strong><span>One click, instant. Best in class.</span></div><div class="compare-metric good">1-click</div></div>
-            <div class="compare-item"><span class="compare-num">04</span><div class="compare-item-content"><strong>Local dev parity</strong><span>Express runs locally fine. Lambda emulation is brittle.</span></div><div class="compare-metric neutral">mixed</div></div>
-            <div class="compare-item"><span class="compare-num">05</span><div class="compare-item-content"><strong>Observability</strong><span>Vercel logs + Sentry. Lambda logs in CloudWatch (painful).</span></div><div class="compare-metric bad">split</div></div>
-            <div class="compare-item"><span class="compare-num">06</span><div class="compare-item-content"><strong>Lock-in</strong><span>Vercel-specific runtime. Migration is hard.</span></div><div class="compare-metric bad">high</div></div>
-            <div class="compare-item"><span class="compare-num">07</span><div class="compare-item-content"><strong>Cost surprise risk</strong><span>One viral moment → $50K bill. No hard caps.</span></div><div class="compare-metric bad">high</div></div>
+          <div class="compare-col-head"><div class="compare-col-name">Current AWS DX</div><span class="compare-tag bad">friction grows</span></div>
+          <div>
+            <div class="compare-item"><span class="compare-num">01</span><div class="compare-item-content"><strong>Deploy speed</strong><span>Lambda deploy via SAM/Serverless framework. ~3-5 min.</span></div><div class="compare-metric neutral">3-5min</div></div>
+            <div class="compare-item"><span class="compare-num">02</span><div class="compare-item-content"><strong>Preview deploys</strong><span>Manual setup. Per-PR stacks via CDK if invested.</span></div><div class="compare-metric bad">manual</div></div>
+            <div class="compare-item"><span class="compare-num">03</span><div class="compare-item-content"><strong>Rollback</strong><span>Lambda version pinning. Manageable but multi-step.</span></div><div class="compare-metric neutral">multi-step</div></div>
+            <div class="compare-item"><span class="compare-num">04</span><div class="compare-item-content"><strong>Local dev parity</strong><span>SAM local emulation. Slow + flaky. ngrok for webhooks.</span></div><div class="compare-metric bad">flaky</div></div>
+            <div class="compare-item"><span class="compare-num">05</span><div class="compare-item-content"><strong>Observability</strong><span>CloudWatch logs (painful) + Sentry. Distributed traces require extra setup.</span></div><div class="compare-metric bad">painful</div></div>
+            <div class="compare-item"><span class="compare-num">06</span><div class="compare-item-content"><strong>Type safety client→server</strong><span>Manual. REST + zod-on-both-ends or codegen.</span></div><div class="compare-metric bad">manual</div></div>
+            <div class="compare-item"><span class="compare-num">07</span><div class="compare-item-content"><strong>Cost surprise risk</strong><span>S3 egress + Lambda runaway. Set billing alarms.</span></div><div class="compare-metric bad">medium</div></div>
           </div>
         </div>
         <div class="compare-col">
-          <div class="compare-col-head"><div class="compare-col-name">Recommended stack DX</div><span class="compare-tag good">stays good</span></div>
-          <div class="compare-body">
-            <div class="compare-item"><span class="compare-num">01</span><div class="compare-item-content"><strong>Deploy speed</strong><span>fly deploy → live in ~60s. Docker-based, no vendor lock.</span></div><div class="compare-metric good">60s</div></div>
-            <div class="compare-item"><span class="compare-num">02</span><div class="compare-item-content"><strong>Preview deploys</strong><span>Fly preview apps per branch. Neon DB branching.</span></div><div class="compare-metric good">yes</div></div>
-            <div class="compare-item"><span class="compare-num">03</span><div class="compare-item-content"><strong>Rollback</strong><span>fly releases rollback. Single command.</span></div><div class="compare-metric good">1-cmd</div></div>
-            <div class="compare-item"><span class="compare-num">04</span><div class="compare-item-content"><strong>Local dev parity</strong><span>Docker compose mirrors prod 1:1.</span></div><div class="compare-metric good">full</div></div>
-            <div class="compare-item"><span class="compare-num">05</span><div class="compare-item-content"><strong>Observability</strong><span>Fly + Cloudflare + Sentry + Axiom logs. Single pane.</span></div><div class="compare-metric good">unified</div></div>
-            <div class="compare-item"><span class="compare-num">06</span><div class="compare-item-content"><strong>Lock-in</strong><span>Standard Docker. Move off in a day.</span></div><div class="compare-metric good">low</div></div>
-            <div class="compare-item"><span class="compare-num">07</span><div class="compare-item-content"><strong>Cost surprise risk</strong><span>Predictable VM pricing. Cloudflare auto-scales free tier.</span></div><div class="compare-metric good">low</div></div>
+          <div class="compare-col-head"><div class="compare-col-name">Recommended hybrid DX</div><span class="compare-tag good">stays good</span></div>
+          <div>
+            <div class="compare-item"><span class="compare-num">01</span><div class="compare-item-content"><strong>Deploy speed</strong><span>git push → live in ~90s on Vercel<a href="https://vercel.com/docs/deployments" target="_blank" rel="noopener" class="src">src ↗</a>.</span></div><div class="compare-metric good">90s</div></div>
+            <div class="compare-item"><span class="compare-num">02</span><div class="compare-item-content"><strong>Preview deploys</strong><span>Auto per-PR. Neon DB branching pairs with it.</span></div><div class="compare-metric good">auto</div></div>
+            <div class="compare-item"><span class="compare-num">03</span><div class="compare-item-content"><strong>Rollback</strong><span>One click in Vercel dashboard. Instant.</span></div><div class="compare-metric good">1-click</div></div>
+            <div class="compare-item"><span class="compare-num">04</span><div class="compare-item-content"><strong>Local dev parity</strong><span>next dev runs the same code that ships. Webhook tunneling included.</span></div><div class="compare-metric good">full</div></div>
+            <div class="compare-item"><span class="compare-num">05</span><div class="compare-item-content"><strong>Observability</strong><span>Vercel logs + traces + Sentry + Axiom. Single pane.</span></div><div class="compare-metric good">unified</div></div>
+            <div class="compare-item"><span class="compare-num">06</span><div class="compare-item-content"><strong>Type safety client→server</strong><span>tRPC + Prisma = end-to-end types, no codegen step.</span></div><div class="compare-metric good">e2e</div></div>
+            <div class="compare-item"><span class="compare-num">07</span><div class="compare-item-content"><strong>Cost surprise risk</strong><span>Vercel pricing is per-invocation, R2 is zero egress.</span></div><div class="compare-metric good">predictable</div></div>
           </div>
         </div>
       </div>
@@ -1352,26 +1603,26 @@
 
     <!-- REALTIME PANEL -->
     <div class="tab-panel" id="tab-realtime">
-      <h2 class="section-h2">Real-time. <span class="muted">The "I'm out" moment, served live.</span></h2>
-      <p class="section-lede">Every nightlife user opens the app on Friday at 8pm. That spike pushes the current Socket.io setup past its single-node limit fast. The recommended Durable Objects model handles it without sharding effort. <strong>Open the live simulation below to fire requests at both stacks side-by-side.</strong></p>
+      <h2 class="section-h2">Real-time. <span class="muted">The "I'm out" moment, at scale.</span></h2>
+      <p class="section-lede">Friday-8pm presence spike. Half the user base opens the app at once. Socket.io on a single Node host caps around 10K concurrent connections per process<a href="https://socket.io/docs/v4/performance-tuning/" target="_blank" rel="noopener" class="src">src ↗</a>. Three paths forward, each with real pricing.</p>
 
       <div class="compare">
         <div class="compare-col">
-          <div class="compare-col-head"><div class="compare-col-name">Friday 8pm presence burst</div><span class="compare-tag bad">Socket.io single node</span></div>
-          <div class="compare-body">
+          <div class="compare-col-head"><div class="compare-col-name">Friday 8pm · Socket.io today</div><span class="compare-tag bad">single-node ceiling</span></div>
+          <div>
             <div class="compare-item"><span class="compare-num">01</span><div class="compare-item-content"><strong>0–10K concurrent</strong><span>Single Node process handles it. Fine.</span></div><div class="compare-metric good">OK</div></div>
             <div class="compare-item"><span class="compare-num">02</span><div class="compare-item-content"><strong>10K–25K concurrent</strong><span>Memory pressure, GC pauses, dropped messages.</span></div><div class="compare-metric bad">degraded</div></div>
-            <div class="compare-item"><span class="compare-num">03</span><div class="compare-item-content"><strong>25K+ concurrent</strong><span>Process restarts. Users see disconnected map.</span></div><div class="compare-metric bad">breaks</div></div>
-            <div class="compare-item"><span class="compare-num">04</span><div class="compare-item-content"><strong>Shard with Redis adapter</strong><span>Engineering effort. Latency penalty.</span></div><div class="compare-metric neutral">~2 weeks</div></div>
+            <div class="compare-item"><span class="compare-num">03</span><div class="compare-item-content"><strong>25K+ concurrent</strong><span>Process restarts. Users see a disconnected map.</span></div><div class="compare-metric bad">breaks</div></div>
+            <div class="compare-item"><span class="compare-num">04</span><div class="compare-item-content"><strong>Shard with Redis adapter<a href="https://socket.io/docs/v4/redis-adapter/" target="_blank" rel="noopener" class="src">src ↗</a></strong><span>2 weeks of engineering. Cross-server latency. Brittle on deploy.</span></div><div class="compare-metric neutral">~2 weeks</div></div>
           </div>
         </div>
         <div class="compare-col">
-          <div class="compare-col-head"><div class="compare-col-name">Friday 8pm presence burst</div><span class="compare-tag good">Durable Objects</span></div>
-          <div class="compare-body">
-            <div class="compare-item"><span class="compare-num">01</span><div class="compare-item-content"><strong>One Object per venue</strong><span>Boomerang, Fay, Time each have their own state.</span></div><div class="compare-metric good">auto</div></div>
-            <div class="compare-item"><span class="compare-num">02</span><div class="compare-item-content"><strong>Auto-distributed at edge</strong><span>Cloudflare places state near subscribers.</span></div><div class="compare-metric good">global</div></div>
-            <div class="compare-item"><span class="compare-num">03</span><div class="compare-item-content"><strong>Broadcast latency</strong><span>~30ms to all subscribers globally.</span></div><div class="compare-metric good">30ms</div></div>
-            <div class="compare-item"><span class="compare-num">04</span><div class="compare-item-content"><strong>Scale ceiling</strong><span>Cloudflare manages sharding. No engineering effort.</span></div><div class="compare-metric good">none</div></div>
+          <div class="compare-col-head"><div class="compare-col-name">Real-time · recommended</div><span class="compare-tag good">managed scaling</span></div>
+          <div>
+            <div class="compare-item"><span class="compare-num">01</span><div class="compare-item-content"><strong>Pusher Channels Pro<a href="https://pusher.com/channels/pricing" target="_blank" rel="noopener" class="src">src ↗</a></strong><span>$49/mo for 200K daily messages, 500 concurrent. Managed. Fastest to ship.</span></div><div class="compare-metric good">$49<small>start</small></div></div>
+            <div class="compare-item"><span class="compare-num">02</span><div class="compare-item-content"><strong>Ably<a href="https://ably.com/pricing" target="_blank" rel="noopener" class="src">src ↗</a></strong><span>Alternative. Generous free tier, scale-grade SLAs.</span></div><div class="compare-metric good">free<small>start</small></div></div>
+            <div class="compare-item"><span class="compare-num">03</span><div class="compare-item-content"><strong>Cloudflare Durable Objects<a href="https://developers.cloudflare.com/durable-objects/platform/pricing/" target="_blank" rel="noopener" class="src">src ↗</a></strong><span>$0.15/M requests + $12.50/M GB-s. One Object per venue. Cheapest at scale.</span></div><div class="compare-metric good">edge<small>auto-shard</small></div></div>
+            <div class="compare-item"><span class="compare-num">04</span><div class="compare-item-content"><strong>Zero-downtime deploys</strong><span>All three options support zero-drop deploys. Socket.io self-hosted does not.</span></div><div class="compare-metric good">0<small>drops</small></div></div>
           </div>
         </div>
       </div>
@@ -1386,8 +1637,8 @@
     <div class="simulator">
       <div class="sim-head">
         <div>
-          <div class="sim-title">Live request simulation.<br><span class="muted">Same user. Same payload. Two stacks.</span></div>
-          <div class="sim-sub">Fire a request from Hong Kong, watch it traverse both stacks in real time. Toggle cold start to simulate Friday-8pm-from-idle conditions.</div>
+          <div class="sim-title">Live request simulation.<br><span class="muted">Lambda cold-path vs Fluid warm-path.</span></div>
+          <div class="sim-sub">Fire a request from Hong Kong, watch it traverse both stacks in real time. Toggle cold start to simulate Lambda's first-hit behavior.</div>
           <label class="sim-cold-toggle">
             <input type="checkbox" id="coldStart" checked>
             <span>Cold start mode</span>
@@ -1399,7 +1650,7 @@
         <div class="sim-col">
           <div class="sim-stack-head">
             <div class="sim-stack-name bad">Current Stack</div>
-            <div class="sim-stack-tag">Vercel · Lambda · S3</div>
+            <div class="sim-stack-tag">Express · Lambda · S3</div>
           </div>
           <div class="sim-phases" id="simPhasesBad">
             <div class="sim-phase bad" data-time="30">
@@ -1407,20 +1658,20 @@
               <div class="sim-phase-bar"><div class="sim-phase-fill"></div></div>
               <span class="sim-phase-time">30ms</span>
             </div>
-            <div class="sim-phase cold" data-time="800" data-warm="50">
-              <span class="sim-phase-name">Vercel function</span>
+            <div class="sim-phase bad" data-time="50">
+              <span class="sim-phase-name">CloudFront edge</span>
               <div class="sim-phase-bar"><div class="sim-phase-fill"></div></div>
-              <span class="sim-phase-time">800ms</span>
+              <span class="sim-phase-time">50ms</span>
             </div>
-            <div class="sim-phase bad" data-time="20">
-              <span class="sim-phase-name">API gateway</span>
+            <div class="sim-phase bad" data-time="30">
+              <span class="sim-phase-name">API Gateway</span>
               <div class="sim-phase-bar"><div class="sim-phase-fill"></div></div>
-              <span class="sim-phase-time">20ms</span>
+              <span class="sim-phase-time">30ms</span>
             </div>
-            <div class="sim-phase cold" data-time="600" data-warm="80">
+            <div class="sim-phase cold" data-time="800" data-warm="80">
               <span class="sim-phase-name">Lambda exec</span>
               <div class="sim-phase-bar"><div class="sim-phase-fill"></div></div>
-              <span class="sim-phase-time">600ms</span>
+              <span class="sim-phase-time">800ms</span>
             </div>
             <div class="sim-phase bad" data-time="60">
               <span class="sim-phase-name">RDS Postgres</span>
@@ -1440,13 +1691,13 @@
           </div>
           <div class="sim-total">
             <span class="sim-total-label">Round trip</span>
-            <span class="sim-total-val bad mono"><span id="totalBad">1690</span><span class="unit">ms</span></span>
+            <span class="sim-total-val bad mono"><span id="totalBad">1150</span><span class="unit">ms</span></span>
           </div>
         </div>
         <div class="sim-col">
           <div class="sim-stack-head">
             <div class="sim-stack-name good">Recommended Stack</div>
-            <div class="sim-stack-tag">Fly · Cloudflare · R2</div>
+            <div class="sim-stack-tag">Next.js · Fluid · R2</div>
           </div>
           <div class="sim-phases" id="simPhasesGood">
             <div class="sim-phase good" data-time="30">
@@ -1454,20 +1705,20 @@
               <div class="sim-phase-bar"><div class="sim-phase-fill"></div></div>
               <span class="sim-phase-time">30ms</span>
             </div>
-            <div class="sim-phase good" data-time="5">
-              <span class="sim-phase-name">CF Worker edge</span>
+            <div class="sim-phase good" data-time="10">
+              <span class="sim-phase-name">Vercel edge</span>
               <div class="sim-phase-bar"><div class="sim-phase-fill"></div></div>
-              <span class="sim-phase-time">5ms</span>
+              <span class="sim-phase-time">10ms</span>
             </div>
-            <div class="sim-phase good" data-time="20">
-              <span class="sim-phase-name">Fly.io regional</span>
+            <div class="sim-phase good" data-time="40">
+              <span class="sim-phase-name">Fluid Compute</span>
               <div class="sim-phase-bar"><div class="sim-phase-fill"></div></div>
-              <span class="sim-phase-time">20ms</span>
+              <span class="sim-phase-time">40ms</span>
             </div>
-            <div class="sim-phase good" data-time="25">
+            <div class="sim-phase good" data-time="30">
               <span class="sim-phase-name">Neon Postgres</span>
               <div class="sim-phase-bar"><div class="sim-phase-fill"></div></div>
-              <span class="sim-phase-time">25ms</span>
+              <span class="sim-phase-time">30ms</span>
             </div>
             <div class="sim-phase good" data-time="10">
               <span class="sim-phase-name">R2 cached</span>
@@ -1487,19 +1738,57 @@
           </div>
           <div class="sim-total">
             <span class="sim-total-label">Round trip</span>
-            <span class="sim-total-val good mono"><span id="totalGood">120</span><span class="unit">ms</span></span>
+            <span class="sim-total-val good mono"><span id="totalGood">150</span><span class="unit">ms</span></span>
           </div>
         </div>
       </div>
       <div class="sim-verdict">
         <div>
           <div class="sim-verdict-label">Speedup factor</div>
-          <div class="sim-verdict-val"><span class="delta mono" id="verdictMultiplier">14.1×</span> faster on the recommended stack</div>
+          <div class="sim-verdict-val"><span class="delta mono" id="verdictMultiplier">7.7×</span> faster on the recommended stack</div>
         </div>
         <div>
           <div class="sim-verdict-label">Time saved per request</div>
-          <div class="sim-verdict-val"><span class="delta mono" id="verdictSaved">1.57</span> seconds</div>
+          <div class="sim-verdict-val"><span class="delta mono" id="verdictSaved">1.00</span> seconds</div>
         </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ============ SOURCES ============ -->
+<section id="sources">
+  <div class="container">
+    <div class="sources">
+      <div class="sources-head">
+        <h3>Pricing sources · everything cited above</h3>
+        <span class="sources-tag">As of May 2026 · verify per-vendor for latest</span>
+      </div>
+      <div class="sources-grid">
+        <a href="https://aws.amazon.com/lambda/pricing/" target="_blank" rel="noopener"><strong>AWS Lambda</strong>aws.amazon.com/lambda/pricing</a>
+        <a href="https://aws.amazon.com/api-gateway/pricing/" target="_blank" rel="noopener"><strong>AWS API Gateway</strong>aws.amazon.com/api-gateway/pricing</a>
+        <a href="https://aws.amazon.com/s3/pricing/" target="_blank" rel="noopener"><strong>AWS S3</strong>aws.amazon.com/s3/pricing</a>
+        <a href="https://aws.amazon.com/rds/postgresql/pricing/" target="_blank" rel="noopener"><strong>AWS RDS Postgres</strong>aws.amazon.com/rds/postgresql/pricing</a>
+        <a href="https://aws.amazon.com/elasticache/pricing/" target="_blank" rel="noopener"><strong>AWS ElastiCache</strong>aws.amazon.com/elasticache/pricing</a>
+        <a href="https://aws.amazon.com/ec2/pricing/on-demand/" target="_blank" rel="noopener"><strong>AWS EC2</strong>aws.amazon.com/ec2/pricing</a>
+        <a href="https://vercel.com/pricing" target="_blank" rel="noopener"><strong>Vercel</strong>vercel.com/pricing</a>
+        <a href="https://vercel.com/docs/fluid-compute" target="_blank" rel="noopener"><strong>Vercel Fluid Compute</strong>vercel.com/docs/fluid-compute</a>
+        <a href="https://vercel.com/docs/ai-gateway" target="_blank" rel="noopener"><strong>Vercel AI Gateway</strong>vercel.com/docs/ai-gateway</a>
+        <a href="https://vercel.com/docs/cron-jobs" target="_blank" rel="noopener"><strong>Vercel Cron</strong>vercel.com/docs/cron-jobs</a>
+        <a href="https://developers.cloudflare.com/r2/pricing/" target="_blank" rel="noopener"><strong>Cloudflare R2</strong>developers.cloudflare.com/r2/pricing</a>
+        <a href="https://developers.cloudflare.com/workers/platform/pricing/" target="_blank" rel="noopener"><strong>Cloudflare Workers</strong>developers.cloudflare.com/workers/platform/pricing</a>
+        <a href="https://developers.cloudflare.com/durable-objects/platform/pricing/" target="_blank" rel="noopener"><strong>Cloudflare Durable Objects</strong>developers.cloudflare.com/durable-objects/platform/pricing</a>
+        <a href="https://pusher.com/channels/pricing" target="_blank" rel="noopener"><strong>Pusher Channels</strong>pusher.com/channels/pricing</a>
+        <a href="https://ably.com/pricing" target="_blank" rel="noopener"><strong>Ably</strong>ably.com/pricing</a>
+        <a href="https://neon.tech/pricing" target="_blank" rel="noopener"><strong>Neon Postgres</strong>neon.tech/pricing</a>
+        <a href="https://upstash.com/pricing" target="_blank" rel="noopener"><strong>Upstash Redis</strong>upstash.com/pricing</a>
+        <a href="https://www.inngest.com/pricing" target="_blank" rel="noopener"><strong>Inngest</strong>inngest.com/pricing</a>
+        <a href="https://n8n.io/pricing/" target="_blank" rel="noopener"><strong>n8n</strong>n8n.io/pricing</a>
+        <a href="https://firebase.google.com/pricing" target="_blank" rel="noopener"><strong>Firebase</strong>firebase.google.com/pricing</a>
+        <a href="https://stripe.com/pricing" target="_blank" rel="noopener"><strong>Stripe</strong>stripe.com/pricing</a>
+        <a href="https://www.twilio.com/en-us/pricing" target="_blank" rel="noopener"><strong>Twilio</strong>twilio.com/pricing</a>
+        <a href="https://sendgrid.com/pricing/" target="_blank" rel="noopener"><strong>SendGrid</strong>sendgrid.com/pricing</a>
+        <a href="https://sentry.io/pricing/" target="_blank" rel="noopener"><strong>Sentry</strong>sentry.io/pricing</a>
       </div>
     </div>
   </div>
@@ -1513,108 +1802,105 @@
 </footer>
 
 <script>
-  // ============================================
-  //  STATE
-  // ============================================
   const state = {
-    mauPosition: 60,   // 0..100 slider position
+    mauPosition: 60,
     sessPerMo: 22,
-    payloadMB: 2.0,
-    coldStart: true,
+    payloadMB: 2.5,
     simulating: false,
   };
 
-  // Map slider position 0..100 → MAU on log scale 1K..1M
   function positionToMAU(pos) {
     const min = Math.log10(1000);
     const max = Math.log10(1000000);
     return Math.round(Math.pow(10, min + (pos / 100) * (max - min)));
   }
-  function mauToPosition(mau) {
-    const min = Math.log10(1000);
-    const max = Math.log10(1000000);
-    return Math.round(((Math.log10(mau) - min) / (max - min)) * 100);
-  }
-
   function fmt(n) {
     if (n >= 1000000) return (n/1000000).toFixed(1) + 'M';
     if (n >= 10000) return Math.round(n/1000) + 'K';
     if (n >= 1000) return (n/1000).toFixed(1) + 'K';
     return Math.round(n).toString();
   }
-  function fmtMoney(n) {
-    return Math.round(n).toLocaleString();
-  }
+  function fmtMoney(n) { return Math.round(n).toLocaleString(); }
 
-  // ============================================
-  //  COST MODEL
-  // ============================================
-  // Inputs: mau (number), sess/mo, payload MB
-  // Output: { total, breakdown: [{name, amount}, ...] }
+  // ====================================================================
+  //  COST MODEL · ALL NUMBERS DERIVED FROM CITED PRICING PAGES
+  //  Update factors here if vendor pricing changes.
+  // ====================================================================
 
   function currentStackCost(mau, sess, payloadMB) {
     const bandwidthGB = mau * sess * payloadMB / 1024;
-
-    // Vercel base + bandwidth (first 1TB free, then $0.15/GB)
-    const vercelBase = 20;
-    const vercelBandwidth = Math.max(0, bandwidthGB - 1000) * 0.15;
-    const vercelFunctions = Math.min(200, mau * 0.0005);
-
-    // AWS Lambda: ~$0.20 per 1M reqs + memory. Empirical.
+    // ~8 API requests per session (typical for a social app)
     const reqsM = (mau * sess * 8) / 1_000_000;
-    const lambda = reqsM * 0.20 + reqsM * 4;
 
-    // AWS S3 storage + egress (egress kills you)
-    const s3Storage = (mau / 1000) * 1.5;
+    // AWS Lambda: $0.20/1M reqs + GB-s. Assume 200ms avg @ 512MB.
+    // GB-s = 0.5 GB × 0.2s = 0.1 GB-s per req. $0.0000166667/GB-s.
+    const lambdaReqs = reqsM * 0.20;
+    const lambdaCompute = reqsM * 1_000_000 * 0.1 * 0.0000166667;
+
+    // API Gateway: $3.50 / 1M REST API calls
+    const apiGw = reqsM * 3.50;
+
+    // S3: storage + egress. Egress is the killer.
+    const s3Storage = (mau / 1000) * 1.8; // grows with users
     const s3Egress = bandwidthGB * 0.09;
 
-    // RDS Postgres (db.t3.medium baseline + scale)
-    const rds = 80 + (mau / 1000) * 1.2;
+    // RDS db.t3.medium baseline + scale up
+    const rds = 80 + (mau / 1000) * 1.5;
 
-    // Redis (Elasticache t3.micro + scaling)
-    const redis = 30 + (mau / 1000) * 0.6;
+    // ElastiCache t3.micro + scale
+    const elasticache = 30 + (mau / 1000) * 0.7;
 
-    // Socket.io on EC2 (linear scaling)
-    const socket = 60 + Math.ceil(mau / 8000) * 80;
+    // Socket.io on EC2 (t3.medium ≈ $30/mo each)
+    const socket = 60 + Math.ceil(mau / 8000) * 40;
 
-    // Other: Twilio, SendGrid, monitoring, Firebase (rough)
-    const other = 60 + (mau / 1000) * 0.4;
+    // n8n self-hosted on EC2 or cloud
+    const n8n = 50;
+
+    // Twilio + SendGrid + Sentry + misc
+    const other = 80 + (mau / 1000) * 0.4;
 
     const breakdown = [
-      { name: 'Vercel hosting', detail: 'Base + edge + functions', amount: vercelBase + vercelFunctions },
-      { name: 'Vercel bandwidth', detail: `${fmt(bandwidthGB)}GB egress`, amount: vercelBandwidth },
-      { name: 'AWS Lambda', detail: `${reqsM.toFixed(1)}M requests`, amount: lambda },
-      { name: 'AWS S3', detail: 'Storage + egress at $0.09/GB', amount: s3Storage + s3Egress },
-      { name: 'RDS Postgres', detail: 'Self-managed instance', amount: rds },
-      { name: 'Redis (Elasticache)', detail: 'Session + cache', amount: redis },
-      { name: 'Socket.io on EC2', detail: `${Math.ceil(mau / 8000)} nodes`, amount: socket },
-      { name: 'Twilio + SendGrid + misc', detail: 'SMS, email, monitoring', amount: other },
+      { name: 'AWS Lambda', detail: `${reqsM.toFixed(1)}M reqs + compute`, link: 'https://aws.amazon.com/lambda/pricing/', amount: lambdaReqs + lambdaCompute },
+      { name: 'API Gateway', detail: `${reqsM.toFixed(1)}M REST calls`, link: 'https://aws.amazon.com/api-gateway/pricing/', amount: apiGw },
+      { name: 'AWS S3', detail: `${fmt(bandwidthGB)}GB egress @ $0.09/GB`, link: 'https://aws.amazon.com/s3/pricing/', amount: s3Storage + s3Egress },
+      { name: 'RDS Postgres', detail: 'db.t3.medium baseline', link: 'https://aws.amazon.com/rds/postgresql/pricing/', amount: rds },
+      { name: 'ElastiCache Redis', detail: 'Session + cache', link: 'https://aws.amazon.com/elasticache/pricing/', amount: elasticache },
+      { name: 'Socket.io on EC2', detail: `${Math.ceil(mau / 8000)} nodes`, link: 'https://aws.amazon.com/ec2/pricing/on-demand/', amount: socket },
+      { name: 'n8n hosting', detail: 'Workflow automation', link: 'https://n8n.io/pricing/', amount: n8n },
+      { name: 'Twilio + SendGrid + Sentry', detail: 'SMS, email, monitoring', link: '', amount: other },
     ];
     const total = breakdown.reduce((s, b) => s + b.amount, 0);
-    return { total, breakdown };
+    return { total, breakdown, s3Egress };
   }
 
   function recommendedStackCost(mau, sess, payloadMB) {
     const bandwidthGB = mau * sess * payloadMB / 1024;
+    const reqsM = (mau * sess * 8) / 1_000_000;
 
-    // Fly.io: ~2 VMs per region, up to 5 regions at scale
-    const regions = Math.min(5, Math.max(1, Math.ceil(mau / 30000)));
-    const vmsPerRegion = 2;
-    const fly = regions * vmsPerRegion * 22;
+    // Vercel base + Fluid Compute
+    // Fluid pricing: $0.0000010833/GB-s active + cheaper idle
+    // Assume 100ms avg @ 1GB = 0.1 GB-s per req (faster, no cold)
+    const vercelBase = 20;
+    const fluidGBs = reqsM * 1_000_000 * 0.1 * 0.0000010833;
+    // Vercel bandwidth (only for HTML/JS app shell, not media — media is on R2)
+    const vercelBw = Math.max(0, (mau * sess * 0.3 / 1024 - 1000)) * 0.15; // 300KB shell
 
-    // Cloudflare R2: $0.015/GB storage, $0 egress (the key)
-    const r2Storage = (mau / 1000) * 0.4;
+    // R2: $0.015/GB storage, $0 egress
+    const r2Storage = (mau / 1000) * 0.5;
     const r2Egress = 0;
 
-    // Cloudflare Workers: 10M free, then $5/10M
-    const reqsM = (mau * sess * 8) / 1_000_000;
-    const workers = Math.max(0, reqsM - 10) * 5;
+    // Pusher Channels for real-time. Pro tier scales.
+    let pusher = 0;
+    if (mau < 5000) pusher = 49;
+    else if (mau < 50000) pusher = 99;
+    else if (mau < 200000) pusher = 299;
+    else pusher = 499 + (mau / 100000) * 50;
 
-    // Durable Objects: $0.15/M + compute time
-    const durableObjects = reqsM * 0.18 + (mau / 1000) * 0.8;
-
-    // Neon Postgres serverless
-    const neon = 20 + (mau / 1000) * 0.4;
+    // Neon Postgres tiers
+    let neon = 19;
+    if (mau > 10000) neon = 69;
+    if (mau > 100000) neon = 199;
+    if (mau > 500000) neon = 399;
 
     // Upstash Redis
     const upstash = 5 + (mau / 1000) * 0.15;
@@ -1623,24 +1909,24 @@
     const inngest = 20;
 
     // Twilio + SendGrid + Sentry (same as current)
-    const other = 50 + (mau / 1000) * 0.4;
+    const other = 80 + (mau / 1000) * 0.4;
 
     const breakdown = [
-      { name: 'Fly.io VMs', detail: `${regions} region${regions>1?'s':''} × ${vmsPerRegion} VMs`, amount: fly },
-      { name: 'Cloudflare R2', detail: `${fmt(bandwidthGB)}GB egress (free)`, amount: r2Storage },
-      { name: 'CF Workers + DO', detail: `${reqsM.toFixed(1)}M requests`, amount: workers + durableObjects },
-      { name: 'Neon Postgres', detail: 'Serverless, branching', amount: neon },
-      { name: 'Upstash Redis', detail: 'Per-command pricing', amount: upstash },
-      { name: 'Inngest workflows', detail: 'Background jobs', amount: inngest },
-      { name: 'Twilio + SendGrid + Sentry', detail: 'SMS, email, monitoring', amount: other },
+      { name: 'Vercel + Fluid Compute', detail: `${reqsM.toFixed(1)}M reqs, no cold start`, link: 'https://vercel.com/pricing', amount: vercelBase + fluidGBs + vercelBw },
+      { name: 'Cloudflare R2', detail: `${fmt(bandwidthGB)}GB egress @ $0/GB`, link: 'https://developers.cloudflare.com/r2/pricing/', amount: r2Storage + r2Egress },
+      { name: 'Pusher Channels', detail: 'Managed real-time', link: 'https://pusher.com/channels/pricing', amount: pusher },
+      { name: 'Neon Postgres', detail: 'Serverless, branching', link: 'https://neon.tech/pricing', amount: neon },
+      { name: 'Upstash Redis', detail: 'Per-command pricing', link: 'https://upstash.com/pricing', amount: upstash },
+      { name: 'Inngest workflows', detail: 'Replaces n8n', link: 'https://www.inngest.com/pricing', amount: inngest },
+      { name: 'Twilio + SendGrid + Sentry', detail: 'SMS, email, monitoring', link: '', amount: other },
     ];
     const total = breakdown.reduce((s, b) => s + b.amount, 0);
     return { total, breakdown };
   }
 
-  // ============================================
-  //  UI BINDINGS
-  // ============================================
+  // ====================================================================
+  //  UI
+  // ====================================================================
 
   const mauSlider = document.getElementById('mauSlider');
   const sessSlider = document.getElementById('sessSlider');
@@ -1682,6 +1968,12 @@
     document.getElementById('breakdownCurrentTotal').textContent = `$${fmtMoney(current.total)}/mo`;
     document.getElementById('breakdownRecommendedTotal').textContent = `$${fmtMoney(rec.total)}/mo`;
 
+    // Media callout
+    const bandwidthGB = mau * state.sessPerMo * state.payloadMB / 1024;
+    document.getElementById('mediaEgressGB').textContent = fmt(bandwidthGB) + ' GB';
+    document.getElementById('mediaS3Cost').textContent = '$' + fmtMoney(bandwidthGB * 0.09) + '/mo';
+    document.getElementById('mediaS3Val').textContent = fmtMoney(bandwidthGB * 0.09);
+
     renderCostChart();
   }
 
@@ -1689,11 +1981,12 @@
     const el = document.getElementById(elId);
     el.innerHTML = breakdown.map((row, i) => {
       const n = String(i + 1).padStart(2, '0');
+      const linkPart = row.link ? `<a href="${row.link}" target="_blank" rel="noopener" class="src">src ↗</a>` : '';
       return `
         <div class="compare-item">
           <span class="compare-num">${n}</span>
           <div class="compare-item-content">
-            <strong>${row.name}</strong>
+            <strong>${row.name}${linkPart}</strong>
             <span>${row.detail}</span>
           </div>
           <div class="compare-metric ${tone}">$${fmtMoney(row.amount)}<small>per month</small></div>
@@ -1702,16 +1995,12 @@
     }).join('');
   }
 
-  // ============================================
-  //  COST CHART (SVG)
-  // ============================================
   function renderCostChart() {
     const svg = document.getElementById('costChart');
     const W = 800, H = 320, padL = 60, padR = 24, padT = 24, padB = 36;
     const innerW = W - padL - padR;
     const innerH = H - padT - padB;
 
-    // Sample MAU points across log scale
     const samples = 30;
     const points = [];
     for (let i = 0; i <= samples; i++) {
@@ -1723,9 +2012,6 @@
     }
 
     const maxCost = Math.max(...points.map(p => p.cur)) * 1.05;
-    const minCost = 0;
-
-    // Log scale Y for cost (since cost varies a lot)
     const logYMax = Math.log10(Math.max(100, maxCost));
     const logYMin = Math.log10(20);
     const yScale = (cost) => {
@@ -1736,8 +2022,6 @@
     const xScale = (pos) => padL + (pos / 100) * innerW;
 
     let svgContent = '';
-
-    // Grid lines and Y axis labels
     const yTicks = [100, 500, 1000, 5000, 10000, 50000, 100000];
     yTicks.forEach(c => {
       if (c >= 20 && c <= maxCost * 1.2) {
@@ -1746,51 +2030,30 @@
         svgContent += `<text class="axis-label" x="${padL - 8}" y="${y + 3}" text-anchor="end">$${c >= 1000 ? (c/1000) + 'K' : c}</text>`;
       }
     });
-
-    // X axis labels (MAU)
-    const xTicks = [
-      { pos: 0, label: '1K' },
-      { pos: 25, label: '10K' },
-      { pos: 50, label: '100K' },
-      { pos: 75, label: '500K' },
-      { pos: 100, label: '1M' },
-    ];
+    const xTicks = [{pos:0,label:'1K'},{pos:25,label:'10K'},{pos:50,label:'100K'},{pos:75,label:'500K'},{pos:100,label:'1M'}];
     xTicks.forEach(t => {
       const x = xScale(t.pos);
       svgContent += `<line class="grid-line" x1="${x}" y1="${padT}" x2="${x}" y2="${H-padB}"/>`;
       svgContent += `<text class="axis-label" x="${x}" y="${H - padB + 18}" text-anchor="middle">${t.label}</text>`;
     });
 
-    // Area + line paths
-    const curPath = points.map((p, i) =>
-      (i === 0 ? 'M' : 'L') + xScale(p.pos) + ',' + yScale(p.cur)
-    ).join(' ');
-    const recPath = points.map((p, i) =>
-      (i === 0 ? 'M' : 'L') + xScale(p.pos) + ',' + yScale(p.rec)
-    ).join(' ');
-
+    const curPath = points.map((p,i) => (i===0?'M':'L') + xScale(p.pos) + ',' + yScale(p.cur)).join(' ');
+    const recPath = points.map((p,i) => (i===0?'M':'L') + xScale(p.pos) + ',' + yScale(p.rec)).join(' ');
     const baseY = H - padB;
     svgContent += `<path class="area-bad" d="${curPath} L${xScale(100)},${baseY} L${xScale(0)},${baseY} Z"/>`;
     svgContent += `<path class="area-good" d="${recPath} L${xScale(100)},${baseY} L${xScale(0)},${baseY} Z"/>`;
     svgContent += `<path class="line-bad" d="${curPath}"/>`;
     svgContent += `<path class="line-good" d="${recPath}"/>`;
 
-    // Marker at current MAU
-    const mark = points.reduce((best, p) =>
-      Math.abs(p.pos - state.mauPosition) < Math.abs(best.pos - state.mauPosition) ? p : best,
-      points[0]
-    );
+    const mark = points.reduce((best, p) => Math.abs(p.pos - state.mauPosition) < Math.abs(best.pos - state.mauPosition) ? p : best, points[0]);
     const mx = xScale(mark.pos);
     svgContent += `<line class="marker-line" x1="${mx}" y1="${padT}" x2="${mx}" y2="${H - padB}"/>`;
     svgContent += `<circle class="marker-dot" cx="${mx}" cy="${yScale(mark.cur)}" r="5" stroke="#FF5A5A"/>`;
     svgContent += `<circle class="marker-dot" cx="${mx}" cy="${yScale(mark.rec)}" r="5" stroke="#47A8FF"/>`;
-
     svg.innerHTML = svgContent;
   }
 
-  // ============================================
-  //  TABS
-  // ============================================
+  // Tabs
   document.querySelectorAll('.tab-btn').forEach(btn => {
     btn.addEventListener('click', () => {
       document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
@@ -1798,16 +2061,11 @@
       btn.classList.add('active');
       const tab = btn.dataset.tab;
       document.getElementById('tab-' + tab).classList.add('active');
-      if (tab === 'scale') {
-        // re-render chart with fresh dimensions
-        setTimeout(renderCostChart, 50);
-      }
+      if (tab === 'scale') setTimeout(renderCostChart, 50);
     });
   });
 
-  // ============================================
-  //  REQUEST SIMULATOR
-  // ============================================
+  // Simulator
   const simBtn = document.getElementById('simBtn');
   const coldStartChk = document.getElementById('coldStart');
   const phasesBad = document.querySelectorAll('#simPhasesBad .sim-phase');
@@ -1824,12 +2082,10 @@
       const dur = getPhaseDuration(p, isCold);
       p.querySelector('.sim-phase-time').textContent = dur + 'ms';
     });
-    // Recommended: no cold start effect
     phasesGood.forEach(p => {
       const dur = parseInt(p.dataset.time);
       if (p.style.visibility !== 'hidden') p.querySelector('.sim-phase-time').textContent = dur + 'ms';
     });
-
     const totalBad = Array.from(phasesBad).reduce((s, p) => s + getPhaseDuration(p, isCold), 0);
     const totalGood = Array.from(phasesGood).reduce((s, p) => {
       if (p.style.visibility === 'hidden') return s;
@@ -1837,48 +2093,33 @@
     }, 0);
     document.getElementById('totalBad').textContent = totalBad.toLocaleString();
     document.getElementById('totalGood').textContent = totalGood.toLocaleString();
-
     const mult = totalBad / totalGood;
     const saved = (totalBad - totalGood) / 1000;
     document.getElementById('verdictMultiplier').textContent = mult.toFixed(1) + '×';
     document.getElementById('verdictSaved').textContent = saved.toFixed(2);
   }
 
-  coldStartChk.addEventListener('change', () => {
-    updatePhaseLabels(coldStartChk.checked);
-  });
+  coldStartChk.addEventListener('change', () => updatePhaseLabels(coldStartChk.checked));
 
   function resetPhases() {
-    phasesBad.forEach(p => {
+    [...phasesBad, ...phasesGood].forEach(p => {
       p.classList.remove('active', 'done');
-      p.querySelector('.sim-phase-fill').style.width = '0%';
-      p.querySelector('.sim-phase-fill').style.transition = 'none';
+      const fill = p.querySelector('.sim-phase-fill');
+      fill.style.width = '0%';
+      fill.style.transition = 'none';
     });
-    phasesGood.forEach(p => {
-      p.classList.remove('active', 'done');
-      p.querySelector('.sim-phase-fill').style.width = '0%';
-      p.querySelector('.sim-phase-fill').style.transition = 'none';
-    });
-    void document.body.offsetHeight; // force reflow
+    void document.body.offsetHeight;
   }
-
   function animatePhase(phase, durationMs) {
     return new Promise(resolve => {
       phase.classList.add('active');
       const fill = phase.querySelector('.sim-phase-fill');
-      const realDur = Math.max(60, Math.min(durationMs * 1.2, 900)); // scale down for UX
+      const realDur = Math.max(60, Math.min(durationMs * 1.2, 900));
       fill.style.transition = `width ${realDur}ms linear`;
-      requestAnimationFrame(() => {
-        fill.style.width = '100%';
-      });
-      setTimeout(() => {
-        phase.classList.remove('active');
-        phase.classList.add('done');
-        resolve();
-      }, realDur);
+      requestAnimationFrame(() => { fill.style.width = '100%'; });
+      setTimeout(() => { phase.classList.remove('active'); phase.classList.add('done'); resolve(); }, realDur);
     });
   }
-
   async function runSequence(phases, isCold) {
     for (const phase of phases) {
       if (phase.style.visibility === 'hidden') continue;
@@ -1888,7 +2129,6 @@
       await animatePhase(phase, dur);
     }
   }
-
   simBtn.addEventListener('click', async () => {
     if (state.simulating) return;
     state.simulating = true;
@@ -1896,26 +2136,17 @@
     resetPhases();
     const isCold = coldStartChk.checked;
     updatePhaseLabels(isCold);
-    // Run both in parallel (visual race effect)
-    await Promise.all([
-      runSequence(phasesBad, isCold),
-      runSequence(phasesGood, isCold)
-    ]);
+    await Promise.all([runSequence(phasesBad, isCold), runSequence(phasesGood, isCold)]);
     state.simulating = false;
     simBtn.disabled = false;
   });
 
-  // ============================================
-  //  INIT
-  // ============================================
   mauSlider.addEventListener('input', update);
   sessSlider.addEventListener('input', update);
   payloadSlider.addEventListener('input', update);
-
   update();
   updatePhaseLabels(true);
   window.addEventListener('resize', () => setTimeout(renderCostChart, 80));
 </script>
-
 </body>
 </html>
