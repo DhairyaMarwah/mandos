@@ -1,0 +1,1730 @@
+<!DOCTYPE html>
+<html lang="en" data-reading="sans" data-theme="light">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>Mandos — Social Map · Product Requirements Document</title>
+<link rel="stylesheet" href="report.css" />
+<style>
+  /* Page-local styles only — net-new, never duplicating report.css helpers. */
+  .reading-controls {
+    position: fixed; top: 14px; right: 14px; z-index: 50;
+    display: flex; gap: 6px; align-items: center;
+    background: color-mix(in oklab, var(--paper) 88%, transparent);
+    backdrop-filter: blur(8px);
+    border: var(--hairline); border-radius: 999px;
+    padding: 5px 7px; box-shadow: var(--shadow-sm);
+  }
+  .reading-controls button {
+    font: 500 0.72rem/1 var(--font-mono); letter-spacing: 0.04em;
+    border: 0; background: transparent; color: var(--fg-muted);
+    padding: 6px 9px; border-radius: 999px; cursor: pointer;
+    transition: background .15s, color .15s;
+  }
+  .reading-controls button:hover { background: var(--g100); color: var(--fg-strong); }
+  .reading-controls button[aria-pressed="true"] { background: var(--clay); color: #fff; }
+  .reading-controls .rc-sep { width: 1.5px; height: 18px; background: var(--border-subtle); }
+  @media (max-width: 600px) { .reading-controls { display: none; } }
+
+  /* Phone-screenshot framing */
+  .shot { border: var(--hairline); border-radius: var(--radius-lg); overflow: hidden;
+          background: #0c0c0c; box-shadow: var(--shadow-sm); display: block; }
+  .shot img { display: block; width: 100%; height: auto; }
+  .shot-cap { font-family: var(--font-mono); font-size: 0.7rem; letter-spacing: 0.02em;
+              color: var(--fg-faint); margin-top: var(--space-2); text-align: center; }
+  .gallery { display: grid; gap: var(--space-5); margin: var(--space-6) 0; }
+  .gallery-2 { grid-template-columns: repeat(2, minmax(0,1fr)); }
+  .gallery-3 { grid-template-columns: repeat(3, minmax(0,1fr)); }
+  .gallery-4 { grid-template-columns: repeat(4, minmax(0,1fr)); }
+  @media (max-width: 760px) { .gallery-3, .gallery-4 { grid-template-columns: repeat(2,1fr); } }
+  @media (max-width: 480px) { .gallery-2, .gallery-3, .gallery-4 { grid-template-columns: 1fr; } }
+
+  /* Screen spec block — image beside its requirements */
+  .screen { display: grid; grid-template-columns: 232px minmax(0,1fr); gap: var(--space-6);
+            align-items: start; padding: var(--space-6) 0; border-top: var(--hairline-subtle); }
+  .screen:first-of-type { border-top: 0; }
+  .screen > figure { margin: 0; position: sticky; top: var(--space-6); }
+  .screen .scr-title { display: flex; align-items: baseline; gap: var(--space-3); flex-wrap: wrap; margin-bottom: var(--space-2); }
+  .screen .scr-title h4 { margin: 0; }
+  .screen .scr-file { font-family: var(--font-mono); font-size: 0.7rem; color: var(--fg-faint); }
+  @media (max-width: 760px) { .screen { grid-template-columns: 1fr; } .screen > figure { position: static; max-width: 280px; } }
+
+  .kv { font-family: var(--font-mono); font-size: 0.72rem; letter-spacing: 0.06em;
+        text-transform: uppercase; color: var(--clay-rust); margin: var(--space-4) 0 var(--space-2); }
+  .states { display: grid; grid-template-columns: repeat(3, 1fr); gap: var(--space-3); margin: var(--space-3) 0; }
+  @media (max-width: 620px) { .states { grid-template-columns: 1fr; } }
+  .state-box { border: var(--hairline-subtle); border-radius: var(--radius); padding: var(--space-3) var(--space-4); background: var(--g50); }
+  .state-box .st-h { font-family: var(--font-mono); font-size: 0.66rem; letter-spacing: 0.1em; text-transform: uppercase; color: var(--fg-faint); margin-bottom: 4px; }
+  .state-box.st-empty { border-left: 3px solid var(--g400); }
+  .state-box.st-loading { border-left: 3px solid var(--clay); }
+  .state-box.st-error { border-left: 3px solid var(--danger); }
+  .actions-table td { font-size: 0.9rem; }
+  .actions-table td:first-child { white-space: nowrap; font-weight: 550; color: var(--fg-strong); }
+  .legend-grid { display: grid; grid-template-columns: repeat(2,1fr); gap: var(--space-5); margin: var(--space-6) 0; }
+  @media (max-width: 620px) { .legend-grid { grid-template-columns: 1fr; } }
+  .phase-tag { font-family: var(--font-mono); font-size: 0.64rem; }
+</style>
+</head>
+<body>
+
+<div class="reading-controls no-print" role="group" aria-label="Reading preferences">
+  <button id="rc-serif" aria-pressed="false" title="Toggle serif reading mode">Serif</button>
+  <span class="rc-sep"></span>
+  <button id="rc-narrow" aria-pressed="false" title="Narrow the measure">Narrow</button>
+  <span class="rc-sep"></span>
+  <button id="rc-dark" aria-pressed="false" title="Toggle dark theme">Dark</button>
+</div>
+
+<div class="page-with-nav" style="padding-top: var(--space-12);">
+
+  <nav>
+    <ol class="toc-side" id="toc">
+      <li><span class="eyebrow eyebrow-rule">Contents</span></li>
+      <li><a href="#overview">00 · Overview</a></li>
+      <li><a href="#legend">01 · Marker language</a></li>
+      <li><a href="#ia">02 · Information architecture</a></li>
+      <li><a href="#journeys">03 · Primary journeys</a></li>
+      <li><a href="#mod-onboarding" class="l2">04 · Onboarding &amp; permissions</a></li>
+      <li><a href="#mod-coremap" class="l2">05 · Core map</a></li>
+      <li><a href="#mod-events" class="l2">06 · Events</a></li>
+      <li><a href="#mod-friends" class="l2">07 · Friends &amp; users</a></li>
+      <li><a href="#mod-visibility" class="l2">08 · Visibility</a></li>
+      <li><a href="#mod-regions" class="l2">09 · Regions</a></li>
+      <li><a href="#mod-vouchers" class="l2">10 · Vouchers</a></li>
+      <li><a href="#mod-search" class="l2">11 · Search</a></li>
+      <li><a href="#states">12 · Global states &amp; edges</a></li>
+      <li><a href="#data">13 · Data model</a></li>
+      <li><a href="#permstate">14 · Permission state machine</a></li>
+      <li><a href="#future">15 · Future scope</a></li>
+      <li><a href="#questions">16 · Open questions</a></li>
+    </ol>
+  </nav>
+
+  <main>
+
+    <!-- ░░ Masthead ░░ -->
+    <header class="stack">
+      <span class="eyebrow eyebrow-rule">Product Requirements · Mobile · Hong Kong</span>
+      <h1>Mandos: the night, <em>collapsed</em> onto one map</h1>
+      <p class="lead">A social map that folds an events app, a party app, a table-booking app, a
+        friends app and a voucher app into a single live view of Hong Kong. This document walks every
+        designed screen, the journeys that stitch them together, the conditional states the mockups
+        don't show, and the scope planned but not yet drawn — so the architecture is built flexible from day one.</p>
+      <div class="meta-strip">
+        <span><b>Prepared for</b> &nbsp;Engineering / Tech team</span>
+        <span class="sep">·</span>
+        <span><b>Source</b> &nbsp;23 designed screens</span>
+        <span class="sep">·</span>
+        <span><b>Updated</b> &nbsp;Jun 24, 2026</span>
+        <span class="sep">·</span>
+        <span><b>Status</b> &nbsp;<span class="badge badge-warn">Design → Spec</span></span>
+      </div>
+    </header>
+
+    <!-- ░░ TL;DR ░░ -->
+    <div class="tldr">
+      <span class="eyebrow">TL;DR</span>
+      <p>Mandos is a <strong>live, dark-themed Apple-MapKit map of Hong Kong</strong> where every social
+        primitive is a marker: <strong>events</strong> (pin size scales with popularity), <strong>users who are "out"</strong>
+        (avatar + status pill), <strong>clubs &amp; bars</strong>, <strong>regions</strong> (e.g. <em>Midnight City</em>),
+        and <strong>"Mandos Coin" vouchers</strong>. Users filter by time (Today / This Weekend / This Week / Select Date)
+        and category (All / Events / Friends / Clubs), tap any marker to open a detail sheet, message friends or
+        request strangers, explore a region's people-venues-chat-offers, and claim vouchers. Two systemic threads run
+        through everything: a <strong>visibility model</strong> (Visible ↔ Ghost, with Boost planned) and a
+        <strong>location-permission model</strong> that degrades the whole map when off. Vouchers ship in two phases —
+        <strong>Phase 1: tap-to-claim from anywhere</strong>; <strong>Phase 2: geofenced claim within ~100m</strong> — so
+        proximity, anti-spoofing and per-user daily limits must be designed into the data model now.</p>
+    </div>
+
+    <!-- ░░ 00 · Overview ░░ -->
+    <section class="section" id="overview">
+      <div class="sec-head">
+        <span class="idx">00</span>
+        <h2>Overview &amp; how to read this</h2>
+      </div>
+      <p class="sec-intro">What this document covers and the shape it follows, mapped to exactly what
+        the tech team asked for.</p>
+
+      <div class="grid-3">
+        <div class="card">
+          <span class="badge badge-brand">Asked for</span>
+          <h4 style="margin-top:var(--space-3)">Screens &amp; journeys</h4>
+          <p class="small muted">Key screens, entry points, decision branches and edge cases — covered
+            per-screen in §04–§11 and stitched end-to-end in <a href="#journeys">§03 Journeys</a>.</p>
+        </div>
+        <div class="card">
+          <span class="badge badge-brand">Asked for</span>
+          <h4 style="margin-top:var(--space-3)">Features &amp; states</h4>
+          <p class="small muted">What each screen does, including the conditional logic the static
+            designs hide — <em>empty</em>, <em>loading</em>, <em>error</em> and degraded states, called out on every screen.</p>
+        </div>
+        <div class="card">
+          <span class="badge badge-brand">Asked for</span>
+          <h4 style="margin-top:var(--space-3)">Future scope</h4>
+          <p class="small muted">Planned-but-not-designed work — Phase 2 geofencing, Boost mode, booking,
+            moderation — consolidated in <a href="#future">§15</a> so the architecture stays flexible.</p>
+        </div>
+      </div>
+
+      <div class="callout callout-info">
+        <div class="callout-title">How the per-screen specs are structured</div>
+        <p>Modules §04–§11 each open with what the module does, then break down every screen with its
+          <strong>purpose</strong>, <strong>entry points</strong>, an <strong>actions → outcomes</strong> table,
+          its <strong>empty / loading / error</strong> states, and <strong>edge cases</strong>. The screenshot sits
+          beside its spec. Items marked <span class="badge badge-warn">Phase 2</span> or
+          <span class="badge badge-oat">Not designed</span> are flagged inline so nothing reads as "already built".</p>
+      </div>
+
+      <div class="callout callout-info" style="margin-top:var(--space-6); border-left-width:5px">
+        <div class="callout-title" style="font-size:1.05rem">The one rule to design around — location gates the social layer</div>
+        <p><strong>With location OFF</strong>, Mandos still works fully as a <em>discovery</em> app — the user
+          can browse <strong>all events, venues, regions and offers / vouchers</strong> on the map. What they
+          <strong>cannot</strong> do is see <strong>people</strong>: no friends or public users appear, the user
+          is invisible to others, and nothing is distance-ranked. The UI must state this plainly up front —
+          <em>"turn on location to see who's out tonight"</em> — so the absence of people reads as a setting,
+          not a bug, and the user knows exactly what they're missing.</p>
+        <p><strong>With location ON</strong>, the social layer switches on: the user sees <strong>friends and
+          public users who are "out"</strong>, their live <strong>status pills</strong> and distances, and they
+          become visible to others (unless they pick Ghost). The status pills <strong>reuse the existing status
+          set from the current module</strong> — no new status taxonomy is introduced. Every on/off × Visible/Ghost
+          combination is mapped in the state machine, <a href="#permstate">§14</a>.</p>
+      </div>
+    </section>
+
+    <!-- ░░ 02 · Marker language ░░ -->
+    <section class="section" id="legend">
+      <div class="sec-head">
+        <span class="idx">01</span>
+        <h2>The marker language</h2>
+        <span class="count">Map Icons Items</span>
+      </div>
+      <p class="sec-intro">A dedicated legend screen teaches the four marker families and their visual
+        rules. These rules are load-bearing — pin sizing, status pills and coin states all derive from data.</p>
+
+      <figure class="shot" style="margin:0 0 var(--space-3)">
+        <img src="Map%20Icons%20Items.png" alt="Marker legend showing Events, Clubs & Bars, Users, and Vouchers / Mandos Coin" loading="lazy" />
+      </figure>
+      <figcaption>Legend / key — the four map marker types and the rules each follows.</figcaption>
+
+      <div class="legend-grid">
+        <div class="card">
+          <h4>Events</h4>
+          <p class="small muted">Rounded poster thumbnails with a date badge (<code>MAY 09</code>). Pin
+            <strong>size scales with popularity</strong> — needs a numeric <code>popularityScore</code> and a
+            sizing function with min/max bounds, deterministic for ties, and clustering so popular events
+            don't occlude smaller ones.</p>
+        </div>
+        <div class="card">
+          <h4>Clubs &amp; Bars</h4>
+          <p class="small muted">Circular icons, <strong>constant size</strong>, showing the venue's
+            upcoming-event poster <em>or</em> its profile image (precedence: upcoming event wins, fall back to
+            profile), with a name label that must truncate.</p>
+        </div>
+        <div class="card">
+          <h4>Users</h4>
+          <p class="small muted">Circular avatars, <strong>constant size</strong>, with a status
+            <strong>pill</strong> ("I'm out!"). Status text is variable → truncation + profanity/empty handling.
+            Users in Ghost mode are <em>excluded entirely</em>, not drawn differently.</p>
+        </div>
+        <div class="card">
+          <h4>Vouchers / Mandos Coin</h4>
+          <p class="small muted">Hexagonal "M" coin with a value label ("20% discount"). Value is
+            data-driven (%, fixed, BOGO, HKD). The legend shows only the active coin — claimed / expired /
+            not-nearby / limit-reached states still need iconography (<span class="badge badge-warn">Phase 2 / not designed</span>).</p>
+        </div>
+      </div>
+
+      <div class="callout callout-info">
+        <div class="callout-title">A Region is not a pin — it's an admin-drawn area</div>
+        <p>Unlike the four marker types above, a <strong>Region is not a point on the map</strong>. It is a
+          <strong>category / zone created by Mandos admins from the web dashboard</strong>: an admin drops a pin
+          and sets a <strong>radius</strong>, and that creates a region area on the map. Everything that falls
+          inside the radius is automatically <strong>tagged to the region</strong> — the people inside, the
+          venues inside, the offers / vouchers inside, and the users inside.</p>
+        <p>Users can <strong>see and open</strong> a region from the map. And when a user physically
+          <strong>enters the area with location on</strong>, they get a <strong>popup notification</strong> and
+          the region opens up to show everything inside it — who's around, the venues, the live chat box, the
+          vouchers / offers, and so on. So the legend's four pins are the <em>contents</em>; the region is the
+          <em>container</em> drawn around them. (Dense areas also still need <strong>cluster</strong> glyphs —
+          <code>M+</code> / <code>+N</code> — plus Boost/Ghost user treatments and voucher state variants.)</p>
+      </div>
+    </section>
+
+    <!-- ░░ 03 · IA ░░ -->
+    <section class="section" id="ia">
+      <div class="sec-head">
+        <span class="idx">02</span>
+        <h2>Information architecture</h2>
+      </div>
+      <p class="sec-intro">The map is the hub. Almost everything else is a bottom sheet that slides over
+        it, so navigation is shallow and context is preserved when a sheet closes.</p>
+
+      <figure class="card" style="padding:var(--space-6)">
+        <svg viewBox="0 0 700 470" width="100%" role="img"
+             aria-label="Navigation map: the Core Map hub opens permission, search, filter, event, user, visibility, region and voucher sheets.">
+          <defs>
+            <marker id="arr" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse">
+              <path d="M0 0 L10 5 L0 10 z" fill="#D97757" />
+            </marker>
+          </defs>
+
+          <!-- Onboarding -->
+          <rect x="20" y="200" width="120" height="64" rx="10" fill="#F1EBDD" stroke="#E7DECB" stroke-width="2.5"/>
+          <text x="80" y="228" text-anchor="middle" font-family="ui-serif,Georgia,serif" font-size="14" fill="#141413">Grant Location</text>
+          <text x="80" y="247" text-anchor="middle" font-family="ui-monospace,monospace" font-size="9.5" fill="#6B6353">onboarding</text>
+
+          <!-- Hub -->
+          <rect x="270" y="196" width="160" height="78" rx="12" fill="#F6E4DA" stroke="#D97757" stroke-width="3"/>
+          <text x="350" y="228" text-anchor="middle" font-family="ui-serif,Georgia,serif" font-size="18" fill="#9E4E35">Core Map</text>
+          <text x="350" y="248" text-anchor="middle" font-family="ui-monospace,monospace" font-size="9.5" fill="#B45A3D">home · filters · tabs</text>
+
+          <line x1="140" y1="232" x2="262" y2="234" stroke="#D97757" stroke-width="2.5" marker-end="url(#arr)"/>
+
+          <!-- right column sheets -->
+          <g font-family="ui-serif,Georgia,serif" font-size="13" fill="#141413">
+            <rect x="500" y="20"  width="180" height="44" rx="9" fill="#FFFFFF" stroke="#D4CBBB" stroke-width="2.5"/>
+            <text x="590" y="47" text-anchor="middle">Search sheet</text>
+            <rect x="500" y="78" width="180" height="44" rx="9" fill="#FFFFFF" stroke="#D4CBBB" stroke-width="2.5"/>
+            <text x="590" y="105" text-anchor="middle">Event detail sheet</text>
+            <rect x="500" y="136" width="180" height="44" rx="9" fill="#FFFFFF" stroke="#D4CBBB" stroke-width="2.5"/>
+            <text x="590" y="163" text-anchor="middle">User profile sheet</text>
+            <rect x="500" y="194" width="180" height="44" rx="9" fill="#FFFFFF" stroke="#D4CBBB" stroke-width="2.5"/>
+            <text x="590" y="221" text-anchor="middle">Visibility sheet</text>
+            <rect x="500" y="252" width="180" height="44" rx="9" fill="#EAEEDF" stroke="#788C5D" stroke-width="2.5"/>
+            <text x="590" y="279" text-anchor="middle">Region explore + chat</text>
+            <rect x="500" y="310" width="180" height="44" rx="9" fill="#F6E4DA" stroke="#D97757" stroke-width="2.5"/>
+            <text x="590" y="337" text-anchor="middle">Voucher claim flow</text>
+            <rect x="500" y="368" width="180" height="44" rx="9" fill="#FFFFFF" stroke="#D4CBBB" stroke-width="2.5"/>
+            <text x="590" y="395" text-anchor="middle">Date / filter sheet</text>
+          </g>
+
+          <!-- hub to sheets -->
+          <g stroke="#D97757" stroke-width="2" fill="none">
+            <path d="M430 210 Q470 120 498 42"  marker-end="url(#arr)"/>
+            <path d="M430 214 Q470 150 498 100" marker-end="url(#arr)"/>
+            <path d="M430 224 Q470 185 498 158" marker-end="url(#arr)"/>
+            <path d="M430 235 C465 232 470 220 498 216" marker-end="url(#arr)"/>
+            <path d="M430 248 Q470 268 498 274" marker-end="url(#arr)"/>
+            <path d="M430 256 Q470 305 498 332" marker-end="url(#arr)"/>
+            <path d="M430 264 Q470 350 498 390" marker-end="url(#arr)"/>
+          </g>
+
+          <!-- region geofence arrival -->
+          <rect x="270" y="392" width="160" height="50" rx="10" fill="#EAEEDF" stroke="#788C5D" stroke-width="2.5"/>
+          <text x="350" y="414" text-anchor="middle" font-family="ui-serif,Georgia,serif" font-size="13" fill="#5F7049">Region arrival</text>
+          <text x="350" y="431" text-anchor="middle" font-family="ui-monospace,monospace" font-size="9" fill="#5F7049">geofence-enter</text>
+          <path d="M350 392 L350 282" stroke="#788C5D" stroke-width="2.5" fill="none" marker-end="url(#arr)" stroke-dasharray="5 4"/>
+          <text x="358" y="345" font-family="ui-monospace,monospace" font-size="9" fill="#5F7049">arrive in region →</text>
+        </svg>
+        <figcaption>Navigation map — a shallow hub-and-sheet model. Closing a sheet returns to the map with camera and filter state preserved.</figcaption>
+      </figure>
+
+      <p>Because nearly every detail surface is a sheet over the live map, three architectural rules
+        follow: (1) <strong>map state persists</strong> under the sheet (camera, active filter, category);
+        (2) the sheet payload should render header content <strong>instantly from the tapped marker</strong>
+        while the full detail loads; and (3) <strong>back / dismiss</strong> must be lossless. The one true
+        full-screen context switch is <strong>Search</strong>.</p>
+    </section>
+
+    <!-- ░░ 04 · Journeys ░░ -->
+    <section class="section" id="journeys">
+      <div class="sec-head">
+        <span class="idx">03</span>
+        <h2>Primary user journeys</h2>
+        <span class="count">8 flows</span>
+      </div>
+      <p class="sec-intro">The end-to-end paths that stitch the screens together, with their decision
+        branches. Each maps to a module spec below.</p>
+
+      <div class="stack-lg">
+        <div class="card">
+          <div class="row-between"><h4 style="margin:0">1 · First-run onboarding → live map</h4><span class="badge badge-oat">Onboarding</span></div>
+          <p class="small muted" style="margin-top:var(--space-2)">Sign-in → value/permission screen →
+            native OS dialog →
+            <strong>branch:</strong> Granted → live map centred on user · Approximate → map with precision
+            warning · Denied / "keep browsing" → degraded <code>Device Location off</code> map → (once) marker
+            legend → land on Core Map.</p>
+        </div>
+        <div class="card">
+          <div class="row-between"><h4 style="margin:0">2 · Browse &amp; open an event</h4><span class="badge badge-oat">Events</span></div>
+          <p class="small muted" style="margin-top:var(--space-2)">Select <em>Events</em> tab → optionally
+            apply a time filter → scan poster pins / "Events Near you" carousel → tap → event sheet →
+            <strong>branch:</strong> Get Directions · Send a message (inquiry/booking, auth-gated) ·
+            share / bookmark · expand for full detail.</p>
+        </div>
+        <div class="card">
+          <div class="row-between"><h4 style="margin:0">3 · Discover a person &amp; connect</h4><span class="badge badge-oat">Friends &amp; Users</span></div>
+          <p class="small muted" style="margin-top:var(--space-2)">See avatars + "I'm out!" pills (and own
+            "You" marker) → tap a user → profile sheet →
+            <strong>branch by relationship:</strong> non-friend → Follow / request + request-to-message ·
+            friend → open existing chat. Recent-activity thumbnail → event detail.</p>
+        </div>
+        <div class="card">
+          <div class="row-between"><h4 style="margin:0">4 · Region arrival &amp; exploration</h4><span class="badge badge-success">Regions</span></div>
+          <p class="small muted" style="margin-top:var(--space-2)">Pan to / tap a region <em>or</em>
+            physically enter its geofence (arrival sheet) → choose: See who's around · Join Live Chat ·
+            Discover offers &amp; venues · Explore the Zone → tabbed region view
+            (About / People / Live Chat / Venues / Offers).</p>
+        </div>
+        <div class="card">
+          <div class="row-between"><h4 style="margin:0">5 · Voucher claim — Phase 1 (digital)</h4><span class="badge badge-brand">Vouchers</span></div>
+          <p class="small muted" style="margin-top:var(--space-2)">Spot coin pin (value + distance) → tap →
+            "You found a Voucher!" → Claim → server validates expiry / stock / daily limit →
+            "Congratulations!" (added to wallet) → View all vouchers / share with friends.</p>
+        </div>
+        <div class="card">
+          <div class="row-between"><h4 style="margin:0">6 · Voucher claim — Phase 2 (geofenced)</h4><span class="badge badge-warn">Phase 2</span></div>
+          <p class="small muted" style="margin-top:var(--space-2)">Tap coin with location ON → proximity
+            checked vs ~100m →
+            <strong>branch:</strong> within range → "You're within range!" claim enabled · out of range →
+            "You're not close enough" claim blocked + Get Directions → cross geofence → sheet flips to
+            claimable → claim (subject to daily limit / stock) → success + share.</p>
+        </div>
+        <div class="card">
+          <div class="row-between"><h4 style="margin:0">7 · Toggle visibility (Ghost / Visible)</h4><span class="badge badge-oat">Visibility</span></div>
+          <p class="small muted" style="margin-top:var(--space-2)">Tap eye / visibility icon → "Visibility on
+            Map" sheet → choose Visible to all (broadcast + see everyone, distance-ranked) or Ghost Mode
+            (hidden; only see public / location-on users) →
+            <strong>branch:</strong> Ghost+location-off shows "what still works without location" + Turn on
+            Location deep link → mode persisted + broadcast in near-real-time.</p>
+        </div>
+        <div class="card">
+          <div class="row-between"><h4 style="margin:0">8 · Location-off degraded recovery</h4><span class="badge badge-oat">Onboarding</span></div>
+          <p class="small muted" style="margin-top:var(--space-2)">App detects location denied / off (or a
+            location-gated action tapped) → "You're invisible on map" reminder sheet → explains consequences +
+            what still works (saved-venue events, friends' last spot, messaging) →
+            <strong>branch:</strong> Open Settings / Turn on Location · Keep browsing → on return from Settings,
+            re-check on foreground and restore full map if granted.</p>
+        </div>
+      </div>
+    </section>
+
+    <!-- ░░ 05 · Onboarding & Permissions ░░ -->
+    <section class="section" id="mod-onboarding">
+      <div class="sec-head">
+        <span class="idx">04</span>
+        <h2>Module · Onboarding &amp; permissions</h2>
+        <span class="count">2 screens</span>
+      </div>
+      <p class="sec-intro">A pre-permission value/privacy explainer plus location-off reminder sheets.
+        They request OS location (<strong>decoupled from broadcasting it</strong>), deep-link to Settings when
+        denied, and define a degraded "invisible" browse mode whose only working features are saved-venue
+        events, friends' last spot, and messaging.</p>
+
+      <div class="screen">
+        <figure>
+          <span class="shot"><img src="Map%20Grant%20Access%20Location%20Screen.png" alt="Grant location access onboarding screen" loading="lazy" /></span>
+          <span class="shot-cap">Map Grant Access Location Screen.png</span>
+        </figure>
+        <div>
+          <div class="scr-title"><h4>Grant Location Access</h4><span class="badge badge-brand">Permission</span></div>
+          <p class="small muted">A value-explanation screen ("See what everyone's up to") that motivates
+            granting location before the OS dialog, with four benefit rows including the privacy promise —
+            <em>"No one can see your location until you share it with them"</em> — and an escape hatch to keep
+            browsing without location.</p>
+
+          <div class="kv">Entry points</div>
+          <ul class="small">
+            <li>First-launch onboarding after sign-in when location is not-yet-determined</li>
+            <li>Opening the map when the app detects location is off</li>
+            <li>Re-entry when a "keep browsing" user taps a location-gated action</li>
+          </ul>
+
+          <div class="kv">Actions → outcomes</div>
+          <table class="actions-table table-flat"><tbody>
+            <tr><td>Give Access</td><td>Fires the native OS permission dialog; app then branches on the result</td></tr>
+            <tr><td>Grant (While Using)</td><td>Acquire fix → dismiss → live map centred on user, nearby entities populate</td></tr>
+            <tr><td>Allow Once / Approximate</td><td>Proceed but handle lapsing permission &amp; reduced accuracy; warn that Phase 2 geofencing may be limited</td></tr>
+            <tr><td>Deny</td><td>Return to <code>Device Location off</code> state with degraded map; future taps must deep-link to Settings</td></tr>
+            <tr><td>Keep browsing without location</td><td>Degraded browse mode — city-level view, no "near me", location-gated actions re-prompt</td></tr>
+          </tbody></table>
+
+          <div class="kv">States</div>
+          <div class="states">
+            <div class="state-box st-empty"><div class="st-h">Empty</div><span class="small">Pre-permission avatar cluster is illustrative; after grant, genuine "no one out near you" must look valid, not broken.</span></div>
+            <div class="state-box st-loading"><div class="st-h">Loading</div><span class="small">Post-grant location-acquisition spinner over the map; CTA disabled to prevent double-tap.</span></div>
+            <div class="state-box st-error"><div class="st-h">Error</div><span class="small">Denied · services globally off (deep-link Settings) · fix times out (retry / last-known) · permanently-denied (no dialog).</span></div>
+          </div>
+
+          <div class="kv">Edge cases</div>
+          <ul class="small">
+            <li>Granted OS location but app-level sharing off (Ghost) → map works, user stays invisible; copy must stay truthful</li>
+            <li>"Allow Once" lapses next launch → re-detect &amp; possibly re-show this screen each session</li>
+            <li>Approximate-only → proximity, region detection &amp; ~100m geofenced claims can't be guaranteed; warn</li>
+            <li>Device Location Services master toggle off → dialog won't fire; "Give Access" must deep-link to Settings</li>
+            <li>Permission revoked while backgrounded → detect on foreground &amp; revert cleanly</li>
+            <li>User outside Hong Kong / VPN / spoofed GPS → graceful "not in coverage" + anti-spoof for vouchers</li>
+          </ul>
+          <details>
+            <summary>Data &amp; backend</summary>
+            <ul class="small">
+              <li>OS permission APIs; observe foreground authorization + accuracy (precise vs approximate)</li>
+              <li>Reverse-geocode coordinate → HK region (used app-wide)</li>
+              <li>Per-user location-sharing flag + audience scoping (friends / trusted / public-out), decoupled from OS grant</li>
+              <li>Persisted onboarding/permission state; last-known + city/IP fallback; grant-rate analytics</li>
+            </ul>
+          </details>
+        </div>
+      </div>
+
+      <div class="screen">
+        <figure>
+          <span class="shot"><img src="Map%20Location%20Reminder%20Sheet.png" alt="Location-off reminder sheet, you're invisible on map" loading="lazy" /></span>
+          <span class="shot-cap">Map Location Reminder Sheet.png</span>
+        </figure>
+        <div>
+          <div class="scr-title"><h4>Location-Off Reminder — "You're invisible on map"</h4><span class="badge badge-warn">Degraded</span></div>
+          <p class="small muted">A sheet that warns the user their device location is off (so they're
+            invisible and can't be distance-ranked), lists what still works without location, and routes them
+            to enable it or continue. Doubles as the location-off recovery prompt across the app.</p>
+
+          <div class="kv">Entry points</div>
+          <ul class="small">
+            <li>App launch / map open when location is denied or services off</li>
+            <li>User disabled location in-app then returned (foreground re-check)</li>
+            <li>Tapping a location-dependent action, or the <code>Device Location off</code> pill</li>
+          </ul>
+
+          <div class="kv">Actions → outcomes</div>
+          <table class="actions-table table-flat"><tbody>
+            <tr><td>Open Settings</td><td>Deep-link to OS location settings (or native prompt if re-requestable); re-check on return</td></tr>
+            <tr><td>Turn on Location row</td><td>Same routing as Open Settings</td></tr>
+            <tr><td>Keep browsing without location</td><td>Dismiss → degraded mode; only the listed offline features work</td></tr>
+          </tbody></table>
+
+          <div class="kv">States</div>
+          <div class="states">
+            <div class="state-box st-empty"><div class="st-h">Empty</div><span class="small">"Saved-venue events" empty if zero saved; "friends' last spot" empty if none shared — each needs its own copy.</span></div>
+            <div class="state-box st-loading"><div class="st-h">Loading</div><span class="small">Re-checking permission &amp; acquiring first fix on return from Settings; cover the gap with a spinner.</span></div>
+            <div class="state-box st-error"><div class="st-h">Error</div><span class="small">Granted but no GPS fix (indoors/airplane) → "Can't find your location", not a false "on"; failed deep link → instructions.</span></div>
+          </div>
+
+          <div class="kv">Edge cases</div>
+          <ul class="small">
+            <li>App permission granted but device Location Services master toggle still off → distinguish the two in copy</li>
+            <li>"While Using" granted but Phase 2 geofence needs "Always" → separate upgrade prompt</li>
+            <li>Returning from Settings unchanged → don't loop/re-show aggressively; respect a cooldown</li>
+            <li>Sheet shown mid-action (claiming a voucher) → on grant, <strong>resume</strong> the interrupted action, don't just dismiss</li>
+            <li>First-ever launch (never asked) → native prompt; previously-denied → deep-link Settings</li>
+          </ul>
+        </div>
+      </div>
+    </section>
+
+    <!-- ░░ 06 · Core Map ░░ -->
+    <section class="section" id="mod-coremap">
+      <div class="sec-head">
+        <span class="idx">05</span>
+        <h2>Module · Core map</h2>
+        <span class="count">3 screens</span>
+      </div>
+      <p class="sec-intro">The app's home: a dark Apple-MapKit Hong Kong map overlaying events, "out"
+        users, venues, regions and (future) coins, with composable <strong>time filters</strong> AND
+        <strong>category tabs</strong>, a drag-up explore sheet, locate-me, search, and the documented marker
+        legend. Heavily degraded in the <code>Device Location off</code> state.</p>
+
+      <div class="screen">
+        <figure>
+          <span class="shot"><img src="Map%20Initial%20Landing%20Page.png" alt="Initial landing map with event pins, user avatars, filters and tabs" loading="lazy" /></span>
+          <span class="shot-cap">Map Initial Landing Page.png</span>
+        </figure>
+        <div>
+          <div class="scr-title"><h4>Initial Landing Page (default map)</h4><span class="badge badge-brand">Home</span></div>
+          <p class="small muted">The default home view. Top bar = back · <code>Device Location off</code> pill ·
+            search. Below it a single-select time-filter row (Today / This Weekend / This Week / Select Date).
+            Over the map: event poster pins, avatar markers with "I'm out!" pills, a venue icon, branded POIs
+            (M+, Jollibee, Broadway Cinema). Bottom: category tabs (All / Events / Friends / Clubs) and a
+            "Drag Up to Explore" sheet.</p>
+
+          <div class="kv">Entry points</div>
+          <ul class="small">
+            <li>Cold-start / default landing after login · after permission onboarding</li>
+            <li>Back-navigation from any deeper sheet · app resume · deep link / push</li>
+          </ul>
+
+          <div class="kv">Actions → outcomes</div>
+          <table class="actions-table table-flat"><tbody>
+            <tr><td>Tap event pin</td><td>Opens event detail sheet</td></tr>
+            <tr><td>Tap user avatar</td><td>Opens profile (friend → chat; non-friend → request/message)</td></tr>
+            <tr><td>Tap venue icon</td><td>Opens venue/club detail</td></tr>
+            <tr><td>Tap time chip</td><td>Re-queries map for that window; single-select</td></tr>
+            <tr><td>Tap Select Date</td><td>Opens calendar picker</td></tr>
+            <tr><td>Tap category tab</td><td>Filters marker layers; composes (AND) with the time filter</td></tr>
+            <tr><td>Tap location pill / locate-me</td><td>Enable-location flow (off) or recenter/follow (on)</td></tr>
+            <tr><td>Pan / pinch</td><td>Re-fetch + re-cluster markers for new viewport bounds</td></tr>
+            <tr><td>Drag up handle</td><td>Expands curated lists (popular venues, event cards)</td></tr>
+          </tbody></table>
+
+          <div class="kv">States</div>
+          <div class="states">
+            <div class="state-box st-empty"><div class="st-h">Empty</div><span class="small">No markers for filter+tab+viewport → distinct per-tab empties ("No events today — try This Weekend / zoom out"); explore sheet shows placeholder.</span></div>
+            <div class="state-box st-loading"><div class="st-h">Loading</div><span class="small">Skeleton pins / shimmer on each filter, tab change or pan; base tiles + avatars + posters stream progressively; debounce viewport fetch.</span></div>
+            <div class="state-box st-error"><div class="st-h">Error</div><span class="small">Marker fetch fail → non-blocking retry, base map stays usable; tile failure fallback; image failures → default placeholders; 5xx → backoff.</span></div>
+          </div>
+
+          <div class="kv">Edge cases</div>
+          <ul class="small">
+            <li>Location off (shown) → no self-dot, can't recenter, geofencing disabled; rest of map still works</li>
+            <li>Very high marker density (HK is dense) → clustering, z-ordering, popularity-based sizing so popular events don't occlude others</li>
+            <li>Time filter × category tab interaction (e.g. Friends + This Week) → define whether "out" markers are time-bound or always-now</li>
+            <li>Stale "I'm out!" status → TTL + real-time removal; Ghost friends must not appear; a user toggling off mid-session drops in near-real-time</li>
+            <li>Long / non-Latin labels (status pill already shows "I'm…" truncated) → truncation + i18n</li>
+          </ul>
+          <div class="callout callout-warn" style="margin-top:var(--space-4)">
+            <div class="callout-title">Not yet on this view</div>
+            <p class="small">Voucher coins and Region polygons aren't drawn on the default landing yet —
+              reserve a <strong>voucher marker layer</strong> and a <strong>region overlay</strong>. The
+              "Trending" time chip named in the brief is also absent; the chip row must accept new filters.</p>
+          </div>
+        </div>
+      </div>
+
+      <div class="screen">
+        <figure>
+          <span class="shot"><img src="Map%20Showing%20Friend%20Screen.png" alt="Map friends view with avatar scroller and You marker" loading="lazy" /></span>
+          <span class="shot-cap">Map Showing Friend Screen.png</span>
+        </figure>
+        <div>
+          <div class="scr-title"><h4>Friends view</h4><span class="badge badge-oat">Friends tab</span></div>
+          <p class="small muted">The map with the <em>Friends</em> tab active: friends and public "out"
+            users as avatar markers with status pills, a horizontal friend-avatar scroller across the top, a
+            self <strong>"You"</strong> marker, and an <code>M+</code> cluster marker for grouped users.</p>
+
+          <div class="kv">Actions → outcomes</div>
+          <table class="actions-table table-flat"><tbody>
+            <tr><td>Tap avatar marker</td><td>Opens profile (friend → chat; public → add/message)</td></tr>
+            <tr><td>Tap scroller avatar</td><td>Recenters/zooms to that friend (and/or opens profile)</td></tr>
+            <tr><td>Tap M+ cluster</td><td>Zooms/expands to reveal individual avatars</td></tr>
+            <tr><td>Tap region/eye pill</td><td>Opens region detail <em>or</em> visibility control — <span class="badge badge-warn">behaviour to confirm</span></td></tr>
+          </tbody></table>
+
+          <div class="kv">States</div>
+          <div class="states">
+            <div class="state-box st-empty"><div class="st-h">Empty</div><span class="small">No one out → only "You" marker + "No friends out nearby — pan, widen, or invite friends"; zero-friends → invite CTA.</span></div>
+            <div class="state-box st-loading"><div class="st-h">Loading</div><span class="small">Shimmer in scroller; spinner on the reverse-geocoded area label; "locating…" pulse until GPS fix.</span></div>
+            <div class="state-box st-error"><div class="st-h">Error</div><span class="small">Location denied → blocked/limited; fetch fail → retry banner; geocode fail → coordinates / "Hong Kong"; stale markers dimmed.</span></div>
+          </div>
+
+          <div class="kv">Edge cases</div>
+          <ul class="small">
+            <li>A friend goes offline / Ghost while on screen → marker disappears in near-real-time, no manual refresh</li>
+            <li>Coarse vs precise friend location → respect each user's sharing precision when placing markers</li>
+            <li>Self GPS jitter indoors → smoothing / last-known for the "You" marker</li>
+            <li>Viewport straddles two regions → pick dominant / nearest region label</li>
+            <li>Friends tab + Ghost mode (you only see public users) → reconcile what shows vs friends-only hidden</li>
+          </ul>
+        </div>
+      </div>
+
+      <div class="screen">
+        <figure>
+          <span class="shot"><img src="Map%20Date%20Select%20Sheet.png" alt="Calendar date-range picker bottom sheet" loading="lazy" /></span>
+          <span class="shot-cap">Map Date Select Sheet.png</span>
+        </figure>
+        <div>
+          <div class="scr-title"><h4>Date Select Sheet (calendar)</h4><span class="badge badge-oat">Filter</span></div>
+          <p class="small muted">A bottom-sheet calendar — titled "Select Date Range for Map Activities" —
+            to scope the map to a specific date or range (a contiguous 10–12 span is shown highlighted).
+            Re-scopes events, friends-out, venues and vouchers by date.</p>
+
+          <div class="kv">Actions → outcomes</div>
+          <table class="actions-table table-flat"><tbody>
+            <tr><td>Tap a date</td><td>Sets range start (or single-day); highlights cell</td></tr>
+            <tr><td>Tap second date</td><td>Sets range end; inclusive span highlighted</td></tr>
+            <tr><td>Month chevrons</td><td>Navigate months; grid + label update</td></tr>
+            <tr><td>Confirm / Apply</td><td>Close → re-filter map; chip reflects selection <span class="badge badge-warn">explicit Apply/Clear not drawn</span></td></tr>
+            <tr><td>Re-tap a preset chip</td><td>Overrides the custom date selection</td></tr>
+          </tbody></table>
+
+          <div class="kv">States</div>
+          <div class="states">
+            <div class="state-box st-empty"><div class="st-h">Empty</div><span class="small">Selected dates with zero activities → "No activities for these dates"; optionally show event-density dots per day.</span></div>
+            <div class="state-box st-loading"><div class="st-h">Loading</div><span class="small">Map re-query spinner after apply; per-day availability indicators may load async.</span></div>
+            <div class="state-box st-error"><div class="st-h">Error</div><span class="small">Query fail → retry, keep prior filter; invalid range (end&lt;start) auto-correct/block.</span></div>
+          </div>
+
+          <div class="kv">Edge cases &amp; open points</div>
+          <ul class="small">
+            <li>Trigger says "Select Date", sheet says "Select Date Range" → define single-day vs range, keep labels consistent</li>
+            <li>Range across a month boundary while one month is visible → cross-month support</li>
+            <li>Dimmed adjacent-month days → navigate, select, or inert? Define</li>
+            <li>Calendar shows "September 2024" sample → production opens to current month; decide if past dates are selectable</li>
+            <li>Large ranges → cap length / paginate pins; HKT day boundaries around midnight</li>
+          </ul>
+        </div>
+      </div>
+    </section>
+
+    <!-- ░░ 07 · Events ░░ -->
+    <section class="section" id="mod-events">
+      <div class="sec-head">
+        <span class="idx">06</span>
+        <h2>Module · Events</h2>
+        <span class="count">2 screens</span>
+      </div>
+      <p class="sec-intro">Event discovery via map pins and an "Events Near you" carousel, leading to a
+        single-event bottom sheet with directions, message/inquiry/booking, share and expand-for-detail.
+        Booking, RSVP/ticketing and attached vouchers are future build-out.</p>
+
+      <div class="screen">
+        <figure>
+          <span class="shot"><img src="Map%20%20Events%20Filter%20Sheet.png" alt="Events tab with Events Near you carousel" loading="lazy" /></span>
+          <span class="shot-cap">Map  Events Filter Sheet.png</span>
+        </figure>
+        <div>
+          <div class="scr-title"><h4>Events Near You (Events tab)</h4><span class="badge badge-oat">Events tab</span></div>
+          <p class="small muted">The map filtered to Events, with a horizontally scrollable carousel of
+            nearby event cards (poster, title/artist, one-line description). Category chips sit above; an event
+            marker ("Justin's Event") is selected on the map.</p>
+
+          <div class="kv">Actions → outcomes</div>
+          <table class="actions-table table-flat"><tbody>
+            <tr><td>Tap card / chevron</td><td>Opens event detail sheet</td></tr>
+            <tr><td>Swipe carousel</td><td>Scroll more events; lazy-load at the end</td></tr>
+            <tr><td>Tap event marker</td><td>Selects/centres + surfaces its card; live events show a "Live" badge</td></tr>
+            <tr><td>Tap category chip</td><td>Re-scope map + sheet; single-select</td></tr>
+            <tr><td>Pan / zoom</td><td>Refresh list to visible area (may need "search this area")</td></tr>
+          </tbody></table>
+
+          <div class="kv">States</div>
+          <div class="states">
+            <div class="state-box st-empty"><div class="st-h">Empty</div><span class="small">No events in viewport/time → "No events near you right now" + CTA to widen area / change time / switch category; no map markers.</span></div>
+            <div class="state-box st-loading"><div class="st-h">Loading</div><span class="small">Skeleton carousel cards; markers fade in. Chip tap / pan loads on the sheet only, map stays interactive.</span></div>
+            <div class="state-box st-error"><div class="st-h">Error</div><span class="small">Fetch fail → inline "Couldn't load events — Retry"; location denied → default region + nudge; offline → cached + "showing cached results".</span></div>
+          </div>
+
+          <div class="kv">Edge cases</div>
+          <ul class="small">
+            <li>Two events with same title/artist ("DJ Kenzo" appears twice) → key on unique IDs, de-dup same-event-multiple-venues</li>
+            <li>Full filter controls (time + event types) are hinted but not drawn → support composable dimensions (category + type + time + region)</li>
+            <li>Region scoping ("Tai Kok Tsui") vs free pan → define whether the list follows the labelled region or the viewport</li>
+            <li>"Live" badge timing depends on start/end + HKT + clock skew; long titles truncate to one line</li>
+          </ul>
+        </div>
+      </div>
+
+      <div class="screen">
+        <figure>
+          <span class="shot"><img src="Map%20single%20Event%20open%20sheet.png" alt="Single event open bottom sheet with directions and message" loading="lazy" /></span>
+          <span class="shot-cap">Map single Event open sheet.png</span>
+        </figure>
+        <div>
+          <div class="scr-title"><h4>Single Event sheet</h4><span class="badge badge-brand">Detail</span></div>
+          <p class="small muted">A bottom sheet over the map for one event: poster with date chip
+            ("18 Jun"), <strong>distance ("1.2km away")</strong>, title ("Rooftop Sessions"), venue/area, an
+            attendance signal ("20+ are expected to be here tonight"), a description, and the primary actions
+            <strong>Get Directions</strong> and <strong>Send a message</strong>.</p>
+
+          <div class="kv">Entry points</div>
+          <ul class="small">
+            <li>Tap an event pin · an event in a region view · a search result · a shared/deep-linked event</li>
+          </ul>
+
+          <div class="kv">Actions → outcomes</div>
+          <table class="actions-table table-flat"><tbody>
+            <tr><td>Get Directions</td><td>Route to venue — in-app routing or hand-off to device maps; needs venue lat/lng</td></tr>
+            <tr><td>Send a message</td><td>Opens chat / inquiry / booking with organizer; auth-gated if logged out</td></tr>
+            <tr><td>Share / bookmark</td><td>Share event/voucher with friends, or save to list</td></tr>
+            <tr><td>Tap attendee cluster</td><td>List of expected/attending users → each tappable to a profile</td></tr>
+            <tr><td>Drag up / chevron</td><td>Full event detail (schedule, ticketing, booking)</td></tr>
+            <tr><td>Close (x) / drag down</td><td>Dismiss, deselect pin, return to map</td></tr>
+          </tbody></table>
+
+          <div class="kv">States</div>
+          <div class="states">
+            <div class="state-box st-empty"><div class="st-h">Empty</div><span class="small">No description → hide card; no attendees → suppress count / "Be the first to RSVP"; no poster → category/venue fallback.</span></div>
+            <div class="state-box st-loading"><div class="st-h">Loading</div><span class="small">Blurhash poster + shimmer for title/subtitle/attendees/description; distance shows "—" until location resolves; buttons disabled until payload (esp. venue coords) loads.</span></div>
+            <div class="state-box st-error"><div class="st-h">Error</div><span class="small">Fetch fail → retry; no route / no coords → "Couldn't get directions" + disable; messaging unavailable → inquiry form; distance unavailable → hide / "enable location".</span></div>
+          </div>
+
+          <div class="kv">Edge cases</div>
+          <ul class="small">
+            <li>Multi-day / recurring events → a single date chip can't express a range; need "starts 18 Jun" + clear "tonight" handling</li>
+            <li>Distance live-updates as the user moves? Define; handle "0m / You're here"</li>
+            <li>Sold out / fully booked / cancelled / ended → states the current design doesn't show</li>
+            <li>Organizer has messaging disabled → hide/disable, don't open a dead thread</li>
+            <li>Stale event opened from an old shared link → not-found / ended state</li>
+            <li>Attendee count cap ("20+") logic must stay consistent with the event's actual time window</li>
+          </ul>
+          <p class="small muted"><span class="badge badge-warn">Not designed</span> Inquire / table-booking /
+            ticketing / explicit RSVP and event-attached vouchers live in the expanded sheet or behind "Send a
+            message" — dedicated UI + backend still to be designed.</p>
+        </div>
+      </div>
+    </section>
+
+    <!-- ░░ 08 · Friends & Users ░░ -->
+    <section class="section" id="mod-friends">
+      <div class="sec-head">
+        <span class="idx">07</span>
+        <h2>Module · Friends &amp; users</h2>
+        <span class="count">1 sheet + map view</span>
+      </div>
+      <p class="sec-intro">The social layer: friends and public "out" users as avatar markers with status
+        pills and a self "You" marker (the map surface is covered in <a href="#mod-coremap">§05 · Friends view</a>).
+        Tapping a user opens the profile sheet below — branching to follow/request vs chat, all gated by
+        privacy / Ghost / block rules.</p>
+
+      <div class="screen">
+        <figure>
+          <span class="shot"><img src="Map%20Single%20User%20clcik%20sheet.png" alt="Single user profile bottom sheet with Follow and Send a message" loading="lazy" /></span>
+          <span class="shot-cap">Map Single User clcik sheet.png</span>
+        </figure>
+        <div>
+          <div class="scr-title"><h4>User Profile sheet</h4><span class="badge badge-brand">Detail</span></div>
+          <p class="small muted">A bottom sheet for a tapped user: avatar, name, "Out Tonight" status,
+            distance, current venue ("Out at Fung Tea House · Central"), "Updated 12min ago", a bio, key facts
+            (Status / Location / Member Since) and a Recent Activity strip, with <strong>Follow</strong> and
+            <strong>Send a message</strong>.</p>
+
+          <div class="kv">Entry points</div>
+          <ul class="small">
+            <li>Tap a user avatar on the map · in a region's People row · in search results · in region live chat</li>
+          </ul>
+
+          <div class="kv">Actions → outcomes</div>
+          <table class="actions-table table-flat"><tbody>
+            <tr><td>Follow</td><td>Sends follow/friend request → pending ("Requested") or "Following"; gated by target privacy + viewer Ghost</td></tr>
+            <tr><td>Send a message</td><td>Opens 1:1 chat; non-friend → request-to-message/restricted, friend → full chat</td></tr>
+            <tr><td>Scroll / tap Recent Activity</td><td>Opens the associated event/post detail</td></tr>
+            <tr><td>Tap bio / handle up</td><td>Expand full bio / taller sheet</td></tr>
+            <tr><td>Overflow <span class="badge badge-warn">missing</span></td><td>Should expose Block / Report / Share-profile — absent from the design</td></tr>
+          </tbody></table>
+
+          <div class="kv">States &amp; variants</div>
+          <div class="states">
+            <div class="state-box st-empty"><div class="st-h">Empty</div><span class="small">No bio / status / activity → hide rows, not blank labels; no live location → hide "Out at…"/distance or "Location hidden"; new accounts may show only "Member Since".</span></div>
+            <div class="state-box st-loading"><div class="st-h">Loading</div><span class="small">Opens instantly with avatar/name from the pin; skeleton for facts + thumbnails; distance &amp; "Updated" may resolve separately.</span></div>
+            <div class="state-box st-error"><div class="st-h">Error</div><span class="small">Fetch fail → inline retry, keep known name/avatar; action fail → revert optimistic state + toast; deleted user → "no longer available".</span></div>
+          </div>
+          <p class="small muted">Relationship variants drive the buttons: <em>following / friends</em> →
+            "Following" + open thread · <em>pending</em> → "Requested" · <em>blocked</em> → hide actions / "Unblock" ·
+            <em>private target</em> → reduced fields, gated messaging · <em>self</em> → route to own-profile edit ·
+            <em>stale location</em> (&gt; threshold) → grey pill / "Last seen".</p>
+
+          <div class="kv">Edge cases &amp; bugs to fix</div>
+          <ul class="small">
+            <li><strong>Templating bug:</strong> header reads "Dhairya M." but sections say "About Maya" / "Follow Maya" — interpolate one canonical name field</li>
+            <li><strong>Copy fixes:</strong> "Recent Activtiy" → Activity; area label "Tai KOK TSON" → Tai Kok Tsui (centralize for i18n)</li>
+            <li>Distance depends on both users sharing location → round/obfuscate to avoid exact-location leakage; handle either side off</li>
+            <li>Self-guards (no follow/message yourself; can't message someone who blocked you); rate-limit spammy requests</li>
+            <li>Live updates while sheet open — does distance/status re-fetch in real time? Define</li>
+          </ul>
+        </div>
+      </div>
+    </section>
+
+    <!-- ░░ 09 · Visibility ░░ -->
+    <section class="section" id="mod-visibility">
+      <div class="sec-head">
+        <span class="idx">08</span>
+        <h2>Module · Visibility (Ghost / Boost)</h2>
+        <span class="count">2 screens</span>
+      </div>
+      <p class="sec-intro">A bottom-sheet toggle controlling <strong>both</strong> whether others see the
+        user <strong>and</strong> what the user sees. The asymmetric rule — <em>Ghost users only receive
+        public / location-on users, not friends-only</em> — must be enforced <strong>server-side</strong> in
+        every geo/presence/search query. Designed as a binary today; build it as an extensible enum
+        (<code>visible_to_all · ghost · boost</code>).</p>
+
+      <div class="stack">
+        <div class="screen" style="border-top:0;padding-top:0">
+          <figure>
+            <span class="shot"><img src="Map%20ghost%20mode%20off.png" alt="Visibility sheet set to Visible to all" loading="lazy" /></span>
+            <span class="shot-cap">Map ghost mode off.png</span>
+          </figure>
+          <div>
+            <div class="scr-title"><h4>Visible to all</h4><span class="badge badge-success">Default</span></div>
+            <p class="small muted">"Visibility on Map" sheet set to <strong>Visible to all</strong>: the user
+              appears normally and can see everyone, with the benefits listed ("Browse events near venues you've
+              saved", "See friends who shared their spot", "Send messages and join events").</p>
+            <div class="kv">Actions</div>
+            <table class="actions-table table-flat"><tbody>
+              <tr><td>Tap "Visible to all"</td><td>No-op / confirms visible; user broadcasts &amp; sees all</td></tr>
+              <tr><td>Tap "Ghost Mode"</td><td>Switches to invisible + asymmetric view; transitions to the Ghost state</td></tr>
+            </tbody></table>
+            <div class="kv">Key behaviour</div>
+            <ul class="small">
+              <li>Optimistic toggle with backend write; <strong>revert + toast</strong> on failure</li>
+              <li>If location is OFF, "Visible to all" can't truly publish a spot → prompt to enable</li>
+              <li>Block list overrides visibility — blocked users never see you even when visible</li>
+              <li>Presence TTL: if app is killed while visible, auto-drop off others' maps after a timeout</li>
+            </ul>
+          </div>
+        </div>
+
+        <div class="screen">
+          <figure>
+            <span class="shot"><img src="Map%20ghost%20mode%20on.png" alt="Visibility sheet set to Ghost Mode with location off" loading="lazy" /></span>
+            <span class="shot-cap">Map ghost mode on.png</span>
+          </figure>
+          <div>
+            <div class="scr-title"><h4>Ghost Mode (location off)</h4><span class="badge badge-warn">Hidden</span></div>
+            <p class="small muted">Ghost selected: <em>"Mandos can't see your spot — so you won't show up to
+              friends, and nearby events won't be ranked by distance."</em> A "Turn on Location" row deep-links to
+              Settings; "What still works without location" lists the offline features.</p>
+            <div class="kv">Actions</div>
+            <table class="actions-table table-flat"><tbody>
+              <tr><td>Tap "Ghost Mode"</td><td>Stay hidden; user only sees public / location-on users</td></tr>
+              <tr><td>Tap "Visible to all"</td><td>Go public; if location still off, re-prompt for location</td></tr>
+              <tr><td>Turn on Location / Settings</td><td>Deep-link to iOS Settings; re-read permission on return</td></tr>
+            </tbody></table>
+            <div class="kv">The four-state matrix (the core complexity)</div>
+            <ul class="small">
+              <li><strong>Two independent variables:</strong> visibility (Visible/Ghost) × location (on/off) → four combinations, each distinct UI/copy. This screen is Ghost+Off.</li>
+              <li>Copy must differentiate <em>"you chose to hide"</em> (Ghost) from <em>"we can't see your spot"</em> (location off)</li>
+              <li>Stored visibility flag vs OS permission mismatch → backend must not advertise a user as present without a valid location</li>
+              <li>Ghost + Phase 2 voucher claim → block (geofencing needs location); confirm whether a Ghost user can post in region chat / counts toward occupancy</li>
+              <li>Debounce rapid Visible↔Ghost toggles to avoid presence flicker + notification spam</li>
+            </ul>
+          </div>
+        </div>
+      </div>
+      <div class="callout callout-info">
+        <div class="callout-title">Boost mode — planned, not on this sheet</div>
+        <p class="small">"Boost" (be more visible) is a stated feature absent from this two-option control.
+          Model visibility as a spectrum/enum so a third elevated tier (and granular "friends-only", scheduled
+          / auto-Ghost, timed "hide for 2 hours") can be added without redesigning the toggle.</p>
+      </div>
+    </section>
+
+    <!-- ░░ 10 · Regions ░░ -->
+    <section class="section" id="mod-regions">
+      <div class="sec-head">
+        <span class="idx">09</span>
+        <h2>Module · Regions</h2>
+        <span class="count">Upcoming · not in current sprint</span>
+      </div>
+      <div class="callout callout-warn" style="border-left-width:5px">
+        <div class="callout-title">⏳ Upcoming feature — not in the current sprint</div>
+        <p class="small">This whole module (admin-drawn regions, arrival popups, region explore, live chat and
+          region offers) is <strong>planned for a later phase</strong>. It's specced here so the data model and
+          map layer leave room for it — but it is <strong>not part of the current build</strong>.</p>
+      </div>
+      <p class="sec-intro">Named Hong Kong nightlife areas (e.g. <em>Midnight City</em>, <em>LFK Live</em>)
+        as admin-drawn geofenced areas (pin + radius from the web dashboard) — a boundary preview, an
+        arrival-confirmation sheet, a tabbed Explore view (About / People / Live Chat / Venues / Offers) and a
+        today-scoped realtime region chat with live occupancy and an "energy" indicator.</p>
+
+      <div class="screen">
+        <figure>
+          <span class="shot"><img src="Map%20Region%20Selection%20Area.png" alt="Region boundary preview with dashed circle and in-area users" loading="lazy" /></span>
+          <span class="shot-cap">Map Region Selection Area.png</span>
+        </figure>
+        <div>
+          <div class="scr-title"><h4>Region Selection (boundary preview)</h4><span class="badge badge-success">Regions</span></div>
+          <p class="small muted">A dashed boundary highlights a region on the live map with the people,
+            vouchers and venues inside it, before the user drags up to open the full region view. A top avatar
+            strip shows who's out; the centre marker can represent "You".</p>
+          <div class="kv">Actions</div>
+          <table class="actions-table table-flat"><tbody>
+            <tr><td>Drag up / up-arrow</td><td>Opens full region detail (people, vouchers, venues, live chat)</td></tr>
+            <tr><td>Tap avatar / voucher / event</td><td>Profile · voucher claim · event detail respectively</td></tr>
+            <tr><td>Switch category tab</td><td>Re-render markers within the region scope</td></tr>
+            <tr><td>Pan / zoom</td><td>May shift focus to an adjacent region, redrawing the boundary</td></tr>
+          </tbody></table>
+          <div class="kv">States</div>
+          <div class="states">
+            <div class="state-box st-empty"><div class="st-h">Empty</div><span class="small">Quiet region → boundary draws but no markers; strip + counts collapse; "No one's out here yet" + CTA to broaden time or pick a busier region.</span></div>
+            <div class="state-box st-loading"><div class="st-h">Loading</div><span class="small">Boundary draws immediately; markers/avatars shimmer; header spinner until region metadata resolves.</span></div>
+            <div class="state-box st-error"><div class="st-h">Error</div><span class="small">Region fetch fail → "Couldn't load this area, retry"; location denied → default HK region + prompt; offline → cached boundary + stale flag.</span></div>
+          </div>
+          <div class="kv">Edge cases</div>
+          <ul class="small">
+            <li>Very large vs very small regions → boundary radius must scale and stay on-screen; overlapping/nested regions need a deterministic selection rule</li>
+            <li>High density → cluster avatars + "+N more" header overflow</li>
+            <li>Ghost-on viewer tapping a friends-only marker that shouldn't be visible → filtered server-side</li>
+            <li>In-region voucher claimed/expired while open → marker updates in near-real-time; stale "I'm out!" auto-expires</li>
+          </ul>
+        </div>
+      </div>
+
+      <div class="screen">
+        <figure>
+          <span class="shot"><img src="Map%20Region%20Explore%20Screen.png" alt="Midnight City region explore with About/People/Live Chat/Venues/Offers tabs" loading="lazy" /></span>
+          <span class="shot-cap">Map Region Explore Screen.png</span>
+        </figure>
+        <div>
+          <div class="scr-title"><h4>Region Explore — "Midnight City"</h4><span class="badge badge-brand">Detail</span></div>
+          <p class="small muted">A region-detail sheet with a hero image, live occupancy ("👤 23"),
+            "High energy" indicator and tabs <strong>About · People · Live Chat · Venues · Offers</strong>.
+            Shows a description, "People out tonight" avatars, and "Popular Venues at Midnight City" cards.</p>
+          <div class="kv">Actions</div>
+          <table class="actions-table table-flat"><tbody>
+            <tr><td>Tab (People / Live Chat / Venues / Offers)</td><td>Switches body: people list · region chat · venue list · dropped vouchers / discounts</td></tr>
+            <tr><td>Tap an avatar</td><td>Opens profile (respecting privacy/Ghost)</td></tr>
+            <tr><td>Tap a venue/event card</td><td>Venue or event detail (directions, inquiry/booking, share)</td></tr>
+            <tr><td>Top-right circular button</td><td>Share / save / overflow for the region <span class="badge badge-warn">confirm</span></td></tr>
+          </tbody></table>
+          <div class="kv">States</div>
+          <div class="states">
+            <div class="state-box st-empty"><div class="st-h">Empty</div><span class="small">No people → "Be the first"; no venues → "No venues yet"; Offers empty → "No Mandos Coins dropped here"; chat empty → start-the-conversation prompt.</span></div>
+            <div class="state-box st-loading"><div class="st-h">Loading</div><span class="small">Header renders from the map-tap payload; occupancy, energy, avatars &amp; venues stream; each tab lazy-loads on first selection.</span></div>
+            <div class="state-box st-error"><div class="st-h">Error</div><span class="small">Region fetch fail → retry card; <strong>partial</strong> failures degrade per-section; chat drop → reconnect banner; image fail → placeholder.</span></div>
+          </div>
+          <div class="kv">Edge cases</div>
+          <ul class="small">
+            <li><strong>Past-event handling:</strong> a card dated "Sat, 30th May 2025" is in the past — define hide / grey / "Ended"; reconcile conflicting dates</li>
+            <li>Occupancy "23" must scale to hundreds with "+N more"; long venue/artist strings ("Galpao Aurora Sadium" — note typo) truncate</li>
+            <li>Ghosted viewer sees only public users <em>and</em> doesn't add to the count; blocked users never appear</li>
+            <li>Region boundary ambiguity — a venue near two regions needs deterministic ownership</li>
+          </ul>
+        </div>
+      </div>
+
+      <div class="screen">
+        <figure>
+          <span class="shot"><img src="Map%20Regsion%20live%20chat.png" alt="Region live chat thread scoped to today" loading="lazy" /></span>
+          <span class="shot-cap">Map Regsion live chat.png</span>
+        </figure>
+        <div>
+          <div class="scr-title"><h4>Region Live Chat</h4><span class="badge badge-brand">Realtime</span></div>
+          <p class="small muted">A realtime group chat shared by everyone present in the region, as a tab
+            inside the region sheet. A pill reads <strong>"Only Showing the chats for today"</strong>; messages
+            show sender + time, the sender's own bubbles in orange, with a "+" attachment button and composer.</p>
+          <div class="kv">Actions</div>
+          <table class="actions-table table-flat"><tbody>
+            <tr><td>Type + send</td><td>Posts to the region's realtime channel; broadcast to all present</td></tr>
+            <tr><td>"+" attachment</td><td>Attach photo / share a voucher · venue · event card <span class="badge badge-warn">implied</span></td></tr>
+            <tr><td>Tap sender name/avatar</td><td>Opens that user's profile</td></tr>
+            <tr><td>Scroll</td><td>Review today's messages; auto-anchor to newest only when already at bottom</td></tr>
+          </tbody></table>
+          <div class="kv">States</div>
+          <div class="states">
+            <div class="state-box st-empty"><div class="st-h">Empty</div><span class="small">No messages today → "No chats yet today — say hi" with composer active; empty-region (occupancy 0).</span></div>
+            <div class="state-box st-loading"><div class="st-h">Loading</div><span class="small">Skeleton bubbles + spinner for today's history; sent message shows optimistic "sending" before ack.</span></div>
+            <div class="state-box st-error"><div class="st-h">Error</div><span class="small">History fail → retry; send fail/offline → failed-state + resend; socket drop → "reconnecting…" + resync; blocked/muted → disabled composer + reason.</span></div>
+          </div>
+          <div class="kv">Edge cases</div>
+          <ul class="small">
+            <li><strong>Day-rollover:</strong> "today only" means the thread appears to wipe at local midnight — define HK vs device timezone + in-flight day-spanning conversations</li>
+            <li><strong>Non-unique names:</strong> both an incoming and the outgoing bubble read "Dhairya" → need stable user IDs + disambiguation (avatars / @handles)</li>
+            <li>High-volume floods → pin-to-bottom only when at bottom + "new messages" jump button</li>
+            <li>User leaves the region while open → read-only / stay / eject? Define presence vs participation</li>
+            <li>Moderation: report / block / mute, profanity / NSFW filtering, rate limiting, idempotent sends, blocked-user suppression in fan-out</li>
+          </ul>
+        </div>
+      </div>
+
+      <div class="screen">
+        <figure>
+          <span class="shot"><img src="Map%20Youre%20at%20the%20region%20screen.png" alt="Region arrival confirmation You're at LFK Live" loading="lazy" /></span>
+          <span class="shot-cap">Map Youre at the region screen.png</span>
+        </figure>
+        <div>
+          <div class="scr-title"><h4>Region Arrival — "You're at LFK Live"</h4><span class="badge badge-warn">Geofence</span></div>
+          <p class="small muted">A confirmation sheet telling the user they've physically arrived in a region
+            (LFK Live, within Midnight City), offering three entry rows — <strong>See who's around · Join the
+            Live Chat · Discover offers and venues</strong> (each "Go nearby club to scan vouchers") — and an
+            "Explore the Zone" CTA.</p>
+          <div class="kv">Entry points</div>
+          <ul class="small">
+            <li>Physically entering the region geofence with location on (geofence-enter event)</li>
+            <li>Tapping a region cluster/label · returning to a region you're inside · arrival push</li>
+          </ul>
+          <div class="kv">States</div>
+          <div class="states">
+            <div class="state-box st-empty"><div class="st-h">Empty</div><span class="small">No users → hide cluster / "Be the first one here"; no offers/venues → empty row, not a dead-end; chat empty prompt.</span></div>
+            <div class="state-box st-loading"><div class="st-h">Loading</div><span class="small">Header/CTA render instantly from cached region metadata so arrival feels instant; avatars + counts shimmer.</span></div>
+            <div class="state-box st-error"><div class="st-h">Error</div><span class="small">Location unconfirmed (GPS lost / revoked) → fall back to "tapped region" (non-arrival) variant, don't falsely claim "You're at".</span></div>
+          </div>
+          <div class="kv">Edge cases &amp; fixes</div>
+          <ul class="small">
+            <li><strong>Geofence jitter:</strong> GPS bouncing the boundary re-fires the sheet → require dwell-time (N seconds inside) + "don't re-show within X minutes"</li>
+            <li>Nested/overlapping regions (LFK Live within Midnight City) → precedence rule for which sheet shows</li>
+            <li>"While Using" only → backgrounded means no geofence arrival; reconcile on next foreground</li>
+            <li>Ghost mode → arriving must <strong>not</strong> broadcast presence; user excluded from "who's around"</li>
+            <li><strong>Copy fixes:</strong> "Your are at" → "You're at"; "Hongkong" → "Hong Kong"; localize for HK bilingual audience</li>
+          </ul>
+        </div>
+      </div>
+    </section>
+
+    <!-- ░░ 11 · Vouchers ░░ -->
+    <section class="section" id="mod-vouchers">
+      <div class="sec-head">
+        <span class="idx">10</span>
+        <h2>Module · Vouchers ("Mandos Coin")</h2>
+        <span class="count">7 screens</span>
+      </div>
+      <p class="sec-intro">Hexagonal "Mandos Coin" voucher pins scattered across the map with value +
+        distance. The flagship mechanic, shipping in two phases — and the single most state-heavy module in the
+        app. Server-authoritative limits, stock, expiry and (Phase 2) anti-spoofing are non-negotiable.</p>
+
+      <div class="grid-2" style="margin-bottom:var(--space-6)">
+        <div class="callout callout-success" style="margin:0">
+          <div class="callout-title">Phase 1 — Digital claim <span class="badge badge-success">Now</span></div>
+          <p class="small">Tap a coin anywhere → claim straight to the wallet. No proximity needed. Still
+            gated by expiry, remaining stock, one-per-user, and the daily claim limit.</p>
+        </div>
+        <div class="callout callout-warn" style="margin:0">
+          <div class="callout-title">Phase 2 — Geofenced claim <span class="badge badge-warn">Planned</span></div>
+          <p class="small">Claim only when physically within ~100m. Tap shows "nearby" vs "not nearby";
+            crossing the boundary flips it to claimable. Needs precise location, hysteresis at the boundary, and
+            <strong>server-side location attestation</strong> against spoofing.</p>
+        </div>
+      </div>
+
+      <p>The mockups already carry the Phase-2 hooks — every voucher shows a distance ("1.2km away") and the
+        <code>Device Location off</code> pill. Crucially, the same surfaces must resolve <em>why</em> a voucher
+        can't be claimed through one canonical resolver rather than inferring it from scattered flags:</p>
+
+      <table>
+        <thead><tr><th>Claimability state</th><th>Headline</th><th>Recovery</th></tr></thead>
+        <tbody>
+          <tr><td><span class="risk"><span class="dot dot-success"></span> CLAIMABLE</span></td><td>"You found a Voucher!" / "You're within range!"</td><td>Claim</td></tr>
+          <tr><td><span class="risk"><span class="dot dot-warn"></span> NOT_NEARBY <span class="badge badge-warn">P2</span></span></td><td>"You're not close enough"</td><td>Get Directions → cross geofence</td></tr>
+          <tr><td><span class="risk"><span class="dot dot-info"></span> ALREADY_CLAIMED_BY_USER</span></td><td>"Voucher Already Claimed"</td><td>View in wallet / share</td></tr>
+          <tr><td><span class="risk"><span class="dot dot-danger"></span> CLAIMED_OUT</span></td><td>"Just claimed out"</td><td>View all vouchers</td></tr>
+          <tr><td><span class="risk"><span class="dot dot-danger"></span> PROMOTION_ENDED</span></td><td>"This promotion ended on 20 May"</td><td>View all vouchers</td></tr>
+          <tr><td><span class="risk"><span class="dot dot-warn"></span> DAILY_LIMIT_REACHED</span></td><td>"Daily Limit Reached"</td><td>Come back tomorrow</td></tr>
+        </tbody>
+      </table>
+      <div class="callout callout-danger">
+        <div class="callout-title">Overloaded copy to disambiguate</div>
+        <p class="small">The "already claimed" screen shows the headline <em>"Voucher Already Claimed"</em>
+          with subtext <em>"This promotion ended on 20 May"</em> — two different reasons conflated. The client
+          must <strong>not</strong> infer the reason from multiple flags; the server returns one typed enum +
+          copy. <code>NOT_NEARBY</code> (too far, not expired) must never reuse "promotion ended" copy.</p>
+      </div>
+
+      <div class="screen">
+        <figure>
+          <span class="shot"><img src="Map%20Vouchers%20Screen.png" alt="Map with multiple Mandos Coin voucher pins and distances" loading="lazy" /></span>
+          <span class="shot-cap">Map Vouchers Screen.png</span>
+        </figure>
+        <div>
+          <div class="scr-title"><h4>Vouchers on the map</h4><span class="badge badge-brand">Map layer</span></div>
+          <p class="small muted">The map showing coin pins (20% OFF, 10% OFF) scattered across HK, each
+            tagged with a distance ("2km away"). A larger central coin hints at clustering. Bottom tabs + a
+            zoom/locate cluster are present.</p>
+          <div class="kv">Actions</div>
+          <table class="actions-table table-flat"><tbody>
+            <tr><td>Tap coin pin</td><td>Opens voucher detail sheet (value, venue, expiry, distance, Claim)</td></tr>
+            <tr><td>Pan / zoom</td><td>Loads coins for new viewport; recomputes distances; re-clusters</td></tr>
+            <tr><td>Drag up handle</td><td>List of nearby coins sorted by distance/value</td></tr>
+            <tr><td>Locate / "+"</td><td>Recenter (needs location) / zoom in (changes density &amp; clustering)</td></tr>
+          </tbody></table>
+          <div class="kv">States</div>
+          <div class="states">
+            <div class="state-box st-empty"><div class="st-h">Empty</div><span class="small">No coins in viewport (or all claimed/expired) → "No Mandos Coins nearby — pan out or check back later"; explore drawer empty.</span></div>
+            <div class="state-box st-loading"><div class="st-h">Loading</div><span class="small">Tiles first, coins stream via viewport query; distances show "—" until location resolves; debounce re-fetch during pan.</span></div>
+            <div class="state-box st-error"><div class="st-h">Error</div><span class="small">Pin fetch fail → retry banner, map stays interactive; claim failures don't consume the daily limit.</span></div>
+          </div>
+          <div class="kv">Edge cases</div>
+          <ul class="small">
+            <li>Location off → decide: hide distance, show "approx", or use last-known/region-centre</li>
+            <li>Many overlapping coins → cluster ("+N coins") with tap-to-expand</li>
+            <li>Voucher expires / stock hits 0 while on screen → pin updates/removes in near-real-time; stale tap fails gracefully</li>
+            <li>Race: two users claim the last unit → atomic server-side stock decrement; loser sees "Just claimed out"</li>
+            <li><strong>Phase 2:</strong> GPS drift near ~100m flips nearby/not-nearby → accuracy gating + hysteresis; spoof detection</li>
+          </ul>
+        </div>
+      </div>
+
+      <div class="screen">
+        <figure>
+          <span class="shot"><img src="Map%20found%20Voucher.png" alt="You found a voucher detail sheet with Claim Voucher" loading="lazy" /></span>
+          <span class="shot-cap">Map found Voucher.png</span>
+        </figure>
+        <div>
+          <div class="scr-title"><h4>Voucher Found (discovery / Phase 1 claim)</h4><span class="badge badge-success">Phase 1</span></div>
+          <p class="small muted">The sheet on tapping a coin: a "20% OFF" badge, "You found a Voucher!",
+            the issuing venue ("at Club Zentral"), distance and validity ("Valid till 20 May 2024"), and a
+            single <strong>Claim Voucher</strong> CTA.</p>
+          <div class="kv">Actions</div>
+          <table class="actions-table table-flat"><tbody>
+            <tr><td>Claim Voucher</td><td>P1: claim to wallet from anywhere → success + share. P2: only succeeds within ~100m, else "not nearby"</td></tr>
+            <tr><td>Tap venue name</td><td>Issuing venue / linked event detail</td></tr>
+            <tr><td>Back / drag down</td><td>Dismiss; voucher stays on the map</td></tr>
+          </tbody></table>
+          <div class="kv">States</div>
+          <div class="states">
+            <div class="state-box st-empty"><div class="st-h">Empty</div><span class="small">Voucher gone (claimed-out / expired / pulled between render &amp; tap) → "no longer available" + remove pin.</span></div>
+            <div class="state-box st-loading"><div class="st-h">Loading</div><span class="small">Skeleton thumbnail/value/distance/validity; CTA disabled until detail loads; claiming → "Claiming…" spinner + disabled.</span></div>
+            <div class="state-box st-error"><div class="st-h">Error</div><span class="small">Load fail → retry; claim fail → toast; <strong>re-validate expiry &amp; stock server-side at claim time</strong>; idempotent against double-tap.</span></div>
+          </div>
+          <div class="kv">Edge cases</div>
+          <ul class="small">
+            <li>Same voucher opened via a shared link the user already claimed → show claimed state, not a fresh claim</li>
+            <li>Offline claim → queue or fail clearly; never optimistically mark claimed without server confirmation</li>
+            <li>Venue deactivates the campaign while the sheet is open → claim returns unavailable</li>
+          </ul>
+        </div>
+      </div>
+
+      <div class="legend-grid">
+        <div class="screen" style="border-top:0;padding-top:0">
+          <figure>
+            <span class="shot"><img src="Map%20Voucher%20Nearby.png" alt="Voucher nearby, you're within range, coupons list" loading="lazy" /></span>
+            <span class="shot-cap">Map Voucher Nearby.png</span>
+          </figure>
+          <div>
+            <div class="scr-title"><h4>Voucher Nearby (in range)</h4><span class="badge badge-warn">Phase 2</span></div>
+            <p class="small muted">Geofence in-range state: "Voucher Nearby — You're within range!", a 20% OFF
+              hexagon, and a list of "2 coupons nearby" each with distance + Get Directions. Claim is
+              <strong>enabled</strong> because the user is within threshold.</p>
+            <ul class="small">
+              <li><strong>Contradiction to resolve:</strong> <code>Device Location off</code> is visible while the sheet asserts "within range" — define the source of truth (precise GPS) and block claim when location is untrusted</li>
+              <li>"1.2km away" (venue) vs "within range" (coin) → clarify whether range is measured to the <strong>drop point</strong> or the <strong>venue</strong></li>
+              <li>Hysteresis/accuracy floor before enabling claim; server-side proximity re-validation; spoof detection</li>
+              <li>Empty → "0 coupons nearby"; loading → skeleton coupons + placeholder hexagon until geofence evaluates</li>
+            </ul>
+          </div>
+        </div>
+
+        <div class="screen" style="border-top:0;padding-top:0">
+          <figure>
+            <span class="shot"><img src="Map%20not%20nearby%20voucher.png" alt="You're not close enough, voucher geofence locked" loading="lazy" /></span>
+            <span class="shot-cap">Map not nearby voucher.png</span>
+          </figure>
+          <div>
+            <div class="scr-title"><h4>Not Nearby (geofence locked)</h4><span class="badge badge-warn">Phase 2</span></div>
+            <p class="small muted">Outside the threshold: a struck-through coin, "You're not close enough —
+              Visit the location to unlock this Mandos Coin voucher", the linked event ("Rooftop Sessions") with
+              its distance and a mini-map, and a <strong>Get Directions</strong> recovery path. Claim is disabled.</p>
+            <ul class="small">
+              <li>Location off / denied / low-accuracy → <strong>fail closed</strong> to "not nearby" + prompt; never silently allow a claim</li>
+              <li>User crosses the geofence while open → distance + CTA update live, flipping to an enabled Claim</li>
+              <li>Voucher claimed-out / expires before arrival despite directions → "no longer available" on arrival</li>
+              <li>Distance units/rounding (km↔m) as the user approaches; no maps app → in-app route / copyable address</li>
+            </ul>
+          </div>
+        </div>
+      </div>
+
+      <div class="legend-grid">
+        <div class="screen" style="border-top:0;padding-top:0">
+          <figure>
+            <span class="shot"><img src="voucher%20claimed.png" alt="Congratulations, voucher unlocked success state" loading="lazy" /></span>
+            <span class="shot-cap">voucher claimed.png</span>
+          </figure>
+          <div>
+            <div class="scr-title"><h4>Voucher Claimed (success)</h4><span class="badge badge-success">Success</span></div>
+            <p class="small muted">Confetti "Congratulations! You unlocked a voucher near you", the voucher
+              card (20% OFF at Club Zentral, validity, distance) and a <strong>View all vouchers</strong> CTA. Per
+              the brief, a <strong>share-with-friends</strong> option should live here.</p>
+            <ul class="small">
+              <li>This sheet must <strong>never</strong> appear on a failed claim — expiry / out-of-stock / daily-limit / not-nearby branch away to their own states</li>
+              <li>Re-tapping an already-claimed voucher routes to the wallet entry, not a double-claim</li>
+              <li>"View all vouchers" wallet empty state when this is the only one; missing artwork → Mandos placeholder</li>
+              <li><span class="badge badge-warn">Not designed</span> In-venue redemption (QR / staff code / one-time token) + redeemed vs unredeemed lifecycle</li>
+            </ul>
+          </div>
+        </div>
+
+        <div class="screen" style="border-top:0;padding-top:0">
+          <figure>
+            <span class="shot"><img src="voucher%20already%20claimed%20screen.png" alt="Voucher already claimed / promotion ended terminal state" loading="lazy" /></span>
+            <span class="shot-cap">voucher already claimed screen.png</span>
+          </figure>
+          <div>
+            <div class="scr-title"><h4>Already Claimed / Promotion Ended</h4><span class="badge badge-danger">Terminal</span></div>
+            <p class="small muted">A terminal state: "Voucher Already Claimed", subtext "This promotion ended
+              on 20 May", a greyed card ("Promotion code ended") and a <strong>View all vouchers</strong> redirect
+              to find a valid offer.</p>
+            <ul class="small">
+              <li><strong>Disambiguate</strong> already-claimed-by-me vs claimed-out-by-others vs ended-by-date vs daily-limit vs not-nearby — distinct headline/subtext each (see resolver table above)</li>
+              <li>End date "20 May" without a year is ambiguous → send full timestamp, format in HK time</li>
+              <li>Status changes while open (expires / last one claimed) → reactively flip state</li>
+              <li>Shared deep link opened logged-out / as a new user → route through auth/onboarding first</li>
+            </ul>
+          </div>
+        </div>
+      </div>
+
+      <div class="screen">
+        <figure>
+          <span class="shot"><img src="daily%20limit%20reached.png" alt="Daily limit reached for voucher claims" loading="lazy" /></span>
+          <span class="shot-cap">daily limit reached.png</span>
+        </figure>
+        <div>
+          <div class="scr-title"><h4>Daily Limit Reached</h4><span class="badge badge-warn">Limit</span></div>
+          <p class="small muted">Blocks further claims once the user hits the daily maximum: "You've reached
+            the maximum number of vouchers you can claim today", "Come back tomorrow…", and a
+            <strong>View all vouchers</strong> CTA. The cap is server-authoritative and gates all voucher entry
+            points (map, region Offers, detail sheets).</p>
+          <div class="kv">States &amp; behaviour</div>
+          <div class="states">
+            <div class="state-box st-empty"><div class="st-h">Empty</div><span class="small">"View all vouchers" destination has its own empty state; this sheet only appears when a cap exists.</span></div>
+            <div class="state-box st-loading"><div class="st-h">Loading</div><span class="small">Claim button spinner while the server validates remaining allowance; this sheet renders only after a typed <code>DAILY_LIMIT_REACHED</code>.</span></div>
+            <div class="state-box st-error"><div class="st-h">Error</div><span class="small">A connectivity failure must show a retryable network error, <strong>not</strong> this copy; if the limit-check itself fails, fail safe (don't falsely block).</span></div>
+          </div>
+          <div class="kv">Edge cases</div>
+          <ul class="small">
+            <li><strong>Reset timezone:</strong> define HK time vs device vs server UTC; claiming near local midnight or while travelling</li>
+            <li><strong>Clock manipulation:</strong> changing device date to bypass the cap → reset must be server-authoritative + tamper-resistant</li>
+            <li>Race: two rapid taps at the cap → enforce the limit atomically; idempotency so a network drop after commit doesn't wrongly consume allowance</li>
+            <li>Limit reached mid-session (sheet opened with allowance, cap hit before confirm) → re-check on confirm + surface this sheet</li>
+            <li>Phase-2 conflict: geofenced-near but daily-capped → show the cap message, not "not nearby" (define precedence: cap before proximity)</li>
+          </ul>
+          <p class="small muted"><span class="badge badge-oat">Future</span> "Resets in HH:MM" countdown ·
+            reset push notification · per-region/per-category limits · raised limit for a Boost/premium tier.</p>
+        </div>
+      </div>
+    </section>
+
+    <!-- ░░ 12 · Search ░░ -->
+    <section class="section" id="mod-search">
+      <div class="sec-head">
+        <span class="idx">11</span>
+        <h2>Module · Search</h2>
+        <span class="count">1 screen</span>
+      </div>
+      <p class="sec-intro">A unified search surface across the whole social map, with a "Recents" default,
+        typeahead, category tabs and a filter/sort control. Results are <strong>privacy-aware</strong> — they
+        must exclude Ghost / private / blocked users and the searcher themselves.</p>
+
+      <div class="callout callout-info" style="border-left-width:5px">
+        <div class="callout-title" style="font-size:1.05rem">Reuse the existing Discover search here</div>
+        <p>We do <strong>not need to build search from scratch.</strong> The current
+          <strong>Discover search</strong> can be reused as-is for this screen — the only addition is the
+          <strong>Friends / Events filter chips</strong> (the <span class="badge badge-oat">All · Events · Friends · Clubs</span>
+          tabs) layered on top to scope the results. Same component, same search behaviour, just driven by the
+          social-map filter chips.</p>
+      </div>
+
+      <div class="screen">
+        <figure>
+          <span class="shot"><img src="Social%20Map%20Search.png" alt="Social map search with recents, category tabs and results" loading="lazy" /></span>
+          <span class="shot-cap">Social Map Search.png</span>
+        </figure>
+        <div>
+          <div class="scr-title"><h4>Social Map Search</h4><span class="badge badge-brand">Search</span></div>
+          <p class="small muted">A search field (placeholder "Search for producers, djs &amp; venues…") with
+            a filter/sort icon, category tabs (All / Events / Friends / Clubs), a "Recents" default, and result
+            rows showing avatar, name and "Out Tonight" status with a chevron.</p>
+          <div class="kv">Actions</div>
+          <table class="actions-table table-flat"><tbody>
+            <tr><td>Type a query</td><td>Live/typeahead search; "Recents" replaced by ranked results</td></tr>
+            <tr><td>Tap category tab</td><td>Re-scope results to that entity type; re-run query</td></tr>
+            <tr><td>Filter/sort control</td><td>Opens a panel (time filters, distance, sort)</td></tr>
+            <tr><td>Tap a result / chevron</td><td>Open the entity detail (profile · event · venue · region · voucher) or focus it on the map</td></tr>
+            <tr><td>Clear field</td><td>Return to "Recents"</td></tr>
+          </tbody></table>
+          <div class="kv">States</div>
+          <div class="states">
+            <div class="state-box st-empty"><div class="st-h">Empty</div><span class="small">Pre-query → Recents (or "No recent searches" → trending/suggested). Post-query → "No results for &lt;query&gt;" + hint to broaden via "All".</span></div>
+            <div class="state-box st-loading"><div class="st-h">Loading</div><span class="small">Skeleton rows while the debounced query resolves; bar stays interactive; avatars lazy-load.</span></div>
+            <div class="state-box st-error"><div class="st-h">Error</div><span class="small">"Couldn't load results — tap to retry"; distinguish offline vs server error; discard responses for superseded queries (no flicker).</span></div>
+          </div>
+          <div class="kv">Edge cases &amp; open points</div>
+          <ul class="small">
+            <li>Tabs cover only All/Events/Friends/Clubs but the product also has <strong>Regions</strong> and <strong>Vouchers</strong> → define whether they live under "All" or get their own scope</li>
+            <li>Selected "Friends" tab shows three identical "Dhairya M" rows (placeholder) → de-dup real data; clarify "Friends" = only friends or all people who are "out"</li>
+            <li>Privacy: Ghost / location-off users must not surface as "Out Tonight"; boosted users may rank higher</li>
+            <li>Debounce typing; cancel in-flight; handle out-of-order responses; don't conflate "no results" with "filtered out by privacy"</li>
+          </ul>
+        </div>
+      </div>
+    </section>
+
+    <!-- ░░ 13 · Global states & edges ░░ -->
+    <section class="section" id="states">
+      <div class="sec-head">
+        <span class="idx">12</span>
+        <h2>Global states &amp; cross-cutting edge cases</h2>
+      </div>
+      <p class="sec-intro">The conditions the static mockups can't show but that touch most screens. Spec
+        all four base states — <em>loading</em>, <em>empty</em>, <em>error</em>, <em>degraded (location-off)</em> —
+        on every surface, plus these cross-cutting concerns.</p>
+
+      <div class="grid-2">
+        <div class="callout callout-warn" style="margin:0">
+          <div class="callout-title">Location &amp; permission</div>
+          <ul class="small" style="margin-bottom:0">
+            <li>Denied / services-off / "Allow Once" lapse / approximate-only → degrade gracefully (no self-pin, no distance ranking, geofencing off)</li>
+            <li>Re-check permission on <strong>every foreground</strong>, not just on the prompt screen</li>
+            <li>Distinguish app-permission vs the device-wide Location Services master toggle</li>
+            <li>Visibility mode × location permission = four distinct combinations</li>
+          </ul>
+        </div>
+        <div class="callout callout-warn" style="margin:0">
+          <div class="callout-title">Privacy &amp; visibility (server-enforced)</div>
+          <ul class="small" style="margin-bottom:0">
+            <li>Ghost users, friends-only/private users and blocked relationships must <strong>never</strong> leak into maps, regions, search, attendee clusters or region chat</li>
+            <li>Enforce in every geo/presence/search query server-side, not client-filtered</li>
+            <li>Self-exclusion: never return the current user in their own nearby/search results</li>
+          </ul>
+        </div>
+        <div class="callout callout-warn" style="margin:0">
+          <div class="callout-title">Real-time presence &amp; staleness</div>
+          <ul class="small" style="margin-bottom:0">
+            <li>"out" / "I'm out!" status needs TTL + auto-expiry (end-of-night reset); stale avatars dim ("Last seen") or drop</li>
+            <li>Claimed/expired vouchers and offline users drop off the map in near-real-time</li>
+            <li>Live-vs-snapshot: define whether an open sheet updates attendee counts, distance, and voucher availability live</li>
+          </ul>
+        </div>
+        <div class="callout callout-warn" style="margin:0">
+          <div class="callout-title">Geofencing &amp; anti-fraud <span class="badge badge-warn">P2</span></div>
+          <ul class="small" style="margin-bottom:0">
+            <li>GPS jitter near ~100m → hysteresis/debounce so the claim CTA doesn't flicker; dwell-time before region-arrival sheets</li>
+            <li>GPS spoofing / mock-location → server-side location attestation before geofenced claims and "out tonight"/arrival presence</li>
+            <li>Fail closed when location is off/untrusted</li>
+          </ul>
+        </div>
+        <div class="callout callout-warn" style="margin:0">
+          <div class="callout-title">Data integrity &amp; concurrency</div>
+          <ul class="small" style="margin-bottom:0">
+            <li>Limited-stock vouchers → atomic server-side decrement; loser sees "no longer available"; idempotent claim endpoint survives retries</li>
+            <li>Daily limit enforced atomically &amp; server-authoritatively; clock-tamper resistant</li>
+            <li>Offline → cached last-known markers + banner; never optimistically mark a claim without server confirmation</li>
+          </ul>
+        </div>
+        <div class="callout callout-warn" style="margin:0">
+          <div class="callout-title">Density, rendering &amp; performance</div>
+          <ul class="small" style="margin-bottom:0">
+            <li>Dense HK nightlife zones → server/client clustering, z-ordering, popularity-based sizing, "+N more" overflow</li>
+            <li>Label-collision between Mandos markers and third-party MapKit POIs (Jollibee, MUJI, M+)</li>
+            <li>Rapid pan/zoom or filter toggling → debounce viewport queries, cancel stale in-flight requests</li>
+          </ul>
+        </div>
+        <div class="callout callout-warn" style="margin:0">
+          <div class="callout-title">Time &amp; timezone (HKT)</div>
+          <ul class="small" style="margin-bottom:0">
+            <li>All "today"/"tonight"/"this weekend" windows, voucher validity/expiry, daily-limit reset and region-chat "today only" scope use Hong Kong time regardless of device</li>
+            <li>Past / ended / recurring events → a single date chip can't express ranges; define hide vs grey vs "Ended"</li>
+          </ul>
+        </div>
+        <div class="callout callout-warn" style="margin:0">
+          <div class="callout-title">Moderation, abuse &amp; i18n</div>
+          <ul class="small" style="margin-bottom:0">
+            <li>Public region chat → report/block/mute, profanity/NSFW filter, rate limiting, blocked-user suppression in fan-out</li>
+            <li>Non-Latin (Traditional Chinese / Cantonese) names + long strings truncate; copy localizable</li>
+            <li>Centralize &amp; fix source typos: "Hongkong", "Sadium", "Peope", "Activtiy", "Tai KOK TSON", "Your are at"</li>
+          </ul>
+        </div>
+      </div>
+    </section>
+
+    <!-- ░░ 14 · Data model ░░ -->
+    <section class="section" id="data">
+      <div class="sec-head">
+        <span class="idx">13</span>
+        <h2>Implied data model</h2>
+        <span class="count">14 entities</span>
+      </div>
+      <p class="sec-intro">The core entities and key fields the screens imply. Not a schema — a starting
+        point so the architecture reserves room for presence TTLs, visibility enums, geofencing and
+        server-authoritative limits from day one.</p>
+
+      <div class="grid-2">
+        <div class="card-tight card">
+          <div class="row-between"><span class="strong">User</span><span class="badge badge-brand">core</span></div>
+          <p class="small muted" style="margin-top:6px">id · displayName · avatarUrl · bio · relationshipStatus · homeLocation · memberSince · <strong>visibilityMode</strong> (visible_to_all·ghost·boost) · locationSharingEnabled · locationPrecision · currentStatusText · <strong>statusTTL/expiresAt</strong> · currentLat/Lng · lastKnownLocation · privacyFlags · blockedUserIds</p>
+        </div>
+        <div class="card-tight card">
+          <div class="row-between"><span class="strong">Friendship / Relationship</span><span class="badge badge-oat">graph</span></div>
+          <p class="small muted" style="margin-top:6px">viewerId · targetId · state (none·requested·following·friends·blocked) · direction · createdAt</p>
+        </div>
+        <div class="card-tight card">
+          <div class="row-between"><span class="strong">Event</span><span class="badge badge-brand">core</span></div>
+          <p class="small muted" style="margin-top:6px">id · title · posterImageUrl+blurhash · startDateTime (HKT) · endDateTime · category · <strong>popularityScore</strong> (drives pin size) · liveStatus · description · venueId · hostId · region · lat/lng · attendeeCount ("20+") · attendeeUserIds · attachedVoucherId? · messagingEnabled</p>
+        </div>
+        <div class="card-tight card">
+          <div class="row-between"><span class="strong">Venue (Club &amp; Bar)</span><span class="badge badge-oat">place</span></div>
+          <p class="small muted" style="margin-top:6px">id · name · profileImageUrl · upcomingEventId · lat/lng · address · district/region · eventIds · savedByUser?</p>
+        </div>
+        <div class="card-tight card">
+          <div class="row-between"><span class="strong">Region / Area</span><span class="badge badge-success">place</span></div>
+          <p class="small muted" style="margin-top:6px">id · displayName ("Midnight City") · <strong>parentRegionId</strong> (nesting) · coverImageUrl · description · <strong>geometry</strong> (polygon or center+radius geofence) · liveOccupancyCount · energyLevel · venueIds · activeVoucherIds · liveChatChannelId · popularityRank</p>
+        </div>
+        <div class="card-tight card">
+          <div class="row-between"><span class="strong">Voucher (Mandos Coin)</span><span class="badge badge-brand">core</span></div>
+          <p class="small muted" style="margin-top:6px">id · discountValue/type (%·fixed·BOGO) · title · issuingVenueId · linkedEventId? · posterThumbnailUrl · lat/lng (drop) · <strong>geofenceThreshold (~100m)</strong> · <strong>claimPhase</strong> (digital·geofenced) · validFrom · validTill (HKT+year) · totalStock · remainingStock · perUserClaimRule · claimState</p>
+        </div>
+        <div class="card-tight card">
+          <div class="row-between"><span class="strong">VoucherClaim</span><span class="badge badge-warn">txn</span></div>
+          <p class="small muted" style="margin-top:6px">id · voucherId · userId · claimTimestamp · claimLocation · source (map·region·search·share) · redemptionStatus · redemptionToken/QR</p>
+        </div>
+        <div class="card-tight card">
+          <div class="row-between"><span class="strong">DailyClaimCounter</span><span class="badge badge-warn">txn</span></div>
+          <p class="small muted" style="margin-top:6px">userId · <strong>calendarDay (HKT)</strong> · claimsUsed · dailyLimit · resetAt</p>
+        </div>
+        <div class="card-tight card">
+          <div class="row-between"><span class="strong">PresenceRecord</span><span class="badge badge-brand">realtime</span></div>
+          <p class="small muted" style="margin-top:6px">userId · regionId? · lat/lng · statusText · visibilityMode · heartbeat/lastSeen · <strong>ttl</strong></p>
+        </div>
+        <div class="card-tight card">
+          <div class="row-between"><span class="strong">RegionChatMessage</span><span class="badge badge-success">realtime</span></div>
+          <p class="small muted" style="margin-top:6px">id · regionId · senderUserId · body · attachment (photo·voucher·venue·event card) · serverTimestamp · sequence · <strong>dayScope (HKT)</strong> · moderationFlags</p>
+        </div>
+        <div class="card-tight card">
+          <div class="row-between"><span class="strong">ChatThread (1:1)</span><span class="badge badge-oat">messaging</span></div>
+          <p class="small muted" style="margin-top:6px">id · participantIds · relationshipGated (friend vs request) · lastMessageAt · messages</p>
+        </div>
+        <div class="card-tight card">
+          <div class="row-between"><span class="strong">SavedItem</span><span class="badge badge-oat">prefs</span></div>
+          <p class="small muted" style="margin-top:6px">userId · entityType (venue·event·region·date) · entityId · savedAt</p>
+        </div>
+        <div class="card-tight card">
+          <div class="row-between"><span class="strong">RecentSearch</span><span class="badge badge-oat">prefs</span></div>
+          <p class="small muted" style="margin-top:6px">userId · query · resultEntityRefs · timestamp</p>
+        </div>
+        <div class="card-tight card">
+          <div class="row-between"><span class="strong">FilterState</span><span class="badge badge-oat">session</span></div>
+          <p class="small muted" style="margin-top:6px">activeCategory (All·Events·Friends·Clubs) · timeFilter (Today·Weekend·Week·Trending·SelectDate range) · regionScope/viewportBounds · persistedAcrossSheetCollapse</p>
+        </div>
+      </div>
+    </section>
+
+    <!-- ░░ 15 · Permission/visibility state machine ░░ -->
+    <section class="section" id="permstate">
+      <div class="sec-head">
+        <span class="idx">14</span>
+        <h2>Permission &amp; visibility state machine</h2>
+      </div>
+      <p class="sec-intro">The two independent variables that reshape the app: <strong>location permission</strong>
+        (off / on) and <strong>visibility</strong> (Visible / Ghost / Boost). The diagram traces what the app does
+        in each case — location off keeps discovery working but switches the whole <em>people</em> layer off;
+        location on unlocks it, then visibility decides how the user appears. Re-evaluate the location axis on
+        every foreground.</p>
+
+      <figure class="card" style="padding:var(--space-6)">
+        <svg viewBox="0 0 720 478" width="100%" role="img"
+             aria-label="Location-permission decision: off keeps discovery but hides all people; on unlocks the social layer, then Visible vs Ghost decides appearance.">
+          <defs>
+            <marker id="arr2" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7.5" markerHeight="7.5" orient="auto-start-reverse">
+              <path d="M0 0 L10 5 L0 10 z" fill="#D97757" />
+            </marker>
+          </defs>
+
+          <!-- entry -->
+          <rect x="276" y="14" width="168" height="40" rx="10" fill="#FFFFFF" stroke="#D4CBBB" stroke-width="2.5"/>
+          <text x="360" y="39" text-anchor="middle" font-family="ui-serif,Georgia,serif" font-size="13.5" fill="#141413">App opens / foregrounds</text>
+          <line x1="360" y1="54" x2="360" y2="72" stroke="#D97757" stroke-width="2.5" marker-end="url(#arr2)"/>
+
+          <!-- re-check -->
+          <rect x="246" y="74" width="228" height="50" rx="10" fill="#F1EBDD" stroke="#E7DECB" stroke-width="2.5"/>
+          <text x="360" y="95" text-anchor="middle" font-family="ui-serif,Georgia,serif" font-size="12.5" fill="#141413">Re-check OS location permission ↻</text>
+          <text x="360" y="113" text-anchor="middle" font-family="ui-monospace,monospace" font-size="8.5" fill="#6B6353">not-determined · while-using · approximate · denied · services-off</text>
+          <line x1="360" y1="124" x2="360" y2="146" stroke="#D97757" stroke-width="2.5" marker-end="url(#arr2)"/>
+
+          <!-- decision diamond -->
+          <path d="M360 144 L452 188 L360 232 L268 188 Z" fill="#F6E4DA" stroke="#D97757" stroke-width="3"/>
+          <text x="360" y="184" text-anchor="middle" font-family="ui-serif,Georgia,serif" font-size="13" fill="#9E4E35">Location</text>
+          <text x="360" y="201" text-anchor="middle" font-family="ui-serif,Georgia,serif" font-size="13" fill="#9E4E35">shared?</text>
+
+          <!-- decoupling note -->
+          <text x="470" y="150" font-family="ui-monospace,monospace" font-size="8.5" fill="#8A8068">OS grant ≠ broadcast —</text>
+          <text x="470" y="162" font-family="ui-monospace,monospace" font-size="8.5" fill="#8A8068">separate in-app share flag</text>
+
+          <!-- branches -->
+          <path d="M268 188 Q150 200 150 250" fill="none" stroke="#C0533F" stroke-width="2.5" marker-end="url(#arr2)"/>
+          <text x="176" y="222" font-family="ui-monospace,monospace" font-size="10" fill="#97402F" font-weight="bold">NO · OFF</text>
+          <path d="M452 188 Q566 200 566 250" fill="none" stroke="#5F7049" stroke-width="2.5" marker-end="url(#arr2)"/>
+          <text x="486" y="222" font-family="ui-monospace,monospace" font-size="10" fill="#5F7049" font-weight="bold">YES · ON</text>
+
+          <!-- OFF box -->
+          <rect x="20" y="250" width="300" height="212" rx="11" fill="#F6E0DA" stroke="#C0533F" stroke-width="2.5"/>
+          <text x="36" y="274" font-family="ui-serif,Georgia,serif" font-size="14" fill="#97402F">Location OFF — discovery only</text>
+          <g font-family="ui-monospace,monospace" font-size="10.5">
+            <text x="36" y="300" fill="#5F7049">✓  Browse all events, venues, regions, offers</text>
+            <text x="36" y="320" fill="#97402F">✗  No people / friends on the map</text>
+            <text x="36" y="340" fill="#97402F">✗  You are invisible to others</text>
+            <text x="36" y="360" fill="#97402F">✗  No distance ranking</text>
+            <text x="36" y="380" fill="#97402F">✗  Geofenced voucher claim disabled</text>
+          </g>
+          <text x="36" y="412" font-family="ui-serif,Georgia,serif" font-style="italic" font-size="11.5" fill="#4E483D">Say it plainly: "Turn on location to</text>
+          <text x="36" y="429" font-family="ui-serif,Georgia,serif" font-style="italic" font-size="11.5" fill="#4E483D">see who's out tonight."</text>
+          <text x="36" y="450" font-family="ui-monospace,monospace" font-size="9" fill="#6B6353">Still works: saved-venue events · messaging</text>
+
+          <!-- ON box -->
+          <rect x="400" y="250" width="300" height="66" rx="11" fill="#EAEEDF" stroke="#5F7049" stroke-width="2.5"/>
+          <text x="416" y="274" font-family="ui-serif,Georgia,serif" font-size="14" fill="#5F7049">Location ON — social layer unlocked</text>
+          <text x="416" y="296" font-family="ui-monospace,monospace" font-size="9.5" fill="#5F7049">see friends &amp; public "out" · live status pills · distances</text>
+          <line x1="473" y1="316" x2="473" y2="340" stroke="#5F7049" stroke-width="2.5" marker-end="url(#arr2)"/>
+          <line x1="627" y1="316" x2="627" y2="340" stroke="#5F7049" stroke-width="2.5" marker-end="url(#arr2)"/>
+
+          <!-- Visible -->
+          <rect x="400" y="342" width="146" height="120" rx="10" fill="#FFFFFF" stroke="#788C5D" stroke-width="2.5"/>
+          <text x="473" y="366" text-anchor="middle" font-family="ui-serif,Georgia,serif" font-size="13" fill="#5F7049">VISIBLE</text>
+          <g font-family="ui-monospace,monospace" font-size="9.5" fill="#4E483D">
+            <text x="414" y="390">• Appear to others</text>
+            <text x="414" y="408">• See everyone out</text>
+            <text x="414" y="426">• Distance-ranked</text>
+            <text x="414" y="444">• (Boost = louder)</text>
+          </g>
+
+          <!-- Ghost -->
+          <rect x="554" y="342" width="146" height="120" rx="10" fill="#F6E4DA" stroke="#D97757" stroke-width="2.5"/>
+          <text x="627" y="366" text-anchor="middle" font-family="ui-serif,Georgia,serif" font-size="13" fill="#9E4E35">GHOST</text>
+          <g font-family="ui-monospace,monospace" font-size="9.5" fill="#B45A3D">
+            <text x="568" y="390">• Hidden from all</text>
+            <text x="568" y="408">• See only public /</text>
+            <text x="568" y="426">  location-on users</text>
+            <text x="568" y="444">• Friends-only hidden</text>
+          </g>
+        </svg>
+        <figcaption>Granting OS location ≠ broadcasting it (a separate in-app share flag governs that). Phase-2 voucher claim further requires <code>precise ∧ within ~100m ∧ under daily-limit ∧ in-stock ∧ not-expired</code> — else fail closed.</figcaption>
+      </figure>
+
+      <div class="grid-2">
+        <div class="card">
+          <h4>Location permission</h4>
+          <ul class="small" style="margin-bottom:0">
+            <li>States: not-determined · while-using · allow-once (lapses) · approximate-only · denied · restricted (MDM) · services-globally-off</li>
+            <li>Re-evaluate on every foreground; first-launch → native prompt, previously-denied → deep-link Settings</li>
+            <li>Location-off forces a ghost-like invisible state — reconcile copy with explicit Ghost mode</li>
+          </ul>
+        </div>
+        <div class="card">
+          <h4>Visibility mode</h4>
+          <ul class="small" style="margin-bottom:0">
+            <li>Enum, not binary: <code>visible_to_all · ghost · boost</code> — Ghost = hidden AND only receives public/location-on users (friends-only suppressed)</li>
+            <li>Asymmetric Ghost view rule enforced server-side in every query</li>
+            <li>Block list / ACLs override visibility everywhere; presence TTL/heartbeat handles staleness</li>
+          </ul>
+        </div>
+      </div>
+    </section>
+
+    <!-- ░░ 16 · Future scope ░░ -->
+    <section class="section" id="future">
+      <div class="sec-head">
+        <span class="idx">15</span>
+        <h2>Future scope &amp; roadmap</h2>
+      </div>
+      <p class="sec-intro">Planned but not yet designed. Keep the architecture flexible for these — most
+        are already foreshadowed by hooks in the current screens (distance labels, the eye icon, the location
+        pill, the "today only" chat scope).</p>
+
+      <div class="grid-3">
+        <div class="card">
+          <span class="badge badge-success">Now · Phase 1</span>
+          <h4 style="margin-top:var(--space-3)">Shipping</h4>
+          <ul class="small" style="margin-bottom:0">
+            <li>Digital voucher claim (tap-from-anywhere)</li>
+            <li>Visible / Ghost binary visibility</li>
+            <li>Map, events, friends, regions, region chat, search</li>
+            <li>Time + category filters</li>
+          </ul>
+        </div>
+        <div class="card" style="border-left:4px solid var(--warn)">
+          <span class="badge badge-warn">Next · Phase 2</span>
+          <h4 style="margin-top:var(--space-3)">Designed-for, not built</h4>
+          <ul class="small" style="margin-bottom:0">
+            <li><strong>Voucher geofencing (~100m)</strong> — nearby/not-nearby, live distance, arrival auto-flip, per-campaign radius/time windows</li>
+            <li><strong>Background / "Always" location</strong> + battery-transparency UI</li>
+            <li>Server-side location attestation / anti-spoofing</li>
+            <li><strong>Boost mode</strong> as a third visibility tier (+ promoted events, sponsored coins)</li>
+            <li>Daily-limit countdown + reset push</li>
+          </ul>
+        </div>
+        <div class="card">
+          <span class="badge badge-oat">Later</span>
+          <h4 style="margin-top:var(--space-3)">Roadmap</h4>
+          <ul class="small" style="margin-bottom:0">
+            <li>Booking / table-reservation / ticketing / RSVP</li>
+            <li>In-venue redemption (QR / staff code / token)</li>
+            <li>Coverage beyond Hong Kong; zh-HK localization &amp; accessibility</li>
+            <li>Trending filter + popularity analytics pipeline</li>
+          </ul>
+        </div>
+      </div>
+
+      <div class="grid-2" style="margin-top:var(--space-6)">
+        <div class="card-tight card">
+          <span class="strong">Granular visibility</span>
+          <p class="small muted" style="margin-top:6px">Friends-only vs public, per-field profile visibility (hide relationship/exact venue/coarse distance), scheduled / timed / auto-Ghost, distance obfuscation buckets.</p>
+        </div>
+        <div class="card-tight card">
+          <span class="strong">Regions as living entities</span>
+          <p class="small muted" style="margin-top:6px">Activity-driven / heatmap dynamic boundaries, curated/seasonal regions, save/favorite + "getting busy"/"friends arrived" notifications, check-in/first-arrival rewards.</p>
+        </div>
+        <div class="card-tight card">
+          <span class="strong">Region chat maturity</span>
+          <p class="small muted" style="margin-top:6px">Persistent/multi-day history + search, rich claimable/bookable attachment cards, reactions/replies/@mentions/typing, read receipts, moderation roles, pinned announcements, translation.</p>
+        </div>
+        <div class="card-tight card">
+          <span class="strong">Sharing &amp; referrals</span>
+          <p class="small muted" style="margin-top:6px">Share-after-claim, share event/region/voucher with deep-linkable URLs and referral mechanics (recipients land on auth-gated detail).</p>
+        </div>
+        <div class="card-tight card">
+          <span class="strong">Voucher variety</span>
+          <p class="small muted" style="margin-top:6px">Fixed-amount, BOGO, tiered, multi-claim/bundle types beyond simple %, region-scoped discovery, wallet enhancements (expiry reminders, sort/filter, archive).</p>
+        </div>
+        <div class="card-tight card">
+          <span class="strong">Search expansion</span>
+          <p class="small muted" style="margin-top:6px">Regions &amp; Vouchers as first-class searchable categories, richer filter/sort panel, trending/suggested empties, search-to-map handoff, saved searches, personalized ML ranking.</p>
+        </div>
+      </div>
+    </section>
+
+    <!-- ░░ 17 · Open questions ░░ -->
+    <section class="section" id="questions">
+      <div class="sec-head">
+        <span class="idx">16</span>
+        <h2>Open questions for the tech team</h2>
+      </div>
+      <p class="sec-intro">Ambiguities to resolve before building — each changes data shape or behaviour,
+        so worth deciding early.</p>
+
+      <div class="callout callout-warn">
+        <div class="callout-title">Decide before implementation</div>
+        <ol class="small" style="margin-bottom:0">
+          <li><strong>Filter composition:</strong> do category tabs (All/Events/Friends/Clubs) compose with time filters as a strict AND? Are "Friends"/"out" markers time-bound or always-now?</li>
+          <li><strong>Region scope vs viewport:</strong> does the "near you" list follow the labelled region or the free-panned viewport, and which wins when they diverge?</li>
+          <li><strong>Date picker semantics:</strong> single day vs range (trigger says "Select Date", sheet says "Range")? Explicit Apply/Clear or auto-apply? Are past dates selectable? Cross-month ranges?</li>
+          <li><strong>Geofence reference point:</strong> is "range" measured to the voucher drop point or the issuing venue? Distance chips show venue distance ("1.2km") while the sheet says "within range" — needs one source of truth.</li>
+          <li><strong>Ghost in region chat:</strong> can an invisible user post, and do they appear as participants / count toward occupancy ("23")?</li>
+          <li><strong>"Friends" definition:</strong> only the viewer's friends, or all people who are "out" (friends + public)? Must be consistent across map, search, filters.</li>
+          <li><strong>Eye / region pill:</strong> does it open region detail OR toggle visibility? The same affordance is read both ways across screens — pick one canonical behaviour.</li>
+          <li><strong>Daily-limit &amp; chat "today" timezone:</strong> Hong Kong time vs device vs server UTC, and behaviour across local midnight while travelling.</li>
+          <li><strong>Claimability copy:</strong> adopt the canonical resolver enum (CLAIMABLE / NOT_NEARBY / ALREADY_CLAIMED_BY_USER / CLAIMED_OUT / PROMOTION_ENDED / DAILY_LIMIT_REACHED) so reasons aren't overloaded.</li>
+          <li><strong>Voucher map layer:</strong> do coins persist across all category tabs or live under a dedicated Vouchers layer/filter? They're not on the default landing yet.</li>
+          <li><strong>Regions &amp; Vouchers in search:</strong> where do they live in the 4-tab search? Placeholder copy ("producers, djs &amp; venues") understates scope.</li>
+          <li><strong>Distance when location off:</strong> hide the chip, show "approx", or use last-known/coarse/venue-cached coords? "1.2km away" currently renders even with location off.</li>
+          <li><strong>Live vs snapshot:</strong> should an open sheet update attendee counts, distance/status and voucher availability in real time, or snapshot at open?</li>
+          <li><strong>Self-broadcast contract:</strong> confirm that granting OS location does NOT imply being visible — so a Visible-but-location-off user isn't advertised without coordinates.</li>
+          <li><strong>Missing social actions:</strong> confirm placement/policy for Block / Report / Share-profile (absent from the user sheet) and "Get Directions" routing (in-app vs device maps + fallback).</li>
+        </ol>
+      </div>
+    </section>
+
+    <!-- ░░ Footer ░░ -->
+    <footer class="report-footer">
+      <span class="k">One map, the whole night.</span>
+      <span>Mandos · Social Map PRD</span>
+      <span>·</span>
+      <span>23 screens · 8 modules</span>
+      <span>·</span>
+      <span>generated Jun 24, 2026</span>
+    </footer>
+
+  </main>
+</div>
+
+<script>
+  const root = document.documentElement;
+  const KEY = "mandos-prd-prefs";
+  const prefs = JSON.parse(localStorage.getItem(KEY) || "{}");
+
+  function apply() {
+    root.dataset.reading = prefs.serif ? "serif" : "sans";
+    root.dataset.theme = prefs.dark ? "dark" : "light";
+    if (prefs.narrow) root.style.setProperty("--measure", "60ch");
+    else root.style.removeProperty("--measure");
+    set("rc-serif", prefs.serif); set("rc-narrow", prefs.narrow); set("rc-dark", prefs.dark);
+  }
+  function set(id, on) { document.getElementById(id).setAttribute("aria-pressed", on ? "true" : "false"); }
+  function toggle(k) { prefs[k] = !prefs[k]; localStorage.setItem(KEY, JSON.stringify(prefs)); apply(); }
+
+  document.getElementById("rc-serif").onclick  = () => toggle("serif");
+  document.getElementById("rc-narrow").onclick = () => toggle("narrow");
+  document.getElementById("rc-dark").onclick   = () => toggle("dark");
+  apply();
+
+  // Active-section highlight in the side TOC
+  const links = [...document.querySelectorAll("#toc a")];
+  const map = new Map(links.map(a => [a.getAttribute("href").slice(1), a]));
+  const obs = new IntersectionObserver((entries) => {
+    entries.forEach(e => {
+      const a = map.get(e.target.id);
+      if (a && e.isIntersecting) { links.forEach(l => l.classList.remove("active")); a.classList.add("active"); }
+    });
+  }, { rootMargin: "-15% 0px -75% 0px" });
+  document.querySelectorAll("main section[id]").forEach(s => obs.observe(s));
+</script>
+</body>
+</html>
