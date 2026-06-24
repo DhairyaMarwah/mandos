@@ -765,6 +765,20 @@
         Tapping a user opens the profile sheet below — branching to follow/request vs chat, all gated by
         privacy / Ghost / block rules.</p>
 
+      <div class="callout callout-info" style="border-left-width:5px">
+        <div class="callout-title">How a user's location actually behaves (important)</div>
+        <p>A user's pin is <strong>not a constantly-live exact position</strong>. It carries a
+          <strong>"last active" timestamp</strong> (the profile sheet already shows "Updated 12min ago") so
+          others see <em>roughly when</em> someone was last out, not a moment-by-moment GPS trail.</p>
+        <p>Location is <strong>re-captured each time the user opens the social-map screen</strong> — a fresh fix
+          on entry refreshes their presence and "last active" — rather than continuously streaming exact
+          coordinates in the background. And critically, a user's <strong>precise location is never exposed to
+          others</strong>: other people only ever see an <strong>approximate / coarse</strong> position plus the
+          last-active time. This is the privacy contract — "who's roughly around and how recently", not "exactly
+          where this person is right now". (Precise location is only used locally, e.g. for the user's own
+          distance readouts and Phase-2 geofenced voucher claims.)</p>
+      </div>
+
       <div class="screen">
         <figure>
           <span class="shot"><img src="Map%20Single%20User%20clcik%20sheet.png" alt="Single user profile bottom sheet with Follow and Send a message" loading="lazy" /></span>
@@ -1411,7 +1425,7 @@
       <div class="grid-2">
         <div class="card-tight card">
           <div class="row-between"><span class="strong">User</span><span class="badge badge-brand">core</span></div>
-          <p class="small muted" style="margin-top:6px">id · displayName · avatarUrl · bio · relationshipStatus · homeLocation · memberSince · <strong>visibilityMode</strong> (visible_to_all·ghost·boost) · locationSharingEnabled · locationPrecision · currentStatusText · <strong>statusTTL/expiresAt</strong> · currentLat/Lng · lastKnownLocation · privacyFlags · blockedUserIds</p>
+          <p class="small muted" style="margin-top:6px">id · displayName · avatarUrl · bio · relationshipStatus · homeLocation · memberSince · <strong>visibilityMode</strong> (visible_to_all·ghost·boost) · locationSharingEnabled · locationPrecision · currentStatusText · <strong>statusTTL/expiresAt</strong> · <strong>lastActiveAt</strong> (shown as "last active") · preciseLatLng (local only, never broadcast) · <strong>coarseLatLng</strong> (what others see) · lastKnownLocation · privacyFlags · blockedUserIds</p>
         </div>
         <div class="card-tight card">
           <div class="row-between"><span class="strong">Friendship / Relationship</span><span class="badge badge-oat">graph</span></div>
@@ -1566,6 +1580,8 @@
             <li>States: not-determined · while-using · allow-once (lapses) · approximate-only · denied · restricted (MDM) · services-globally-off</li>
             <li>Re-evaluate on every foreground; first-launch → native prompt, previously-denied → deep-link Settings</li>
             <li>Location-off forces a ghost-like invisible state — reconcile copy with explicit Ghost mode</li>
+            <li>Location is <strong>re-captured each time the social map opens</strong> (fresh fix on entry), not streamed continuously in the background</li>
+            <li>Others only ever see a <strong>coarse position + "last active" time</strong> — a user's <strong>precise location is never exposed</strong>; precise is used locally only (own distance + Phase-2 claims)</li>
           </ul>
         </div>
         <div class="card">
