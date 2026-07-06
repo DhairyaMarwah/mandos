@@ -35,6 +35,24 @@
   .screen h3 { margin-bottom: var(--space-3); }
   .screen .kv { font-size: 0.95rem; }
   .legend-grid img { width: 100%; border: var(--hairline); border-radius: var(--radius-lg); box-shadow: var(--shadow-sm); background: #0b0b0b; display: block; }
+
+  /* Clustering visual preview (schematic, no photos) */
+  .clbadges { display: grid; grid-template-columns: repeat(4, 1fr); gap: var(--space-4); margin-bottom: var(--space-3); }
+  @media (max-width: 640px) { .clbadges { grid-template-columns: repeat(2, 1fr); } }
+  .clb { display: flex; flex-direction: column; align-items: center; gap: 12px; padding: var(--space-5) var(--space-2); border: var(--hairline); border-radius: var(--radius-lg); background: var(--g900); }
+  .clcap { font-family: var(--font-mono); font-size: 0.66rem; letter-spacing: 0.04em; color: rgba(255,255,255,.62); text-align: center; }
+  .cl { position: relative; display: inline-flex; align-items: center; gap: 6px; padding: 7px 13px 7px 10px; border-radius: 999px; color: #fff; font: 600 0.9rem/1 var(--font-sans); box-shadow: 0 6px 16px rgba(0,0,0,.5); }
+  .cl::after { content: ""; position: absolute; bottom: -4px; left: 50%; transform: translateX(-50%) rotate(45deg); width: 11px; height: 11px; border-radius: 3px; background: inherit; z-index: -1; }
+  .cl .g { font-size: 1rem; line-height: 1; }
+  .cl .sub { margin-left: 3px; padding: 2px 6px; border-radius: 999px; background: rgba(255,255,255,.2); font-size: 0.72rem; }
+  .cl-people { background: #2b3040; }
+  .cl-club   { background: #4f7a52; }
+  .cl-event  { background: #35618e; }
+  .map-canvas { position: relative; border-radius: var(--radius-lg); border: var(--hairline); overflow: hidden; box-shadow: var(--shadow-sm); background: radial-gradient(120% 120% at 30% 8%, #16323a 0%, #0f2129 55%, #0b1820 100%); }
+  .map-canvas::before { content: ""; position: absolute; inset: 0; background: repeating-linear-gradient(35deg, transparent 0 26px, rgba(255,255,255,.045) 26px 27px), repeating-linear-gradient(-55deg, transparent 0 34px, rgba(255,255,255,.03) 34px 35px); }
+  .map-canvas .cap { position: absolute; top: 10px; left: 12px; z-index: 3; font-family: var(--font-mono); font-size: 0.6rem; letter-spacing: 0.1em; text-transform: uppercase; color: rgba(255,255,255,.55); }
+  .map-canvas .at { position: absolute; z-index: 2; }
+  .pin-av { display: block; width: 30px; height: 30px; border-radius: 50%; border: 3px solid; background: #6b7280; box-shadow: 0 4px 10px rgba(0,0,0,.55); }
 </style>
 </head>
 <body>
@@ -288,56 +306,48 @@
         </div>
       </div>
 
-      <p>Recommended approach: index all visible entities with
-        <a href="https://github.com/mapbox/supercluster">Supercluster</a> (works
-        with react-native-maps, MapLibre / Mapbox GL, and Leaflet) and re-query per
-        viewport + zoom. Carry each pin's <code>type</code> so a cluster can show
-        the right glyph and count.</p>
+      <p>When zoomed out, dense pins collapse into a single <strong>teardrop
+        badge</strong> = count + the cluster's dominant-type glyph. The badge styles,
+        and what a tap does:</p>
 
-      <div class="code-block">
-        <div class="code-cap">clustering — Supercluster (JS / React Native)</div>
-        <pre><span class="k">import</span> Supercluster <span class="k">from</span> <span class="s">'supercluster'</span>;
+      <figure>
+        <div class="clbadges">
+          <div class="clb"><span class="cl cl-people"><span class="g">👤</span>24</span><span class="clcap">People</span></div>
+          <div class="clb"><span class="cl cl-club"><span class="g">🎧</span>32</span><span class="clcap">Clubs / nightlife</span></div>
+          <div class="clb"><span class="cl cl-event"><span class="g">🌐</span>12</span><span class="clcap">Events</span></div>
+          <div class="clb"><span class="cl cl-event"><span class="g">🌐</span>12<span class="sub">👤</span></span><span class="clcap">Mixed (+ 2nd type)</span></div>
+        </div>
+        <figcaption>Cluster badge styles — count + dominant-type glyph (mixed clusters add a small secondary chip)</figcaption>
+      </figure>
 
-<span class="c">// 1. Build the index once from every visible entity.</span>
-<span class="c">//    Each point carries its type so clusters can pick a glyph + tally.</span>
-<span class="k">const</span> index = <span class="k">new</span> <span class="n">Supercluster</span>({
-  radius: <span class="n">60</span>,        <span class="c">// cluster radius in px; raise it as you zoom out</span>
-  maxZoom: <span class="n">16</span>,       <span class="c">// past this zoom, stop clustering → show real pins</span>
-  map: (p) =&gt; ({ users: p.type === <span class="s">'user'</span> ? <span class="n">1</span> : <span class="n">0</span>,
-                 venues: p.type === <span class="s">'venue'</span> ? <span class="n">1</span> : <span class="n">0</span>,
-                 events: p.type === <span class="s">'event'</span> ? <span class="n">1</span> : <span class="n">0</span> }),
-  reduce: (a, p) =&gt; { a.users += p.users; a.venues += p.venues; a.events += p.events; },
-});
-index.<span class="n">load</span>(points); <span class="c">// points = GeoJSON features: geometry + { type }</span>
-
-<span class="c">// 2. On every pan / zoom, ask for exactly what to draw.</span>
-<span class="k">const</span> bbox = [west, south, east, north];
-<span class="k">const</span> markers = index.<span class="n">getClusters</span>(bbox, Math.<span class="n">round</span>(zoom));
-
-<span class="c">// 3. Render a cluster badge (count + dominant glyph) or a single pin.</span>
-markers.<span class="n">forEach</span>((m) =&gt; {
-  <span class="k">if</span> (m.properties.cluster) {
-    <span class="k">const</span> { point_count, users, venues, events } = m.properties;
-    <span class="k">const</span> glyph = <span class="n">dominant</span>({ users, venues, events }); <span class="c">// 👤 / 🎧 / 🌐</span>
-    <span class="n">renderClusterBadge</span>(m.geometry.coordinates, point_count, glyph);
-  } <span class="k">else</span> {
-    <span class="n">renderPin</span>(m); <span class="c">// event / user / venue / voucher</span>
-  }
-});
-
-<span class="c">// 4. Tapping a cluster zooms to where it splits apart.</span>
-<span class="k">function</span> <span class="n">onClusterTap</span>(clusterId, coords) {
-  <span class="k">const</span> z = index.<span class="n">getClusterExpansionZoom</span>(clusterId);
-  map.<span class="n">animateTo</span>({ center: coords, zoom: z });
-}</pre>
-      </div>
+      <figure>
+        <div class="grid-2">
+          <div class="map-canvas" style="min-height: 200px;">
+            <span class="cap">Zoomed out — 1 cluster</span>
+            <span class="at" style="top: 42%; left: 38%;"><span class="cl cl-people"><span class="g">👤</span>24</span></span>
+          </div>
+          <div class="map-canvas" style="min-height: 200px;">
+            <span class="cap">Zoomed in — expands to pins</span>
+            <span class="at" style="top: 20%; left: 18%;"><span class="pin-av" style="border-color:#5fd06a;"></span></span>
+            <span class="at" style="top: 30%; left: 52%;"><span class="pin-av" style="border-color:#4f93de;"></span></span>
+            <span class="at" style="top: 48%; left: 30%;"><span class="pin-av" style="border-color:#5fd06a;"></span></span>
+            <span class="at" style="top: 58%; left: 62%;"><span class="pin-av" style="border-color:#e0a53c;"></span></span>
+            <span class="at" style="top: 68%; left: 26%;"><span class="pin-av" style="border-color:#4f93de;"></span></span>
+            <span class="at" style="top: 44%; left: 78%;"><span class="pin-av" style="border-color:#9aa0a8; opacity:.5;"></span></span>
+          </div>
+        </div>
+        <figcaption>Tap a cluster → the map zooms to the level where it splits into individual pins. Ring colour = last-active tier (green→blue→amber→grey), see §07.</figcaption>
+      </figure>
 
       <div class="callout callout-info">
-        <div class="callout-title">Native alternative</div>
-        <p>If the app uses native map SDKs directly: iOS MapKit gives clustering via
-          <code>MKMarkerAnnotationView.clusteringIdentifier</code>, and Google Maps
-          (Android) via the <code>ClusterManager</code> utility. Same idea — the
-          Supercluster route just keeps the logic shared and portable.</p>
+        <div class="callout-title">Behaviour to build</div>
+        <ul>
+          <li>Merge nearby pins into one badge as soon as they'd overlap; <strong>tap → zoom to expand</strong>.</li>
+          <li>Badge = <strong>count + dominant-type glyph</strong>; a mixed cluster shows a small secondary chip.</li>
+          <li><strong>Rebuild on every pan / zoom</strong>, and respect the active filter chip (filtering to Friends only clusters people, etc.).</li>
+          <li>Standout single events can stay <strong>un-clustered</strong> so they always show.</li>
+        </ul>
+        <p class="xs faint" style="margin-top: var(--space-3);">Standard tooling handles the maths — Supercluster (react-native-maps / MapLibre / Mapbox), or native MapKit / Google <code>ClusterManager</code> — so this is a rendering + interaction spec, not new algorithm work.</p>
       </div>
     </section>
 
