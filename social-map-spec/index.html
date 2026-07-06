@@ -1,0 +1,470 @@
+<!DOCTYPE html>
+<html lang="en" data-reading="sans" data-theme="light">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>Mandos Social Map — Dev Handoff Spec</title>
+<link rel="stylesheet" href="report.css" />
+<style>
+  /* Page-local only — never duplicating report.css helpers. */
+  .reading-controls {
+    position: fixed; top: 14px; right: 14px; z-index: 50;
+    display: flex; gap: 6px; align-items: center;
+    background: color-mix(in oklab, var(--paper) 88%, transparent);
+    backdrop-filter: blur(8px);
+    border: var(--hairline); border-radius: 999px;
+    padding: 5px 7px; box-shadow: var(--shadow-sm);
+  }
+  .reading-controls button {
+    font: 500 0.72rem/1 var(--font-mono); letter-spacing: 0.04em;
+    border: 0; background: transparent; color: var(--fg-muted);
+    padding: 6px 9px; border-radius: 999px; cursor: pointer;
+    transition: background .15s, color .15s;
+  }
+  .reading-controls button:hover { background: var(--g100); color: var(--fg-strong); }
+  .reading-controls button[aria-pressed="true"] { background: var(--clay); color: #fff; }
+  .reading-controls .rc-sep { width: 1.5px; height: 18px; background: var(--border-subtle); }
+  @media (max-width: 600px) { .reading-controls { display: none; } }
+
+  /* Screen = phone shot on the left, concise notes on the right. */
+  .screen { display: grid; grid-template-columns: 300px minmax(0, 1fr); gap: var(--space-8); align-items: start; margin: var(--space-8) 0; }
+  @media (max-width: 760px) { .screen { grid-template-columns: 1fr; gap: var(--space-5); } }
+  .shot { margin: 0; }
+  .shot img { display: block; width: 100%; border: var(--hairline); border-radius: var(--radius-lg); box-shadow: var(--shadow-md); background: #0b0b0b; }
+  .shot figcaption { font-family: var(--font-mono); font-size: 0.72rem; color: var(--fg-faint); margin-top: var(--space-3); text-align: center; letter-spacing: 0.02em; }
+  .screen h3 { margin-bottom: var(--space-3); }
+  .screen .kv { font-size: 0.95rem; }
+  .legend-grid img { width: 100%; border: var(--hairline); border-radius: var(--radius-lg); box-shadow: var(--shadow-sm); background: #0b0b0b; display: block; }
+</style>
+</head>
+<body>
+
+<div class="reading-controls no-print" role="group" aria-label="Reading preferences">
+  <button id="rc-serif" aria-pressed="false" title="Toggle serif reading mode">Serif</button>
+  <span class="rc-sep"></span>
+  <button id="rc-narrow" aria-pressed="false" title="Narrow the measure">Narrow</button>
+  <span class="rc-sep"></span>
+  <button id="rc-dark" aria-pressed="false" title="Toggle dark theme">Dark</button>
+</div>
+
+<div class="page-with-nav" style="padding-top: var(--space-16);">
+
+  <nav>
+    <ol class="toc-side" id="toc">
+      <li><span class="eyebrow eyebrow-rule">Contents</span></li>
+      <li><a href="#what">What it is</a></li>
+      <li><a href="#markers">Marker language</a></li>
+      <li><a href="#privacy">Location &amp; privacy</a></li>
+      <li><a href="#map" class="l2">The map &amp; filters</a></li>
+      <li><a href="#people" class="l2">People &amp; messaging</a></li>
+      <li><a href="#visibility" class="l2">Ghost mode</a></li>
+      <li><a href="#vouchers">Vouchers (Mandos Coin)</a></li>
+      <li><a href="#build">Build notes</a></li>
+    </ol>
+  </nav>
+
+  <main>
+
+    <!-- ░░ Masthead ░░ -->
+    <header class="stack">
+      <span class="eyebrow eyebrow-rule">Mandos · Social Map · Dev Handoff</span>
+      <h1>The Social Map, <em>spec'd</em> for build</h1>
+      <p class="lead">A location layer on top of Mandos: see friends who are out,
+        events, clubs, bars and claimable vouchers around Hong Kong — without ever
+        exposing anyone's exact spot. This is the concise, screen-by-screen brief
+        for the dev team.</p>
+      <div class="meta-strip">
+        <span><b>Feature</b> &nbsp;Social Map</span>
+        <span class="sep">·</span>
+        <span><b>Platform</b> &nbsp;Mobile (iOS shown)</span>
+        <span class="sep">·</span>
+        <span><b>Screens</b> &nbsp;11</span>
+        <span class="sep">·</span>
+        <span><b>Status</b> &nbsp;<span class="badge badge-mod">Design → Build</span></span>
+      </div>
+    </header>
+
+    <!-- ░░ TL;DR ░░ -->
+    <div class="tldr">
+      <span class="eyebrow">TL;DR</span>
+      <p>One map shows four things: <strong>friends, events, clubs/bars, and
+        vouchers</strong>. Location is opt-in, sampled <strong>only while the map
+        is open</strong>, and other users only ever see an <strong>approximate
+        area + a "last active" time — never precise coordinates</strong>. Users can
+        go <strong>Ghost</strong> to hide while still browsing. Vouchers are a
+        Phase-1 experiment: <strong>tap-to-claim from anywhere</strong> today,
+        <strong>geofenced to the venue later</strong>. Vouchers are authored in a
+        web dashboard.</p>
+    </div>
+
+    <!-- ░░ 01 · What it is ░░ -->
+    <section class="section" id="what">
+      <div class="sec-head">
+        <span class="idx">01</span>
+        <h2>What it is</h2>
+      </div>
+      <p class="sec-intro">Mandos is a social event-booking app for Hong Kong
+        nightlife. The Social Map is the "what's happening around me right now"
+        surface.</p>
+
+      <p>On a single dark map the user explores four kinds of pins — the friends
+        they're already connected with, events happening nearby, the clubs and
+        bars themselves, and digital vouchers ("Mandos Coins"). They can filter to
+        any one type, jump to a date, open any pin for detail, and message
+        friends. Everything sits on top of a strict privacy model: <strong>the map
+        never reveals where a person exactly is.</strong></p>
+
+      <div class="grid-3">
+        <div class="stat"><div class="stat-value">4</div><div class="stat-label">Pin types</div><div class="stat-sub">Friends · Events · Clubs/Bars · Vouchers</div></div>
+        <div class="stat stat-success"><div class="stat-value">Opt-in</div><div class="stat-label">Location</div><div class="stat-sub">Foreground only, on map-open</div></div>
+        <div class="stat"><div class="stat-value">~area</div><div class="stat-label">Shared precision</div><div class="stat-sub">Never exact coordinates</div></div>
+      </div>
+    </section>
+
+    <!-- ░░ 02 · Marker language ░░ -->
+    <section class="section" id="markers">
+      <div class="sec-head">
+        <span class="idx">02</span>
+        <h2>The marker language</h2>
+        <span class="count">Legend</span>
+      </div>
+      <p class="sec-intro">Four marker styles. One rule to remember: only events
+        change size.</p>
+
+      <figure class="legend-grid">
+        <img src="markers-legend.png" alt="Map marker legend: Events, Clubs & Bars, Users, Vouchers" />
+        <figcaption>markers-legend.png — the four pin styles</figcaption>
+      </figure>
+
+      <table>
+        <thead><tr><th>Marker</th><th>Looks like</th><th>Sizing</th><th>Data shown</th></tr></thead>
+        <tbody>
+          <tr><td><strong>Events</strong></td><td>Event poster thumbnail with a date badge (e.g. <code>MAY 09</code>)</td><td><span class="badge badge-warn">Variable</span> — bigger = more popular</td><td>Poster, date, event name</td></tr>
+          <tr><td><strong>Clubs &amp; Bars</strong></td><td>Rounded venue tile (e.g. Rnb Bar, Club Zentral)</td><td><span class="badge">Constant</span></td><td>Upcoming-event image or venue profile image + name</td></tr>
+          <tr><td><strong>Users</strong></td><td>Circular avatar with a status pill under it ("I'm out!")</td><td><span class="badge">Constant</span></td><td>Avatar + status pill; own pin is highlighted as <code>You</code></td></tr>
+          <tr><td><strong>Vouchers</strong> <span class="mono faint">(Mandos Coin)</span></td><td>Hexagonal coin badge</td><td><span class="badge">Constant</span></td><td>Discount + distance (e.g. "20% OFF · 2km away")</td></tr>
+        </tbody>
+      </table>
+
+      <div class="callout callout-info">
+        <div class="callout-title">Popularity → size</div>
+        <p>Event marker size scales with popularity so hot events read first at a
+          glance. Clubs, bars, users and vouchers are all a fixed size — a bigger
+          pin never means a bigger venue.</p>
+      </div>
+    </section>
+
+    <!-- ░░ 03 · Location & privacy ░░ -->
+    <section class="section" id="privacy">
+      <div class="sec-head">
+        <span class="idx">03</span>
+        <h2>Location &amp; privacy — who sees what</h2>
+        <span class="count">Core rule</span>
+      </div>
+      <p class="sec-intro">The most important part of this feature. Privacy is a
+        product promise, not a setting buried in a menu.</p>
+
+      <div class="screen">
+        <figure class="shot">
+          <img src="onboarding-grant-access.png" alt="Grant location access priming screen" />
+          <figcaption>onboarding-grant-access.png</figcaption>
+        </figure>
+        <div class="stack-sm">
+          <h3>Grant Access (first run)</h3>
+          <p class="kv">Before the OS permission prompt, a priming sheet —
+            "<em>See what everyone's up to</em>" — states the privacy deal in plain
+            language. CTA: <strong>Accept and grant access</strong>, with an escape
+            hatch: <strong>Keep browsing without location</strong>.</p>
+          <p class="kv strong">The four promises shown to the user:</p>
+          <ul class="kv">
+            <li>Catch up with people &amp; see what's around you.</li>
+            <li>Discover places and posts tagged nearby.</li>
+            <li><strong>Others only see your approximate area</strong> — a rough zone plus your last-active time, <strong>never your exact spot</strong>.</li>
+            <li>Location is <strong>checked only when you open the map</strong> — it updates in-app, <strong>never in the background</strong>.</li>
+          </ul>
+        </div>
+      </div>
+
+      <div class="callout callout-danger">
+        <div class="callout-title">Non-negotiable privacy rules for engineering</div>
+        <ul>
+          <li><strong>Never broadcast precise coordinates</strong> of a user to other users. Coarsen server-side (rough zone / rounded geohash) before it reaches another device.</li>
+          <li>Other users see an <strong>approximate area label + a "last active" timestamp</strong> only (e.g. "Out around Fung Tea House · Central · Updated 12min ago"). This is the anti-stalking guarantee.</li>
+          <li><strong>Foreground-only</strong> sampling: capture position when the map is opened/active. <strong>No background location tracking.</strong></li>
+          <li>Location is <strong>opt-in</strong>; the whole map must remain browsable in a degraded, self-hidden mode if access is declined.</li>
+        </ul>
+      </div>
+
+      <div class="screen">
+        <figure class="shot">
+          <img src="location-reminder.png" alt="You're invisible on map reminder sheet" />
+          <figcaption>location-reminder.png</figcaption>
+        </figure>
+        <div class="stack-sm">
+          <h3>Location-off reminder</h3>
+          <p class="kv">When device location is off, the top bar reads
+            <strong>"Device Location off"</strong> and a reminder sheet —
+            "<em>You're invisible on map</em>" — explains the trade-off and offers
+            <strong>Open Settings</strong> or <strong>Keep browsing without
+            location</strong>.</p>
+          <p class="kv"><strong>Still works without location:</strong> browse events
+            near saved venues, and send messages / join collabs. What's lost: you
+            don't appear to anyone, and there's no "near me" distance.</p>
+        </div>
+      </div>
+    </section>
+
+    <!-- ░░ 04 · The map & filters ░░ -->
+    <section class="section" id="map">
+      <div class="sec-head">
+        <span class="idx">04</span>
+        <h2>The map &amp; filters</h2>
+      </div>
+      <p class="sec-intro">The default surface once location is granted.</p>
+
+      <div class="screen">
+        <figure class="shot">
+          <img src="map-friends.png" alt="Main map showing friends" />
+          <figcaption>map-friends.png</figcaption>
+        </figure>
+        <div class="stack-sm">
+          <h3>Friends view (default map)</h3>
+          <ul class="kv">
+            <li><strong>Top bar:</strong> back · current region label (e.g. "Tai Kok Tsui") with an eye/visibility icon · search.</li>
+            <li><strong>Avatar row</strong> (horizontal scroll) of friends who are out.</li>
+            <li><strong>Friend pins</strong> with "I'm out!" status pills; own pin is ringed and labelled <code>You</code>.</li>
+            <li><strong>Filter chips</strong> (bottom): <span class="chip">All</span> <span class="chip">Events</span> <span class="chip">Friends</span> <span class="chip">Clubs</span></li>
+            <li><strong>"Drag Up to Explore"</strong> bottom sheet → list/region browsing.</li>
+          </ul>
+        </div>
+      </div>
+
+      <div class="screen">
+        <figure class="shot">
+          <img src="date-select.png" alt="Date select sheet with calendar" />
+          <figcaption>date-select.png</figcaption>
+        </figure>
+        <div class="stack-sm">
+          <h3>Date filter</h3>
+          <p class="kv">Filter map activity by time. Quick chips —
+            <span class="chip">Today</span> <span class="chip">This Weekend</span>
+            <span class="chip">This Week</span> <span class="chip">Select Date</span>
+            — plus a calendar for a custom <strong>date range</strong>.</p>
+          <p class="kv"><strong>Dates with events near the current map view are
+            marked in yellow</strong>, so the calendar itself hints where activity
+            is. Selecting a date re-queries the map for that day.</p>
+        </div>
+      </div>
+    </section>
+
+    <!-- ░░ 05 · People & messaging ░░ -->
+    <section class="section" id="people">
+      <div class="sec-head">
+        <span class="idx">05</span>
+        <h2>People &amp; messaging</h2>
+      </div>
+      <p class="sec-intro">Tapping a friend pin opens their profile sheet — the
+        social heart of the feature.</p>
+
+      <div class="screen">
+        <figure class="shot">
+          <img src="user-profile-sheet.png" alt="Single user profile sheet" />
+          <figcaption>user-profile-sheet.png</figcaption>
+        </figure>
+        <div class="stack-sm">
+          <h3>User profile sheet</h3>
+          <ul class="kv">
+            <li><strong>Approximate distance</strong> — "About 1 km away" (never an exact pin-drop).</li>
+            <li><strong>Status</strong> — "Out Tonight", with an approximate area: "Out around Fung Tea House · Central".</li>
+            <li><strong>Last active</strong> — "Updated 12 min ago".</li>
+            <li><strong>About</strong> — bio, relationship status, home city, member-since.</li>
+            <li><strong>Recent Activity</strong> — event thumbnails they've engaged with.</li>
+            <li><strong>Actions:</strong> <span class="badge badge-oat">Follow</span> and <span class="badge badge-brand">Send a message</span> — messaging is the primary connect action.</li>
+          </ul>
+        </div>
+      </div>
+
+      <div class="callout callout-info">
+        <div class="callout-title">Messaging</div>
+        <p>Users message the friends/connections they see on the map straight from
+          the profile sheet ("Send a message"). Scope for the map release: reuse
+          the app's existing connections + DM system; the map is a new entry point
+          into it, not a new chat product.</p>
+      </div>
+    </section>
+
+    <!-- ░░ 06 · Visibility / Ghost mode ░░ -->
+    <section class="section" id="visibility">
+      <div class="sec-head">
+        <span class="idx">06</span>
+        <h2>Visibility — Ghost mode</h2>
+      </div>
+      <p class="sec-intro">A user toggle (opened from the eye icon) controlling
+        whether they appear to others.</p>
+
+      <div class="screen">
+        <figure class="shot">
+          <img src="visibility-visible.png" alt="Visibility sheet set to Visible to all" />
+          <figcaption>visibility-visible.png</figcaption>
+        </figure>
+        <div class="stack-sm">
+          <h3>Visible to all</h3>
+          <p class="kv">Default. Others see your <strong>approximate area + last
+            active time — never your exact spot</strong>. You can browse events near
+            saved venues, see friends who shared their spot, and send messages /
+            join events.</p>
+        </div>
+      </div>
+
+      <div class="screen">
+        <figure class="shot">
+          <img src="visibility-ghost.png" alt="Visibility sheet set to Ghost Mode" />
+          <figcaption>visibility-ghost.png</figcaption>
+        </figure>
+        <div class="stack-sm">
+          <h3>Ghost mode</h3>
+          <p class="kv"><strong>You're hidden</strong> — you won't appear to friends
+            or show up nearby, but you can still see who's out and browse
+            everything. Send messages and join collabs still work.</p>
+          <p class="kv faint">Note: Ghost mode and a device with location off both
+            resolve to the same "hidden but fully browsing" state — see build note 2.</p>
+        </div>
+      </div>
+    </section>
+
+    <!-- ░░ 07 · Vouchers ░░ -->
+    <section class="section" id="vouchers">
+      <div class="sec-head">
+        <span class="idx">07</span>
+        <h2>Vouchers — "Mandos Coin"</h2>
+        <span class="count">Experimental</span>
+      </div>
+      <p class="sec-intro">Claimable digital discounts scattered on the map.
+        Currently an <strong>exploration</strong> — we're testing the mechanic, not
+        shipping the final economy.</p>
+
+      <div class="screen">
+        <figure class="shot">
+          <img src="map-vouchers.png" alt="Map filtered to voucher coins" />
+          <figcaption>map-vouchers.png</figcaption>
+        </figure>
+        <div class="stack-sm">
+          <h3>Vouchers on the map</h3>
+          <p class="kv">Hexagonal coin pins show the discount and distance — "20%
+            OFF · 2km away", "10% OFF · 2km away". Filterable like any other pin
+            type. Tapping a coin opens the Voucher Found sheet.</p>
+        </div>
+      </div>
+
+      <div class="grid-2">
+        <figure class="shot">
+          <img src="voucher-found.png" alt="Voucher Found sheet, unclaimed" />
+          <figcaption>voucher-found.png — unclaimed</figcaption>
+        </figure>
+        <figure class="shot">
+          <img src="voucher-claimed.png" alt="Voucher claimed / used state" />
+          <figcaption>voucher-claimed.png — claimed / used</figcaption>
+        </figure>
+      </div>
+
+      <div class="stack-sm" style="margin-top: var(--space-6);">
+        <h3>Voucher sheet</h3>
+        <ul class="kv">
+          <li><strong>Offer</strong> — e.g. "20% OFF on foods &amp; drinks", venue tag (Club Zentral), validity date.</li>
+          <li><strong>Unlocked at</strong> — the region it belongs to (e.g. "Midnight City").</li>
+          <li><strong>About / terms</strong> — numbered rules (not valid on special events/blackout dates, can't be combined with other offers, valid-till date).</li>
+          <li><strong>Actions:</strong> <span class="badge badge-oat">Send as a gift</span> and <span class="badge badge-brand">Claim Voucher</span>.</li>
+          <li><strong>Claimed state</strong> re-skins the coin (green) and shows "Used on &lt;date&gt;".</li>
+        </ul>
+      </div>
+
+      <div class="callout callout-warn">
+        <div class="callout-title">⚑ Dev note — phasing &amp; authoring</div>
+        <ul>
+          <li><strong>Phase 1 (now):</strong> pure digital exploration — a user can <strong>tap and claim from anywhere</strong>, no proximity check. Keep it simple.</li>
+          <li><strong>Phase 2 (later):</strong> <strong>geofencing</strong> — claim only unlocks when the user is physically near the venue/region. Design the voucher model now so the proximity gate can be switched on later without a rewrite.</li>
+          <li><strong>Authoring:</strong> all vouchers are created and managed in a <strong>web dashboard</strong> (offer, venue, region, validity, terms, blackout dates). The app only reads/claims them.</li>
+          <li>Model these states/attributes: available → claimed → used; validity window; blackout dates; "not combinable"; and <strong>gift transfer</strong> to another user.</li>
+        </ul>
+      </div>
+    </section>
+
+    <!-- ░░ 08 · Build notes ░░ -->
+    <section class="section" id="build">
+      <div class="sec-head">
+        <span class="idx">08</span>
+        <h2>Build notes &amp; open questions</h2>
+      </div>
+      <p class="sec-intro">The things worth agreeing on before code.</p>
+
+      <div class="callout callout-info">
+        <div class="callout-title">Decided</div>
+        <ol>
+          <li>Coarsen every user location server-side; broadcast <strong>area label + last-active time</strong> only.</li>
+          <li>Foreground-only location, sampled on map-open. No background tracking.</li>
+          <li>Only <strong>event</strong> markers scale by popularity; all others constant.</li>
+          <li>Vouchers: digital-claim now, geofenced later; authored via web dashboard.</li>
+          <li>Map must stay browsable with location denied (self-hidden).</li>
+        </ol>
+      </div>
+
+      <div class="callout callout-warn">
+        <div class="callout-title">Open questions for the team</div>
+        <ol>
+          <li><strong>Distance granularity</strong> — snap "km away" to buckets (e.g. 500 m / 1 km)? What's the coarsening radius for the area label?</li>
+          <li><strong>Ghost vs location-off</strong> — both hide the user; confirm whether Ghost still requires location ON (to power "near me"), or is purely a broadcast toggle.</li>
+          <li><strong>Who's on the map</strong> — mutual connections only, or open discovery of nearby people? The profile sheet has both "Follow" and "Send a message".</li>
+          <li><strong>Voucher gifting</strong> — how does "Send as a gift" transfer ownership, and does the recipient inherit the same validity/geofence?</li>
+          <li><strong>Claim limits</strong> — any per-user daily cap on voucher claims?</li>
+        </ol>
+      </div>
+
+      <p class="faint small">Screens referenced (11): onboarding-grant-access ·
+        location-reminder · markers-legend · map-friends · date-select ·
+        user-profile-sheet · visibility-visible · visibility-ghost · map-vouchers ·
+        voucher-found · voucher-claimed. A broader earlier draft (regions, live
+        chat, geofence states, search) lives in <code>../social-map-prd/</code>.</p>
+    </section>
+
+    <footer class="report-footer">
+      <span class="k">Mandos</span>
+      <span>Social Map — Dev Handoff</span>
+      <span>·</span>
+      <span>Design → Build</span>
+      <span>·</span>
+      <span>concise spec</span>
+    </footer>
+
+  </main>
+</div>
+
+<script>
+  const root = document.documentElement;
+  const KEY = "mandos-map-spec-prefs";
+  const prefs = JSON.parse(localStorage.getItem(KEY) || "{}");
+  function apply() {
+    root.dataset.reading = prefs.serif ? "serif" : "sans";
+    root.dataset.theme = prefs.dark ? "dark" : "light";
+    if (prefs.narrow) root.style.setProperty("--measure", "60ch");
+    else root.style.removeProperty("--measure");
+    set("rc-serif", prefs.serif); set("rc-narrow", prefs.narrow); set("rc-dark", prefs.dark);
+  }
+  function set(id, on) { document.getElementById(id).setAttribute("aria-pressed", on ? "true" : "false"); }
+  function toggle(k) { prefs[k] = !prefs[k]; localStorage.setItem(KEY, JSON.stringify(prefs)); apply(); }
+  document.getElementById("rc-serif").onclick  = () => toggle("serif");
+  document.getElementById("rc-narrow").onclick = () => toggle("narrow");
+  document.getElementById("rc-dark").onclick   = () => toggle("dark");
+  apply();
+
+  const links = [...document.querySelectorAll("#toc a")];
+  const map = new Map(links.map(a => [a.getAttribute("href").slice(1), a]));
+  const obs = new IntersectionObserver((entries) => {
+    entries.forEach(e => {
+      const a = map.get(e.target.id);
+      if (a && e.isIntersecting) { links.forEach(l => l.classList.remove("active")); a.classList.add("active"); }
+    });
+  }, { rootMargin: "-20% 0px -70% 0px" });
+  document.querySelectorAll("main section[id]").forEach(s => obs.observe(s));
+</script>
+</body>
+</html>
