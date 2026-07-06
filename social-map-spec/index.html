@@ -56,7 +56,9 @@
       <li><a href="#markers">Marker language</a></li>
       <li><a href="#privacy">Location &amp; privacy</a></li>
       <li><a href="#map" class="l2">The map &amp; filters</a></li>
+      <li><a href="#clustering" class="l2">Clustering</a></li>
       <li><a href="#people" class="l2">People &amp; messaging</a></li>
+      <li><a href="#presence" class="l2">Last-active status</a></li>
       <li><a href="#visibility" class="l2">Ghost mode</a></li>
       <li><a href="#vouchers">Vouchers (Mandos Coin)</a></li>
       <li><a href="#build">Build notes</a></li>
@@ -78,7 +80,7 @@
         <span class="sep">·</span>
         <span><b>Platform</b> &nbsp;Mobile (iOS shown)</span>
         <span class="sep">·</span>
-        <span><b>Screens</b> &nbsp;11</span>
+        <span><b>Screens</b> &nbsp;13</span>
         <span class="sep">·</span>
         <span><b>Status</b> &nbsp;<span class="badge badge-mod">Design → Build</span></span>
       </div>
@@ -94,7 +96,9 @@
         go <strong>Ghost</strong> to hide while still browsing. Vouchers are a
         Phase-1 experiment: <strong>tap-to-claim from anywhere</strong> today,
         <strong>geofenced to the venue later</strong>. Vouchers are authored in a
-        web dashboard.</p>
+        web dashboard. People on the map are users who set an <strong>"Out
+        Tonight"</strong> status; their avatar ring fades as their presence goes
+        stale, and pins <strong>cluster</strong> when zoomed out.</p>
     </div>
 
     <!-- ░░ 01 · What it is ░░ -->
@@ -257,10 +261,90 @@
       </div>
     </section>
 
-    <!-- ░░ 05 · People & messaging ░░ -->
-    <section class="section" id="people">
+    <!-- ░░ 05 · Clustering ░░ -->
+    <section class="section" id="clustering">
       <div class="sec-head">
         <span class="idx">05</span>
+        <h2>Clustering (zoomed-out map)</h2>
+        <span class="count">Perf + legibility</span>
+      </div>
+      <p class="sec-intro">When the map is zoomed out, dozens of nearby pins would
+        overlap into noise. Instead, group them into cluster badges.</p>
+
+      <div class="screen">
+        <figure class="shot">
+          <img src="clustering.png" alt="Map with clustered pins when zoomed out" />
+          <figcaption>clustering.png</figcaption>
+        </figure>
+        <div class="stack-sm">
+          <h3>How clusters read</h3>
+          <ul class="kv">
+            <li>A cluster is a <strong>teardrop badge = count + a dominant-type glyph</strong> (person = people, headphones = clubs/nightlife, globe = events).</li>
+            <li><strong>Mixed clusters</strong> append a small secondary icon (e.g. "12 🌐 + 👤") when a second type is significant.</li>
+            <li><strong>Standout single pins stay un-clustered</strong> — a prominent event card (Justin's Event) can render on its own even when zoomed out.</li>
+            <li><strong>Tap a cluster → zoom to the level where it breaks apart</strong> into individual pins.</li>
+            <li>Clusters respect the active <strong>filter chip</strong> — filtering to "Friends" only clusters people, etc.</li>
+          </ul>
+        </div>
+      </div>
+
+      <p>Recommended approach: index all visible entities with
+        <a href="https://github.com/mapbox/supercluster">Supercluster</a> (works
+        with react-native-maps, MapLibre / Mapbox GL, and Leaflet) and re-query per
+        viewport + zoom. Carry each pin's <code>type</code> so a cluster can show
+        the right glyph and count.</p>
+
+      <div class="code-block">
+        <div class="code-cap">clustering — Supercluster (JS / React Native)</div>
+        <pre><span class="k">import</span> Supercluster <span class="k">from</span> <span class="s">'supercluster'</span>;
+
+<span class="c">// 1. Build the index once from every visible entity.</span>
+<span class="c">//    Each point carries its type so clusters can pick a glyph + tally.</span>
+<span class="k">const</span> index = <span class="k">new</span> <span class="n">Supercluster</span>({
+  radius: <span class="n">60</span>,        <span class="c">// cluster radius in px; raise it as you zoom out</span>
+  maxZoom: <span class="n">16</span>,       <span class="c">// past this zoom, stop clustering → show real pins</span>
+  map: (p) =&gt; ({ users: p.type === <span class="s">'user'</span> ? <span class="n">1</span> : <span class="n">0</span>,
+                 venues: p.type === <span class="s">'venue'</span> ? <span class="n">1</span> : <span class="n">0</span>,
+                 events: p.type === <span class="s">'event'</span> ? <span class="n">1</span> : <span class="n">0</span> }),
+  reduce: (a, p) =&gt; { a.users += p.users; a.venues += p.venues; a.events += p.events; },
+});
+index.<span class="n">load</span>(points); <span class="c">// points = GeoJSON features: geometry + { type }</span>
+
+<span class="c">// 2. On every pan / zoom, ask for exactly what to draw.</span>
+<span class="k">const</span> bbox = [west, south, east, north];
+<span class="k">const</span> markers = index.<span class="n">getClusters</span>(bbox, Math.<span class="n">round</span>(zoom));
+
+<span class="c">// 3. Render a cluster badge (count + dominant glyph) or a single pin.</span>
+markers.<span class="n">forEach</span>((m) =&gt; {
+  <span class="k">if</span> (m.properties.cluster) {
+    <span class="k">const</span> { point_count, users, venues, events } = m.properties;
+    <span class="k">const</span> glyph = <span class="n">dominant</span>({ users, venues, events }); <span class="c">// 👤 / 🎧 / 🌐</span>
+    <span class="n">renderClusterBadge</span>(m.geometry.coordinates, point_count, glyph);
+  } <span class="k">else</span> {
+    <span class="n">renderPin</span>(m); <span class="c">// event / user / venue / voucher</span>
+  }
+});
+
+<span class="c">// 4. Tapping a cluster zooms to where it splits apart.</span>
+<span class="k">function</span> <span class="n">onClusterTap</span>(clusterId, coords) {
+  <span class="k">const</span> z = index.<span class="n">getClusterExpansionZoom</span>(clusterId);
+  map.<span class="n">animateTo</span>({ center: coords, zoom: z });
+}</pre>
+      </div>
+
+      <div class="callout callout-info">
+        <div class="callout-title">Native alternative</div>
+        <p>If the app uses native map SDKs directly: iOS MapKit gives clustering via
+          <code>MKMarkerAnnotationView.clusteringIdentifier</code>, and Google Maps
+          (Android) via the <code>ClusterManager</code> utility. Same idea — the
+          Supercluster route just keeps the logic shared and portable.</p>
+      </div>
+    </section>
+
+    <!-- ░░ 06 · People & messaging ░░ -->
+    <section class="section" id="people">
+      <div class="sec-head">
+        <span class="idx">06</span>
         <h2>People &amp; messaging</h2>
       </div>
       <p class="sec-intro">Tapping a friend pin opens their profile sheet — the
@@ -293,10 +377,53 @@
       </div>
     </section>
 
-    <!-- ░░ 06 · Visibility / Ghost mode ░░ -->
+    <!-- ░░ 07 · Presence / last-active status ░░ -->
+    <section class="section" id="presence">
+      <div class="sec-head">
+        <span class="idx">07</span>
+        <h2>Presence &amp; last-active status</h2>
+        <span class="count">Clarified</span>
+      </div>
+      <p class="sec-intro">A user avatar's ring colour encodes how fresh their
+        presence is. The dimmer/greyer the ring, the older the "last active".</p>
+
+      <div class="screen">
+        <figure class="shot">
+          <img src="last-activity-status.png" alt="Last activity status ring tiers" />
+          <figcaption>last-activity-status.png</figcaption>
+        </figure>
+        <div class="stack-sm">
+          <h3>The four freshness tiers</h3>
+          <p class="kv">Every marker carries a "last active" timestamp; the ring is
+            derived from its age. Only the newest tier feels truly "live".</p>
+        </div>
+      </div>
+
+      <table>
+        <thead><tr><th>Tier</th><th>Ring</th><th>Status pill</th><th>Age (indicative*)</th></tr></thead>
+        <tbody>
+          <tr><td><strong>Active</strong></td><td><span class="dot dot-success"></span> Green (glowing)</td><td>"I'm out!"</td><td>≲ 30 min</td></tr>
+          <tr><td><strong>Stale</strong></td><td><span class="dot dot-info"></span> Blue</td><td>"I'm out!"</td><td>~30–60 min</td></tr>
+          <tr><td><strong>Very stale</strong></td><td><span class="dot dot-warn"></span> Amber</td><td>"I'm out!"</td><td>~1–3 hr</td></tr>
+          <tr><td><strong>Inactive</strong></td><td><span class="dot"></span> Grey (avatar dimmed)</td><td>"Inactive"</td><td>≳ 3 hr</td></tr>
+        </tbody>
+      </table>
+      <p class="xs faint">*Thresholds in the mock (12 min / 34 min / 2 hr / 6 hr) are
+        examples — the exact cut-offs still need to be locked. See build note.</p>
+
+      <div class="callout callout-success">
+        <div class="callout-title">Clarified with the team</div>
+        <ul>
+          <li><strong>How long a user stays on the map:</strong> for <strong>now, shown indefinitely</strong> — the user base is small, so we keep presence around. <strong>Later, a 2-week cap</strong>: after ~14 days of no activity a user's presence expires and drops off the map entirely.</li>
+          <li><strong>Who these people are:</strong> the "random" people on the map are users who set an <strong>"Out Tonight" status</strong> — the <em>same</em> presence signal used on the <strong>Discover page</strong>. So the map is open discovery of who's out, not limited to your own connections.</li>
+        </ul>
+      </div>
+    </section>
+
+    <!-- ░░ 08 · Visibility / Ghost mode ░░ -->
     <section class="section" id="visibility">
       <div class="sec-head">
-        <span class="idx">06</span>
+        <span class="idx">08</span>
         <h2>Visibility — Ghost mode</h2>
       </div>
       <p class="sec-intro">A user toggle (opened from the eye icon) controlling
@@ -332,10 +459,10 @@
       </div>
     </section>
 
-    <!-- ░░ 07 · Vouchers ░░ -->
+    <!-- ░░ 09 · Vouchers ░░ -->
     <section class="section" id="vouchers">
       <div class="sec-head">
-        <span class="idx">07</span>
+        <span class="idx">09</span>
         <h2>Vouchers — "Mandos Coin"</h2>
         <span class="count">Experimental</span>
       </div>
@@ -389,20 +516,23 @@
       </div>
     </section>
 
-    <!-- ░░ 08 · Build notes ░░ -->
+    <!-- ░░ 10 · Build notes ░░ -->
     <section class="section" id="build">
       <div class="sec-head">
-        <span class="idx">08</span>
+        <span class="idx">10</span>
         <h2>Build notes &amp; open questions</h2>
       </div>
       <p class="sec-intro">The things worth agreeing on before code.</p>
 
       <div class="callout callout-info">
-        <div class="callout-title">Decided</div>
+        <div class="callout-title">Decided / clarified</div>
         <ol>
           <li>Coarsen every user location server-side; broadcast <strong>area label + last-active time</strong> only.</li>
           <li>Foreground-only location, sampled on map-open. No background tracking.</li>
           <li>Only <strong>event</strong> markers scale by popularity; all others constant.</li>
+          <li><strong>Presence retention:</strong> shown indefinitely for now (small user base); <strong>2-week cap later</strong> — no activity in ~14 days → drop off the map.</li>
+          <li><strong>Map population = "Out Tonight" users</strong> — same signal as the Discover page; open discovery, not just your connections.</li>
+          <li><strong>Cluster</strong> markers when zoomed out (Supercluster or native), count + dominant-type glyph, tap-to-expand.</li>
           <li>Vouchers: digital-claim now, geofenced later; authored via web dashboard.</li>
           <li>Map must stay browsable with location denied (self-hidden).</li>
         </ol>
@@ -411,19 +541,21 @@
       <div class="callout callout-warn">
         <div class="callout-title">Open questions for the team</div>
         <ol>
+          <li><strong>Last-active thresholds</strong> — lock the exact cut-offs for Active / Stale / Very-stale / Inactive rings (mock shows 12 min / 34 min / 2 hr / 6 hr as examples).</li>
+          <li><strong>Grant-access timing</strong> — confirm the priming screen shows on <em>first</em> Social Map open (before the OS prompt), and how often the location-off reminder re-surfaces after that.</li>
           <li><strong>Distance granularity</strong> — snap "km away" to buckets (e.g. 500 m / 1 km)? What's the coarsening radius for the area label?</li>
           <li><strong>Ghost vs location-off</strong> — both hide the user; confirm whether Ghost still requires location ON (to power "near me"), or is purely a broadcast toggle.</li>
-          <li><strong>Who's on the map</strong> — mutual connections only, or open discovery of nearby people? The profile sheet has both "Follow" and "Send a message".</li>
           <li><strong>Voucher gifting</strong> — how does "Send as a gift" transfer ownership, and does the recipient inherit the same validity/geofence?</li>
           <li><strong>Claim limits</strong> — any per-user daily cap on voucher claims?</li>
         </ol>
       </div>
 
-      <p class="faint small">Screens referenced (11): onboarding-grant-access ·
+      <p class="faint small">Screens referenced (13): onboarding-grant-access ·
         location-reminder · markers-legend · map-friends · date-select ·
-        user-profile-sheet · visibility-visible · visibility-ghost · map-vouchers ·
-        voucher-found · voucher-claimed. A broader earlier draft (regions, live
-        chat, geofence states, search) lives in <code>../social-map-prd/</code>.</p>
+        clustering · user-profile-sheet · last-activity-status · visibility-visible ·
+        visibility-ghost · map-vouchers · voucher-found · voucher-claimed. A broader
+        earlier draft (regions, live chat, geofence states, search) lives in
+        <code>../social-map-prd/</code>.</p>
     </section>
 
     <footer class="report-footer">
