@@ -1,0 +1,1750 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>Mandos · Reservation Engine Prototype</title>
+<link rel="preconnect" href="https://fonts.googleapis.com" />
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+<link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700&display=swap" rel="stylesheet" />
+<style>
+/* ============================================================
+   MANDOS DESIGN TOKENS  (copy these into your design system)
+   ============================================================ */
+:root{
+  --bg:#0b0b0d; --bg2:#111114; --surface:#1a1a1e; --surface2:#232329;
+  --line:#2b2b33; --line2:#3a3a44;
+  --text:#f4f4f5; --dim:#9a9aa2; --dim2:#6d6d76;
+  --accent:#f5851f; --accent-2:#ff9a3c; --accent-soft:rgba(245,133,31,.14);
+  --green:#37c26a; --green-soft:rgba(55,194,106,.14);
+  --red:#ff4d4f; --red-soft:rgba(255,77,79,.13);
+  --blue:#3b82f6; --blue-soft:rgba(59,130,246,.16);
+  --purple:#a855f7; --purple-soft:rgba(168,85,247,.18);
+  --amber:#f5a623; --amber-soft:rgba(245,166,35,.15);
+  --r:16px; --r-sm:12px; --r-lg:22px;
+  --shadow:0 12px 40px rgba(0,0,0,.5);
+}
+*{box-sizing:border-box;-webkit-tap-highlight-color:transparent}
+html,body{margin:0;background:#050506;color:var(--text);font-family:'Poppins',system-ui,-apple-system,Segoe UI,Roboto,sans-serif}
+button{font-family:inherit;cursor:pointer;border:none;background:none;color:inherit}
+.ic{width:20px;height:20px;stroke:currentColor;stroke-width:2;fill:none;stroke-linecap:round;stroke-linejoin:round;display:inline-block;flex:none}
+.ic.sm{width:16px;height:16px}.ic.lg{width:24px;height:24px}
+
+/* ---------- App shell ---------- */
+.app{display:flex;gap:22px;padding:22px;min-height:100vh;align-items:flex-start}
+.sidebar{width:264px;flex:none;position:sticky;top:22px;background:var(--bg2);border:1px solid var(--line);border-radius:18px;padding:14px;max-height:calc(100vh - 44px);overflow:auto}
+.sidebar h2{font-size:15px;margin:2px 4px 4px}
+.sidebar .sub{font-size:11px;color:var(--dim);margin:0 4px 12px}
+.seg{display:flex;background:var(--surface);border-radius:999px;padding:4px;margin-bottom:14px}
+.seg button{flex:1;padding:8px;border-radius:999px;font-size:13px;font-weight:600;color:var(--dim)}
+.seg button.on{background:var(--accent);color:#1a1200}
+.nav-group{font-size:10px;letter-spacing:.14em;text-transform:uppercase;color:var(--dim2);margin:14px 4px 6px;font-weight:600}
+.nav-item{display:flex;gap:8px;align-items:center;width:100%;text-align:left;padding:8px 10px;border-radius:10px;font-size:12.5px;color:var(--dim);margin-bottom:2px}
+.nav-item:hover{background:var(--surface)}
+.nav-item.active{background:var(--accent-soft);color:var(--text)}
+.nav-item .tagx{font-size:9px;margin-left:auto;color:var(--dim2);border:1px solid var(--line2);padding:1px 5px;border-radius:6px}
+.stage{flex:1;display:flex;flex-direction:column;align-items:center;gap:10px}
+.stage .hint{font-size:12px;color:var(--dim);text-align:center}
+.stage .scrn-name{font-size:13px;color:var(--accent);font-weight:600}
+
+/* ---------- Phone (iPhone-style frame: height-fit, slim metallic bezel) ---------- */
+.phone{aspect-ratio:428/928;height:min(940px,calc(100vh - 132px));width:auto;position:relative;flex:none;border-radius:56px;padding:5px;
+  background:linear-gradient(140deg,#72727a 0%,#26262b 15%,#3d3d44 37%,#161618 60%,#50505a 82%,#1d1d21 100%);
+  box-shadow:0 30px 80px -14px rgba(0,0,0,.8),0 0 0 1px rgba(255,255,255,.05),inset 0 1px 1px rgba(255,255,255,.16)}
+.device-screen{position:relative;width:100%;height:100%;background:var(--bg);border-radius:52px;overflow:hidden;box-shadow:inset 0 0 0 1px rgba(0,0,0,.6)}
+.island{position:absolute;top:12px;left:50%;transform:translateX(-50%);width:120px;height:33px;background:#000;border-radius:20px;z-index:30;box-shadow:inset 0 0 0 1px rgba(255,255,255,.06)}
+.home-ind{position:absolute;bottom:8px;left:50%;transform:translateX(-50%);width:135px;height:5px;border-radius:3px;background:rgba(255,255,255,.5);z-index:29;pointer-events:none}
+.statusbar{height:48px;display:flex;align-items:center;justify-content:space-between;padding:6px 28px 0;font-size:15px;font-weight:600;position:relative;z-index:5}
+.statusbar .sb-r{display:flex;gap:6px;align-items:center}
+.screens{position:absolute;top:48px;left:0;right:0;bottom:0}
+.screen{position:absolute;inset:0;display:none;flex-direction:column}
+.screen.active{display:flex}
+.screen-body{flex:1;overflow:auto;padding:14px 16px 20px;display:flex;flex-direction:column;gap:14px}
+.screen-body::-webkit-scrollbar{width:0}
+.screen-footer{padding:12px 16px 22px;background:linear-gradient(transparent,var(--bg) 26%);flex:none}
+
+/* ---------- Header ---------- */
+.apphdr{display:flex;align-items:center;gap:10px;padding:8px 16px 4px;flex:none}
+.apphdr h1{font-size:19px;font-weight:600;margin:0}
+.apphdr .sub{font-size:11px;color:var(--dim);font-weight:400}
+.icon-btn{width:34px;height:34px;border-radius:50%;display:grid;place-items:center;color:var(--text)}
+.icon-btn.bg{background:var(--surface)}
+.push{margin-left:auto}
+.dot{width:8px;height:8px;border-radius:50%;background:var(--accent);position:absolute;top:6px;right:6px}
+
+/* ---------- Typo helpers ---------- */
+.muted{color:var(--dim)}.dim2{color:var(--dim2)}.bold{font-weight:600}.sm{font-size:12px}.xs{font-size:11px}.big{font-size:22px;font-weight:600}
+.row{display:flex;align-items:center;gap:8px}.between{display:flex;align-items:center;justify-content:space-between;gap:8px}
+.col{display:flex;flex-direction:column;gap:6px}.grow{flex:1}.right{text-align:right}.center{text-align:center}
+.accent{color:var(--accent)}.green{color:var(--green)}.red{color:var(--red)}
+.divider{height:1px;background:var(--line);margin:2px 0}
+.sec-label{display:flex;align-items:center;gap:10px;color:var(--dim);font-size:12px;margin:2px 0}
+.sec-label::before,.sec-label::after{content:"";flex:1;height:1px;background:var(--line)}
+
+/* ---------- Cards ---------- */
+.card{background:var(--surface);border:1px solid var(--line);border-radius:var(--r);padding:14px}
+.card.tight{padding:12px}
+.list-card{background:var(--surface);border:1px solid var(--line);border-radius:var(--r);padding:13px;display:flex;flex-direction:column;gap:9px}
+.kv{display:flex;justify-content:space-between;font-size:13px;gap:8px}
+.kv .k{color:var(--dim)}
+.info-banner{background:var(--blue-soft);border:1px solid rgba(59,130,246,.4);border-radius:12px;padding:11px 12px;font-size:12px;display:flex;gap:9px;color:#cfe0ff}
+
+/* ---------- Buttons ---------- */
+.btn{width:100%;padding:15px;border-radius:999px;font-weight:600;font-size:15px;display:flex;align-items:center;justify-content:center;gap:8px}
+.btn-primary{background:var(--accent);color:#1a1200}
+.btn-dark{background:var(--surface2);color:var(--text)}
+.btn-outline{background:transparent;border:1.5px solid var(--accent);color:var(--accent)}
+.btn-outline-dim{background:transparent;border:1.5px solid var(--line2);color:var(--text)}
+.btn-danger{background:var(--red);color:#fff}
+.btn-ghost{background:transparent;color:var(--dim)}
+.btn.sm{padding:9px 14px;font-size:13px;width:auto}
+.btn-green{background:var(--green);color:#04270f}
+.foot-note{text-align:center;font-size:11px;color:var(--dim);margin-top:8px}
+
+/* ---------- Chips / badges / tabs ---------- */
+.chip{display:inline-flex;align-items:center;gap:6px;background:var(--surface2);border:1px solid var(--line);border-radius:999px;padding:7px 13px;font-size:12.5px;font-weight:500}
+.chip.on{background:var(--accent);color:#1a1200;border-color:var(--accent)}
+.badge{display:inline-flex;align-items:center;gap:4px;padding:4px 10px;border-radius:999px;font-size:11px;font-weight:600}
+.b-pending{background:var(--amber-soft);color:var(--amber)} .b-confirmed{background:var(--green-soft);color:var(--green)}
+.b-cancel{background:var(--red-soft);color:var(--red)} .b-completed{background:var(--surface2);color:var(--dim)}
+.b-event{background:var(--accent);color:#1a1200} .b-owl{background:var(--purple);color:#fff}
+.b-seated{background:var(--blue-soft);color:var(--blue)} .b-paid{background:var(--green-soft);color:var(--green)}
+.tabs{display:flex;border-bottom:1px solid var(--line);gap:4px}
+.tab{flex:1;padding:12px 6px;text-align:center;font-size:14px;font-weight:600;color:var(--dim);position:relative}
+.tab.on{color:var(--text)}
+.tab.on::after{content:"";position:absolute;left:12%;right:12%;bottom:-1px;height:2px;background:var(--accent);border-radius:2px}
+.pills{display:flex;gap:8px;overflow:auto}
+
+/* ---------- Date strip ---------- */
+.datestrip{display:flex;gap:8px;overflow:auto;padding-bottom:2px}
+.dc{flex:none;width:58px;background:var(--surface);border:1.5px solid transparent;border-radius:14px;padding:9px 4px;text-align:center}
+.dc .d{font-size:11px;color:var(--dim)} .dc .n{font-size:19px;font-weight:600;margin:2px 0}
+.dc .tg{font-size:9px;color:var(--dim);font-weight:600}
+.dc.sel{border-color:var(--accent)} .dc.sel .n,.dc.sel .d{color:var(--accent)}
+.dc.ev .tg{background:var(--accent);color:#1a1200;border-radius:5px;padding:1px 4px;display:inline-block}
+.dc.off{opacity:.4}
+
+/* ---------- Steppers / slots ---------- */
+.stepper{display:flex;align-items:center;justify-content:space-between}
+.stp-btn{width:44px;height:44px;border-radius:50%;background:var(--surface2);display:grid;place-items:center}
+.stp-val{font-size:22px;font-weight:600}
+.stepper.mini .stp-btn{width:30px;height:30px}.stepper.mini .stp-val{font-size:15px;min-width:26px;text-align:center}
+.stepper.mini{gap:6px;background:#fff;border-radius:999px;padding:3px;color:#111}
+.stepper.mini .stp-btn{background:transparent;color:#111}
+.slotgrid{display:grid;grid-template-columns:1fr 1fr 1fr;gap:9px}
+.slot{background:var(--surface);border:1px solid var(--line);border-radius:12px;padding:10px 6px;text-align:center}
+.slot .t{font-size:14px;font-weight:600}.slot .s{font-size:10px;margin-top:2px}
+.slot.sel{background:var(--accent);color:#1a1200;border-color:var(--accent)}.slot.sel .s{color:#5a3a00}
+.slot.off{opacity:.35}
+.s-low{color:var(--green)}.s-mod{color:var(--amber)}.s-busy{color:var(--accent)}.s-high{color:var(--red)}.s-sold{color:var(--dim2)}
+.legend{display:flex;flex-wrap:wrap;gap:10px;font-size:10.5px;color:var(--dim)}
+.legend i{width:8px;height:8px;border-radius:50%;display:inline-block;margin-right:4px}
+
+/* ---------- Stat tiles ---------- */
+.tiles{display:grid;grid-template-columns:1fr 1fr 1fr;gap:9px}
+.tiles.two{grid-template-columns:1fr 1fr}
+.tile{background:var(--surface);border:1px solid var(--line);border-radius:14px;padding:11px}
+.tile .l{font-size:11px;color:var(--dim)}.tile .v{font-size:22px;font-weight:600;margin-top:2px}
+.tile .sub2{font-size:10px;color:var(--dim2)}
+.tile.acc{border-left:3px solid var(--accent)} .tile.b{border-left:3px solid var(--blue)}
+.tile.g{border-left:3px solid var(--green)} .tile.r{border-left:3px solid var(--red)}
+
+/* ---------- Table grid (merchant) ---------- */
+.tblgrid{display:grid;grid-template-columns:1fr 1fr 1fr 1fr;gap:8px}
+.tbl{background:var(--surface);border:1.5px solid var(--line);border-radius:11px;padding:8px 6px;text-align:center;position:relative}
+.tbl .id{font-size:14px;font-weight:600}.tbl .c{font-size:9px;color:var(--dim)}
+.tbl .st{font-size:9px;margin-top:4px;border-radius:5px;padding:1px 4px;display:inline-block;font-weight:600}
+.tbl.confirmed{border-color:var(--green)} .tbl.confirmed .st{background:var(--green-soft);color:var(--green)}
+.tbl.seated{border-color:var(--blue)} .tbl.seated .st{background:var(--blue-soft);color:var(--blue)}
+.tbl.pending{border-color:var(--amber)} .tbl.pending .st{background:var(--amber-soft);color:var(--amber)}
+.tbl.noshow{border-color:var(--red)} .tbl.noshow .st{background:var(--red-soft);color:var(--red)}
+.tbl.vacant{opacity:.5} .tbl.blocked{opacity:.5;border-style:dashed}
+
+/* ---------- Inputs ---------- */
+.field{display:flex;flex-direction:column;gap:6px}
+.field label{font-size:12px;color:var(--dim)}
+.input,.textarea,.selectx{background:var(--surface);border:1px solid var(--line);border-radius:12px;padding:13px;color:var(--text);font-family:inherit;font-size:14px;width:100%}
+.textarea{min-height:64px;resize:none}
+.toggle{width:46px;height:27px;border-radius:999px;background:var(--surface2);position:relative;flex:none;transition:.2s}
+.toggle::after{content:"";position:absolute;top:3px;left:3px;width:21px;height:21px;border-radius:50%;background:#fff;transition:.2s}
+.toggle.on{background:var(--green)}.toggle.on::after{left:22px}
+
+/* ---------- Sheet ---------- */
+.sheet-layer{position:absolute;inset:0;z-index:40;display:none}
+.sheet-layer.open{display:block}
+.sheet-ov{position:absolute;inset:0;background:rgba(0,0,0,.55)}
+.sheet{position:absolute;left:0;right:0;bottom:0;max-height:88%;overflow:auto;background:var(--bg2);border-top-left-radius:24px;border-top-right-radius:24px;border-top:1px solid var(--line);padding:16px;display:flex;flex-direction:column;gap:13px;transform:translateY(100%);transition:.28s}
+.sheet-layer.open .sheet{transform:translateY(0)}
+.grab{width:42px;height:4px;border-radius:2px;background:var(--line2);margin:0 auto 4px}
+
+/* ---------- Misc components ---------- */
+.hero{border-radius:var(--r);overflow:hidden;position:relative;background:linear-gradient(160deg,#3a1e5c,#7b2d86 45%,#c23b6a);min-height:210px;display:flex;align-items:flex-end;padding:14px}
+.hero.lounge{background:linear-gradient(160deg,#1b2a4a,#2b5c7b)}
+.hero-cap{background:rgba(0,0,0,.5);backdrop-filter:blur(4px);border-radius:12px;padding:10px 12px;width:100%}
+.venue-ic{width:44px;height:44px;border-radius:11px;background:linear-gradient(140deg,#3a1e5c,#c23b6a);flex:none;display:grid;place-items:center;font-size:18px}
+.avatar{width:40px;height:40px;border-radius:50%;background:linear-gradient(140deg,#555,#999);flex:none;overflow:hidden;display:grid;place-items:center;font-size:14px;font-weight:600;color:#fff}
+.qa{display:grid;grid-template-columns:1fr 1fr 1fr 1fr;gap:8px}
+.qa .qi{background:var(--surface);border:1px solid var(--line);border-radius:14px;padding:11px 4px;text-align:center;font-size:10.5px;color:var(--dim);display:flex;flex-direction:column;gap:6px;align-items:center}
+.qa .qi .ci{width:34px;height:34px;border-radius:10px;background:var(--accent-soft);color:var(--accent);display:grid;place-items:center}
+.alert{display:flex;gap:10px;align-items:center;background:var(--surface);border:1px solid var(--line);border-radius:13px;padding:11px}
+.alert .ci{width:34px;height:34px;border-radius:9px;display:grid;place-items:center;flex:none}
+.timeline{position:relative;padding-left:18px}
+.tl{position:relative;padding-bottom:14px;font-size:12px}
+.tl::before{content:"";position:absolute;left:-13px;top:3px;width:9px;height:9px;border-radius:50%;background:var(--accent)}
+.tl::after{content:"";position:absolute;left:-9px;top:12px;bottom:0;width:1px;background:var(--line)}
+.tl:last-child::after{display:none}
+.tl.mute::before{background:var(--line2)}
+.fab{position:absolute;right:16px;bottom:20px;background:var(--accent);color:#1a1200;border-radius:999px;padding:13px 18px;font-weight:600;display:flex;gap:8px;align-items:center;box-shadow:0 8px 24px rgba(245,133,31,.4);z-index:6}
+.qr{width:130px;height:130px;background:#fff;border-radius:12px;padding:8px}
+.crowd-tag{font-size:10px;font-weight:600}
+.ticket-ic{width:38px;height:38px;border-radius:10px;display:grid;place-items:center;flex:none}
+.timeline-row{display:flex;gap:10px;font-size:12px;padding:9px 0;border-bottom:1px solid var(--line)}
+.timeline-row .tm{width:44px;color:var(--dim);flex:none}
+.empty{text-align:center;padding:26px 14px;color:var(--dim);display:flex;flex-direction:column;gap:8px;align-items:center}
+.empty .big-ic{width:54px;height:54px;border-radius:16px;background:var(--surface2);display:grid;place-items:center;color:var(--dim2)}
+@media(max-width:1040px){.app{flex-direction:column;align-items:center}.sidebar{width:390px;position:static;max-height:none}}
+
+/* ===== polish · make-interfaces-feel-better ===== */
+body{-webkit-font-smoothing:antialiased;-moz-osx-font-smoothing:grayscale;text-rendering:optimizeLegibility}
+h1,h2,.big,.apphdr h1{text-wrap:balance}
+.muted,.foot-note,.xs,.sm{text-wrap:pretty}
+.big,.tile .v,.tile .l,.stp-val,#tkTotal,#tkCount,.kv,.badge,.dc .n,.tbl .id{font-variant-numeric:tabular-nums}
+.btn,.chip,.tile,.slot,.dc,.qi,.stp-btn,.icon-btn,.list-card,.tbl,.nav-item,.seg button,.add-btn,.alert,.card[onclick],[data-goto]{transition:scale .12s cubic-bezier(.2,0,0,1),background-color .16s ease,border-color .16s ease,color .16s ease,box-shadow .18s ease}
+.btn:active,.chip:active,.tile:active,.slot:active,.dc:active,.qi:active,.stp-btn:active,.icon-btn:active,.list-card:active,.tbl:active,.seg button:active,.add-btn:active,.alert:active,.card[onclick]:active,[data-goto]:active{scale:.97}
+.btn:active{scale:.96}
+.card,.list-card,.tile,.alert{box-shadow:inset 0 1px 0 rgba(255,255,255,.03),0 4px 16px rgba(0,0,0,.32);border-color:rgba(255,255,255,.06)}
+.btn-primary{box-shadow:0 6px 18px rgba(245,133,31,.32),inset 0 1px 0 rgba(255,255,255,.28)}
+.chip.on,.add-btn.on{box-shadow:0 4px 14px rgba(245,133,31,.3)}
+.slot.sel,.dc.sel{box-shadow:0 0 0 1px var(--accent),0 6px 16px rgba(245,133,31,.22)}
+.toggle{transition:background-color .2s ease}
+.toggle::after{transition:left .22s cubic-bezier(.2,0,0,1)}
+.sheet{transition:transform .3s cubic-bezier(.2,0,0,1);will-change:transform;box-shadow:0 -14px 44px rgba(0,0,0,.55)}
+.hero,.venue-ic,.venue-img,.avatar,.qr{outline:1px solid rgba(255,255,255,.1);outline-offset:-1px}
+.icon-btn{width:40px;height:40px}
+.stepper:not(.mini) .stp-btn{position:relative}
+.stepper:not(.mini) .stp-btn::after{content:"";position:absolute;inset:-6px}
+.filterbar{gap:8px;padding-bottom:2px}
+.filterbar::-webkit-scrollbar{height:0}
+.venue-card{padding:0;overflow:hidden}
+/* stop flex from compacting content — let the body scroll instead */
+.screen-body>*{flex-shrink:0}
+.sheet>*{flex-shrink:0}
+.venue-img,.hero,.tblgrid,.slotgrid,.datestrip{flex-shrink:0}
+@keyframes enterUp{from{opacity:0;transform:translateY(9px)}to{opacity:1;transform:translateY(0)}}
+.screen.active>.apphdr{animation:enterUp .3s both cubic-bezier(.2,0,0,1)}
+.screen.active .screen-body>*{animation:enterUp .34s both cubic-bezier(.2,0,0,1)}
+.screen.active .screen-body>*:nth-child(2){animation-delay:.04s}
+.screen.active .screen-body>*:nth-child(3){animation-delay:.08s}
+.screen.active .screen-body>*:nth-child(4){animation-delay:.12s}
+.screen.active .screen-body>*:nth-child(5){animation-delay:.16s}
+.screen.active .screen-body>*:nth-child(6){animation-delay:.19s}
+.screen.active .screen-body>*:nth-child(n+7){animation-delay:.22s}
+.tabbed{display:flex;flex-direction:column;gap:12px}
+.panel{display:none;flex-direction:column;gap:12px}
+.panel.on{display:flex}
+.toast{position:absolute;left:16px;right:16px;bottom:74px;background:var(--surface2);border:1px solid var(--line2);border-radius:12px;padding:12px 14px;font-size:13px;text-align:center;z-index:60;opacity:0;transform:translateY(10px);transition:opacity .25s ease,transform .25s ease;box-shadow:0 12px 30px rgba(0,0,0,.5)}
+.toast.show{opacity:1;transform:translateY(0)}
+.segcard{flex:1;background:var(--surface);border:1.5px solid var(--line);border-radius:14px;padding:11px 12px;font-weight:600;font-size:13px;cursor:pointer;line-height:1.25;box-shadow:inset 0 1px 0 rgba(255,255,255,.03),0 4px 14px rgba(0,0,0,.3)}
+.segcard.on{border-color:var(--accent);background:var(--accent-soft)}
+.hybseg{display:flex;flex-direction:column;gap:14px}
+@media(prefers-reduced-motion:reduce){*{animation-duration:.01ms!important}}
+
+/* ===== view toggle (grid / list / timeline) ===== */
+.viewseg{display:flex;gap:5px;background:var(--surface);border:1px solid var(--line);border-radius:999px;padding:4px}
+.viewseg button{flex:1;padding:8px 6px;border-radius:999px;font-size:12px;font-weight:600;color:var(--dim);display:flex;gap:5px;align-items:center;justify-content:center}
+.viewseg button.on{background:var(--accent);color:#1a1200;box-shadow:0 4px 12px rgba(245,133,31,.28)}
+
+/* ===== resource timeline (google-calendar style) ===== */
+.tl-wrap{border:1px solid var(--line);border-radius:14px;overflow:hidden;background:var(--bg2)}
+.tl-scroll{overflow-x:auto;overflow-y:auto;max-height:none}
+.tl-scroll::-webkit-scrollbar{height:8px;width:8px}.tl-scroll::-webkit-scrollbar-thumb{background:var(--line2);border-radius:8px}
+.tl-grid{position:relative;font-variant-numeric:tabular-nums}
+.tl-head{display:flex;position:sticky;top:0;background:var(--bg2);z-index:5;border-bottom:1px solid var(--line)}
+.tl-corner{flex:none;position:sticky;left:0;background:var(--bg2);z-index:6;border-right:1px solid var(--line);display:flex;align-items:center;padding:9px 10px;font-size:11px;color:var(--dim);font-weight:600}
+.tl-hours{display:flex}
+.tl-h{flex:none;font-size:10.5px;color:var(--dim);padding:9px 0 9px 6px;border-left:1px solid var(--line);font-weight:600}
+.tl-row{display:flex;position:relative;border-bottom:1px solid var(--line);height:48px}
+.tl-row:last-child{border-bottom:none}
+.tl-row:nth-child(even) .tl-lane{background:rgba(255,255,255,.012)}
+.tl-name{flex:none;position:sticky;left:0;background:var(--bg2);z-index:4;border-right:1px solid var(--line);display:flex;flex-direction:column;justify-content:center;padding:0 10px}
+.tl-name .n{font-size:12.5px;font-weight:600}.tl-name .c{font-size:9px;color:var(--dim)}
+.tl-lane{position:relative}
+.tl-lane .gl{position:absolute;top:0;bottom:0;width:1px;background:var(--line);opacity:.55}
+.tl-b{position:absolute;top:5px;bottom:5px;border-radius:8px;padding:4px 8px;overflow:hidden;white-space:nowrap;color:#fff;box-shadow:inset 0 1px 0 rgba(255,255,255,.18),0 2px 8px rgba(0,0,0,.35);cursor:pointer}
+.tl-b .who{font-size:10.5px;font-weight:600;line-height:1.1}.tl-b .mt{font-size:9px;opacity:.9;font-weight:500}
+.tl-b.confirmed{background:linear-gradient(180deg,#33b765,#268a49)}
+.tl-b.seated{background:linear-gradient(180deg,#4b8ef7,#2f6bd4)}
+.tl-b.pending{background:linear-gradient(180deg,#e5951f,#bd7413);color:#1a1200}
+.tl-b.event{background:linear-gradient(180deg,#b467f8,#8b3fd6)}
+.tl-evline{position:absolute;top:0;bottom:0;border-left:2px dashed var(--purple);z-index:2;pointer-events:none}
+.tl-evtag{position:sticky;top:0;z-index:6;display:inline-flex;gap:5px;align-items:center;font-size:10px;font-weight:600;color:var(--purple)}
+
+/* ===== floors + floor map (table management) ===== */
+.floor-card{border:1px solid var(--line);border-radius:14px;overflow:hidden;background:var(--surface)}
+.floor-hd{display:flex;align-items:center;gap:11px;padding:13px 14px;cursor:pointer}
+.floor-body{padding:0 12px 12px;display:flex;flex-direction:column;gap:10px}
+.floormap{position:relative;height:200px;border-radius:12px;overflow:hidden;background-size:cover;background-position:center;outline:1px solid rgba(255,255,255,.08);outline-offset:-1px}
+.fm-pin{position:absolute;transform:translate(-50%,-50%);min-width:36px;height:36px;padding:0 6px;border-radius:20px;background:rgba(18,18,22,.7);border:1.5px solid rgba(255,255,255,.55);display:grid;place-items:center;font-size:10.5px;font-weight:700;color:#fff;backdrop-filter:blur(2px)}
+.fm-change{position:absolute;top:10px;left:10px;background:var(--accent);color:#1a1200;border-radius:999px;padding:7px 12px;font-size:12px;font-weight:600;display:flex;gap:6px;align-items:center;box-shadow:0 4px 14px rgba(0,0,0,.4)}
+.fm-hint{position:absolute;bottom:9px;left:0;right:0;text-align:center;font-size:10.5px;color:#fff;text-shadow:0 1px 4px #000;display:flex;gap:6px;align-items:center;justify-content:center}
+.fm-expand{position:absolute;bottom:9px;right:11px;color:#fff;opacity:.9}
+.chk{width:20px;height:20px;border-radius:6px;border:1.5px solid var(--line2);flex:none;display:grid;place-items:center;color:transparent}
+.chk.on{background:var(--accent);border-color:var(--accent);color:#1a1200}
+.tbl-lrow{display:flex;flex-direction:column;gap:8px;background:var(--bg2);border:1px solid var(--line);border-radius:12px;padding:11px 12px}
+
+/* ===== tablet frame (landscape timeline) ===== */
+.phone.tablet{aspect-ratio:3/2;height:min(760px,calc(100vh - 132px));width:auto;border-radius:38px;padding:7px}
+.phone.tablet .device-screen{border-radius:31px}
+.phone.tablet .island,.phone.tablet .home-ind{display:none}
+.phone.tablet .screens{top:48px}
+@media(max-width:1180px){.phone.tablet{max-width:calc(100vw - 40px)}}
+
+/* ===== cursor affordance — clickable vs dead (for stakeholder demos) ===== */
+.phone [onclick],.phone [data-goto],.phone [data-add],.btn,.chip,.tab,.nav-item,.seg button,.viewseg button,.stp-btn,.icon-btn,.qi,.add-btn,.toggle,.segcard,.tl-b,.floor-hd,.fm-change,.fm-expand,.chk,.dc:not(.off),.slot:not(.off),.selectx{cursor:pointer}
+.card,.list-card,.tile,.kv,.info-banner,.legend,.sec-label,.divider,.empty,.hero,.venue-ic,.avatar,.qr,.stp-val,.badge,.tl-name,.tl-corner,.tl-h,.field label,.foot-note,.hint{cursor:default}
+.card[onclick],.list-card[onclick],.tile[onclick],.alert[onclick],.badge[onclick]{cursor:pointer}
+.slot.off,.dc.off,.tbl.vacant,.tbl.blocked,button[disabled],[data-dead]{cursor:not-allowed}
+.input,.textarea{cursor:text}
+/* dead controls read as non-interactive so no one clicks a placeholder */
+.slot.off,.dc.off,.tbl.vacant{opacity:.4}
+
+/* ===== stakeholder explainer panel (right rail) ===== */
+.explain{width:340px;flex:none;position:sticky;top:22px;max-height:calc(100vh - 44px);overflow:auto;background:var(--bg2);border:1px solid var(--line);border-radius:18px;padding:20px}
+.explain::-webkit-scrollbar{width:0}
+.explain .role{display:inline-flex;align-items:center;gap:6px;font-size:10px;font-weight:700;letter-spacing:.11em;text-transform:uppercase;color:var(--accent);margin-bottom:9px}
+.explain .role i{width:6px;height:6px;border-radius:50%;background:var(--accent);display:inline-block}
+.explain h3{font-size:17px;margin:0 0 8px;line-height:1.25}
+.explain .desc{font-size:13px;color:var(--dim);line-height:1.55;margin-bottom:6px}
+.explain .lbl{font-size:10px;letter-spacing:.13em;text-transform:uppercase;color:var(--dim2);font-weight:700;margin:18px 0 9px}
+.explain ul{margin:0;padding:0;list-style:none;display:flex;flex-direction:column;gap:10px}
+.explain li{font-size:12.5px;color:var(--text);line-height:1.5;display:flex;gap:9px;align-items:flex-start}
+.explain li::before{content:"";width:6px;height:6px;border-radius:50%;background:var(--accent-2);margin-top:6px;flex:none}
+.explain li b{color:var(--accent-2);font-weight:600}
+.explain .tip{margin-top:18px;background:var(--accent-soft);border:1px solid rgba(245,133,31,.28);border-radius:12px;padding:12px 13px;font-size:11.5px;color:var(--accent-2);line-height:1.5}
+.explain .lg{display:flex;flex-wrap:wrap;gap:7px;margin-top:12px}
+.explain .lg span{font-size:10.5px;color:var(--dim);display:inline-flex;align-items:center;gap:5px}
+.explain .lg i{width:9px;height:9px;border-radius:3px;display:inline-block}
+@media(max-width:1300px){.explain{position:static;width:428px;max-height:none}}
+</style>
+</head>
+<body>
+
+<!-- ICON SPRITE -->
+<svg width="0" height="0" style="position:absolute">
+<symbol id="i-back" viewBox="0 0 24 24"><path d="M15 18l-6-6 6-6"/></symbol>
+<symbol id="i-fwd" viewBox="0 0 24 24"><path d="M9 6l6 6-6 6"/></symbol>
+<symbol id="i-down" viewBox="0 0 24 24"><path d="M6 9l6 6 6-6"/></symbol>
+<symbol id="i-bell" viewBox="0 0 24 24"><path d="M18 8a6 6 0 10-12 0c0 7-3 9-3 9h18s-3-2-3-9"/><path d="M13.7 21a2 2 0 01-3.4 0"/></symbol>
+<symbol id="i-cal" viewBox="0 0 24 24"><rect x="3" y="4" width="18" height="18" rx="2"/><path d="M16 2v4M8 2v4M3 10h18"/></symbol>
+<symbol id="i-clock" viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"/><path d="M12 7v5l3 2"/></symbol>
+<symbol id="i-user" viewBox="0 0 24 24"><circle cx="12" cy="8" r="4"/><path d="M4 21c0-4 4-6 8-6s8 2 8 6"/></symbol>
+<symbol id="i-users" viewBox="0 0 24 24"><circle cx="9" cy="8" r="3.4"/><path d="M2.5 20c0-3.4 3-5 6.5-5s6.5 1.6 6.5 5"/><path d="M17 5.5a3.4 3.4 0 010 6M18 20c0-2.4-.8-4-2-5"/></symbol>
+<symbol id="i-phone" viewBox="0 0 24 24"><path d="M22 16.9v3a2 2 0 01-2.2 2 19.8 19.8 0 01-8.6-3 19.5 19.5 0 01-6-6 19.8 19.8 0 01-3-8.6A2 2 0 014.1 2h3a2 2 0 012 1.7c.1 1 .4 1.9.7 2.8a2 2 0 01-.5 2.1L8.1 9.9a16 16 0 006 6l1.3-1.2a2 2 0 012.1-.5c.9.3 1.8.6 2.8.7a2 2 0 011.7 2z"/></symbol>
+<symbol id="i-mail" viewBox="0 0 24 24"><rect x="3" y="5" width="18" height="14" rx="2"/><path d="M3 7l9 6 9-6"/></symbol>
+<symbol id="i-filter" viewBox="0 0 24 24"><path d="M22 4H2l8 9v6l4 2v-8z"/></symbol>
+<symbol id="i-plus" viewBox="0 0 24 24"><path d="M12 5v14M5 12h14"/></symbol>
+<symbol id="i-minus" viewBox="0 0 24 24"><path d="M5 12h14"/></symbol>
+<symbol id="i-check" viewBox="0 0 24 24"><path d="M20 6L9 17l-5-5"/></symbol>
+<symbol id="i-x" viewBox="0 0 24 24"><path d="M18 6L6 18M6 6l12 12"/></symbol>
+<symbol id="i-info" viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"/><path d="M12 11v5M12 8h0"/></symbol>
+<symbol id="i-refresh" viewBox="0 0 24 24"><path d="M21 12a9 9 0 11-3-6.7L21 8"/><path d="M21 3v5h-5"/></symbol>
+<symbol id="i-scan" viewBox="0 0 24 24"><path d="M4 8V5a1 1 0 011-1h3M16 4h3a1 1 0 011 1v3M20 16v3a1 1 0 01-1 1h-3M8 20H5a1 1 0 01-1-1v-3"/></symbol>
+<symbol id="i-dollar" viewBox="0 0 24 24"><path d="M12 2v20M17 6.5C17 4.6 14.8 4 12 4S7 5 7 7.5 9.5 11 12 11s5 .8 5 3.5S14.8 20 12 20s-5-1-5-3.5"/></symbol>
+<symbol id="i-edit" viewBox="0 0 24 24"><path d="M12 20h9"/><path d="M16.5 3.5a2.1 2.1 0 013 3L7 19l-4 1 1-4z"/></symbol>
+<symbol id="i-dots" viewBox="0 0 24 24"><circle cx="5" cy="12" r="1.6"/><circle cx="12" cy="12" r="1.6"/><circle cx="19" cy="12" r="1.6"/></symbol>
+<symbol id="i-dots-v" viewBox="0 0 24 24"><circle cx="12" cy="5" r="1.6"/><circle cx="12" cy="12" r="1.6"/><circle cx="12" cy="19" r="1.6"/></symbol>
+<symbol id="i-share" viewBox="0 0 24 24"><path d="M4 12v7a1 1 0 001 1h14a1 1 0 001-1v-7"/><path d="M16 6l-4-4-4 4M12 2v13"/></symbol>
+<symbol id="i-star" viewBox="0 0 24 24"><path d="M12 3l2.9 6 6.1.9-4.5 4.3 1 6.1L12 17.8 6.5 20.3l1-6.1L3 9.9 9.1 9z"/></symbol>
+<symbol id="i-bookmark" viewBox="0 0 24 24"><path d="M19 21l-7-5-7 5V5a2 2 0 012-2h10a2 2 0 012 2z"/></symbol>
+<symbol id="i-alert" viewBox="0 0 24 24"><path d="M10.3 3.9L1.8 18a2 2 0 001.7 3h17a2 2 0 001.7-3L13.7 3.9a2 2 0 00-3.4 0z"/><path d="M12 9v4M12 17h0"/></symbol>
+<symbol id="i-loc" viewBox="0 0 24 24"><path d="M20 10c0 6-8 12-8 12s-8-6-8-12a8 8 0 0116 0z"/><circle cx="12" cy="10" r="3"/></symbol>
+<symbol id="i-menu" viewBox="0 0 24 24"><path d="M3 6h18M3 12h18M3 18h18"/></symbol>
+<symbol id="i-table" viewBox="0 0 24 24"><rect x="3" y="4" width="18" height="16" rx="2"/><path d="M3 10h18M9 10v10"/></symbol>
+<symbol id="i-move" viewBox="0 0 24 24"><path d="M5 9l-3 3 3 3M9 5l3-3 3 3M15 19l-3 3-3-3M19 9l3 3-3 3M2 12h20M12 2v20"/></symbol>
+<symbol id="i-note" viewBox="0 0 24 24"><path d="M4 4h16v12l-4 4H4z"/><path d="M16 20v-4h4"/></symbol>
+<symbol id="i-wallet" viewBox="0 0 24 24"><rect x="3" y="6" width="18" height="13" rx="2"/><path d="M16 12h3M3 9h18"/></symbol>
+<symbol id="i-ticket" viewBox="0 0 24 24"><path d="M3 8a2 2 0 012-2h14a2 2 0 012 2 2 2 0 000 4 2 2 0 000 4 2 2 0 01-2 2H5a2 2 0 01-2-2 2 2 0 000-4 2 2 0 000-4z"/></symbol>
+<symbol id="i-tag" viewBox="0 0 24 24"><path d="M20 12l-8 8-9-9V3h8z"/><circle cx="7.5" cy="7.5" r="1.2"/></symbol>
+<symbol id="i-block" viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"/><path d="M5.6 5.6l12.8 12.8"/></symbol>
+<symbol id="i-lock" viewBox="0 0 24 24"><rect x="4" y="11" width="16" height="9" rx="2"/><path d="M8 11V8a4 4 0 018 0v3"/></symbol>
+</svg>
+
+<div class="app">
+  <!-- ============ SIDEBAR / NAVIGATOR ============ -->
+  <aside class="sidebar">
+    <h2>Mandos Prototype</h2>
+    <p class="sub">Reservation Engine · click any screen</p>
+    <div class="seg">
+      <button id="segC" class="on" onclick="setMode('customer')">Customer</button>
+      <button id="segM" onclick="setMode('merchant')">Merchant</button>
+    </div>
+    <div id="navList"></div>
+  </aside>
+
+  <!-- ============ STAGE ============ -->
+  <div class="stage">
+    <div class="scrn-name" id="scrnName">Booking Entry — Regular</div>
+    <div class="phone">
+      <div class="device-screen">
+      <div class="island"></div>
+      <div class="home-ind"></div>
+      <div class="statusbar">
+        <span>9:41</span>
+        <span class="sb-r">
+          <svg width="17" height="11" viewBox="0 0 17 11" fill="currentColor"><rect x="0" y="7" width="3" height="4" rx="1"/><rect x="4.5" y="5" width="3" height="6" rx="1"/><rect x="9" y="2.5" width="3" height="8.5" rx="1"/><rect x="13.5" y="0" width="3" height="11" rx="1"/></svg>
+          <svg width="16" height="12" viewBox="0 0 16 12" fill="currentColor"><path d="M8 2.5c2.3 0 4.4.9 5.9 2.4l1.2-1.2A9.5 9.5 0 008 .8 9.5 9.5 0 00.9 3.7l1.2 1.2A8 8 0 018 2.5z"/><path d="M8 6c1.2 0 2.3.5 3.1 1.3l1.2-1.2A6 6 0 008 4.3a6 6 0 00-4.3 1.8l1.2 1.2A4.4 4.4 0 018 6z"/><circle cx="8" cy="9.5" r="1.6"/></svg>
+          <svg width="25" height="12" viewBox="0 0 25 12" fill="none"><rect x="1" y="1" width="21" height="10" rx="2.5" stroke="currentColor" opacity=".5"/><rect x="3" y="3" width="16" height="6" rx="1.2" fill="currentColor"/><rect x="23" y="4" width="1.5" height="4" rx="1" fill="currentColor" opacity=".5"/></svg>
+        </span>
+      </div>
+      <div class="screens" id="screens"><!-- screens injected --></div>
+      <!-- sheet layer -->
+      <div class="sheet-layer" id="sheetLayer">
+        <div class="sheet-ov" onclick="closeSheet()"></div>
+        <div class="sheet" id="sheetBox"></div>
+      </div>
+      </div>
+    </div>
+    <p class="hint">iPhone-scale reference · not production code. Data stays consistent across every screen (one canonical booking).</p>
+  </div>
+
+  <!-- ============ STAKEHOLDER EXPLAINER (right rail) ============ -->
+  <aside class="explain" id="explain"></aside>
+</div>
+
+<script>
+/* ============================================================
+   CANONICAL FAKE DATA  (fixes the Tier-2 continuity issues)
+   ============================================================ */
+const D = {
+  venue:{name:"Boomerang Club", area:"Central, Hong Kong"},
+  guest:{name:"Mei Xiang", phone:"+852 6023 4912", email:"meixiang88@email.com", initials:"MX"},
+  booking:{ ref:"BMR-261225-8F3A", date:"Tue, 26 Dec 2025", time:"9:00 PM", guests:3,
+            table:"V-5", cat:"VIP Table", minSpend:2000, deposit:1000, request:"Close to the stage",
+            requested:"20 Dec 2025 · 8:45 PM" },        // requested within the 1-week window
+  ticket:{ ref:"NEO-261226-2K9P" },                     // event ticket order — its own ref, not the table booking's
+  event:{ name:"Neon Nights", date:"Tue, 26 Dec 2025", time:"9:00 PM", from:180 },
+  rules:{ slot:30, buffer:15, window:"7 Days", turn:"2 hrs", approval:"Manual", cancelFree:"Mon, 25 Dec · 9:00 PM" },
+  stats:{ total:48, confirmed:32, pending:12, rejected:4, seated:20, finished:8, noshow:2, walkins:6,
+          occupancy:63, availTables:8, totalTables:24, published:18, hidden:6 }
+};
+</script>
+
+<script>
+/* ============================================================
+   SCREEN REGISTRY  — id, title, group, mode, (sheet?)
+   ============================================================ */
+const SCREENS = [
+ // ---- CUSTOMER ----
+ {id:"home", t:"Discover — Bars & Clubs", g:"C0 · Start", m:"customer", tag:"NEW"},
+ {id:"c1-entry-reg", t:"Booking Entry — Bar", g:"C1 · Entry", m:"customer"},
+ {id:"c1-hybrid", t:"Club — Day / Night", g:"C1 · Entry", m:"customer", tag:"NEW"},
+ {id:"c1-entry-evt", t:"Booking Entry — Event Day", g:"C1 · Entry", m:"customer"},
+ {id:"c1-event-details", t:"Event Details", g:"C1 · Entry", m:"customer", tag:"NEW"},
+ {id:"c1-fully-booked", t:"Fully Booked (state)", g:"C1 · Entry", m:"customer", tag:"NEW"},
+ {id:"c2-bar", t:"Bar Reservation (time-slot)", g:"C2 · Build", m:"customer"},
+ {id:"c2-club", t:"Club Table Reservation (list)", g:"C2 · Build", m:"customer"},
+ {id:"c2-additional", t:"Additional Details", g:"C2 · Build", m:"customer", sheet:true},
+ {id:"c2-tickets", t:"Ticket Picker", g:"C2 · Build", m:"customer"},
+ {id:"c2-enquiry", t:"Large-Group Enquiry", g:"C2 · Build", m:"customer", tag:"NEW"},
+ {id:"c3-enquiry-sent", t:"Enquiry Sent", g:"C2 · Build", m:"customer"},
+ {id:"c3-summary", t:"Booking Summary (deposit)", g:"C3 · Checkout", m:"customer"},
+ {id:"c3-summary-free", t:"Booking Summary (free)", g:"C3 · Checkout", m:"customer", tag:"NEW"},
+ {id:"c3-payment", t:"Payment", g:"C3 · Checkout", m:"customer", tag:"NEW"},
+ {id:"c3-pending", t:"Booking Pending", g:"C3 · Checkout", m:"customer", tag:"NEW"},
+ {id:"c3-success", t:"Booking Confirmed", g:"C3 · Checkout", m:"customer", tag:"NEW"},
+ {id:"c4-mybookings", t:"My Bookings (list)", g:"C4 · After", m:"customer", tag:"NEW"},
+ {id:"c4-detail", t:"Booking Detail + Pass", g:"C4 · After", m:"customer", tag:"NEW"},
+ {id:"c4-cancel", t:"Cancellation", g:"C4 · After", m:"customer", tag:"NEW"},
+ {id:"c4-deposit-req", t:"Deposit Request (received)", g:"C4 · After", m:"customer", tag:"NEW"},
+ // ---- MERCHANT ----
+ {id:"m3-dashboard", t:"Dashboard / Home", g:"M3 · Live", m:"merchant", tag:"NEW"},
+ {id:"m3-calendar", t:"Calendar", g:"M3 · Live", m:"merchant", tag:"NEW"},
+ {id:"m3-scanner", t:"Scanner (check-in)", g:"M3 · Live", m:"merchant", tag:"NEW"},
+ {id:"m3-assign", t:"Assign Table", g:"M3 · Live", m:"merchant", sheet:true},
+ {id:"m2-bookings", t:"Booking Mgmt — Bookings", g:"M2 · Operate", m:"merchant"},
+ {id:"m2-timeline-tablet", t:"Timeline — Tablet view", g:"M2 · Operate", m:"merchant", tag:"NEW"},
+ {id:"m2-reservation", t:"Booking Mgmt — Reservation", g:"M2 · Operate", m:"merchant"},
+ {id:"m2-detail", t:"Booking Detail (merchant)", g:"M2 · Operate", m:"merchant", tag:"NEW"},
+ {id:"m2-control", t:"Booking Control", g:"M2 · Operate", m:"merchant", tag:"NEW"},
+ {id:"m2-event-impact", t:"Event Impact", g:"M2 · Operate", m:"merchant", tag:"NEW"},
+ {id:"m2-enquiries", t:"Group Enquiries", g:"M2 · Operate", m:"merchant", tag:"NEW"},
+ {id:"m1-settings", t:"Booking Settings", g:"M1 · Setup", m:"merchant"},
+ {id:"m1-schedule", t:"Schedule & Modes", g:"M1 · Setup", m:"merchant", tag:"NEW"},
+ {id:"m1-sessions", t:"Sessions", g:"M1 · Setup", m:"merchant", tag:"NEW"},
+ {id:"m1-policies", t:"Booking Policies", g:"M1 · Setup", m:"merchant", tag:"NEW"},
+ {id:"m1-tables", t:"Tables + Add/Edit", g:"M1 · Setup", m:"merchant"},
+ {id:"m1-rules", t:"Booking Rules / Slots", g:"M1 · Setup", m:"merchant"},
+ {id:"m1-events", t:"Event Management", g:"M1 · Setup", m:"merchant", tag:"NEW"},
+];
+</script>
+
+<script>
+/* ============================================================
+   REUSABLE MARKUP HELPERS
+   ============================================================ */
+const ic = (n,c="")=>`<svg class="ic ${c}"><use href="#i-${n}"/></svg>`;
+const hdr = (title,sub="",right="",back=true)=>`
+  <div class="apphdr">
+    ${back?`<button class="icon-btn" onclick="back()">${ic('back')}</button>`:''}
+    <div><h1>${title}</h1>${sub?`<div class="sub">${sub}</div>`:''}</div>
+    ${right?`<div class="push">${right}</div>`:''}
+  </div>`;
+const dateStrip = (sel=0)=>{
+  const days=[["Sun","24","Regular"],["Mon","25","Regular"],["Tue","26","Event"],["Wed","27","Regular"],["Thu","28","Regular"]];
+  return `<div class="datestrip"><div class="dc" style="width:34px;display:grid;place-items:center;color:var(--dim)">Dec</div>${
+    days.map((d,i)=>`<div class="dc ${i===sel?'sel':''} ${d[2]==='Event'?'ev':''}"><div class="d">${d[0]}</div><div class="n">${d[1]}</div><div class="tg">${d[2]}</div></div>`).join('')}</div>`;
+};
+const venueRow = (v=D.venue,badge="")=>`
+  <div class="row"><div class="venue-ic">🎧</div><div class="grow"><div class="bold">${v.name}</div><div class="sm muted">${v.area}</div></div>${badge}</div>`;
+
+/* ------- SCREEN BUILDERS (return inner HTML of .screen-body/footer) ------- */
+/* ============ LIVE AVAILABILITY ENGINE (real computation) ============ */
+const ENGINE = {
+  rules:{ turnMin:90, bufferMin:15, slotMin:30, openMin:1080, closeMin:1740, windowDays:7 },
+  tables:[
+    {id:'V-1',cap:4,cat:'VIP'},{id:'V-2',cap:4,cat:'VIP'},{id:'V-3',cap:6,cat:'VIP'},{id:'V-4',cap:6,cat:'VIP'},
+    {id:'T-5',cap:4,cat:'High'},{id:'T-6',cap:4,cat:'High'},{id:'R-1',cap:10,cat:'Rooftop'},{id:'R-2',cap:10,cat:'Rooftop',pub:false}
+  ],
+  events:[ {date:'2025-12-26',start:1260,name:'Neon Nights'} ],
+  bookings:[
+    {id:'b1',tableId:'V-2',date:'2025-12-26',start:1290,dur:120,party:2,status:'confirmed'},
+    {id:'b2',tableId:'T-6',date:'2025-12-26',start:1260,dur:120,party:4,status:'confirmed'}
+  ],
+  overlaps:function(aS,aD,bS,bD){ var buf=this.rules.bufferMin; return aS < (bS+bD+buf) && bS < (aS+aD+buf); },
+  eventBlocks:function(date,start,dur){ var e=this.events.find(function(ev){return ev.date===date}); if(!e)return false; return (start+dur+this.rules.bufferMin) > e.start; },
+  tableBusy:function(id,date,start,dur){ return this.bookings.some(function(b){ return b.tableId===id && b.date===date && b.status!=='cancelled' && ENGINE.overlaps(start,dur,b.start,b.dur); }); },
+  freeTables:function(date,start,dur,party){ return this.tables.filter(function(t){ return t.pub!==false && t.cap>=party && !ENGINE.tableBusy(t.id,date,start,dur); }); },
+  slots:function(date,party,dur){ var out=[]; for(var m=this.rules.openMin;m+dur<=this.rules.closeMin;m+=this.rules.slotMin){ var ev=this.eventBlocks(date,m,dur); var f=ev?0:this.freeTables(date,m,dur,party).length; out.push({min:m,ok:!ev&&f>0,free:f,reason:ev?'event':(f?'':'full')}); } return out; },
+  lock:function(b){ b.id='b'+(this.bookings.length+1); b.status='confirmed'; this.bookings.push(b); },
+  fmt:function(m){ m=((m%1440)+1440)%1440; var h=Math.floor(m/60),mm=m%60,ap=h<12?'AM':'PM',h12=h%12||12; return h12+':'+(mm<10?'0':'')+mm+' '+ap; }
+};
+['V-1','V-2','T-5','T-6','R-1'].forEach(function(id){ ENGINE.bookings.push({tableId:id,date:'2025-12-24',start:1140,dur:90,party:3,status:'confirmed'}); });
+function seeAlt(){ go('c1-fully-booked'); }
+function barSlots(party){ return ENGINE.slots('2025-12-24',party,90).map(function(x){ var off=!x.ok; var label=off?(x.reason==='event'?'Event':'Sold out'):(x.free>4?'Available':x.free>2?'Filling':'Few left'); var cls=off?'s-sold':(x.free>4?'s-low':x.free>2?'s-mod':'s-high'); return '<div class="slot '+(off?'off':'')+'"><div class="t">'+ENGINE.fmt(x.min)+'</div><div class="s '+cls+'">'+label+'</div></div>'; }).join(''); }
+function refreshBarSlots(){ var stp=document.querySelector('#c1-entry-reg .stepper[data-party]'); var party=stp?(parseInt(stp.querySelector('.stp-val').textContent)||3):3; var grid=document.getElementById('barSlots'); if(grid) grid.innerHTML=barSlots(party); var any=ENGINE.slots('2025-12-24',party,90).some(function(x){return x.ok}); var note=document.getElementById('availNote'); if(note) note.textContent=ENGINE.freeTables('2025-12-24',1140,90,party).length+' free @ 7 PM'; var full=document.getElementById('barFull'); if(full) full.innerHTML=any?'':('<div class="info-banner" style="background:var(--red-soft);border-color:rgba(255,77,79,.4);color:#ffb3b4">'+ic('alert','sm')+'<div>No table fits '+party+' guests on this date. <span class="accent" style="cursor:pointer" onclick="seeAlt()">See alternatives</span></div></div>'); }
+var ASSIGN_SEL=[];
+function toggleAssign(el){ var id=el.dataset.tid,i=ASSIGN_SEL.indexOf(id); if(i>-1){ASSIGN_SEL.splice(i,1);el.classList.remove('sel');el.style.borderColor='';}else{ASSIGN_SEL.push(id);el.classList.add('sel');el.style.borderColor='var(--accent)';} var b=document.getElementById('assignSel'); if(b)b.textContent=ASSIGN_SEL.length?ASSIGN_SEL.join(', '):'none'; }
+function assignLock(){ if(!ASSIGN_SEL.length){toast('Pick a table first');return;} ASSIGN_SEL.forEach(function(id){ ENGINE.lock({tableId:id,date:'2025-12-26',start:1260,dur:120,party:3}); }); toast('Assigned '+ASSIGN_SEL.join(', ')+' — locked 9:00–11:00 PM'); ASSIGN_SEL=[]; closeSheet(); }
+function toast(msg){ var t=document.createElement('div'); t.className='toast'; t.textContent=msg; document.querySelector('.phone').appendChild(t); setTimeout(function(){t.classList.add('show')},10); setTimeout(function(){t.classList.remove('show');setTimeout(function(){t.remove()},300)},2400); }
+var CUR={name:'Skyline Lounge',area:'Tsim Sha Tsui'};
+function hybSeg(el){ el.parentElement.querySelectorAll('.segcard').forEach(function(c){c.classList.remove('on')}); el.classList.add('on'); var seg=el.dataset.seg; document.querySelectorAll('#segday,#segnight').forEach(function(d){ d.style.display=(d.id==='seg'+seg)?'flex':'none'; }); }
+function dayPref(el,show){ pickChip(el); var t=document.getElementById('dayTables'); if(t) t.style.display=show?'flex':'none'; }
+function dayTableList(){ return ENGINE.tables.filter(function(t){return t.pub!==false}).slice(0,6).map(function(t){ return '<div class="card tight between selrow" data-tid="'+t.id+'" onclick="pickTable(this)" style="cursor:pointer"><div><div class="bold sm">'+t.id+' · '+t.cat+'</div><div class="xs muted">Seats '+t.cap+' · available for your slot</div></div><span class="xs green">Pick</span></div>'; }).join(''); }
+function pickTable(el){ el.parentElement.querySelectorAll('.selrow').forEach(function(x){x.classList.remove('sel');x.style.borderColor='';}); el.classList.add('sel'); el.style.borderColor='var(--accent)'; }
+
+const SB = {};
+
+/* ---------- HOME / DISCOVER (venue selection) ---------- */
+const VENUES=[
+ {id:"boomerang",name:"Boomerang Club",tags:["Club"],area:"Central",rating:"4.8",meta:"Live DJ · Open till 5 AM",event:true,grad:"linear-gradient(140deg,#3a1e5c,#c23b6a)"},
+ {id:"qura",name:"Qura Bar",tags:["Bar","Restaurant"],area:"Central",rating:"4.6",meta:"Cocktails · Open till 2 AM",grad:"linear-gradient(140deg,#1b2a4a,#2b5c7b)"},
+ {id:"skyline",name:"Skyline Lounge",tags:["Lounge","Bar"],area:"Tsim Sha Tsui",rating:"4.7",meta:"Rooftop · Open till 1 AM",grad:"linear-gradient(140deg,#2a2140,#7b4b86)"},
+ {id:"neon",name:"Neon Room",tags:["Club"],area:"Wan Chai",rating:"4.5",meta:"Techno nights · Open till 4 AM",event:true,grad:"linear-gradient(140deg,#101a3a,#3a2a6a)"},
+ {id:"terrace",name:"The Terrace",tags:["Rooftop","Bar"],area:"Central",rating:"4.4",meta:"Sunset views · Open till 12 AM",grad:"linear-gradient(140deg,#123524,#256b4a)"},
+];
+const venueCard=(v)=>`
+  <div class="venue-card list-card" data-name="${v.name.toLowerCase()}" data-tags="${v.tags.join(',')}${v.event?',Event':''}" onclick="openVenue('${v.id}')" style="gap:0">
+    <div class="venue-img" style="height:118px;background:${v.grad};position:relative">${v.event?`<span class="badge b-event" style="position:absolute;top:10px;left:10px">Event Tonight</span>`:''}<span class="badge" style="position:absolute;top:10px;right:10px;background:rgba(0,0,0,.55);color:#fff">${ic('star','sm')} ${v.rating}</span></div>
+    <div style="padding:12px;display:flex;flex-direction:column;gap:7px">
+      <div class="between"><div class="bold">${v.name}</div><span class="xs muted">${ic('loc','sm')} ${v.area}</span></div>
+      <div class="row" style="flex-wrap:wrap;gap:6px">${v.tags.map(t=>`<span class="chip" style="padding:3px 10px;font-size:11px">${t}</span>`).join('')}</div>
+      <div class="between"><span class="xs muted">${v.meta}</span><span class="accent sm">Book ${ic('fwd','sm')}</span></div>
+    </div>
+  </div>`;
+function openVenue(id){ var v=VENUES.find(function(x){return x.id===id}); if(!v){go2('c1-entry-reg');return;} CUR={name:v.name,area:v.area}; if(v.event){go2('c1-entry-evt');return;} var club=v.tags.some(function(t){return t==='Club'||t==='Lounge'}); go2(club?'c1-hybrid':'c1-entry-reg'); }
+function filterVenues(chip){ chip.parentElement.querySelectorAll('.chip').forEach(function(c){c.classList.remove('on')}); chip.classList.add('on'); var t=chip.dataset.vtype; document.querySelectorAll('#home .venue-card').forEach(function(v){ v.style.display=(t==='all'||(v.dataset.tags||'').indexOf(t)>-1)?'':'none'; }); updateVenueCount(); }
+function searchVenues(inp){ var q=inp.value.toLowerCase(); document.querySelectorAll('#home .venue-card').forEach(function(v){ v.style.display=(v.dataset.name||'').indexOf(q)>-1?'':'none'; }); updateVenueCount(); }
+function updateVenueCount(){ var n=[].slice.call(document.querySelectorAll('#home .venue-card')).filter(function(v){return v.style.display!=='none'}).length; var el=document.querySelector('#venueCount'); if(el)el.textContent=n+' venue'+(n===1?'':'s'); }
+function filt(chip){ var bar=chip.closest('.filterbar'); bar.querySelectorAll('.chip[data-filter]').forEach(function(c){c.classList.remove('on')}); chip.classList.add('on'); var key=chip.dataset.filter; var scope=document.querySelector(bar.dataset.target); if(!scope)return; scope.querySelectorAll('[data-cat]').forEach(function(x){ x.style.display=(key==='all'||x.dataset.cat===key)?'':'none'; }); }
+function searchList(inp,sel){ var q=inp.value.toLowerCase(); document.querySelectorAll(sel).forEach(function(x){ x.style.display=(x.dataset.name||'').indexOf(q)>-1?'':'none'; }); }
+SB["home"]=()=>`
+<div class="apphdr"><div class="venue-ic" style="background:linear-gradient(140deg,var(--accent),#ffd24a);color:#1a1200;font-weight:700">M</div><div class="grow"><h1 style="font-size:18px">Mandos</h1><div class="sub">${ic('loc','sm')} Central, Hong Kong</div></div><button class="icon-btn bg" style="position:relative">${ic('bell','sm')}<span class="dot"></span></button></div>
+<div class="screen-body">
+  <div class="big" style="font-size:24px">Where to tonight?</div>
+  <input class="input" placeholder="🔍  Search bars, clubs, lounges…" oninput="searchVenues(this)">
+  <div class="filterbar row" style="overflow:auto">
+    <span class="chip on" data-vtype="all" onclick="filterVenues(this)">All</span>
+    <span class="chip" data-vtype="Bar" onclick="filterVenues(this)">Bars</span>
+    <span class="chip" data-vtype="Club" onclick="filterVenues(this)">Clubs</span>
+    <span class="chip" data-vtype="Lounge" onclick="filterVenues(this)">Lounges</span>
+    <span class="chip" data-vtype="Restaurant" onclick="filterVenues(this)">Restaurants</span>
+    <span class="chip" data-vtype="Rooftop" onclick="filterVenues(this)">Rooftop</span>
+  </div>
+  <div class="between"><span class="sm muted" id="venueCount">5 venues</span><span class="xs muted">Tap a venue to book</span></div>
+  ${VENUES.map(venueCard).join('')}
+</div>`;
+
+/* ---------- C1 ENTRY REGULAR ---------- */
+SB["c1-entry-reg"]=()=>hdr("Booking",(CUR?CUR.name+" · "+CUR.area:"Qura Bar · Central"),`<button class="icon-btn bg">${ic('bookmark','sm')}</button>`)+`
+<div class="screen-body">
+  ${dateStrip(0)}
+  <div class="between"><div class="bold">Pick a time</div><span class="xs green" id="availNote"></span></div>
+  <div class="slotgrid" id="barSlots"></div>
+  <div class="legend"><span><i style="background:var(--green)"></i>Available</span><span><i style="background:var(--amber)"></i>Filling</span><span><i style="background:var(--red)"></i>Few left</span><span><i style="background:var(--dim2)"></i>Sold out</span></div>
+  <div id="barFull"></div>
+  <div class="card"><div class="bold sm" style="margin-bottom:8px">Guests</div><div class="stepper" data-party="1" data-min="1" data-max="16"><button class="stp-btn">${ic('minus')}</button><div class="stp-val">3</div><button class="stp-btn">${ic('plus')}</button></div><div class="between xs" style="margin-top:8px"><span class="muted">10 or more?</span><span class="accent" onclick="go('c2-enquiry')">Send enquiry ${ic('fwd','sm')}</span></div></div>
+  <div class="card"><div class="bold sm" style="margin-bottom:8px">Duration</div><div class="chipsel row"><span class="chip on" onclick="pickChip(this)">1.5 hours</span><span class="chip" onclick="pickChip(this)">2 hours</span><span class="chip" onclick="pickChip(this)">3 hours</span></div></div>
+  <div class="field"><label>Any special requests?</label><textarea class="textarea" placeholder="Window seat, birthday…"></textarea></div>
+</div>
+<div class="screen-footer"><button class="btn btn-primary" onclick="go('c3-summary-free')">Continue</button><div class="foot-note">${ic('lock','sm')} Availability computed live from current bookings</div></div>`;
+
+const slotRange=(t,c,cls,avail)=>`<div class="card tight between" style="cursor:pointer" data-goto="c2-bar"><div><div class="bold sm">${t}</div><div class="xs ${cls}">${c}</div></div><div class="right"><div class="xs muted">${avail.split('·')[0]}</div><div class="xs muted">${avail.split('·')[1]||''}</div></div>${ic('fwd','sm')}</div>`;
+const stepper=(v)=>`<div class="stepper"><button class="stp-btn">${ic('minus')}</button><div class="stp-val">${v}</div><button class="stp-btn">${ic('plus')}</button></div>`;
+
+/* ---------- C1 ENTRY EVENT (date-driven: event date shows event, regular date shows normal booking) ---------- */
+const liveDateStrip=(sel,handler)=>{
+  const days=[["Sun","24","Regular","regular"],["Mon","25","Regular","regular"],["Tue","26","Event","event"],["Wed","27","Regular","regular"],["Thu","28","Regular","regular"]];
+  return `<div class="datestrip"><div class="dc" style="width:34px;display:grid;place-items:center;color:var(--dim);cursor:default">Dec</div>${
+    days.map((d,i)=>`<div class="dc ${i===sel?'sel':''} ${d[3]==='event'?'ev':''}" data-day="${d[3]}" onclick="${handler}(this)"><div class="d">${d[0]}</div><div class="n">${d[1]}</div><div class="tg">${d[2]}</div></div>`).join('')}</div>`;
+};
+function evtDayView(){ return `
+  <div class="tabs"><div class="tab on" data-goto="c2-club">Tables</div><div class="tab" data-goto="c2-tickets">Tickets</div></div>
+  <div class="hero"><button class="icon-btn bg" style="position:absolute;top:12px;right:12px">${ic('bookmark','sm')}</button>
+    <div class="hero-cap"><span class="badge b-event" style="margin-bottom:6px">EVENT NIGHT</span>
+      <div class="big" style="letter-spacing:.02em">NEON NIGHTS</div>
+      <div class="sm muted">House · Techno · Melodic</div>
+      <div class="between" style="margin-top:8px"><div class="sm">${ic('cal','sm')} ${D.event.date} · ${D.event.time}</div><div class="right"><div class="xs muted">Starts at</div><div class="accent bold">HK$${D.event.from}</div></div></div>
+    </div></div>
+  <button class="btn btn-primary" onclick="go('c1-event-details')">View event · tickets &amp; tables</button>
+  <div class="center sm muted">Lineup, tickets and event tables</div>
+  <div class="info-banner">${ic('info','sm')} <div><b>This date is a special event.</b> Entry is by ticket, with event tables available. Regular daytime tables are still bookable earlier in the day.</div></div>`; }
+function evtRegularView(label){ return `
+  <div class="info-banner">${ic('clock','sm')}<div><b>${label} Dec — no event on this date.</b> Book a table by time slot, same as a regular night.</div></div>
+  <div class="between"><div class="bold">Pick a time</div><span class="xs green">6 free @ 9 PM</span></div>
+  <div class="slotgrid">${slot("8:00 PM","Low","s-low")}${slot("8:30 PM","Low","s-low")}${slot("9:00 PM","Moderate","s-mod",true)}${slot("9:30 PM","Moderate","s-mod")}${slot("10:00 PM","Busy","s-busy")}${slot("10:30 PM","Few left","s-high")}</div>
+  <div class="legend"><span><i style="background:var(--green)"></i>Low</span><span><i style="background:var(--amber)"></i>Moderate</span><span><i style="background:var(--accent)"></i>Busy</span><span><i style="background:var(--red)"></i>Few left</span></div>
+  <div class="card"><div class="bold sm" style="margin-bottom:8px">Guests</div>${stepper(3)}</div>
+  <div class="card"><div class="bold sm" style="margin-bottom:8px">Duration</div><div class="chipsel row"><span class="chip on" onclick="pickChip(this)">1.5 hours</span><span class="chip" onclick="pickChip(this)">2 hours</span><span class="chip" onclick="pickChip(this)">3 hours</span></div></div>
+  <button class="btn btn-primary" onclick="go('c3-summary-free')">Continue · Book for Free</button>
+  <div class="foot-note">Regular night — no deposit, reviewed by the venue.</div>`; }
+function evtDate(el){
+  var strip=el.closest('.datestrip'); if(strip) strip.querySelectorAll('.dc').forEach(function(d){d.classList.remove('sel')});
+  el.classList.add('sel');
+  var label=((el.querySelector('.d')||{}).textContent||'')+' '+((el.querySelector('.n')||{}).textContent||'');
+  var c=document.getElementById('evtContent'); if(c) c.innerHTML=(el.dataset.day==='event')?evtDayView():evtRegularView(label.trim());
+}
+function buildDate(el){
+  if(el.dataset.day==='event'){ var s=el.closest('.datestrip'); if(s) s.querySelectorAll('.dc').forEach(function(d){d.classList.remove('sel')}); el.classList.add('sel'); return; }
+  toast('No event on that date — switching to regular booking'); go('c1-hybrid');
+}
+SB["c1-entry-evt"]=()=>hdr("Booking",(CUR?CUR.name+" · "+CUR.area:"Boomerang Club · Central"))+`
+<div class="screen-body">
+  ${liveDateStrip(2,'evtDate')}
+  <div id="evtContent">${evtDayView()}</div>
+</div>`;
+
+/* ---------- C1 EVENT DETAILS ---------- */
+SB["c1-event-details"]=()=>hdr("Event Details","",`<button class="icon-btn bg">${ic('bookmark','sm')}</button>`)+`
+<div class="screen-body">
+  <div class="hero"><div class="hero-cap"><div class="big">NEON NIGHTS</div><div class="sm muted">${D.venue.name}, Central</div></div></div>
+  <div class="card between"><div class="row">${ic('cal')}<div><div class="sm">${D.event.date}</div><div class="xs muted">9:00 PM onwards</div></div></div><div class="right"><div class="xs muted">Starts at</div><div class="accent bold">HK$${D.event.from}</div></div></div>
+  <div><div class="sec-label">About the Event</div><div class="sm muted">A night of unstoppable energy. Deep grooves, heavy drops, and a crowd that lives for the music. <span class="accent">Read more</span></div></div>
+  <div class="sec-label">Lineup</div>
+  <div class="between"><div class="col" style="align-items:center"><div class="avatar">N</div><div class="xs">NOVA</div><div class="xs muted">Headliner</div></div>
+    <div class="col" style="align-items:center"><div class="avatar">M</div><div class="xs">MIRA</div><div class="xs muted">Special Set</div></div>
+    <div class="col" style="align-items:center"><div class="avatar">K</div><div class="xs">KAIRO</div><div class="xs muted">Closing Set</div></div></div>
+  <div class="sec-label">Ticket &amp; Table Options</div>
+  <div class="card between"><div class="row"><div class="ticket-ic" style="background:var(--accent-soft);color:var(--accent)">${ic('ticket')}</div><div><div class="bold sm">General Entry</div><div class="xs muted">1 drink included · Fast track entry</div></div></div><div class="bold">HK$150</div></div>
+</div>
+<div class="screen-footer"><button class="btn btn-primary" onclick="go('c2-tickets')">Choose Tickets / Tables</button><div class="foot-note">You can select your tickets or table in the next step</div></div>`;
+
+/* ---------- C1 FULLY BOOKED ---------- */
+SB["c1-fully-booked"]=()=>hdr("Booking")+`
+<div class="screen-body">
+  <div class="empty"><div class="big-ic" style="width:70px;height:70px;color:var(--accent)">${ic('lock','lg')}</div>
+    <div class="big" style="color:var(--text)">This slot is fully booked</div>
+    <div class="sm">Sun, 24 Dec · 9:00 PM has no tables left. Here are some alternatives.</div></div>
+  <div class="bold sm">Try another time — same day</div>
+  <div class="pills">${["5:30 PM · Few left","7:00 PM · Limited","9:30 PM · Few left","11:00 PM"].map(x=>`<span class="chip">${x}</span>`).join('')}</div>
+  <div class="bold sm">Or try a different date</div>
+  <div class="datestrip">${[["Mon","25","Few left"],["Tue","26","Event"],["Wed","27","Available"],["Thu","28","Few left"]].map(d=>`<div class="dc ${d[2]==='Event'?'ev':''}"><div class="d">${d[0]}</div><div class="n">${d[1]}</div><div class="tg">${d[2]}</div></div>`).join('')}</div>
+</div>
+<div class="screen-footer"><button class="btn btn-outline">${ic('phone','sm')} Call the Venue</button><div class="foot-note">+852 6500 1234</div></div>`;
+
+/* ---------- C2 BAR ---------- */
+SB["c2-bar"]=()=>hdr("Bar Reservation","The venue will assign your table")+`
+<div class="screen-body">
+  ${dateStrip(0)}
+  <div class="bold">Available Time Slots</div>
+  <div class="slotgrid">
+    ${slot("4:00 PM","Low crowd","s-low",true)}${slot("4:30 PM","Low crowd","s-low")}${slot("5:00 PM","Moderate","s-mod")}
+    ${slot("5:30 PM","Moderate","s-mod")}${slot("6:00 PM","Busy","s-busy")}${slot("6:30 PM","Busy","s-busy")}
+    ${slot("7:00 PM","High","s-high")}${slot("7:30 PM","Sold out","s-sold",false,true)}${slot("8:00 PM","Sold out","s-sold",false,true)}
+  </div>
+  <div class="legend"><span><i style="background:var(--green)"></i>Low crowd</span><span><i style="background:var(--amber)"></i>Moderate</span><span><i style="background:var(--accent)"></i>Busy</span><span><i style="background:var(--red)"></i>High</span><span><i style="background:var(--dim2)"></i>Sold out</span></div>
+  <div class="card"><div class="bold sm" style="margin-bottom:8px">Number of Guests</div>${stepper(3)}<div class="between xs" style="margin-top:8px"><span class="muted">Groups of 10 or more</span><span class="accent" style="cursor:pointer" onclick="go('c2-enquiry')">Send enquiry ${ic('fwd','sm')}</span></div></div>
+  <div class="card"><div class="bold sm" style="margin-bottom:8px">Duration</div><div class="chipsel row"><span class="chip on" onclick="pickChip(this)">1.5 hours</span><span class="chip" onclick="pickChip(this)">2 hours</span><span class="chip" onclick="pickChip(this)">3 hours</span></div></div>
+  <div class="field"><label>Any Special Requests?</label><textarea class="textarea" placeholder="Anything we should know?"></textarea></div>
+</div>
+<div class="screen-footer"><button class="btn btn-primary" onclick="go('c3-summary-free')">Continue</button><div class="foot-note">${ic('lock','sm')} No payment now · You can review before confirming</div></div>`;
+
+const slot=(t,c,cls,sel=false,off=false)=>`<div class="slot ${sel?'sel':''} ${off?'off':''}"><div class="t">${t}</div><div class="s ${sel?'':cls}">${c}</div></div>`;
+
+/* ---------- C2 CLUB ---------- */
+const hybDateCell=(d,n,tg,sel)=>`<div class="dc ${sel?'sel':''} ${tg==='Event'?'ev':''}" data-day="${tg==='Event'?'event':'regular'}" onclick="hybDate(this)"><div class="d">${d}</div><div class="n">${n}</div><div class="tg">${tg}</div></div>`;
+function hybModes(ev){ return '<div class="segcard on" data-seg="day" onclick="hybSeg(this)">Daytime tables<div class="xs muted" style="font-weight:400;margin-top:2px">12:00 – 6:00 PM · by time slot</div></div>'+(ev?'<div class="segcard" data-seg="night" onclick="hybSeg(this)">Neon Nights<div class="xs muted" style="font-weight:400;margin-top:2px">event · from 9:00 PM</div></div>':'<div class="segcard" data-seg="night" onclick="hybSeg(this)">Club night<div class="xs muted" style="font-weight:400;margin-top:2px">from 9:00 PM · table for the night</div></div>'); }
+function hybClubNight(){ return '<div class="info-banner">'+ic('info','sm')+'<div>Book a table <b>for the night</b> — it\'s yours until close. A refundable deposit holds it.</div></div>'
+  +'<div class="bold sm">Arrival (optional)</div>'
+  +'<div class="chipsel row" style="flex-wrap:wrap"><span class="chip on" onclick="pickChip(this)">9:00 PM</span><span class="chip" onclick="pickChip(this)">10:00 PM</span><span class="chip" onclick="pickChip(this)">11:00 PM</span><span class="chip" onclick="pickChip(this)">Late</span></div>'
+  +'<div class="filterbar row" data-target="#segnight" style="overflow:auto"><span class="chip on" data-filter="all" onclick="filt(this)">All</span><span class="chip" data-filter="VIP Table" onclick="filt(this)">VIP</span><span class="chip" data-filter="Booth" onclick="filt(this)">Booth</span></div>'
+  +tableCard("V-5","VIP Table","2–4 guests",2000,1000,"Held for the night · prime stage view.",true)
+  +tableCard("V-6","VIP Table","4–6 guests",3000,1000,"Held for the night · premium booth.")
+  +tableCard("B-2","Booth","6–8 guests",3000,1200,"Held for the night · private booth.")
+  +'<div class="card between" style="border-radius:16px"><div><div class="bold sm">1 table · held for the night</div><div class="xs muted">V-5 · arrive 9:00 PM</div></div><button class="btn btn-primary sm" onclick="openSheet(\'c2-additional\')">View Summary '+ic('fwd','sm')+'</button></div>'; }
+function hybEventNight(){ return '<div class="hero" style="min-height:150px"><div class="hero-cap"><span class="badge b-event" style="margin-bottom:6px">EVENT NIGHT</span><div class="big">NEON NIGHTS</div><div class="sm muted">House · Techno · from HK$150</div></div></div>'
+  +'<div class="info-banner">'+ic('info','sm')+'<div>This date is an <b>event night</b> — entry is by ticket, with event tables available. Daytime tables are still bookable by slot.</div></div>'
+  +'<button class="btn btn-primary" onclick="go(\'c1-event-details\')">View event · tickets &amp; tables</button>'; }
+function hybDate(el){ document.querySelectorAll('#hybDates .dc').forEach(function(d){d.classList.remove('sel')}); el.classList.add('sel'); var lbl=(el.querySelector('.d')?el.querySelector('.d').textContent:'')+' '+(el.querySelector('.n')?el.querySelector('.n').textContent:''); hybRender(el.dataset.day==='event',lbl); }
+function hybRender(ev,label){ var m=document.getElementById('hybModes'); if(m) m.innerHTML=hybModes(ev); var n=document.getElementById('segnight'); if(n){ n.innerHTML=ev?hybEventNight():hybClubNight(); n.style.display='none'; } var d=document.getElementById('segday'); if(d) d.style.display='flex'; var h=document.getElementById('hybHint'); if(h) h.innerHTML=ic('clock','sm')+'<div>'+(label||'')+' · <b>'+(ev?'event night':'regular night')+'</b> — '+(ev?'entry by ticket / event tables (daytime tables still by slot).':'daytime tables by slot, or book a table for the night.')+' Pick a mode below.</div>'; }
+SB["c1-hybrid"]=()=>hdr("Booking",(CUR?CUR.name+" · "+CUR.area:"Skyline Lounge · Tsim Sha Tsui"),`<button class="icon-btn bg">${ic('bookmark','sm')}</button>`)+`
+<div class="screen-body">
+  <div class="datestrip" id="hybDates"><div class="dc" style="width:34px;display:grid;place-items:center;color:var(--dim)">Dec</div>${hybDateCell('Sun','24','Regular',true)}${hybDateCell('Mon','25','Regular')}${hybDateCell('Tue','26','Event')}${hybDateCell('Wed','27','Regular')}${hybDateCell('Thu','28','Regular')}</div>
+  <div class="info-banner" id="hybHint">${ic('clock','sm')}<div>Sun 24 · <b>regular night</b> — daytime tables by slot, or book a table for the night. Pick a mode below.</div></div>
+  <div id="hybModes" class="row" style="gap:8px;align-items:stretch">${hybModes(false)}</div>
+  <div id="segday" class="hybseg">
+    <div class="bold">Pick a time</div>
+    <div class="slotgrid">
+      ${slot("12:00 PM","Low","s-low",true)}${slot("12:30 PM","Low","s-low")}${slot("1:00 PM","Low","s-low")}
+      ${slot("1:30 PM","Moderate","s-mod")}${slot("2:00 PM","Moderate","s-mod")}${slot("3:00 PM","Busy","s-busy")}
+      ${slot("4:00 PM","Busy","s-busy")}${slot("5:00 PM","Few left","s-high")}${slot("5:30 PM","Few left","s-high")}
+    </div>
+    <div class="card"><div class="bold sm" style="margin-bottom:8px">Guests</div>${stepper(3)}</div>
+    <div class="card"><div class="bold sm" style="margin-bottom:8px">Duration</div><div class="chipsel row"><span class="chip on" onclick="pickChip(this)">1.5 hours</span><span class="chip" onclick="pickChip(this)">2 hours</span><span class="chip" onclick="pickChip(this)">3 hours</span></div></div>
+    <div class="card"><div class="bold sm" style="margin-bottom:8px">Table</div><div class="chipsel row"><span class="chip on" onclick="dayPref(this,false)">Any · venue assigns</span><span class="chip" onclick="dayPref(this,true)">Choose your table</span></div></div>
+    <div id="dayTables" style="display:none;flex-direction:column;gap:10px">${dayTableList()}</div>
+    <button class="btn btn-primary" onclick="go('c3-summary-free')">Continue · Book for Free</button>
+    <div class="foot-note">Daytime tables turn — booked for your slot only, no deposit</div>
+  </div>
+  <div id="segnight" class="hybseg" style="display:none">${hybClubNight()}</div>
+</div>`;
+SB["c2-club"]=()=>hdr("Club Reservation")+`
+<div class="screen-body">
+  ${liveDateStrip(2,'buildDate')}
+  <div class="tabs"><div class="tab" data-goto="c2-tickets">Tickets</div><div class="tab on">Tables</div></div>
+  <div style="position:relative;border-radius:14px;overflow:hidden;height:96px;background:linear-gradient(120deg,#4a1e3c,#7b2d5b,#c23b6a)"><span class="badge b-completed" style="position:absolute;left:8px;bottom:8px;background:rgba(0,0,0,.55)">Photo (venue reference only)</span></div>
+  <div class="filterbar row" data-target="#c2-club" style="overflow:auto">
+    <span class="chip on" data-filter="all" onclick="filt(this)">All</span>
+    <span class="chip" data-filter="VIP Table" onclick="filt(this)">VIP</span>
+    <span class="chip" data-filter="High Table" onclick="filt(this)">High Table</span>
+    <span class="chip" data-filter="Booth" onclick="filt(this)">Booth</span>
+    <span class="chip">3 Guests ${ic('down','sm')}</span>
+  </div>
+  <div class="sm muted">Tap a category to filter · tap Add to select</div>
+  ${tableCard("V-5","VIP Table","2–4 guests",2000,1000,"Prime location with stage view.",true)}
+  ${tableCard("V-6","VIP Table","4–6 guests",3000,1000,"Spacious booth with premium view.")}
+  ${tableCard("H-3","High Table","4–6 guests",1500,600,"Lively spot near the bar.")}
+  ${tableCard("B-2","Booth","6–8 guests",3000,1200,"Private booth, great for groups.")}
+</div>
+<div class="screen-footer" style="padding-top:0"><div class="card between" style="border-radius:16px"><div><div class="bold sm" id="tblBarCount">1 table added</div><div class="xs muted" id="tblBarList">V-5</div></div><button class="btn btn-primary sm" onclick="go('c2-additional-club')">View Summary ${ic('fwd','sm')}</button></div></div>`;
+
+const tableCard=(id,cat,cap,ms,dep,desc,added=false)=>`
+  <div class="list-card" data-cat="${cat}">
+    <div class="between"><div><span class="bold">${id}</span> <span class="sm accent">${cat}</span></div>
+      <button class="chip add-btn ${added?'on':''}" data-add="${id}">${added?'Added':'+ Add'}</button></div>
+    <div class="sm muted">${ic('users','sm')} ${cap} &nbsp;·&nbsp; Min. Spend HK$${ms.toLocaleString()}</div>
+    <div class="sm">Refundable Deposit <span class="green">HK$${dep.toLocaleString()}</span></div>
+    <div class="xs muted">${desc}</div>
+  </div>`;
+
+/* ---------- C2 ADDITIONAL (sheet content) ---------- */
+SB["c2-additional"]=()=>`<div class="grab"></div>
+  <div class="between"><div class="bold" style="font-size:17px">Additional Details</div><button class="icon-btn" onclick="closeSheet()">${ic('x')}</button></div>
+  <div class="between sm muted">Selected Table(s)<span>1 table selected</span></div>
+  <div class="list-card"><div class="between"><div><b>V-5</b> <span class="sm accent">VIP Table</span></div><span class="red sm">Remove</span></div><div class="sm muted">${ic('users','sm')} 2–4 guests · Deposit HK$1,000</div></div>
+  <div class="between"><div class="bold sm">Contact Details</div><span class="accent sm">Edit</span></div>
+  <div class="card row"><div class="avatar">MX</div><div><div class="bold sm">${D.guest.name}</div><div class="xs muted">${D.guest.phone}</div><div class="xs muted">${D.guest.email}</div></div></div>
+  <div><div class="bold sm">Number of Guests</div><div class="xs muted">Must not exceed table capacity (4 guests)</div></div>
+  <div class="stepper" data-min="1" data-max="4"><button class="stp-btn">${ic('minus')}</button><div class="stp-val">3</div><button class="stp-btn">${ic('plus')}</button></div>
+  <div class="card tight"><div class="between sm"><span class="muted row">${ic('clock','sm')} Table held for</span><span class="bold">the whole night</span></div><div class="xs muted" style="margin-top:4px">Arrive anytime after 9 PM · yours until close</div></div>
+  <div class="field"><label>Any Special Requests?</label><textarea class="textarea" placeholder="Let us know if it's a birthday, anniversary…">Close to the stage</textarea></div>
+  <div class="between"><div class="sm muted row" style="max-width:60%">${ic('lock','sm')} A refundable hold is placed when you confirm.</div><button class="btn btn-primary sm" onclick="closeSheet();go('c3-summary')">Continue</button></div>`;
+
+/* ---------- C2 TICKETS ---------- */
+SB["c2-tickets"]=()=>hdr("Club Reservation")+`
+<div class="screen-body">
+  ${liveDateStrip(2,'buildDate')}
+  <div class="tabs"><div class="tab on">Tickets</div><div class="tab" data-goto="c2-club">Tables</div></div>
+  <div class="bold">Choose Tickets</div>
+  ${ticketCard("Early Bird",200,"Skip the queue and head straight inside. Fast Track entry.","Limited · 20 left","s-mod",2,"var(--purple)")}
+  ${ticketCard("General Entry",150,"Standard entry to the club. Includes 1 drink.","Many available","s-low",1,"var(--blue)")}
+  ${ticketCard("VIP Fast Track",350,"Priority entry, dedicated queue, 2 drinks included.","Sold out","s-sold",0,"var(--accent)",true)}
+  <div class="card between"><div class="row">${ic('tag')}<span class="sm">Have a promo code?</span></div><span class="muted sm">Enter code ${ic('fwd','sm')}</span></div>
+</div>
+<div class="screen-footer"><div class="between"><div><div class="big" id="tkTotal">HK$550</div><div class="xs muted" id="tkCount">3 Tickets</div></div><button class="btn btn-primary sm" onclick="go('c3-summary-ticket')">Proceed</button></div><div class="foot-note">Max 10 tickets per order ${ic('info','sm')}</div></div>`;
+
+const ticketCard=(name,price,desc,stock,scls,qty,col,sold=false)=>`
+  <div class="list-card">
+    <div class="between"><div class="row"><div class="ticket-ic" style="background:${col}22;color:${col}">${ic('ticket')}</div><div><div class="bold sm">${name}</div><div class="sm">HK$${price}</div></div></div>
+      ${sold?`<span class="xs s-sold" style="color:var(--dim2)">Sold out</span>`:`<div class="stepper mini" data-price="${price}"><button class="stp-btn">${ic('minus','sm')}</button><span class="stp-val">${qty}</span><button class="stp-btn">${ic('plus','sm')}</button></div>`}</div>
+    <div class="xs muted">${desc}</div>
+    <div class="xs ${scls}">${stock}</div>
+  </div>`;
+
+/* ---------- C3 SUMMARY (table + deposit) ---------- */
+SB["c3-summary"]=()=>hdr("Booking Summary")+`
+<div class="screen-body">
+  ${venueRow((CUR||D.venue),`<span class="chip">${ic('loc','sm')}</span>`)}
+  <div class="card">
+    <div class="between"><div class="bold sm">Your Booking</div><span class="accent sm">Edit</span></div>
+    <div class="kv" style="margin-top:8px"><span class="k">${ic('cal','sm')} Date &amp; Time</span><span>${D.booking.date} · ${D.booking.time}</span></div>
+    <div class="kv"><span class="k">${ic('users','sm')} Guests</span><span>${D.booking.guests} Guests</span></div>
+    <div class="kv"><span class="k">${ic('note','sm')} Special Request</span><span>${D.booking.request}</span></div>
+    <div class="divider"></div>
+    <div class="kv"><span><b>V-5</b> · VIP Table</span><span class="muted sm">Min spend HK$2,000</span></div>
+    <button class="btn btn-outline-dim sm" style="width:100%;margin-top:8px">${ic('plus','sm')} Select more tables</button>
+  </div>
+  <div class="card between"><div class="row">${ic('tag')}<span class="sm">Offers</span></div><span class="muted sm">View all offers ${ic('fwd','sm')}</span></div>
+  <div class="card">
+    <div class="bold sm" style="margin-bottom:8px">Due now — refundable hold</div>
+    <div class="kv"><span class="k">Deposit hold (refundable)</span><span>HK$1,000</span></div>
+    <div class="divider"></div>
+    <div class="kv bold"><span>Held on card now</span><span>HK$1,000</span></div>
+    <div class="xs muted" style="margin-top:2px">Authorization hold, not a charge — released if the venue doesn't confirm.</div>
+    <div class="info-banner" style="margin-top:10px">${ic('info','sm')}<div><b>Minimum spend HK$2,000</b> is paid at the venue on the night — it is not charged now.</div></div>
+  </div>
+</div>
+<div class="screen-footer"><button class="btn btn-primary" onclick="go('c3-payment')">Request Booking</button><div class="foot-note">We'll notify you once the venue approves</div></div>`;
+
+/* ---------- C3 SUMMARY (ticket variant) ---------- */
+SB["c3-summary-ticket"]=()=>hdr("Booking Summary")+`
+<div class="screen-body">
+  ${venueRow({name:D.event.name,area:D.venue.name+", Central"})}
+  <div class="card">
+    <div class="sec-label">Ticket Summary</div>
+    <div class="kv"><span class="k">Date &amp; Time</span><span>${D.event.date} · ${D.event.time}</span></div>
+    <div class="divider"></div>
+    <div class="kv"><span>2 × Early Bird</span><span>HK$400</span></div>
+    <div class="kv"><span>1 × General Entry</span><span>HK$150</span></div>
+    <div class="center sm accent" style="margin-top:8px">Select more →</div>
+  </div>
+  <div class="card">
+    <div class="sec-label">Payment Summary</div>
+    <div class="kv"><span class="k">Subtotal</span><span>HK$550</span></div>
+    <div class="kv"><span class="k">Coupon WELCOME20 (−20%)</span><span class="green">−HK$110</span></div>
+    <div class="kv"><span class="k">Booking fee</span><span>HK$40</span></div>
+    <div class="kv"><span class="k">Service charge (5%)</span><span>HK$22</span></div>
+    <div class="divider"></div>
+    <div class="kv bold"><span>Total</span><span>HK$502</span></div>
+  </div>
+</div>
+<div class="screen-footer"><button class="btn btn-primary" onclick="go('c3-payment-ticket')">Payment →</button></div>`;
+
+/* ---------- C3 PAYMENT ---------- */
+SB["c3-payment"]=()=>paymentScreen("HK$1,000.00","Deposit hold (refundable)",true,"c3-pending");
+SB["c3-payment-ticket"]=()=>paymentScreen("HK$502.00","Full payment · 3 tickets",false,"c3-success");
+const paymentScreen=(amt,label,isHold,next)=>hdr("Payment",isHold?"Secure and encrypted":"Secure and encrypted")+`
+<div class="screen-body">
+  <div class="card center"><div class="sm muted">Amount due</div><div class="big" style="font-size:30px">${amt}</div><div class="green sm">${label}</div></div>
+  <div class="card">
+    <div class="between"><div class="bold sm">Saved Cards</div><span class="accent sm">Add new card</span></div>
+    <div class="kv" style="margin-top:8px"><span class="row">💳 Visa •••• 4242</span><span class="accent">◉</span></div>
+    <div class="kv"><span class="row">💳 Mastercard •••• 8888</span><span class="muted">◯</span></div>
+  </div>
+  ${isHold?`<div class="card"><div class="row bold sm">${ic('info','sm')} How this works</div><div class="xs muted" style="margin-top:6px">This is a deposit <b>hold</b>, not a charge. We place an authorization hold of ${amt} on your card. It is released automatically if the venue doesn't confirm your booking.</div></div>`:''}
+</div>
+<div class="screen-footer"><button class="btn btn-primary" onclick="go('${next}')">${ic('lock','sm')} ${isHold?'Place hold · '+amt:'Pay '+amt}</button><div class="foot-note">${isHold?"You won't be charged unless the booking is confirmed.":"By continuing you agree to the venue's booking policy."}</div></div>`;
+
+/* ---------- C3 PENDING ---------- */
+SB["c3-pending"]=()=>hdr("Booking Request Sent")+`
+<div class="screen-body">
+  <div class="empty"><div class="big-ic" style="width:80px;height:80px;color:var(--amber);background:var(--amber-soft)">${ic('clock','lg')}</div>
+    <div class="big" style="color:var(--text)">Request sent, pending venue</div>
+    <div class="sm">We've sent your request to ${D.venue.name}. You'll get a response soon.</div></div>
+  <div class="card">
+    <div class="between"><span class="bold sm">Booking Reference</span><span class="badge b-pending">Pending</span></div>
+    <div class="bold" style="margin:6px 0 10px">${D.booking.ref}</div>
+    <div class="kv"><span class="k">Date &amp; Time</span><span>${D.booking.date} · ${D.booking.time}</span></div>
+    <div class="kv"><span class="k">Guests</span><span>${D.booking.guests}</span></div>
+    <div class="kv"><span class="k">Deposit hold</span><span>HK$1,000 · placed</span></div>
+  </div>
+  <div class="card"><div class="bold sm" style="margin-bottom:8px">What happens next?</div>
+    <div class="sm muted">${ic('check','sm')} The venue reviews your request<br>${ic('check','sm')} You get a notification once approved<br>${ic('check','sm')} If declined, the hold is released &amp; we help you find alternatives</div>
+    <div class="kv" style="margin-top:10px"><span class="k">Estimated response time</span><span>1–3 hours</span></div></div>
+</div>
+<div class="screen-footer"><button class="btn btn-outline" style="margin-bottom:8px">${ic('phone','sm')} Contact Venue</button><button class="btn btn-ghost red">Cancel Request</button></div>`;
+
+/* ---------- C3 SUCCESS ---------- */
+SB["c3-success"]=()=>hdr("Booking")+`
+<div class="screen-body">
+  <div class="empty"><div class="big-ic" style="width:84px;height:84px;color:#fff;background:var(--green)">${ic('check','lg')}</div>
+    <div class="big" style="color:var(--text)">Booking Confirmed!</div><div class="sm">We can't wait to see you.</div></div>
+  <div class="card center"><div class="sm muted">Booking Reference</div><div class="bold" style="font-size:18px;margin-top:4px">${D.ticket.ref} ${ic('share','sm')}</div></div>
+  <div class="card">
+    <div class="kv"><span class="k">Venue</span><span>${D.venue.name}</span></div>
+    <div class="kv"><span class="k">Date &amp; Time</span><span>${D.event.date} · ${D.event.time}</span></div>
+    <div class="kv"><span class="k">Tickets</span><span>2 × Early Bird · 1 × General</span></div>
+    <div class="kv"><span class="k">Total paid</span><span>HK$502.00</span></div>
+  </div>
+  <div class="info-banner">${ic('mail','sm')} A confirmation email has been sent to ${D.guest.email}</div>
+</div>
+<div class="screen-footer"><button class="btn btn-primary" style="margin-bottom:8px" onclick="go('c4-detail')">View Booking</button><button class="btn btn-dark" onclick="go('c4-mybookings')">Done</button></div>`;
+
+/* ---------- C4 MY BOOKINGS ---------- */
+SB["c4-mybookings"]=()=>hdr("My Bookings")+`
+<div class="screen-body">
+  <div class="seg" style="margin:0"><button class="on" style="flex:1;padding:9px;border-radius:999px;font-weight:600">Upcoming</button><button style="flex:1;padding:9px;color:var(--dim)">Past</button></div>
+  ${bkCard(D.venue.name,"Central, Hong Kong",D.booking.date,D.booking.time,"VIP Table V-5","3 Guests","Confirmed","b-confirmed")}
+  ${bkCard(D.event.name,D.venue.name,D.event.date,"10:00 PM","General Entry","2 Tickets","Pending","b-pending")}
+  ${bkCard("Skyline Lounge","Tsim Sha Tsui","Sat, 21 Dec 2025","8:30 PM","Table B-12","4 Guests","Completed","b-completed")}
+  ${bkCard("Pulse Sunday",D.venue.name,"Sun, 15 Dec 2025","11:00 PM","Early Bird","1 Ticket","Cancelled","b-cancel")}
+</div>`;
+const bkCard=(name,area,date,time,line1,line2,status,scls)=>`
+  <div class="list-card" onclick="go('c4-detail')" style="cursor:pointer">
+    <div class="between"><div class="row"><div class="venue-ic" style="width:38px;height:38px;font-size:14px">🎧</div><div><div class="bold sm">${name}</div><div class="xs muted">${area}</div></div></div><span class="badge ${scls}">${status}</span></div>
+    <div class="sm muted">${ic('cal','sm')} ${date} · ${time}</div>
+    <div class="between xs muted"><span>${ic('table','sm')} ${line1}</span><span>${ic('users','sm')} ${line2}</span></div>
+  </div>`;
+
+/* ---------- C4 DETAIL ---------- */
+SB["c4-detail"]=()=>hdr("Booking Details","",`<button class="icon-btn bg">${ic('share','sm')}</button>`)+`
+<div class="screen-body">
+  ${venueRow(D.venue,`<span class="badge b-confirmed">Confirmed</span>`)}
+  <div class="right xs muted">Booking Ref ${D.booking.ref}</div>
+  <div class="card">
+    <div class="kv"><span class="k">${ic('cal','sm')} Date &amp; Time</span><span>${D.booking.date} · ${D.booking.time}</span></div>
+    <div class="kv"><span class="k">${ic('users','sm')} Guests</span><span>3 Guests</span></div>
+    <div class="kv"><span class="k">${ic('table','sm')} Booking Type</span><span>VIP Table</span></div>
+    <div class="kv"><span class="k">Table</span><span>V-5 <span class="badge b-confirmed">Assigned</span></span></div>
+    <div class="kv"><span class="k">${ic('dollar','sm')} Min Spend</span><span>HK$2,000 · at venue</span></div>
+    <div class="kv"><span class="k">Deposit</span><span>HK$1,000 <span class="badge b-paid">Paid</span></span></div>
+    <div class="kv"><span class="k">${ic('note','sm')} Special Request</span><span>${D.booking.request}</span></div>
+  </div>
+  <div class="card">
+    <div class="between"><div><div class="bold sm">Entry Pass</div><div class="xs muted">Show this QR at the venue entry</div></div><div class="qr" id="qr1"></div></div>
+    <button class="btn btn-dark sm" style="width:100%;margin-top:10px">${ic('wallet','sm')} Add to Apple Wallet</button>
+  </div>
+  <div class="qa">
+    <div class="qi" onclick="go('c4-cancel')"><div class="ci" style="color:var(--red);background:var(--red-soft)">${ic('x','sm')}</div>Cancel</div>
+    <div class="qi" onclick="go('c4-deposit-req')"><div class="ci">${ic('dollar','sm')}</div>Pay Balance</div>
+    <div class="qi" onclick="openSheet('editbooking')"><div class="ci">${ic('edit','sm')}</div>Modify</div>
+    <div class="qi"><div class="ci">${ic('phone','sm')}</div>Contact</div>
+  </div>
+</div>`;
+
+/* ---------- C4 CANCEL ---------- */
+SB["c4-cancel"]=()=>hdr("Cancel Booking")+`
+<div class="screen-body">
+  <div class="info-banner" style="background:var(--amber-soft);border-color:rgba(245,166,35,.4);color:#ffe3ad">${ic('alert','sm')}<div><b>Are you sure you want to cancel?</b> This action cannot be undone.</div></div>
+  ${venueRow(D.venue)}
+  <div class="sm muted">VIP Table V-5 · ${D.booking.date} · ${D.booking.time} · 3 Guests</div>
+  <div class="card">
+    <div class="sec-label">Cancellation Policy</div>
+    <div class="card tight" style="background:var(--green-soft);border-color:transparent"><div class="between sm"><span class="green">Free cancellation until</span><span>${D.rules.cancelFree}</span></div><div class="xs muted">You can cancel for free before this time.</div></div>
+    <div class="card tight" style="margin-top:8px"><div class="between sm"><span>After the free window</span><span class="red">Deposit forfeited</span></div><div class="xs muted">Your HK$1,000 refundable deposit is forfeited if you cancel after ${D.rules.cancelFree}.</div></div>
+  </div>
+  <div class="field"><label>Reason for cancellation (optional)</label><select class="selectx"><option>Select a reason</option><option>Change of plans</option><option>Found another venue</option></select></div>
+  <div class="card between" style="border-color:var(--red)"><div class="row">${ic('info','sm')}<span class="sm">Deposit at risk</span></div><span class="red bold">HK$1,000</span></div>
+</div>
+<div class="screen-footer"><button class="btn btn-danger" onclick="go('c4-mybookings')">Confirm Cancellation</button><div class="foot-note">You will receive a cancellation email.</div></div>`;
+
+/* ---------- C4 DEPOSIT REQUEST ---------- */
+SB["c4-deposit-req"]=()=>hdr("Deposit Requested")+`
+<div class="screen-body">
+  <div class="empty"><div class="big-ic" style="width:80px;height:80px;color:var(--accent);background:var(--accent-soft)">${ic('mail','lg')}</div>
+    <div class="big" style="color:var(--text)">A deposit is requested to confirm</div>
+    <div class="sm">This booking was free to request — the venue now asks for a deposit to secure your table.</div></div>
+  <div class="card tight">${venueRow({name:"Skyline Lounge",area:"Table B-12"})}<div class="sm muted" style="margin-top:6px">Sat, 27 Dec 2025 · 8:30 PM · 4 Guests</div></div>
+  <div class="card">
+    <div class="kv"><span class="k">Deposit amount</span><span class="bold">HK$1,000</span></div>
+    <div class="kv"><span class="k">Refundable</span><span>Yes · full refund per no-show policy</span></div>
+    <div class="kv"><span class="k">Deadline</span><span class="red">Mon, 25 Dec · 9:00 PM (24h before)</span></div>
+    <div class="kv"><span class="k">Requested by</span><span>Skyline Lounge</span></div>
+  </div>
+  <div class="info-banner">${ic('info','sm')}<div>Your booking is not confirmed until the deposit is paid. The table may be released after the deadline.</div></div>
+</div>
+<div class="screen-footer"><button class="btn btn-primary" style="margin-bottom:8px" onclick="go('c3-payment')">Pay Deposit Now</button><button class="btn btn-outline">Decline Request</button></div>`;
+
+/* ============================================================
+   MERCHANT SCREENS
+   ============================================================ */
+/* ---------- M3 DASHBOARD ---------- */
+SB["m3-dashboard"]=()=>`
+<div class="apphdr"><button class="icon-btn bg">${ic('menu','sm')}</button><div><h1 style="font-size:16px">${D.venue.name} ${ic('down','sm')}</h1><div class="sub">${D.venue.area}</div></div><button class="icon-btn bg push" style="position:relative">${ic('bell','sm')}<span class="dot"></span></button></div>
+<div class="screen-body">
+  <div><div class="big">Good evening, Alex</div><div class="sm muted">Here's what's happening tonight.</div></div>
+  <div class="between"><span class="chip">${ic('cal','sm')} ${D.booking.date} ${ic('down','sm')}</span><span class="xs muted">Updated 8:30 PM ${ic('refresh','sm')}</span></div>
+  <div class="bold sm">Today at a glance</div>
+  <div class="tiles"><div class="tile acc"><div class="l">Upcoming</div><div class="v">32</div><div class="sub2">▲ 8 vs yest.</div></div><div class="tile"><div class="l">Pending</div><div class="v">12</div><div class="sub2">approvals</div></div><div class="tile"><div class="l">Occupancy</div><div class="v">63%</div><div class="sub2">76/120 seats</div></div></div>
+  <div class="tiles"><div class="tile g"><div class="l">Checked In</div><div class="v">20</div></div><div class="tile"><div class="l">Walk-ins</div><div class="v">6</div></div><div class="tile r"><div class="l">No-show</div><div class="v">2</div></div></div>
+  <div class="bold sm">Quick Actions</div>
+  <div class="qa"><div class="qi" onclick="go('m2-bookings')"><div class="ci">${ic('cal','sm')}</div>Bookings</div><div class="qi" onclick="go('m3-scanner')"><div class="ci">${ic('scan','sm')}</div>Scanner</div><div class="qi" onclick="go('m3-calendar')"><div class="ci">${ic('cal','sm')}</div>Calendar</div><div class="qi" onclick="openSheet('createwalkin')"><div class="ci">${ic('users','sm')}</div>Walk-in</div></div>
+  <div class="bold sm">Alerts</div>
+  <div class="alert" onclick="go('m2-event-impact')"><div class="ci" style="background:var(--purple-soft);color:var(--purple)">${ic('star','sm')}</div><div class="grow"><div class="bold sm">Neon Nights — 3 bookings overlap</div><div class="xs muted">Review impact &amp; contact guests</div></div>${ic('fwd','sm')}</div>
+  <div class="alert" onclick="go('m2-reservation')"><div class="ci" style="background:var(--amber-soft);color:var(--amber)">${ic('alert','sm')}</div><div class="grow"><div class="bold sm">12 reservations need approval</div><div class="xs muted">Review pending requests.</div></div>${ic('fwd','sm')}</div>
+  <div class="alert"><div class="ci" style="background:var(--blue-soft);color:var(--blue)">${ic('info','sm')}</div><div class="grow"><div class="bold sm">VIP arrival in 45 mins</div><div class="xs muted">${D.guest.name} — VIP Table V-5</div></div>${ic('fwd','sm')}</div>
+  <div class="alert" onclick="go('m2-enquiries')"><div class="ci" style="background:var(--green-soft);color:var(--green)">${ic('users','sm')}</div><div class="grow"><div class="bold sm">2 group enquiries waiting</div><div class="xs muted">Parties of 10+ to allocate</div></div>${ic('fwd','sm')}</div>
+  <div class="between"><div class="bold sm">Activity Feed</div><span class="accent xs">View all</span></div>
+  <div class="timeline-row"><span class="tm">8:20</span><span>Arjun Patel checked in for Table V-3</span></div>
+  <div class="timeline-row"><span class="tm">7:45</span><span>New booking received for 9:30 PM</span></div>
+</div>`;
+
+/* ---------- M3 CALENDAR ---------- */
+SB["m3-calendar"]=()=>hdr("Calendar","",`<button class="icon-btn bg">${ic('filter','sm')}</button>`)+`
+<div class="screen-body">
+  <div class="seg" style="margin:0"><button style="flex:1;padding:9px;color:var(--dim)">Month</button><button style="flex:1;padding:9px;color:var(--dim)">Week</button><button class="on" style="flex:1;padding:9px;border-radius:999px;font-weight:600">Day</button></div>
+  <div class="between"><button class="icon-btn">${ic('back','sm')}</button><span class="chip">${ic('cal','sm')} ${D.booking.date}</span><button class="icon-btn">${ic('fwd','sm')}</button></div>
+  <div class="tiles"><div class="tile"><div class="l">Reservations</div><div class="v accent">32</div></div><div class="tile"><div class="l">Available Tables</div><div class="v green">8</div></div><div class="tile"><div class="l">Capacity Load</div><div class="v">63%</div></div></div>
+  <div class="chip" style="align-self:flex-start">All Areas ${ic('down','sm')}</div>
+  ${calRow("6 PM","Evening Service (6–9 PM)","","",false)}
+  ${calRow("6:00 – 7:30 PM","2 bookings · 8 guests","V-2, V-3","var(--green)")}
+  ${calRow("8:00 – 9:30 PM","3 bookings · 12 guests","V-4, V-5","var(--blue)")}
+  <div class="card" style="border-color:var(--purple);background:var(--purple-soft)"><div class="between"><div class="row">${ic('star','sm')}<div><div class="bold sm">Neon Nights</div><div class="xs muted">Special Event · 9:00 PM – 2:00 AM</div></div></div><span class="badge b-owl">82%</span></div></div>
+  ${calRow("11:00 PM – 12:30 AM","4 bookings · 14 guests","V-6, V-7, T-6","var(--amber)")}
+  <div class="legend"><span><i style="background:var(--purple)"></i>Event</span><span><i style="background:var(--red)"></i>High</span><span><i style="background:var(--amber)"></i>Medium</span><span><i style="background:var(--green)"></i>Low</span><span><i style="background:var(--dim2)"></i>Blocked</span></div>
+</div>`;
+const calRow=(tm,label,tables,col,card=true)=> card?`<div class="card tight" style="border-left:3px solid ${col}"><div class="bold sm">${tm}</div><div class="xs muted">${label}${tables?' · '+tables:''}</div></div>`:`<div class="sec-label">${label}</div>`;
+
+/* ---------- M3 SCANNER ---------- */
+SB["m3-scanner"]=()=>hdr("Scanner")+`
+<div class="screen-body">
+  <div style="border-radius:16px;height:190px;background:linear-gradient(150deg,#2a1a3a,#3a2a4a);position:relative;display:grid;place-items:center">
+    <svg width="120" height="120" viewBox="0 0 24 24" style="stroke:#fff;fill:none;stroke-width:.8;opacity:.7"><use href="#i-scan"/></svg>
+    <div class="xs muted" style="position:absolute;bottom:12px">Align QR code within the frame</div></div>
+  <div class="card">
+    <div class="sec-label">Scan Result</div>
+    <div class="row"><div class="avatar">MX</div><div class="grow"><div class="bold">${D.guest.name}</div><div class="xs muted">${D.booking.ref}</div></div><span class="badge b-confirmed">Match</span></div>
+    <div class="kv" style="margin-top:8px"><span class="k">Table</span><span>VIP Table V-5</span></div>
+    <div class="kv"><span class="k">Date &amp; Time</span><span>${D.booking.date} · ${D.booking.time}</span></div>
+    <div class="kv"><span class="k">Guests</span><span>3</span></div>
+    <div class="row" style="margin-top:12px" id="scanActions"><button class="btn btn-green" onclick="scanResult(true)">${ic('check','sm')} Check In</button><button class="btn btn-outline" style="border-color:var(--red);color:var(--red)" onclick="scanResult(false)">${ic('x','sm')} Reject</button></div>
+  </div>
+  <div class="between"><div class="bold sm">Recent Scans</div><span class="accent xs">View all</span></div>
+  <div class="card tight between"><div class="row"><div class="avatar" style="width:30px;height:30px">AP</div><div><div class="sm bold">Arjun Patel</div><div class="xs muted">BMR-261225-91AB</div></div></div><div class="right"><div class="xs green">Checked in</div><div class="xs muted">8:42 PM</div></div></div>
+  <div class="card tight between"><div class="row"><div class="avatar" style="width:30px;height:30px">JL</div><div><div class="sm bold">John Lee</div><div class="xs muted">BMR-261225-44CD</div></div></div><div class="right"><div class="xs red">Rejected</div><div class="xs muted">8:35 PM</div></div></div>
+</div>`;
+
+/* ---------- M3 ASSIGN (sheet) ---------- */
+SB["m3-assign"]=function(){ ASSIGN_SEL=[];
+  var date='2025-12-26',start=1260,dur=120,party=3;
+  var pub=ENGINE.tables.filter(function(t){return t.pub!==false});
+  var avail=ENGINE.freeTables(date,start,dur,party).length;
+  var cells=pub.map(function(t){ var fits=t.cap>=party,busy=ENGINE.tableBusy(t.id,date,start,dur),free=fits&&!busy;
+    var st=!fits?'Too small':busy?'Reserved':'Available',col=!fits?'muted':busy?'red':'green';
+    return '<div class="tbl" data-tid="'+t.id+'" '+(free?'onclick="toggleAssign(this)" style="cursor:pointer;text-align:left;padding:9px"':'style="text-align:left;padding:9px;opacity:.45"')+'><div class="bold sm">'+t.id+'</div><div class="xs muted">'+t.cat+' · '+t.cap+' seats</div><div class="xs '+col+'">'+st+'</div></div>'; }).join('');
+  return '<div class="grab"></div>'
+   +'<div class="between"><div class="bold" style="font-size:17px">Assign Table</div><button class="icon-btn" onclick="closeSheet()">'+ic('x')+'</button></div>'
+   +'<div class="card tight"><div class="between sm"><span>'+ic('clock','sm')+' Fri 26 Dec · 9:00 PM</span><span>'+ic('users','sm')+' 3 guests · 2 hrs</span></div></div>'
+   +'<div class="between"><div class="bold sm">Select Table(s)</div><span class="xs green">'+avail+' of '+pub.length+' free (computed)</span></div>'
+   +'<div class="tblgrid" style="grid-template-columns:1fr 1fr 1fr">'+cells+'</div>'
+   +'<div class="info-banner">'+ic('info','sm')+'<div>Reserved = an overlapping booking exists (incl. 15-min buffer) — the engine blocks it. Assigning locks the table so it cannot be double-booked; reopen this sheet to watch it flip to Reserved.</div></div>'
+   +'<div class="between sm"><span>Selected: <b id="assignSel">none</b></span></div>'
+   +'<div class="row"><button class="btn btn-dark sm" onclick="closeSheet()">Cancel</button><button class="btn btn-primary sm" onclick="assignLock()">Assign &amp; lock</button></div>';
+};
+const assignTbl=(id,meta,ms,st,sel=false,mode="")=>`<div class="tbl ${mode==='res'?'pending':mode==='blk'?'blocked':''}" style="text-align:left;padding:9px;${sel?'border-color:var(--accent)':''}"><div class="between"><span class="bold sm">${id}</span>${sel?`<span class="accent">${ic('check','sm')}</span>`:''}</div><div class="xs muted">${meta}</div><div class="xs muted">Min ${ms}</div><div class="xs ${st==='Available'?'green':st==='Reserved'?'s-mod':'red'}">${st}</div></div>`;
+
+/* ---------- M2 BOOKINGS ---------- */
+SB["m2-bookings"]=()=>hdr("Booking Management","",`<button class="icon-btn bg">${ic('cal','sm')}</button>`)+`
+<div class="screen-body">
+  <div class="between"><button class="icon-btn">${ic('back','sm')}</button><span class="chip">${D.booking.date}</span><button class="icon-btn">${ic('fwd','sm')}</button></div>
+  <div class="tabs"><div class="tab on">Bookings</div><div class="tab" onclick="go('m2-reservation')">Reservation</div><div class="tab" onclick="go('m2-control')">Booking Control</div></div>
+  <div class="tiles"><div class="tile"><div class="l">Total</div><div class="v">48</div></div><div class="tile"><div class="l">Expected</div><div class="v">32</div></div><div class="tile b"><div class="l">Seated</div><div class="v">20</div></div></div>
+  <div class="tiles two"><div class="tile g"><div class="l">Finished</div><div class="v">8</div></div><div class="tile r"><div class="l">No-show</div><div class="v">2</div></div></div>
+  <input class="input" placeholder="🔍  Search for attendee name">
+  <div class="viewseg"><button class="on" onclick="setBkView(this,'grid')">${ic('table','sm')} Grid</button><button onclick="setBkView(this,'list')">${ic('menu','sm')} List</button><button onclick="setBkView(this,'timeline')">${ic('clock','sm')} Timeline</button></div>
+
+  <div id="bk-grid">
+    <div class="row" style="margin-bottom:10px"><span class="chip">All Status ${ic('down','sm')}</span><span class="chip">All Areas ${ic('down','sm')}</span><span class="chip">${ic('dots','sm')}</span></div>
+    <div class="tblgrid">
+      ${gt("V-1","2–4","","","vacant")}${gt("V-2","2–4","Mei Xiang","9:00 · 3","confirmed",'m2-detail')}${gt("V-3","4–6","Arjun Patel","9:15 · 4","seated")}${gt("V-4","2–4","","","vacant")}
+      ${gt("V-5","2–4","Neha K.","9:00 · 2","seated")}${gt("V-6","4–6","Pending","9:30 · 6","pending")}${gt("V-7","6–8","John Lee","8:45 · 6","confirmed")}${gt("V-8","2–4","","","vacant")}
+      ${gt("T-1","2–4","","","vacant")}${gt("T-2","2–4","Lucas W.","9:30 · 2","confirmed")}${gt("R-1","6–10","Party Grp","9:00 · 8","confirmed")}${gt("R-2","6–10","","","noshow")}
+    </div>
+    <div class="legend" style="margin-top:10px"><span><i style="background:var(--green)"></i>Confirmed</span><span><i style="background:var(--blue)"></i>Seated</span><span><i style="background:var(--amber)"></i>Pending</span><span><i style="background:var(--dim2)"></i>Vacant</span><span><i style="background:var(--red)"></i>No-show</span></div>
+  </div>
+
+  <div id="bk-list" style="display:none;flex-direction:column;gap:10px">
+    <div class="between"><div class="bold sm">Today</div><span class="xs muted">3 bookings</span></div>
+    ${bkListCard("Lian Hua","LH","8:00 PM","T-1","3","confirmed","Night Owl")}
+    ${bkListCard("Arjun Patel","AP","7:15 PM","V-3","4","seated","")}
+    ${bkListCard("Neha K.","NK","9:30 PM","V-2","2","pending","")}
+    <div class="between" style="margin-top:4px"><div class="bold sm">Later tonight</div><span class="xs muted">2 bookings</span></div>
+    ${bkListCard("Jing Wei","JW","11:00 PM","B-2","6","event","VIP")}
+    ${bkListCard("Party Grp","PG","9:00 PM","R-1","8","seated","")}
+  </div>
+
+  <div id="bk-timeline" style="display:none;flex-direction:column;gap:10px">
+    <div class="between"><div class="bold sm">${ic('clock','sm')} Tonight · 6 PM – 3 AM</div><span class="accent xs row" onclick="go('m2-timeline-tablet')">${ic('scan','sm')} Tablet view ${ic('fwd','sm')}</span></div>
+    ${timelineHTML(64)}
+    ${tlLegend}
+    <div class="info-banner">${ic('info','sm')}<div>Bars = each booking held for its slot. Club tables = held till close. Tap any block to open the booking. The dashed line is when the event takes over — regular tables auto-close before it.</div></div>
+  </div>
+</div>
+<div class="fab" onclick="go('m3-scanner')">${ic('scan','sm')} Scanner</div>`;
+
+/* ---------- M2 TIMELINE (tablet / landscape) ---------- */
+SB["m2-timeline-tablet"]=()=>`
+<div class="apphdr" style="padding:10px 18px 4px"><button class="icon-btn" onclick="back()">${ic('back','sm')}</button><div class="grow"><h1 style="font-size:17px">Booking Timeline</h1><div class="sub">${D.venue.name} · ${D.booking.date}</div></div>
+  <div class="row"><span class="chip">Day ${ic('down','sm')}</span><span class="chip">${ic('filter','sm')} All floors</span><button class="btn btn-primary sm" onclick="openSheet('createwalkin')">${ic('plus','sm')} Walk-in</button></div></div>
+<div class="screen-body" style="padding:12px 16px 18px">
+  <div class="row" style="justify-content:space-between">
+    <div class="row"><button class="icon-btn bg">${ic('back','sm')}</button><span class="chip">${ic('cal','sm')} ${D.booking.date}</span><button class="icon-btn bg">${ic('fwd','sm')}</button></div>
+    <div class="row">${tlLegend}</div>
+  </div>
+  ${timelineHTML(112,140)}
+  <div class="info-banner">${ic('info','sm')}<div>Landscape resource timeline — one lane per table, the full night on the x-axis. Drag-style blocks show each booking; the dashed purple line marks the event takeover (11 PM). This is the merchant tablet layout for the door / floor manager.</div></div>
+</div>`;
+const gt=(id,cap,name,meta,st,goto="")=>`<div class="tbl ${st}" ${goto?`onclick="go('${goto}')"`:''} style="text-align:left"><div class="id">${id}</div><div class="c">(${cap})</div>${name?`<div class="xs bold" style="margin-top:2px">${name}</div><div class="st">${meta}</div>`:`<div class="st">Vacant</div>`}</div>`;
+
+/* ---------- M2 RESERVATION ---------- */
+SB["m2-reservation"]=()=>hdr("Reservations",'',`<button class="icon-btn bg">${ic('info','sm')}</button>`)+`
+<div class="screen-body">
+  <div class="info-banner">${ic('info','sm')} Reservations are pending approvals. Confirmed bookings appear in Bookings.</div>
+  <div class="tiles" style="grid-template-columns:1fr 1fr 1fr 1fr"><div class="tile"><div class="l">All</div><div class="v">48</div></div><div class="tile g"><div class="l">Confirmed</div><div class="v">32</div></div><div class="tile acc"><div class="l">Pending</div><div class="v">12</div></div><div class="tile r"><div class="l">Rejected</div><div class="v">4</div></div></div>
+  <input class="input" placeholder="🔍  Search guest, phone, booking ref" oninput="searchList(this,'#m2-reservation .list-card')">
+  <div class="between"><span class="chip">Newest ${ic('down','sm')}</span><span class="chip">All ${ic('down','sm')}</span></div>
+  ${resCard(D.guest.name,"MX","Close to the stage","20 Dec 2025 · 8:45 PM","9:00 PM","VIP Table","3",true)}
+  ${resCard("Arjun Patel","AP","Birthday celebration","20 Dec 2025 · 8:20 PM","9:30 PM","High Table","4")}
+</div>`;
+const resCard=(name,ini,req,reqd,time,type,g,open=false)=>`
+  <div class="list-card" data-name="${name.toLowerCase()}">
+    <div class="between"><div class="row"><div class="avatar">${ini}</div><div class="bold sm">${name}</div></div><span class="badge b-pending">Pending</span></div>
+    <div class="xs muted">Req. ${reqd}</div>
+    <div class="between sm"><span class="k muted">${ic('cal','sm')} 26 Dec · ${time}</span><span>${ic('users','sm')} ${g} guests</span></div>
+    <div class="between sm"><span class="k muted">${ic('table','sm')} ${type}</span></div>
+    ${open?`<div class="card tight"><div class="xs muted">Contact</div><div class="sm">${D.guest.phone} · ${D.guest.email}</div></div>
+    <div class="card tight"><div class="xs muted">Additional Request</div><div class="sm">${req}</div></div>
+    <div class="row"><button class="btn btn-green sm" onclick="go('m2-detail')">${ic('check','sm')} Confirm</button><button class="btn btn-outline sm" style="border-color:var(--red);color:var(--red)" onclick="openSheet('rejectreason')">Reject</button><button class="btn btn-outline-dim sm" onclick="openSheet('senddeposit')">Deposit</button><button class="icon-btn bg">${ic('phone','sm')}</button></div>`:`<div class="center muted">${ic('down','sm')}</div>`}`;
+
+/* ---------- M2 DETAIL ---------- */
+SB["m2-detail"]=()=>hdr("Booking Detail","",`<button class="icon-btn bg">${ic('dots-v','sm')}</button>`)+`
+<div class="screen-body">
+  <div class="card">
+    <div class="between"><div class="row"><div class="avatar">MX</div><div><div class="bold">${D.guest.name}</div><div class="xs muted">VIP Table · ${D.booking.ref}</div></div></div><span class="badge b-pending">Pending</span></div>
+    <div class="divider" style="margin:10px 0"></div>
+    <div class="kv"><span class="k">${ic('cal','sm')} Date &amp; Time</span><span>${D.booking.date} · ${D.booking.time}</span></div>
+    <div class="kv"><span class="k">${ic('users','sm')} Guests</span><span>3</span></div>
+    <div class="kv"><span class="k">${ic('table','sm')} Table Type</span><span>VIP Table (2–4)</span></div>
+    <div class="kv"><span class="k">${ic('phone','sm')} Contact</span><span>${D.guest.phone}</span></div>
+    <div class="kv"><span class="k">${ic('note','sm')} Special Request</span><span>${D.booking.request}</span></div>
+    <div class="kv"><span class="k">Requested</span><span>${D.booking.requested}</span></div>
+  </div>
+  <div class="bold sm">Quick Actions</div>
+  <div class="qa"><div class="qi" onclick="go('m2-bookings')"><div class="ci" style="color:var(--green);background:var(--green-soft)">${ic('check','sm')}</div>Accept</div><div class="qi" onclick="openSheet('rejectreason')"><div class="ci" style="color:var(--red);background:var(--red-soft)">${ic('x','sm')}</div>Reject</div><div class="qi" onclick="openSheet('m3-assign')"><div class="ci">${ic('table','sm')}</div>Assign</div><div class="qi" onclick="openSheet('senddeposit')"><div class="ci">${ic('dollar','sm')}</div>Deposit</div></div>
+  <div class="qa"><div class="qi" onclick="openSheet('changeduration')"><div class="ci">${ic('clock','sm')}</div>Duration</div><div class="qi" onclick="openSheet('movereservation')"><div class="ci">${ic('move','sm')}</div>Move</div><div class="qi" onclick="openSheet('compensation')"><div class="ci">${ic('note','sm')}</div>Notes</div><div class="qi"><div class="ci">${ic('phone','sm')}</div>Contact</div></div>
+  <div class="bold sm">Activity Timeline</div>
+  <div class="timeline"><div class="tl">${D.booking.requested}<br><span class="muted">Reservation request received</span></div><div class="tl">20 Dec · 8:46 PM<br><span class="muted">Sent to venue</span></div><div class="tl mute"><span class="muted">Awaiting your response</span></div></div>
+</div>`;
+
+/* ---------- M2 CONTROL ---------- */
+SB["m2-control"]=()=>hdr("Booking Management","",`<button class="icon-btn bg">${ic('cal','sm')}</button>`)+`
+<div class="screen-body">
+  <div class="between"><button class="icon-btn">${ic('back','sm')}</button><span class="chip">${D.booking.date}</span><button class="icon-btn">${ic('fwd','sm')}</button></div>
+  <div class="tabs"><div class="tab" onclick="go('m2-bookings')">Bookings</div><div class="tab" onclick="go('m2-reservation')">Reservation</div><div class="tab on">Booking Control</div></div>
+  <div class="between"><div class="bold sm">Today Snapshot</div><span class="xs muted">${ic('refresh','sm')} Refresh</span></div>
+  <div class="tiles"><div class="tile"><div class="l">Stop Sell</div><div class="v" style="font-size:16px">Off</div></div><div class="tile"><div class="l">Walk-ins</div><div class="v green" style="font-size:16px">Allowed</div></div><div class="tile"><div class="l">Capacity</div><div class="v">63%</div></div></div>
+  <div class="tiles"><div class="tile g"><div class="l">Confirmed</div><div class="v">32</div></div><div class="tile"><div class="l">Walk-ins</div><div class="v">6</div></div><div class="tile"><div class="l">Avail. Tables</div><div class="v">8</div></div></div>
+  <div class="card between"><div><div class="bold sm">Block a Date</div><div class="xs muted">Block full-day availability</div></div><span class="chip">Select Date ${ic('cal','sm')}</span></div>
+  <div class="card between"><div><div class="bold sm">Block Specific Tables</div><div class="xs muted">Hide tables from selection</div></div><span class="chip">Manage ${ic('fwd','sm')}</span></div>
+  <div class="card between"><div><div class="bold sm">Time Slot Control</div><div class="xs muted">Block or close time slots</div></div><span class="chip" onclick="openSheet('editslot')">Manage ${ic('fwd','sm')}</span></div>
+  <div class="card between"><div><div class="bold sm">Stop Sell (all bookings)</div><div class="xs muted">Stop accepting new bookings</div></div><div class="toggle"></div></div>
+  <div class="card between"><div><div class="bold sm">Add Walk-in</div><div class="xs muted">Create a walk-in booking now</div></div><span class="chip on" onclick="openSheet('createwalkin')">${ic('users','sm')} Add</span></div>
+  <div class="card"><div class="bold sm" style="margin-bottom:8px">What's Currently Blocked</div>
+    <div class="kv"><span class="k">${ic('cal','sm')} Dates</span><span>29 Dec 2025</span></div>
+    <div class="kv"><span class="k">${ic('table','sm')} Tables</span><span>H-2, R-2</span></div>
+    <div class="kv"><span class="k">${ic('clock','sm')} Time Slots</span><span>2:00 – 3:00 AM</span></div>
+    <div class="kv"><span class="k">Stop Sell</span><span>Off</span></div></div>
+</div>`;
+
+/* ---------- M1 SETTINGS ---------- */
+SB["m1-settings"]=()=>hdr("Booking settings")+`
+<div class="screen-body">
+  ${venueRow(D.venue)}
+  ${sheetRow("Venue Type","Select the type that best describes your venue","venuetype")}
+  ${navRow("Schedule &amp; Modes","Set Regular / Club / Event per date","m1-schedule")}
+  ${sheetRow("Opening Hours","Mon – Sun · 6:00 PM – 5:00 AM","openinghours")}
+  ${sheetRow("Deposits &amp; Payments","Refundable card hold · min spend HK$2,000","depositspay")}
+  ${sheetRow("Reservation Settings","Turn time, buffer, slot interval","reservationsettings")}
+  ${navRow("Tables","18 Active · 4 Hidden · 2 floors","m1-tables")}
+  ${sheetRow("Cancellation &amp; No Show","Policies and penalties","cancelnoshow")}
+  <div class="card between"><div><div class="bold sm">Merchant Approval</div><div class="xs muted">Every request needs your confirmation</div></div><div class="toggle on"></div></div>
+  <div class="sec-label">Capabilities</div>
+  ${capRow("Regular Hour Booking",true)}
+  ${capRow("Event Booking",true)}
+  ${capRow("Table Management",true)}
+  ${capRow("Customer picks table (regular hours)",false)}
+  ${capRow("Deposits",true)}
+  <div class="info-banner">${ic('info','sm')} Updates here reflect on the customer venue screen. Booking modes available depend on your Venue Type.</div>
+</div>`;
+const setRow=(icn,t,s,goto="")=>`<div class="card between" ${goto?`onclick="go('${goto}')"`:''}><div class="row">${ic(icn)}<div><div class="bold sm">${t}</div><div class="xs muted">${s}</div></div></div><span class="accent sm">Edit ${ic('fwd','sm')}</span></div>`;
+const navRow=(t,s,goto)=>`<div class="card between" onclick="go('${goto}')"><div style="max-width:78%"><div class="bold sm">${t}</div><div class="xs muted">${s}</div></div>${ic('fwd','sm')}</div>`;
+const sheetRow=(t,s,sheet)=>`<div class="card between" onclick="openSheet('${sheet}')"><div style="max-width:78%"><div class="bold sm">${t}</div><div class="xs muted">${s}</div></div>${ic('fwd','sm')}</div>`;
+
+/* ---------- M1 TABLES ---------- */
+SB["m1-tables"]=()=>hdr("Tables","",`<button class="btn-ghost accent bold sm" onclick="openSheet('editcategories')">${ic('tag','sm')} Categories</button>`)+`
+<div class="screen-body">
+  <div class="tabs"><div class="tab on">All (24)</div><div class="tab">Published (18)</div><div class="tab">Hidden (6)</div></div>
+  <div class="between"><div class="row"><span class="chk" onclick="toggleChk(this)"></span><span class="sm bold">Select All</span></div><span class="xs muted">0 Selected</span></div>
+  <div class="info-banner">${ic('info','sm')}<div>Group tables by <b>floor</b>. Upload a floor-plan photo per floor so staff (and, for clubs, customers) can see exactly where each table sits.</div></div>
+  ${floorCard("Floor 1","Indoor · Main bar",5,5,false,["V-1","V-2","V-3","T-1","T-2"])}
+  ${floorCard("Floor 2","Rooftop terrace · Outdoor",5,5,true,["B7","B8","B3","B6","B5","B9","B20"])}
+  <button class="btn btn-outline-dim" onclick="openSheet('addfloor')">${ic('plus','sm')} Add Floor</button>
+</div>
+<div class="screen-footer"><button class="btn btn-primary" onclick="openSheet('addtable')">${ic('plus','sm')} Add New Table</button></div>`;
+const mt=(id,cat,cap,ms,st,hid=false)=>`<div class="tbl ${hid?'vacant':''}" style="text-align:left;padding:9px" onclick="openSheet('addtable')"><div class="between"><span class="bold sm">${id}</span>${ic('dots-v','sm')}</div><div class="xs muted">${cat} · ${cap}</div><div class="xs muted">HK$${ms.toLocaleString()}</div><div class="xs ${hid?'muted':'green'}">${st}</div></div>`;
+
+/* ---------- M1 RULES ---------- */
+SB["m1-rules"]=()=>hdr("Booking Rules")+`
+<div class="screen-body">
+  ${ruleRow("Turn Time","Standard seating length. Merchant can extend when a guest is seated.","1.5 hrs")}
+  ${ruleRow("Advance Booking Window","How far in advance guests can book. (Club = 1 week)","7 Days")}
+  ${ruleRow("Buffer Time","Gap before and after each booking.","15 mins")}
+  <div class="info-banner">${ic('info','sm')} Rules help you control availability and guest flow.</div>
+  <div class="sec-label">Slot Interval</div>
+  <div class="card"><div class="bold sm">Interval Length</div><div class="xs muted" style="margin-bottom:8px">Choose the length of each time slot.</div><div class="row"><span class="chip">15</span><span class="chip on">30</span><span class="chip">45</span><span class="chip">60</span></div><button class="btn btn-dark sm" style="width:100%;margin-top:10px" onclick="openSheet('editslot')">Manage Slots ${ic('fwd','sm')}</button></div>
+</div>`;
+const ruleRow=(t,s,v)=>`<div class="card between"><div style="max-width:66%"><div class="bold sm">${t}</div><div class="xs muted">${s}</div></div><span class="chip">${v} ${ic('down','sm')}</span></div>`;
+
+/* ---------- M1 EVENTS ---------- */
+SB["m1-events"]=()=>hdr("Events","",`<button class="btn-ghost accent bold sm" onclick="openSheet('createevent')">Create Event</button>`)+`
+<div class="screen-body">
+  <div class="tabs"><div class="tab on">Upcoming (3)</div><div class="tab">Past (7)</div></div>
+  <div class="alert" onclick="go('m2-event-impact')"><div class="ci" style="background:var(--amber-soft);color:var(--amber)">${ic('alert','sm')}</div><div class="grow"><div class="bold sm">Neon Nights overlaps 3 bookings</div><div class="xs muted">Review and contact affected guests</div></div>${ic('fwd','sm')}</div>
+  ${evRow("Neon Nights",D.event.date+" · 9:00 PM","Published","b-confirmed")}
+  ${evRow("Hip Hop Takeover","Fri, 30 Dec 2025 · 11:00 PM","Draft","b-completed")}
+  ${evRow("Summer Vibes","Sat, 3 Jan 2026 · 9:00 PM","Published","b-confirmed")}
+</div>`;
+const evRow=(n,dt,st,cls)=>`<div class="list-card" onclick="openSheet('createevent')" style="cursor:pointer"><div class="between"><div class="row"><div class="venue-ic" style="width:44px;height:38px;border-radius:8px">🎆</div><div><div class="bold sm">${n}</div><div class="xs muted">${dt}</div><span class="badge ${cls}" style="margin-top:4px">${st}</span></div></div>${ic('fwd','sm')}</div></div>`;
+
+/* ---------- NEW: schedule/modes, event impact, enquiry, free summary ---------- */
+function pickChip(chip){ chip.parentElement.querySelectorAll('.chip').forEach(function(c){c.classList.remove('on')}); chip.classList.add('on'); }
+const capRow=(t,on)=>`<div class="card between"><div class="sm">${t}</div><div class="toggle ${on?'on':''}"></div></div>`;
+const schedRow=(d,mode,cls,detail)=>`<div class="card between"><div><div class="bold sm">${d}</div><div class="xs muted">${detail}</div></div><span class="badge ${cls==='reg'?'b-confirmed':cls==='evt'?'b-event':cls==='split'?'b-owl':'b-cancel'}">${mode}</span></div>`;
+const modeSlot=(t,label,cls)=>`<div class="between" style="padding:8px 0;border-bottom:1px solid var(--line)"><span class="sm">${t}</span><span class="xs ${cls==='reg'?'green':cls==='evt'?'accent':'muted'}">${label}</span></div>`;
+const evTicket=(name,price,stock)=>`<div class="list-card"><div class="between"><div><div class="bold sm">${name}</div><div class="sm">HK$${price}</div></div><span class="row">${ic('edit','sm')} <span class="xs muted">${stock}</span></span></div></div>`;
+const evTableRow=(id,meta,ms,pub)=>`<div class="card between"><div><div class="bold sm">${id} <span class="muted xs">${meta}</span></div><div class="xs muted">Event min spend HK$${ms}</div></div><div class="toggle ${pub?'on':''}"></div></div>`;
+function scanResult(ok){ var el=document.getElementById('scanActions'); if(el) el.innerHTML='<div class="card tight center" style="background:'+(ok?'var(--green-soft)':'var(--red-soft)')+';color:'+(ok?'var(--green)':'var(--red)')+'">'+(ok?'✓ Mei Xiang checked in · 9:01 PM':'✕ Entry rejected')+'</div>'; }
+
+SB["m1-schedule"]=()=>hdr("Schedule &amp; Modes","Set Regular / Club / Event per date")+`
+<div class="screen-body">
+  <div class="tabbed">
+    <div class="tabs"><div class="tab on" data-tab="wk">Weekly Schedule</div><div class="tab" data-tab="sp">Special Dates</div><div class="tab" data-tab="ex">Exceptions</div></div>
+    <div class="panel on" data-panel="wk">
+      <div class="info-banner">${ic('info','sm')}<div>Split each day into time blocks. A day can run <b>Regular</b> in the afternoon and switch to <b>Club</b> at night. Blocks drive which booking mode customers see.</div></div>
+      ${dayBlocks("Monday",[["12:00 PM – 08:00 PM","Regular","reg"],["08:00 PM – 05:00 AM","Club","club"]])}
+      ${dayBlocks("Tuesday",[])}
+      ${dayBlocks("Wednesday",[])}
+      ${dayBlocks("Thursday",[["06:00 PM – 05:00 AM","Club","club"]])}
+      ${dayBlocks("Friday",[["12:00 PM – 08:00 PM","Regular","reg"],["09:00 PM – 05:00 AM","Club","club"]])}
+      ${dayBlocks("Saturday",[["09:00 PM – 05:00 AM","Club","club"]])}
+      ${dayBlocks("Sunday",[["12:00 PM – 10:00 PM","Regular","reg"]])}
+    </div>
+    <div class="panel" data-panel="sp">
+      <div class="between"><div class="bold sm">Special Dates</div><span class="accent sm row" onclick="openSheet('addspecial')">${ic('plus','sm')} Add Special Date</span></div>
+      <div class="xs muted">One-off events that override the weekly schedule for that date.</div>
+      ${specialRow("31 Dec 2025 (Wed)","09:00 PM – 03:00 AM","Event")}
+      ${specialRow("14 Feb 2026 (Sat)","09:00 PM – 03:00 AM","Event")}
+      ${specialRow("15 Mar 2026 (Sun)","09:00 PM – 03:00 AM","Event")}
+    </div>
+    <div class="panel" data-panel="ex">
+      <div class="between"><div class="bold sm">Exceptions</div><span class="accent sm row" onclick="openSheet('addexception')">${ic('plus','sm')} Add Exception</span></div>
+      <div class="xs muted">Closures, holidays or private hire — bookings are blocked for these.</div>
+      ${exRow("25 Dec 2025 (Thu)","Closed all day","Holiday")}
+      ${exRow("15 Mar 2026 (Sun)","09:00 PM – 03:00 AM · not bookable","Private Event")}
+    </div>
+  </div>
+</div>
+<div class="screen-footer"><button class="btn btn-primary">Save schedule</button></div>`;
+
+const impactCard=(name,ini,tbl,meta,state)=>`
+  <div class="list-card">
+    <div class="between"><div class="row"><div class="avatar">${ini}</div><div><div class="bold sm">${name}</div><div class="xs muted">${tbl} · ${meta}</div></div></div>${state==='resolved'?'<span class="badge b-confirmed">Moved</span>':'<span class="badge b-pending">Action needed</span>'}</div>
+    ${state==='open'?`<div class="qa">
+      <div class="qi"><div class="ci">${ic('phone','sm')}</div>Contact</div>
+      <div class="qi" onclick="openSheet('movereservation')"><div class="ci">${ic('move','sm')}</div>Move date</div>
+      <div class="qi" onclick="openSheet('compensation')"><div class="ci" style="color:var(--green);background:var(--green-soft)">${ic('star','sm')}</div>Comp</div>
+      <div class="qi" onclick="openSheet('rejectreason')"><div class="ci" style="color:var(--red);background:var(--red-soft)">${ic('x','sm')}</div>Cancel</div></div>`
+    :state==='resolved'?`<div class="xs green">${ic('check','sm')} Moved to Sat 27 Dec · comp: 1 round of drinks (logged)</div>`
+    :`<div class="center muted xs">Tap to expand ${ic('down','sm')}</div>`}
+  </div>`;
+SB["m2-event-impact"]=()=>hdr("Event Impact","Neon Nights · Fri 26 Dec")+`
+<div class="screen-body">
+  <div class="info-banner" style="background:var(--amber-soft);border-color:rgba(245,166,35,.4);color:#ffe3ad">${ic('alert','sm')}<div><b>3 existing reservations overlap this event.</b> They are not auto-cancelled — contact each guest to move, compensate, or cancel. Force-cancels stay on the day for tracking.</div></div>
+  <div class="tiles"><div class="tile r"><div class="l">Affected</div><div class="v">3</div></div><div class="tile g"><div class="l">Resolved</div><div class="v">1</div></div><div class="tile"><div class="l">Pending</div><div class="v">2</div></div></div>
+  ${impactCard("Mei Xiang","MX","VIP Table V-5","9:00 PM · 3 guests","open")}
+  ${impactCard("Arjun Patel","AP","High Table T-2","9:30 PM · 4 guests","")}
+  ${impactCard("Lucas Wong","LW","VIP Table V-2","10:00 PM · 2 guests","resolved")}
+</div>`;
+
+SB["c2-enquiry"]=()=>hdr("Group Enquiry")+`
+<div class="screen-body">
+  <div class="info-banner">${ic('users','sm')}<div>For parties of <b>10+</b>, the venue arranges tables for you. Send an enquiry — no payment now — and they'll be in touch.</div></div>
+  ${venueRow(D.venue)}
+  <div class="field"><label>Date</label><input class="input" value="Fri, 26 Dec 2025"></div>
+  <div class="card"><div class="bold sm" style="margin-bottom:8px">Party size</div>${stepper(14)}</div>
+  <div class="field"><label>Preferred time</label><input class="input" value="9:00 PM"></div>
+  <div class="field"><label>Occasion / notes</label><textarea class="textarea" placeholder="Birthday, bottle service, seating preference…"></textarea></div>
+  <div class="card row"><div class="avatar">MX</div><div><div class="bold sm">${D.guest.name}</div><div class="xs muted">${D.guest.phone} · ${D.guest.email}</div></div></div>
+</div>
+<div class="screen-footer"><button class="btn btn-primary" onclick="go('c3-enquiry-sent')">Send Enquiry</button><div class="foot-note">The venue allocates tables manually and replies to you</div></div>`;
+SB["c3-enquiry-sent"]=()=>hdr("Enquiry Sent")+`
+<div class="screen-body">
+  <div class="empty"><div class="big-ic" style="width:80px;height:80px;color:var(--accent);background:var(--accent-soft)">${ic('check','lg')}</div><div class="big" style="color:var(--text)">Enquiry sent</div><div class="sm">${D.venue.name} will contact you to arrange tables for your group.</div></div>
+  <div class="card"><div class="kv"><span class="k">Party size</span><span>14 guests</span></div><div class="kv"><span class="k">Date</span><span>Fri, 26 Dec 2025</span></div><div class="kv"><span class="k">Status</span><span class="badge b-pending">Awaiting venue</span></div></div>
+</div>
+<div class="screen-footer"><button class="btn btn-primary" onclick="go('home')">Done</button></div>`;
+
+SB["c3-summary-free"]=()=>hdr("Booking Summary")+`
+<div class="screen-body">
+  ${venueRow(CUR||{name:"Qura Bar",area:"Central, Hong Kong"})}
+  <div class="card">
+    <div class="between"><div class="bold sm">Your Booking</div><span class="accent sm">Edit</span></div>
+    <div class="kv" style="margin-top:8px"><span class="k">${ic('cal','sm')} Date &amp; Time</span><span>Fri, 26 Dec 2025 · 7:00 PM</span></div>
+    <div class="kv"><span class="k">${ic('clock','sm')} Duration</span><span>1.5 hours</span></div>
+    <div class="kv"><span class="k">${ic('users','sm')} Guests</span><span>3 Guests</span></div>
+    <div class="kv"><span class="k">${ic('note','sm')} Special Request</span><span>Window seat if possible</span></div>
+  </div>
+  <div class="info-banner">${ic('info','sm')}<div><b>No deposit</b> for this reservation. The venue assigns your table and confirms shortly.</div></div>
+</div>
+<div class="screen-footer"><button class="btn btn-primary" onclick="go('c3-pending')">Book for Free</button><div class="foot-note">Your request will be reviewed by the venue</div></div>`;
+
+/* ---------- NEW: sessions, policies, group enquiries (spec v1) ---------- */
+const sessionCard=(name,time,mode,cls,detail)=>`<div class="list-card"><div class="between"><div class="bold sm">${name} · ${time}</div><span class="badge ${cls==='reg'?'b-confirmed':cls==='evt'?'b-event':'b-completed'}">${mode}</span></div><div class="xs muted">${detail}</div></div>`;
+SB["m1-sessions"]=()=>hdr("Sessions","Fri 26 Dec · how the day is split")+`
+<div class="screen-body">
+  <div class="info-banner">${ic('info','sm')}<div>A <b>session</b> is a time-block with its own mode, published tables, rules and deposits. Every reservation belongs to one.</div></div>
+  ${sessionCard("Session 1","12:00 – 6:00 PM","Regular","reg","24 tables · 1.5h turn · no deposit")}
+  ${sessionCard("Session 2","7:00 – 10:00 PM","Happy Hour","reg","24 tables · 2h turn · no deposit")}
+  ${sessionCard("Buffer","10:00 – 11:00 PM","Turnover","buf","Regular closes — tables clear before the night")}
+  ${sessionCard("Session 3","11:00 PM – 4:00 AM","Event · Neon Nights","evt","12 published · table for the night · deposit HK$1,000")}
+  <button class="btn btn-outline-dim">${ic('plus','sm')} Add session</button>
+  <div class="xs muted">Priority: Event &gt; Happy Hour &gt; Regular. A higher session auto-closes the one before it (+ buffer).</div>
+</div>`;
+const polRow=(t,v)=>`<div class="card between"><div class="sm" style="max-width:62%">${t}</div><span class="chip">${v} ${ic('down','sm')}</span></div>`;
+SB["m1-policies"]=()=>hdr("Booking Policies")+`
+<div class="screen-body">
+  <div class="sec-label">Booking window</div>
+  ${polRow("Regular reservations","30 days")}
+  ${polRow("Club / event bookings","7 days")}
+  <div class="sec-label">Cancellation &amp; deposits</div>
+  ${polRow("Free cancellation until","24h before")}
+  ${polRow("Late cancel / no-show","Deposit forfeited")}
+  ${polRow("Merchant-cancel","Compensation logged")}
+  ${polRow("Deposit hold expiry","Released in 3h if unconfirmed")}
+  ${polRow("Deposit request expiry","24h before booking")}
+  <div class="sec-label">Arrival</div>
+  ${polRow("Check-in window","Opens at session start")}
+  ${polRow("Late-arrival grace","20 min, then released")}
+  ${polRow("No-show","After grace · deposit captured")}
+</div>`;
+SB["m2-enquiries"]=()=>hdr("Group Enquiries")+`
+<div class="screen-body">
+  <div class="info-banner">${ic('users','sm')}<div>Parties of 10+ land here — call the guest, take a deposit, allocate tables manually, then confirm.</div></div>
+  <div class="list-card">
+    <div class="between"><div class="row"><div class="avatar">MX</div><div><div class="bold sm">Mei Xiang · 14 guests</div><div class="xs muted">Fri 26 Dec · 9:00 PM · birthday, bottle service</div></div></div><span class="badge b-pending">New</span></div>
+    <div class="qa"><div class="qi"><div class="ci">${ic('phone','sm')}</div>Call</div><div class="qi" onclick="openSheet('senddeposit')"><div class="ci">${ic('dollar','sm')}</div>Deposit</div><div class="qi" onclick="openSheet('m3-assign')"><div class="ci">${ic('table','sm')}</div>Allocate</div><div class="qi"><div class="ci" style="color:var(--green);background:var(--green-soft)">${ic('check','sm')}</div>Confirm</div></div>
+  </div>
+  <div class="list-card"><div class="between"><div class="row"><div class="avatar">RK</div><div><div class="bold sm">Raj Kumar · 20 guests</div><div class="xs muted">Sat 27 Dec · corporate night</div></div></div><span class="badge b-confirmed">Allocated</span></div><div class="xs green">${ic('check','sm')} 3 tables held · deposit paid · confirmed</div></div>
+</div>`;
+
+/* ============================================================
+   SHEETS (bottom sheets)
+   ============================================================ */
+const SHEETS = {
+ "c2-additional": SB["c2-additional"],
+ "m3-assign": SB["m3-assign"],
+ "addtable":()=>`<div class="grab"></div>
+   <div class="between"><div class="bold row" style="font-size:17px">Add / Edit Table ${ic('info','sm')}</div><button class="icon-btn" onclick="closeSheet();toast('Table deleted')">${ic('x')}</button></div>
+   <div class="field"><label>Status</label><div class="seg" style="margin:0"><button class="on" style="flex:1;padding:9px;border-radius:999px;font-weight:600">Published</button><button style="flex:1;padding:9px;color:var(--dim)">Hidden</button></div></div>
+   <div class="field"><label>Name</label><input class="input" value="V-7" placeholder="Enter name"></div>
+   <div class="field"><label>Seating Capacity</label><select class="selectx"><option>2</option><option>4</option><option selected>6</option><option>8</option><option>10</option></select></div>
+   <div class="field"><label>Floor</label><select class="selectx"><option>Floor 1 · Indoor</option><option selected>Floor 2 · Rooftop (Outdoor)</option></select></div>
+   <div class="field"><div class="between"><label>Table Category</label><span class="accent xs" onclick="openSheet('editcategories')">Edit categories</span></div><select class="selectx"><option>Standard</option><option selected>VIP</option><option>Booth</option><option>Indoor</option><option>Outdoor</option></select></div>
+   <div class="field"><label>Minimum Spend (HK$)</label><input class="input" value="3,000"></div>
+   <div class="field"><label>Deposit (refundable, HK$)</label><input class="input" value="1,000"></div>
+   <div class="field"><label>Description</label><textarea class="textarea" placeholder="Spacious booth with premium view…"></textarea></div>
+   <div class="card between"><div class="sm row">${ic('loc','sm')} Position on floor map</div><span class="accent sm" onclick="toast('Drag the pin onto the floor-plan photo')">Set pin ${ic('fwd','sm')}</span></div>
+   <div class="row"><button class="btn btn-outline sm" style="border-color:var(--red);color:var(--red)" onclick="closeSheet();toast('Table deleted')">${ic('x','sm')} Delete</button><button class="btn btn-primary sm" onclick="closeSheet();toast('Table saved')">Save Changes</button></div>`,
+ "editcategories":()=>`<div class="grab"></div>
+   <div class="between"><div class="bold row" style="font-size:17px">Edit Table Categories ${ic('info','sm')}</div><button class="btn-ghost accent bold" onclick="toast('Add a category row')">${ic('plus')}</button></div>
+   <div class="sm muted">Reorder, rename or remove the tags you sort tables by (e.g. Indoor / Outdoor / VIP).</div>
+   ${["Standard","VIP","Outdoor","Indoor"].map(function(c){return '<div class="row"><span class="muted">'+ic('dots','sm')+ic('dots','sm')+'</span><input class="input grow" value="'+c+'"><button class="icon-btn" onclick="toast(\'Category removed\')">'+ic('x','sm')+'</button></div>';}).join('')}
+   <div class="row"><span class="muted">${ic('dots','sm')}</span><input class="input grow" placeholder="Enter category label"><button class="icon-btn">${ic('x','sm')}</button></div>
+   <div class="row"><button class="btn btn-dark sm" onclick="closeSheet()">Cancel</button><button class="btn btn-primary sm" onclick="closeSheet();toast('Categories saved')">Save</button></div>`,
+ "addfloor":()=>`<div class="grab"></div>
+   <div class="between"><div class="bold" style="font-size:17px">Add Floor</div><button class="icon-btn" onclick="closeSheet()">${ic('x')}</button></div>
+   <div class="field"><label>Floor name</label><input class="input" placeholder="e.g. Rooftop terrace"></div>
+   <div class="field"><label>Area type</label><div class="chipsel row"><span class="chip on" onclick="pickChip(this)">Indoor</span><span class="chip" onclick="pickChip(this)">Outdoor</span></div></div>
+   <div class="field"><label>Floor-plan photo</label><div style="height:110px;border-radius:12px;background:${FLOORMAP};display:grid;place-items:center;color:#fff;font-size:12px">${ic('scan','sm')} &nbsp;Upload floor plan (optional)</div></div>
+   <div class="row"><button class="btn btn-dark sm" onclick="closeSheet()">Cancel</button><button class="btn btn-primary sm" onclick="closeSheet();toast('Floor added')">Save floor</button></div>`,
+ "venuetype":()=>`<div class="grab"></div>
+   <div class="between"><div class="bold" style="font-size:17px">Venue Type</div><button class="icon-btn" onclick="closeSheet()">${ic('x')}</button></div>
+   <div class="sm muted">Select the type that best describes your venue.</div>
+   <div class="segcard on" onclick="pickVenueType(this)">Bar<div class="xs muted" style="font-weight:400;margin-top:2px">Time-slot reservations</div></div>
+   <div class="segcard" onclick="pickVenueType(this)">Club<div class="xs muted" style="font-weight:400;margin-top:2px">Night reservations &amp; events</div></div>
+   <div class="segcard" onclick="pickVenueType(this)">Restaurant<div class="xs muted" style="font-weight:400;margin-top:2px">Table reservations only</div></div>
+   <div class="info-banner">${ic('info','sm')}<div>This controls which booking modes are available in <b>Schedule &amp; Modes</b>. Pick more than one — a venue can be a bar by day and a club by night.</div></div>
+   <div class="row"><button class="btn btn-dark sm" onclick="closeSheet()">Cancel</button><button class="btn btn-primary sm" onclick="closeSheet();toast('Venue type saved')">Save</button></div>`,
+ "openinghours":()=>`<div class="grab"></div>
+   <div class="between"><div class="bold row" style="font-size:17px">Opening Hours ${ic('info','sm')}</div><button class="icon-btn" onclick="closeSheet()">${ic('x')}</button></div>
+   ${["Mon","Tue","Wed","Thu","Fri","Sat","Sun"].map(function(d,i){return '<div class="card"><div class="between"><div class="bold sm">'+d+'</div><div class="toggle '+(i<6?'on':'')+'"></div></div>'+(i<6?'<div class="row" style="margin-top:8px"><div class="field grow"><label>Start Time</label><input class="input" value="18:00"></div><div class="field grow"><label>End Time</label><input class="input" value="06:00"></div></div>':'<div class="xs muted" style="margin-top:6px">Closed</div>')+'</div>';}).join('')}
+   <div class="row"><button class="btn btn-dark sm" onclick="closeSheet()">Cancel</button><button class="btn btn-primary sm" onclick="closeSheet();toast('Hours saved')">Save</button></div>`,
+ "depositspay":()=>`<div class="grab"></div>
+   <div class="between"><div class="bold" style="font-size:17px">Deposits &amp; Payments</div><button class="icon-btn" onclick="closeSheet()">${ic('x')}</button></div>
+   <div class="sm muted">Set how deposits and payments work.</div>
+   <div class="field"><label>Deposit / Minimum Spend</label><input class="input" value="HK$2,000"></div>
+   <div class="field"><label>Refundable deposit hold</label><input class="input" value="HK$1,000"></div>
+   <div class="card between"><div class="sm">Require deposit to confirm</div><div class="toggle on"></div></div>
+   <div class="info-banner">${ic('info','sm')}<div>The deposit is an <b>authorization hold</b>, not a charge — captured only on no-show, released otherwise. Minimum spend is settled at the venue.</div></div>
+   <div class="field"><label>No-Show Penalty</label><select class="selectx"><option selected>100% deposit forfeited</option><option>50% deposit forfeited</option><option>No penalty</option></select></div>
+   <div class="row"><button class="btn btn-dark sm" onclick="closeSheet()">Cancel</button><button class="btn btn-primary sm" onclick="closeSheet();toast('Saved')">Save</button></div>`,
+ "reservationsettings":()=>`<div class="grab"></div>
+   <div class="between"><div class="bold row" style="font-size:17px">Reservation Settings ${ic('info','sm')}</div><button class="icon-btn" onclick="closeSheet()">${ic('x')}</button></div>
+   <div class="field"><label>Turn Time (minutes) — time guests can spend at a table</label><select class="selectx"><option>90</option><option selected>120</option><option>150</option><option>180</option></select></div>
+   <div class="field"><label>Buffer Time (minutes) — gap before &amp; after each booking</label><select class="selectx"><option>0</option><option selected>15</option><option>30</option></select></div>
+   <div class="field"><label>Slot Interval</label><div class="chipsel row"><span class="chip" onclick="pickChip(this)">15</span><span class="chip on" onclick="pickChip(this)">30</span><span class="chip" onclick="pickChip(this)">45</span><span class="chip" onclick="pickChip(this)">60</span></div></div>
+   <div class="field"><label>Advance Booking Window</label><div class="chipsel row"><span class="chip" onclick="pickChip(this)">Club · 7 days</span><span class="chip on" onclick="pickChip(this)">Regular · 30 days</span><span class="chip" onclick="pickChip(this)">3 months</span></div></div>
+   <div class="row"><button class="btn btn-dark sm" onclick="closeSheet()">Cancel</button><button class="btn btn-primary sm" onclick="closeSheet();toast('Saved')">Save</button></div>`,
+ "cancelnoshow":()=>`<div class="grab"></div>
+   <div class="between"><div class="bold" style="font-size:17px">Cancellation &amp; No Show</div><button class="icon-btn" onclick="closeSheet()">${ic('x')}</button></div>
+   <div class="field"><label>Free cancellation until</label><select class="selectx"><option selected>24 hours before</option><option>48 hours before</option><option>12 hours before</option></select></div>
+   <div class="field"><label>Late cancellation</label><select class="selectx"><option selected>Deposit forfeited</option><option>50% forfeited</option><option>No penalty</option></select></div>
+   <div class="field"><label>No-show penalty</label><select class="selectx"><option selected>100% deposit forfeited</option><option>50% forfeited</option></select></div>
+   <div class="card between"><div class="sm">Merchant-cancel logs compensation</div><div class="toggle on"></div></div>
+   <div class="info-banner">${ic('info','sm')}<div>Guests see this policy before they confirm and on the cancellation screen. Fines apply to the merchant side too, per your team's rule.</div></div>
+   <div class="row"><button class="btn btn-dark sm" onclick="closeSheet()">Cancel</button><button class="btn btn-primary sm" onclick="closeSheet();toast('Policies saved')">Save</button></div>`,
+ "addblock":()=>`<div class="grab"></div>
+   <div class="between"><div class="bold" style="font-size:17px">Add Time Block</div><button class="icon-btn" onclick="closeSheet()">${ic('x')}</button></div>
+   <div class="row"><div class="field grow"><label>Start</label><input class="input" value="09:00 PM"></div><div class="field grow"><label>End</label><input class="input" value="05:00 AM"></div></div>
+   <div class="field"><label>Mode</label><div class="chipsel row"><span class="chip on" onclick="pickChip(this)">Regular</span><span class="chip" onclick="pickChip(this)">Club</span><span class="chip" onclick="pickChip(this)">Event</span></div></div>
+   <div class="info-banner">${ic('info','sm')}<div>Higher-priority modes auto-close lower ones (Event &gt; Club &gt; Regular), plus a turnover buffer, so tables clear in time.</div></div>
+   <div class="row"><button class="btn btn-dark sm" onclick="closeSheet()">Cancel</button><button class="btn btn-primary sm" onclick="closeSheet();toast('Block added')">Save</button></div>`,
+ "addspecial":()=>`<div class="grab"></div>
+   <div class="between"><div class="bold" style="font-size:17px">Add Special Date</div><button class="icon-btn" onclick="closeSheet()">${ic('x')}</button></div>
+   <div class="field"><label>Date</label><input class="input" value="31 Dec 2025"></div>
+   <div class="row"><div class="field grow"><label>Start</label><input class="input" value="09:00 PM"></div><div class="field grow"><label>End</label><input class="input" value="03:00 AM"></div></div>
+   <div class="field"><label>Mode</label><div class="chipsel row"><span class="chip on" onclick="pickChip(this)">Event</span><span class="chip" onclick="pickChip(this)">Club</span></div></div>
+   <div class="field"><label>Link event (optional)</label><select class="selectx"><option>New event…</option><option>Neon Nights</option></select></div>
+   <div class="row"><button class="btn btn-dark sm" onclick="closeSheet()">Cancel</button><button class="btn btn-primary sm" onclick="closeSheet();toast('Special date added')">Save</button></div>`,
+ "addexception":()=>`<div class="grab"></div>
+   <div class="between"><div class="bold" style="font-size:17px">Add Exception</div><button class="icon-btn" onclick="closeSheet()">${ic('x')}</button></div>
+   <div class="field"><label>Date</label><input class="input" value="25 Dec 2025"></div>
+   <div class="field"><label>Type</label><div class="chipsel row"><span class="chip on" onclick="pickChip(this)">Closed</span><span class="chip" onclick="pickChip(this)">Holiday</span><span class="chip" onclick="pickChip(this)">Private Event</span></div></div>
+   <div class="field"><label>Note (optional)</label><input class="input" placeholder="Private function / staff holiday…"></div>
+   <div class="row"><button class="btn btn-dark sm" onclick="closeSheet()">Cancel</button><button class="btn btn-primary sm" onclick="closeSheet();toast('Exception added')">Save</button></div>`,
+ "editslot":()=>`<div class="grab"></div>
+   <div class="between"><div class="bold" style="font-size:17px">Edit Slot — Tue, 26 Dec</div><button class="icon-btn" onclick="closeSheet()">${ic('x')}</button></div>
+   <div class="legend"><span><i style="background:var(--green)"></i>Available</span><span><i style="background:var(--dim2)"></i>Blocked</span><span><i style="background:var(--amber)"></i>Partial</span></div>
+   <div class="slotgrid">
+     ${["6:00 PM,g","6:30 PM,g","7:00 PM,b","7:30 PM,g","8:00 PM,a","8:30 PM,b","9:00 PM,g","9:30 PM,g","10:00 PM,g"].map(s=>{const[t,c]=s.split(',');const col=c==='g'?'':c==='a'?'style="border-color:var(--amber)"':'style="opacity:.4"';return `<div class="slot ${c==='g'?'':''}" ${col}><div class="t">${t.split(' ')[0]}</div><div class="s muted">${t.split(' ')[1]}</div></div>`}).join('')}
+   </div>
+   <div class="row"><button class="btn btn-outline sm" style="border-color:var(--red);color:var(--red)">Block All</button><button class="btn btn-primary sm" onclick="closeSheet()">Save</button></div>`,
+ "createevent":()=>`<div class="grab"></div>
+   <div class="between"><div class="bold" style="font-size:17px">Create / Edit Event</div><button class="icon-btn" onclick="closeSheet()">${ic('x')}</button></div>
+   <div class="tabbed">
+     <div class="tabs"><div class="tab on" data-tab="d">Details</div><div class="tab" data-tab="tk">Tickets</div><div class="tab" data-tab="tb">Tables</div><div class="tab" data-tab="st">Settings</div><div class="tab" data-tab="pv">Preview</div></div>
+     <div class="panel on" data-panel="d">
+       <div class="field"><label>Event Poster</label><div style="height:96px;border-radius:12px;background:linear-gradient(120deg,#3a1e5c,#c23b6a);display:grid;place-items:center;color:#fff">📷 Recommended 1080×1350</div></div>
+       <div class="field"><label>Event Name</label><input class="input" value="Neon Nights"></div>
+       <div class="field"><label>Date &amp; Time</label><div class="row"><input class="input" value="Fri, 26 Dec 2025"><input class="input" value="9:00 PM"></div></div>
+       <div class="field"><label>Description</label><textarea class="textarea">A night of unstoppable energy. Deep grooves, heavy drops, and a crowd that lives for the music.</textarea></div>
+     </div>
+     <div class="panel" data-panel="tk">
+       <div class="sm muted">Ticket types customers can buy for this event.</div>
+       ${evTicket("Early Bird","200","20 / 50 sold")}
+       ${evTicket("General Entry","150","64 available")}
+       ${evTicket("VIP Fast Track","350","Sold out")}
+       <button class="btn btn-outline-dim sm">${ic('plus','sm')} Add ticket type</button>
+     </div>
+     <div class="panel" data-panel="tb">
+       <div class="sm muted">Choose which tables are published for this event, with event pricing.</div>
+       ${evTableRow("V-5","VIP · 2–4","3,000",true)}
+       ${evTableRow("V-6","VIP · 4–6","4,000",true)}
+       ${evTableRow("H-3","High · 4–6","2,000",false)}
+       ${evTableRow("R-1","Rooftop · 6–10","6,000",true)}
+     </div>
+     <div class="panel" data-panel="st">
+       <div class="field"><label>Event deposit (per table)</label><input class="input" value="2,000"></div>
+       <div class="card between"><div class="sm">Require merchant approval</div><div class="toggle on"></div></div>
+       <div class="card between"><div class="sm">Auto-close regular bookings for event window</div><div class="toggle on"></div></div>
+       <div class="field"><label>Event capacity</label><input class="input" value="240 guests"></div>
+     </div>
+     <div class="panel" data-panel="pv">
+       <div class="sm muted">This is what customers see.</div>
+       <div class="hero"><div class="hero-cap"><span class="badge b-event" style="margin-bottom:6px">TONIGHT</span><div class="big">NEON NIGHTS</div><div class="sm muted">House · Techno · Melodic</div><div class="between" style="margin-top:8px"><span class="sm">Fri, 26 Dec · 9:00 PM</span><span class="accent bold">from HK$150</span></div></div></div>
+     </div>
+   </div>
+   <button class="btn btn-primary" onclick="closeSheet()">Save Event</button>`,
+ "rejectreason":()=>`<div class="grab"></div>
+   <div class="between"><div class="bold" style="font-size:17px">Cancel / reject booking</div><button class="icon-btn" onclick="closeSheet()">${ic('x')}</button></div>
+   <div class="sm muted">Pick a reason — the guest is notified and any deposit hold is released (or forfeited per policy).</div>
+   ${['Event replacing this slot','Overbooked / no availability','Venue closure / private function','Guest request','Other'].map(function(r){return '<div class="card tight row"><span class="grow sm">'+r+'</span><span class="muted">◯</span></div>'}).join('')}
+   <div class="field"><label>Note to guest (optional)</label><textarea class="textarea" placeholder="We're hosting a private event that night…"></textarea></div>
+   <div class="card between"><div class="sm">Force-cancel (couldn't reach guest)</div><div class="toggle"></div></div>
+   <div class="row"><button class="btn btn-dark sm" onclick="closeSheet()">Back</button><button class="btn btn-danger sm" onclick="closeSheet()">Confirm cancellation</button></div>`,
+ "movereservation":()=>`<div class="grab"></div>
+   <div class="between"><div class="bold" style="font-size:17px">Move reservation</div><button class="icon-btn" onclick="closeSheet()">${ic('x')}</button></div>
+   <div class="card tight">${venueRow(D.venue)}<div class="sm muted" style="margin-top:6px">Currently: VIP Table V-5 · Fri 26 Dec · 9:00 PM</div></div>
+   <div class="field"><label>New date</label><div class="datestrip">${[['Sat','27','Available'],['Sun','28','Few left'],['Mon','29','Available'],['Tue','30','Available']].map(function(d,i){return '<div class="dc '+(i===0?'sel':'')+'"><div class="d">'+d[0]+'</div><div class="n">'+d[1]+'</div><div class="tg">'+d[2]+'</div></div>'}).join('')}</div></div>
+   <div class="field"><label>New time</label><div class="slotgrid">${['8:00 PM','9:00 PM','10:00 PM'].map(function(t,i){return '<div class="slot '+(i===1?'sel':'')+'"><div class="t">'+t+'</div></div>'}).join('')}</div></div>
+   <div class="info-banner">${ic('info','sm')}<div>The guest is notified of the new date/time. The deposit hold carries over.</div></div>
+   <div class="row"><button class="btn btn-dark sm" onclick="closeSheet()">Cancel</button><button class="btn btn-primary sm" onclick="closeSheet()">Move &amp; notify</button></div>`,
+ "changeduration":()=>`<div class="grab"></div>
+   <div class="between"><div class="bold" style="font-size:17px">Change duration</div><button class="icon-btn" onclick="closeSheet()">${ic('x')}</button></div>
+   <div class="sm muted">Standard is 1.5h. Extending updates availability so no overlap is created — no hard cap once a guest is seated.</div>
+   <div class="chipsel row" style="flex-wrap:wrap"><span class="chip" onclick="pickChip(this)">1.5 hours</span><span class="chip on" onclick="pickChip(this)">2 hours</span><span class="chip" onclick="pickChip(this)">3 hours</span><span class="chip" onclick="pickChip(this)">Custom</span></div>
+   <div class="info-banner">${ic('info','sm')}<div>Guest seated — extending to 2h moves their table release to 11:00 PM. Next booking on V-5 is 11:30 PM, so no conflict.</div></div>
+   <div class="row"><button class="btn btn-dark sm" onclick="closeSheet()">Cancel</button><button class="btn btn-primary sm" onclick="closeSheet()">Update duration</button></div>`,
+ "senddeposit":()=>`<div class="grab"></div>
+   <div class="between"><div class="bold" style="font-size:17px">Request deposit</div><button class="icon-btn" onclick="closeSheet()">${ic('x')}</button></div>
+   <div class="sm muted">Send a secure payment link. The guest pays via app, email or SMS — you'll see it flip to “Paid” here. No money moves until they pay.</div>
+   <div class="field"><label>Amount (HK$)</label><input class="input" value="1,000"></div>
+   <div class="field"><label>Reason</label><input class="input" value="Table security deposit (promoter sale)"></div>
+   <div class="field"><label>Send via</label><div class="chipsel row"><span class="chip on" onclick="pickChip(this)">${ic('mail','sm')} Email</span><span class="chip" onclick="pickChip(this)">SMS</span><span class="chip" onclick="pickChip(this)">In-app</span></div></div>
+   <div class="card between"><div class="sm">Status</div><span class="badge b-pending">Not sent</span></div>
+   <div class="row"><button class="btn btn-dark sm" onclick="closeSheet()">Cancel</button><button class="btn btn-primary sm" onclick="closeSheet()">Send request link</button></div>`,
+ "compensation":()=>`<div class="grab"></div>
+   <div class="between"><div class="bold" style="font-size:17px">Log compensation</div><button class="icon-btn" onclick="closeSheet()">${ic('x')}</button></div>
+   <div class="sm muted">Record what you offered to keep this guest happy. Saved to the reservation notes for tracking.</div>
+   <div class="chipsel row" style="flex-wrap:wrap"><span class="chip on" onclick="pickChip(this)">Round of drinks</span><span class="chip" onclick="pickChip(this)">Bottle on arrival</span><span class="chip" onclick="pickChip(this)">Waived min spend</span><span class="chip" onclick="pickChip(this)">Priority entry</span></div>
+   <div class="field"><label>Note</label><textarea class="textarea">Offered 1 round of drinks — guest agreed to move to Sat 27 Dec.</textarea></div>
+   <div class="row"><button class="btn btn-dark sm" onclick="closeSheet()">Cancel</button><button class="btn btn-green sm" onclick="closeSheet()">Save to reservation</button></div>`,
+ "createwalkin":()=>`<div class="grab"></div>
+   <div class="between"><div class="bold" style="font-size:17px">Add walk-in</div><button class="icon-btn" onclick="closeSheet()">${ic('x')}</button></div>
+   <div class="sm muted">Create a booking for a guest at the door — it occupies inventory immediately (same lock as an online booking).</div>
+   <div class="field"><label>Guest name</label><input class="input" placeholder="Name at the door"></div>
+   <div class="field"><label>Guests</label><div style="margin-top:2px">${stepper(2)}</div></div>
+   <div class="field"><label>Session / time</label><input class="input" value="Club night · seated now 9:15 PM"></div>
+   <div class="field"><label>Table</label><select class="selectx"><option>V-3 · VIP · 4 seats</option><option>V-9 · High · 3 seats</option><option>R-1 · Rooftop · 10 seats</option></select></div>
+   <div class="row"><button class="btn btn-dark sm" onclick="closeSheet()">Cancel</button><button class="btn btn-primary sm" onclick="closeSheet();toast('Walk-in seated at V-3 — table locked')">Seat &amp; lock</button></div>`,
+ "editbooking":()=>`<div class="grab"></div>
+   <div class="between"><div class="bold" style="font-size:17px">Modify booking</div><button class="icon-btn" onclick="closeSheet()">${ic('x')}</button></div>
+   <div class="sm muted">Change your details and re-submit — the venue reviews the change.</div>
+   <div class="field"><label>Date</label><input class="input" value="Fri, 26 Dec 2025"></div>
+   <div class="field"><label>Time</label><input class="input" value="9:00 PM"></div>
+   <div class="field"><label>Guests</label><div style="margin-top:2px">${stepper(3)}</div></div>
+   <div class="field"><label>Special requests</label><textarea class="textarea">Close to the stage</textarea></div>
+   <div class="info-banner">${ic('info','sm')}<div>Changing a confirmed booking sends it back to <b>Pending</b> for the venue to re-approve.</div></div>
+   <div class="row"><button class="btn btn-dark sm" onclick="closeSheet()">Cancel</button><button class="btn btn-primary sm" onclick="closeSheet();toast('Change submitted — pending venue')">Submit change</button></div>`
+};
+
+/* ============================================================
+   RESOURCE TIMELINE  (google-calendar style booking view)
+   ============================================================ */
+const TL_ORIGIN=1080, TL_END=1620;              // 6:00 PM → 3:00 AM (next day)
+const TL_EVENT=1380;                            // 11:00 PM · Neon Nights begins (session 3)
+const TL_TABLES=[
+  {id:'V-1',cat:'VIP',floor:'Floor 1'},{id:'V-2',cat:'VIP',floor:'Floor 1'},{id:'V-3',cat:'VIP',floor:'Floor 1'},
+  {id:'T-1',cat:'High',floor:'Floor 1'},{id:'T-2',cat:'High',floor:'Floor 1'},
+  {id:'B-2',cat:'Booth',floor:'Floor 2'},{id:'R-1',cat:'Rooftop',floor:'Floor 2'},{id:'R-2',cat:'Rooftop',floor:'Floor 2'}
+];
+const TL_BOOKINGS=[
+  {tid:'V-1',who:'Mei Xiang',start:1260,dur:120,g:3,st:'confirmed'},
+  {tid:'V-1',who:'Walk-in',start:1410,dur:120,g:2,st:'seated'},
+  {tid:'V-2',who:'Neha K.',start:1290,dur:120,g:2,st:'pending'},
+  {tid:'V-3',who:'Arjun Patel',start:1155,dur:120,g:4,st:'seated'},
+  {tid:'T-1',who:'Lian Hua',start:1200,dur:120,g:3,st:'confirmed'},
+  {tid:'T-2',who:'Lucas W.',start:1290,dur:90,g:2,st:'confirmed'},
+  {tid:'B-2',who:'Jing Wei',start:1380,dur:150,g:6,st:'event'},
+  {tid:'R-1',who:'Party Grp',start:1260,dur:180,g:8,st:'seated'}
+];
+function tlHM(m){ m=((m%1440)+1440)%1440; var h=Math.floor(m/60),ap=h<12?'AM':'PM',h12=h%12||12; return h12+' '+ap; }
+function timelineHTML(hourPx,nameW){
+  nameW=nameW||96;
+  var span=TL_END-TL_ORIGIN, laneW=span/60*hourPx, hours=[];
+  for(var m=TL_ORIGIN;m<TL_END;m+=60) hours.push(m);
+  var evX=(TL_EVENT-TL_ORIGIN)/60*hourPx;
+  var head='<div class="tl-head"><div class="tl-corner" style="width:'+nameW+'px">Table</div><div class="tl-hours">'+
+    hours.map(function(m){return '<div class="tl-h" style="width:'+hourPx+'px">'+tlHM(m)+'</div>';}).join('')+'</div></div>';
+  var rows=TL_TABLES.map(function(t){
+    var bs=TL_BOOKINGS.filter(function(b){return b.tid===t.id;}).map(function(b){
+      var left=(b.start-TL_ORIGIN)/60*hourPx, w=b.dur/60*hourPx-3;
+      return '<div class="tl-b '+b.st+'" style="left:'+left+'px;width:'+w+'px" onclick="go(\'m2-detail\')"><div class="who">'+b.who+'</div><div class="mt">'+ENGINE.fmt(b.start)+' · '+b.g+'p</div></div>';
+    }).join('');
+    var gl=''; for(var i=1;i<hours.length;i++){ gl+='<div class="gl" style="left:'+(i*hourPx)+'px"></div>'; }
+    return '<div class="tl-row"><div class="tl-name" style="width:'+nameW+'px"><div class="n">'+t.id+'</div><div class="c">'+t.cat+' · '+t.floor+'</div></div>'+
+      '<div class="tl-lane" style="width:'+laneW+'px">'+gl+'<div class="tl-evline" style="left:'+evX+'px"></div>'+bs+'</div></div>';
+  }).join('');
+  return '<div class="tl-wrap"><div class="tl-scroll"><div class="tl-grid" style="min-width:'+(nameW+laneW)+'px">'+head+rows+'</div></div></div>';
+}
+const tlLegend=`<div class="legend"><span><i style="background:#33b765"></i>Confirmed</span><span><i style="background:#4b8ef7"></i>Seated</span><span><i style="background:#e5951f"></i>Pending</span><span><i style="background:#b467f8"></i>Event table</span><span><span style="border-left:2px dashed var(--purple);padding-left:5px"></span>Event start 11 PM</span></div>`;
+function setBkView(btn,view){
+  btn.parentElement.querySelectorAll('button').forEach(function(b){b.classList.remove('on')}); btn.classList.add('on');
+  ['grid','list','timeline'].forEach(function(v){ var el=document.getElementById('bk-'+v); if(el) el.style.display=(v===view)?'':'none'; });
+}
+
+/* ---------- booking-management LIST view (status-coloured cards) ---------- */
+const bkListCard=(name,ini,slot,table,g,st,tag)=>{
+  var col=st==='seated'?'var(--blue)':st==='confirmed'?'var(--green)':st==='pending'?'var(--amber)':st==='noshow'?'var(--red)':'var(--dim2)';
+  return `<div class="list-card" style="border-left:3px solid ${col}" onclick="go('m2-detail')">
+    <div class="between"><div class="row"><div class="avatar">${ini}</div><div class="bold sm">${name}</div></div>${tag?`<span class="badge b-owl">${tag}</span>`:`<span class="badge b-${st==='noshow'?'cancel':st}">${st[0].toUpperCase()+st.slice(1)}</span>`}</div>
+    <div class="tiles"><div class="tile"><div class="l">Slot</div><div class="v" style="font-size:15px">${slot}</div></div><div class="tile"><div class="l">Table</div><div class="v" style="font-size:15px">${table}</div></div><div class="tile"><div class="l">Guests</div><div class="v" style="font-size:15px">${g}</div></div></div>
+  </div>`;
+};
+
+/* ---------- table management: floors + floor map ---------- */
+const FLOORMAP="linear-gradient(125deg,#3a1330 0%,#6a1f4a 35%,#1a2a52 70%,#0e1730 100%)";
+function floorPins(ids){ var pos=[[18,26],[40,20],[68,22],[86,30],[24,58],[50,54],[74,56],[88,70],[16,80],[62,82]];
+  return ids.map(function(id,i){ var p=pos[i%pos.length]; return '<div class="fm-pin" style="left:'+p[0]+'%;top:'+p[1]+'%">'+id+'</div>'; }).join(''); }
+function toggleFloor(el){ var b=el.parentElement.querySelector('.floor-body'); if(!b)return; var open=b.style.display!=='none'; b.style.display=open?'none':'flex'; var chev=el.querySelector('[data-chev]'); if(chev) chev.style.transform=open?'':'rotate(180deg)'; }
+function toggleChk(el){ el.classList.toggle('on'); el.innerHTML=el.classList.contains('on')?'<svg class="ic sm"><use href="#i-check"/></svg>':''; }
+function pickVenueType(el){ el.classList.toggle('on'); }
+const tblListRow=(id,g,ms)=>`<div class="tbl-lrow"><div class="between"><div class="row"><span class="chk" onclick="event.stopPropagation();toggleChk(this)"></span><span class="bold sm">${id}</span></div><span class="accent xs row" onclick="openSheet('addtable')">${ic('edit','sm')} Edit</span></div><div class="row" style="gap:22px;padding-left:32px"><div><div class="xs muted">Guest Allowed ${ic('info','sm')}</div><div class="sm">${g}</div></div><div><div class="xs muted">Min Spend ${ic('info','sm')}</div><div class="sm">HK$${ms.toLocaleString()}</div></div></div></div>`;
+function floorCard(name,sub,added,total,open,pins){
+  var body=`<div class="floor-body" style="display:${open?'flex':'none'}">
+    <div class="floormap" style="background-image:${FLOORMAP}"><div class="fm-change" onclick="toast('Upload a floor-plan photo — tables overlay on it')">${ic('scan','sm')} Change Image</div>${floorPins(pins||[])}<div class="fm-hint">${ic('plus','sm')} Zoom in/out to view floormap</div><div class="fm-expand">${ic('scan','sm')}</div></div>
+    <button class="btn btn-outline-dim sm" onclick="openSheet('addtable')">${ic('plus','sm')} Add New Table</button>
+    ${(pins||[]).slice(0,2).map(function(id){return tblListRow(id, id==='B7'?5:4, 1500);}).join('')}
+  </div>`;
+  return `<div class="floor-card"><div class="floor-hd" onclick="toggleFloor(this)"><span class="chk" onclick="event.stopPropagation();toggleChk(this)"></span><div class="grow"><div class="bold sm">${name} <span data-chev style="display:inline-block;transition:transform .2s;transform:${open?'rotate(180deg)':''}">${ic('down','sm')}</span></div><div class="xs muted">${sub} · Table Added ${ic('info','sm')} ${added}/${total}</div></div></div>${body}</div>`;
+}
+
+/* ---------- schedule & modes helpers ---------- */
+const dayBlocks=(day,blocks)=>`<div class="card"><div class="between"><div class="bold sm">${day}</div><span class="accent xs row" onclick="openSheet('addblock')">${ic('plus','sm')} Add Block</span></div>${
+  blocks.length?blocks.map(function(b){var c=b[2]==='reg'?'var(--green)':b[2]==='club'?'var(--purple)':'var(--accent)';var bd=b[2]==='reg'?'b-confirmed':b[2]==='club'?'b-owl':'b-event';return '<div class="card tight between" style="border-left:3px solid '+c+';margin-top:8px"><span class="sm">'+b[0]+'</span><span class="badge '+bd+'">'+b[1]+'</span></div>';}).join('')
+  :`<button class="btn btn-outline-dim sm" style="width:100%;margin-top:8px" onclick="openSheet('addblock')">${ic('plus','sm')} Add Time Block</button>`}</div>`;
+const specialRow=(date,time,mode)=>`<div class="card between"><div><div class="bold sm">${date}</div><div class="xs muted">${time}</div></div><span class="badge b-event">${mode}</span></div>`;
+const exRow=(date,detail,type)=>`<div class="card between"><div><div class="bold sm">${date}</div><div class="xs muted">${detail}</div></div><span class="badge ${type==='Holiday'?'b-cancel':'b-owl'}">${type}</span></div>`;
+
+/* ============================================================
+   STAKEHOLDER EXPLAINER  — per-screen "what & why" (right rail)
+   ============================================================ */
+const INFO = {
+ "home":{desc:"The discovery feed. One list for bars, clubs, lounges — venue type is just a filter tag, not a separate app.",points:["Search or filter by venue type","Tap a venue → routes to the right booking flow (bar slot, club day/night, or event)","<b>Event Tonight</b> badge flags special-event dates"],tip:"There is no separate 'bar app' and 'club app' — one engine, filtered."},
+ "c1-entry-reg":{title:"Bar booking — time slot",desc:"A plain venue: pick a time, party size, duration. The venue assigns the table.",points:["Slots are computed live from real bookings (green→red = filling up)","Sold-out slots are greyed and un-clickable","10+ guests routes to a group enquiry"],tip:"No table-picking for bars — that's a club-only capability."},
+ "c1-hybrid":{title:"Club — Day / Night",desc:"One date, two modes. Daytime books by slot; nighttime books a table 'for the night'.",points:["Mode switches by the venue's schedule, not by guesswork","Daytime = slot + optional table pick","Club night = table held till close + refundable deposit"],tip:"This screen is the answer to 'bar vs club' — the schedule decides the mode."},
+ "c1-entry-evt":{title:"Event day entry",desc:"When a date is a special event, entry is by ticket with event tables available.",points:["Hero promotes the event + price-from","Leads into ticket / table selection","Regular daytime tables can still be booked earlier in the day"]},
+ "c1-event-details":{title:"Event details",desc:"The event landing: lineup, description, ticket & table options.",points:["Read the event before committing","Continue to pick tickets or an event table"]},
+ "c1-fully-booked":{title:"Fully booked (state)",desc:"The sold-out path — instead of a dead end, we offer a way forward.",points:["Suggests other times the same day","Suggests other dates","One tap to call the venue"],tip:"A decided edge case: never leave the guest at a dead end."},
+ "c2-bar":{title:"Bar reservation",desc:"Time-slot list with a live crowd indicator per slot.",points:["Crowd colour shows how busy each slot is","Sold-out slots disabled","No payment now — review before confirming"]},
+ "c2-club":{title:"Club table list",desc:"Card/list table selector — deliberately not a floor-map for customers.",points:["Filter by category (VIP / Booth / High)","Each card shows capacity, min spend, refundable deposit","Add builds the summary at the bottom"],tip:"Customers see a simple list; the floor-map lives on the merchant side."},
+ "c2-tickets":{title:"Ticket picker",desc:"Buy event entry. Steppers per tier, live total.",points:["Early Bird / General / VIP tiers","Sold-out tiers disabled","Total + count update live (fixes the old price bug)"]},
+ "c2-enquiry":{title:"Large-group enquiry",desc:"Parties of 10+ don't auto-book — they become an enquiry the venue arranges.",points:["No payment now","Venue allocates tables manually and replies"],tip:"Decided rule: big groups are a conversation, not a silent multi-table booking."},
+ "c3-enquiry-sent":{title:"Enquiry sent",desc:"Confirmation that the group enquiry reached the venue."},
+ "c3-summary":{title:"Summary — with deposit",desc:"Club-night checkout. The money model is spelled out before committing.",points:["Deposit is a <b>hold</b>, not a charge","Min spend is settled at the venue, not now","Button requests the booking (venue approves)"],tip:"Resolves the 'hold vs charge' ambiguity your team flagged."},
+ "c3-summary-free":{title:"Summary — free request",desc:"Bar / daytime checkout. No deposit — the venue assigns the table and confirms.",points:["'Book for free' = free to request, not free night","Reviewed by the venue before it's confirmed"]},
+ "c3-payment":{title:"Payment",desc:"Card step. For deposits it explains the authorization hold in plain words.",points:["Hold is placed, not captured","Released automatically if the venue doesn't confirm"]},
+ "c3-pending":{title:"Booking pending",desc:"Request sent, awaiting the venue. Clear next-steps so the guest isn't left guessing.",points:["Shows the hold status + reference","Explains what happens on approve / decline"]},
+ "c3-success":{title:"Booking confirmed",desc:"Instant-confirm path (tickets). Own reference + email receipt.",points:["Distinct ticket reference (not the table ref)","Leads to the pass / QR"]},
+ "c4-mybookings":{title:"My bookings",desc:"The guest's upcoming & past bookings with clear status colours."},
+ "c4-detail":{title:"Booking detail + pass",desc:"Everything about one booking, including the entry QR the merchant scans.",points:["QR pass + Apple Wallet","Cancel, pay balance, modify, contact"]},
+ "c4-cancel":{title:"Cancellation",desc:"Shows the policy and what's at risk before cancelling.",points:["Free-cancel window is explicit","Deposit-at-risk is shown in red"],tip:"Decided rule: fines/forfeit are surfaced, never a surprise."},
+ "c4-deposit-req":{title:"Deposit requested",desc:"A free request the venue later asks to secure with a deposit + deadline."},
+ "m3-dashboard":{role:"Merchant",title:"Dashboard",desc:"The operator's home — tonight at a glance, alerts, quick actions.",points:["Live counts: upcoming, pending, occupancy, no-shows","Alerts for event conflicts, approvals, group enquiries","Jump to bookings, scanner, calendar, walk-in"]},
+ "m3-calendar":{role:"Merchant",title:"Calendar",desc:"Day/week/month view of load and events across the venue."},
+ "m3-scanner":{role:"Merchant",title:"Scanner (check-in)",desc:"Scan the guest QR at the door — instant match, check-in or reject."},
+ "m2-bookings":{role:"Merchant",title:"Booking management",desc:"The live floor. Three ways to see the same night.",points:["<b>Grid</b> — table map with status colours","<b>List</b> — cards grouped by time","<b>Timeline</b> — Google-calendar resource view"],tip:"Tap 'Tablet view' in Timeline for the landscape floor layout."},
+ "m2-timeline-tablet":{role:"Merchant",title:"Timeline — tablet",desc:"Landscape resource timeline for the door / floor manager. One lane per table, the whole night on the x-axis.",points:["Blocks = bookings, coloured by status","Dashed purple line = event takeover (11 PM)","Day / floor filters + add walk-in"],tip:"This is the tablet layout — the frame switches to landscape automatically."},
+ "m2-reservation":{role:"Merchant",title:"Reservations (approvals)",desc:"Pending requests waiting on the merchant. Confirm / reject / request deposit.",points:["See guest, party, request, contact","Confirm assigns a table (blocks double-booking)","Request a deposit via link"]},
+ "m2-detail":{role:"Merchant",title:"Booking detail",desc:"One reservation with every action: accept, assign, move, extend, deposit, notes.",tip:"Assign shows the table + blocks conflicts — fixes the double-booking bug."},
+ "m2-control":{role:"Merchant",title:"Booking control",desc:"Per-day levers: block dates/tables/slots, stop-sell, add walk-ins.",points:["Different from Settings — this is today's overrides","See exactly what's currently blocked"]},
+ "m2-event-impact":{role:"Merchant",title:"Event impact",desc:"When an event lands on existing bookings — the resolution workflow.",points:["Contact, move, comp, or cancel each guest","Nothing auto-cancels","Comp/force-cancel is logged for tracking"],tip:"Implements your team's exact edge-case playbook."},
+ "m2-enquiries":{role:"Merchant",title:"Group enquiries",desc:"10+ parties land here — call, deposit, allocate tables, confirm."},
+ "m1-settings":{role:"Merchant",title:"Booking settings",desc:"The venue's setup hub. Everything a merchant configures once.",points:["Venue Type drives which modes are available","Schedule, hours, deposits, reservation rules","Tables (with floors + floor maps), cancellation policy"]},
+ "m1-schedule":{role:"Merchant",title:"Schedule & Modes",desc:"How each date runs. Weekly blocks, one-off special dates, and exceptions.",points:["A day can be Regular by afternoon, Club by night","Special dates = one-off events","Exceptions = closures / private hire"]},
+ "m1-sessions":{role:"Merchant",title:"Sessions",desc:"The engine concept: a day is a sequence of time-blocks, each with its own mode, tables, rules and deposits."},
+ "m1-policies":{role:"Merchant",title:"Booking policies",desc:"Windows, deposits, check-in, no-show — the rulebook the engine enforces."},
+ "m1-tables":{role:"Merchant",title:"Tables + floors",desc:"Full table inventory grouped by floor, with an uploadable floor-plan photo per floor.",points:["Floors: Indoor / Outdoor, tables pinned on the map","Add / edit tables (capacity, category, min spend, deposit)","Publish or hide tables from customers"],tip:"Floor-map photos are merchant-only — customers still book from a simple list."},
+ "m1-rules":{role:"Merchant",title:"Booking rules / slots",desc:"Turn time, advance window, buffer, slot interval."},
+ "m1-events":{role:"Merchant",title:"Events",desc:"Create and manage events — tickets, event tables, pricing, capacity."},
+ // sheets
+ "addtable":{role:"Merchant",title:"Add / edit table",desc:"Define one table: status, name, capacity, floor, category, min spend, deposit, map position."},
+ "venuetype":{role:"Merchant",title:"Venue type",desc:"Pick Bar / Club / Restaurant — controls which booking modes appear. Multi-select allowed."},
+ "editcategories":{role:"Merchant",title:"Table categories",desc:"Rename / reorder / remove the tags you sort tables by (Indoor, Outdoor, VIP…)."},
+ "m3-assign":{role:"Merchant",title:"Assign table",desc:"Pick a table for a booking. Reserved = a real overlap; assigning locks it against double-booking."},
+ "senddeposit":{role:"Merchant",title:"Request deposit",desc:"Send a secure pay-link (app / email / SMS). Flips to Paid here — no money moves till they pay."}
+};
+function renderExplain(id){
+  var el=document.getElementById('explain'); if(!el) return;
+  var meta=SCREENS.find(function(s){return s.id===id;});
+  var info=INFO[id]||{};
+  var role=info.role||(meta&&meta.m==='merchant'?'Merchant':meta&&meta.m==='customer'?'Customer':'Screen');
+  var title=info.title||(meta?meta.t:id);
+  var grp=meta&&meta.g?' · '+meta.g.replace(/^[CM]\d+ · /,''):'';
+  var legend = id==='m2-timeline-tablet'||id==='m2-bookings' ?
+    '<div class="lg"><span><i style="background:#33b765"></i>Confirmed</span><span><i style="background:#4b8ef7"></i>Seated</span><span><i style="background:#e5951f"></i>Pending</span><span><i style="background:#b467f8"></i>Event</span></div>' : '';
+  el.innerHTML =
+    '<div class="role"><i></i>'+role+grp+'</div>'+
+    '<h3>'+title+'</h3>'+
+    (info.desc?'<div class="desc">'+info.desc+'</div>':'<div class="desc">Part of the Mandos reservation flow.</div>')+
+    legend+
+    (info.points&&info.points.length?'<div class="lbl">What you can do here</div><ul>'+info.points.map(function(p){return '<li>'+p+'</li>';}).join('')+'</ul>':'')+
+    (info.tip?'<div class="tip">💡 '+info.tip+'</div>':'');
+}
+
+/* ---------- ROUTER + WIRING ---------- */
+let history=[], mode="customer";
+function renderNav(){
+  const groups={};
+  SCREENS.filter(s=>s.m===mode).forEach(s=>{(groups[s.g]=groups[s.g]||[]).push(s)});
+  document.getElementById('navList').innerHTML=Object.entries(groups).map(([g,items])=>
+    `<div class="nav-group">${g}</div>`+items.map(s=>`<button class="nav-item" data-id="${s.id}" onclick="go('${s.id}')">${s.t}${s.sheet?'<span class="tagx">sheet</span>':s.tag?`<span class="tagx">${s.tag}</span>`:''}</button>`).join('')).join('');
+}
+function go(id){
+  const meta=SCREENS.find(s=>s.id===id) || {t:''};
+  // aliases (screens that reuse another body id)
+  const bodyId = id==='c2-additional-club'?'c2-additional': id;
+  if(id==='c2-additional-club'||id==='c2-additional'){ go('c2-club'); openSheet('c2-additional'); return; }
+  if(id==='c2-additional-from'){ alert('Large-group enquiry flow (stub)'); return; }
+  if(SHEETS[id] && SCREENS.find(s=>s.id===id&&s.sheet)){
+    // sheet-type screen selected from nav → open its parent context then the sheet
+    if(id==='m3-assign'){ ensure('m2-detail'); go2('m2-detail'); openSheet('m3-assign'); return; }
+    if(id==='c2-additional'){ go2('c2-club'); openSheet('c2-additional'); return; }
+  }
+  go2(id);
+}
+function ensure(id){ if(!document.getElementById(id)) buildScreen(id); }
+function buildScreen(id){
+  const fn=SB[id]; if(!fn) return;
+  const el=document.createElement('section'); el.className='screen'; el.id=id; el.innerHTML=fn();
+  document.getElementById('screens').appendChild(el);
+  el.querySelectorAll('.qr').forEach(makeQR);
+  if(id==='c2-tickets') recalcTickets();
+  if(id==='c2-club') recalcTables();
+  if(id==='c1-entry-reg') refreshBarSlots();
+}
+function go2(id){
+  closeSheet();                       // navigating always dismisses an open sheet
+  ensure(id);
+  const cur=document.querySelector('.screen.active');
+  if(cur && cur.id!==id) history.push(cur.id);
+  document.querySelectorAll('.screen').forEach(s=>s.classList.remove('active'));
+  const el=document.getElementById(id); if(!el) return;
+  el.classList.add('active'); el.querySelector('.screen-body')?.scrollTo(0,0);
+  document.querySelector('.phone')?.classList.toggle('tablet', id==='m2-timeline-tablet');
+  const meta=SCREENS.find(s=>s.id===id)||SCREENS.find(s=>id.startsWith(s.id));
+  document.getElementById('scrnName').textContent=meta?meta.t:id;
+  document.querySelectorAll('.nav-item').forEach(n=>n.classList.toggle('active',n.dataset.id===id));
+  renderExplain(id);
+}
+function back(){ const p=history.pop(); if(p) go2(p); }
+function openSheet(id){ document.getElementById('sheetBox').innerHTML=(SHEETS[id]||(()=>'—'))(); document.getElementById('sheetLayer').classList.add('open'); if(INFO[id]) renderExplain(id); }
+function closeSheet(){ const l=document.getElementById('sheetLayer'); if(l) l.classList.remove('open'); const a=document.querySelector('.screen.active'); if(a) renderExplain(a.id); }
+function setMode(m){ mode=m; document.getElementById('segC').classList.toggle('on',m==='customer'); document.getElementById('segM').classList.toggle('on',m==='merchant'); renderNav(); history=[]; go2(m==='customer'?'home':'m3-dashboard'); }
+
+/* fake QR generator */
+function makeQR(el){
+  const N=21; let seed=42; const rnd=()=>{seed=(seed*1103515245+12345)&0x7fffffff;return seed/0x7fffffff};
+  let r=`<svg viewBox="0 0 ${N} ${N}" width="100%" height="100%">`;
+  for(let y=0;y<N;y++)for(let x=0;x<N;x++){ const finder=(x<7&&y<7)||(x>=N-7&&y<7)||(x<7&&y>=N-7); if(finder)continue; if(rnd()>.55) r+=`<rect x="${x}" y="${y}" width="1" height="1" fill="#000"/>`; }
+  [[0,0],[N-7,0],[0,N-7]].forEach(([fx,fy])=>{ r+=`<rect x="${fx}" y="${fy}" width="7" height="7" fill="#000"/><rect x="${fx+1}" y="${fy+1}" width="5" height="5" fill="#fff"/><rect x="${fx+2}" y="${fy+2}" width="3" height="3" fill="#000"/>`; });
+  el.innerHTML=r+`</svg>`;
+}
+
+/* ---------- delegated interactions: make controls & flow clickable ---------- */
+document.querySelector('.phone').addEventListener('click',function(e){
+  const goEl=e.target.closest('[data-goto]');
+  if(goEl){ if(goEl.classList.contains('tab')) setTab(goEl); go2(goEl.dataset.goto); return; }
+  const stp=e.target.closest('.stp-btn'); if(stp){ step(stp); return; }
+  const tog=e.target.closest('.toggle'); if(tog){ tog.classList.toggle('on'); return; }
+  const segb=e.target.closest('.seg button');
+  if(segb){ segb.parentElement.querySelectorAll('button').forEach(function(b){b.classList.remove('on');b.style.color='var(--dim)';b.style.fontWeight='400';}); segb.classList.add('on'); segb.style.color=''; segb.style.fontWeight='600'; return; }
+  const addb=e.target.closest('[data-add]'); if(addb){ addb.classList.toggle('on'); addb.textContent=addb.classList.contains('on')?'Added':'+ Add'; recalcTables(); return; }
+  const tab=e.target.closest('.tab'); if(tab && !tab.getAttribute('onclick')){ setTab(tab); if(tab.dataset.tab){ var box=tab.closest('.tabbed'); if(box) box.querySelectorAll('.panel').forEach(function(p){p.classList.toggle('on',p.dataset.panel===tab.dataset.tab)}); } return; }
+  const dc=e.target.closest('.dc');
+  if(dc && dc.closest('.datestrip') && !dc.classList.contains('off') && dc.querySelector('.n')){
+    if(dc.getAttribute('onclick')) return;
+    if(dc.classList.contains('ev')){ go2('c1-entry-evt'); return; }
+    pick(dc,'.datestrip','.dc'); return; }
+  const sl=e.target.closest('.slot'); if(sl && !sl.classList.contains('off')){ pick(sl,'.slotgrid','.slot'); return; }
+});
+function setTab(t){ t.parentElement.querySelectorAll('.tab').forEach(function(x){x.classList.remove('on')}); t.classList.add('on'); }
+function pick(el,scopeSel,itemSel){ const scope=el.closest(scopeSel)||el.parentElement; scope.querySelectorAll(itemSel).forEach(function(x){x.classList.remove('sel')}); el.classList.add('sel'); }
+function step(btn){ const st=btn.closest('.stepper'); if(!st)return; const v=st.querySelector('.stp-val'); const plus=(btn.querySelector('use')&&btn.querySelector('use').getAttribute('href')||'').indexOf('plus')>-1; let n=parseInt((v.textContent||'').replace(/\D/g,''))||0; const mini=st.classList.contains('mini'); const min=st.dataset.min!==undefined?+st.dataset.min:(mini?0:1); const max=st.dataset.max!==undefined?+st.dataset.max:30; n=plus?Math.min(max,n+1):Math.max(min,n-1); v.textContent=n; if(st.dataset.price) recalcTickets(); if(st.dataset.party) refreshBarSlots(); }
+function recalcTickets(){ let tot=0,cnt=0; document.querySelectorAll('#c2-tickets .stepper[data-price]').forEach(function(st){var q=parseInt(st.querySelector('.stp-val').textContent)||0; tot+=q*(+st.dataset.price); cnt+=q;}); var T=document.querySelector('#tkTotal'),C=document.querySelector('#tkCount'); if(T)T.textContent='HK$'+tot; if(C)C.textContent=cnt+' Tickets'; }
+function recalcTables(){ var ids=[].slice.call(document.querySelectorAll('#c2-club [data-add].on')).map(function(b){return b.dataset.add}); var c=document.querySelector('#tblBarCount'),l=document.querySelector('#tblBarList'); if(c)c.textContent=ids.length+' table'+(ids.length===1?'':'s')+' added'; if(l)l.textContent=ids.length?ids.join(', '):'None selected'; }
+
+renderNav();
+go2('home');
+</script>
+</body>
+</html>
