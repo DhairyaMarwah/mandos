@@ -325,6 +325,33 @@ h1,h2,.big,.apphdr h1{text-wrap:balance}
 .explain .lg span{font-size:10.5px;color:var(--dim);display:inline-flex;align-items:center;gap:5px}
 .explain .lg i{width:9px;height:9px;border-radius:3px;display:inline-block}
 @media(max-width:1300px){.explain{position:static;width:428px;max-height:none}}
+
+/* ================= MOBILE — full-bleed app + drawer nav (no device frame) ================= */
+.mnav{display:none}
+.drawer-ov{display:none}
+@media(max-width:760px){
+  html,body{overflow-x:hidden}
+  .app{flex-direction:column;align-items:stretch;padding:0;gap:0;min-height:100dvh}
+  .mnav{display:flex;align-items:center;gap:8px;position:sticky;top:0;z-index:60;height:56px;padding:0 12px;background:rgba(10,10,12,.94);backdrop-filter:blur(12px);-webkit-backdrop-filter:blur(12px);border-bottom:1px solid var(--line)}
+  .mnav-btn{flex:none;display:flex;align-items:center;gap:6px;font-size:12.5px;font-weight:600;color:var(--text);background:var(--surface);border:1px solid var(--line);border-radius:999px;padding:8px 13px;cursor:pointer}
+  .mnav-btn:active{scale:.96}
+  .mnav-title{flex:1;min-width:0;text-align:center;font-size:13px;font-weight:600;color:var(--accent);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+  .stage{width:100%;flex:1;gap:0}
+  .stage .scrn-name,.stage .hint{display:none}
+  .phone,.phone.tablet{width:100%;height:calc(100dvh - 56px);max-width:none;max-height:none;aspect-ratio:auto;border:none;border-radius:0;padding:0;background:none;box-shadow:none}
+  .phone .device-screen,.phone.tablet .device-screen{border-radius:0;box-shadow:none}
+  .phone .island,.phone .home-ind,.phone .statusbar{display:none}
+  .phone .screens,.phone.tablet .screens{top:0}
+  /* right drawer = page list */
+  .sidebar{position:fixed;top:0;right:0;bottom:0;left:auto;width:86%;max-width:360px;height:100dvh;max-height:100dvh;margin:0;border:none;border-left:1px solid var(--line);border-radius:0;overflow-x:hidden;overflow-y:auto;transform:translateX(101%);transition:transform .3s cubic-bezier(.2,0,0,1);z-index:85;box-shadow:-16px 0 44px rgba(0,0,0,.55)}
+  .sidebar.open{transform:translateX(0)}
+  .sidebar .nav-item{white-space:normal}
+  /* left drawer = info / explainer */
+  .explain{position:fixed;top:0;left:0;bottom:0;right:auto;width:86%;max-width:360px;height:100dvh;max-height:100dvh;margin:0;border:none;border-right:1px solid var(--line);border-radius:0;overflow-x:hidden;overflow-y:auto;transform:translateX(-101%);transition:transform .3s cubic-bezier(.2,0,0,1);z-index:85;box-shadow:16px 0 44px rgba(0,0,0,.55)}
+  .explain.open{transform:translateX(0)}
+  .drawer-ov{display:block;position:fixed;inset:0;background:rgba(0,0,0,.55);z-index:80;opacity:0;pointer-events:none;transition:opacity .25s}
+  .drawer-ov.show{opacity:1;pointer-events:auto}
+}
 </style>
 </head>
 <body>
@@ -370,6 +397,14 @@ h1,h2,.big,.apphdr h1{text-wrap:balance}
 </svg>
 
 <div class="app">
+  <!-- ============ MOBILE NAVBAR (only shows ≤760px) ============ -->
+  <div class="mnav">
+    <button class="mnav-btn" onclick="openInfo()"><svg class="ic sm"><use href="#i-info"/></svg> Info</button>
+    <div class="mnav-title" id="mnavTitle">Mandos</div>
+    <button class="mnav-btn" onclick="openNav()">Pages <svg class="ic sm"><use href="#i-menu"/></svg></button>
+  </div>
+  <div class="drawer-ov" id="drawerOv" onclick="closeDrawers()"></div>
+
   <!-- ============ SIDEBAR / NAVIGATOR ============ -->
   <aside class="sidebar">
     <h2>Mandos Prototype</h2>
@@ -1703,9 +1738,16 @@ function go2(id){
   document.querySelector('.phone')?.classList.toggle('tablet', id==='m2-timeline-tablet');
   const meta=SCREENS.find(s=>s.id===id)||SCREENS.find(s=>id.startsWith(s.id));
   document.getElementById('scrnName').textContent=meta?meta.t:id;
+  const mt=document.getElementById('mnavTitle'); if(mt) mt.textContent=meta?meta.t:id;
   document.querySelectorAll('.nav-item').forEach(n=>n.classList.toggle('active',n.dataset.id===id));
   renderExplain(id);
+  closeDrawers();
 }
+/* ---------- mobile drawers (info = left, pages = right) ---------- */
+function drawerOv(on){ const o=document.getElementById('drawerOv'); if(o) o.classList.toggle('show',on); }
+function openNav(){ document.querySelector('.sidebar')?.classList.add('open'); document.getElementById('explain')?.classList.remove('open'); drawerOv(true); }
+function openInfo(){ document.getElementById('explain')?.classList.add('open'); document.querySelector('.sidebar')?.classList.remove('open'); drawerOv(true); }
+function closeDrawers(){ document.querySelector('.sidebar')?.classList.remove('open'); document.getElementById('explain')?.classList.remove('open'); drawerOv(false); }
 function back(){ const p=history.pop(); if(p) go2(p); }
 function openSheet(id){ document.getElementById('sheetBox').innerHTML=(SHEETS[id]||(()=>'—'))(); document.getElementById('sheetLayer').classList.add('open'); if(INFO[id]) renderExplain(id); }
 function closeSheet(){ const l=document.getElementById('sheetLayer'); if(l) l.classList.remove('open'); const a=document.querySelector('.screen.active'); if(a) renderExplain(a.id); }
