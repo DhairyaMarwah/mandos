@@ -578,6 +578,14 @@ function passCard(t,opts){ opts=opts||{}; const T=TIERS[t]||TIERS.ga; return `<d
 const swatchRow = (sel=0)=>`<div class="swatches">${TIER_PALETTE.map((c,i)=>`<span class="sw${i===sel?' on':''}" style="--sc:${c}" onclick="pickSwatch(this)"></span>`).join('')}</div>`;
 function pickSwatch(el){ el.parentElement.querySelectorAll('.sw').forEach(s=>s.classList.remove('on')); el.classList.add('on'); }
 
+/* ---------- real imagery (verified Unsplash posters + pravatar faces) ---------- */
+const img=(id,w)=>`https://images.unsplash.com/${id}?auto=format&fit=crop&w=${w||800}&q=70`;
+const IMG={ neon:'photo-1545128485-c400e7702796', crowd:'photo-1470229722913-7c0e2dbbafd3', dj:'photo-1516450360452-9312f5e86fc7', club:'photo-1574391884720-bbc3740c59d1' };
+/* dark gradient over the photo so white text stays legible */
+const heroImg=(key,w)=>`background:linear-gradient(180deg,rgba(8,6,16,.26) 0%,rgba(8,6,16,.5) 52%,rgba(8,6,16,.9) 100%),url('${img(IMG[key]||IMG.neon,w||900)}') center/cover;`;
+const avSeed=s=>{ s=(s||'')+''; let t=7; for(let i=0;i<s.length;i++) t+=s.charCodeAt(i)*(i+1); return (t%70)+1; };
+const avatarPhoto=(seed,size)=>`<div class="avatar" style="background:url('https://i.pravatar.cc/120?img=${(typeof seed==='number'?seed:avSeed(seed))}') center/cover${size?';width:'+size+'px;height:'+size+'px':''}"></div>`;
+
 /* ------- SCREEN BUILDERS (return inner HTML of .screen-body/footer) ------- */
 /* ============ LIVE AVAILABILITY ENGINE (real computation) ============ */
 const ENGINE = {
@@ -617,15 +625,15 @@ const SB = {};
 
 /* ---------- HOME / DISCOVER (venue selection) ---------- */
 const VENUES=[
- {id:"boomerang",name:"Boomerang Club",tags:["Club"],area:"Central",rating:"4.8",meta:"Live DJ · Open till 5 AM",event:true,grad:"linear-gradient(140deg,#3a1e5c,#c23b6a)"},
- {id:"qura",name:"Qura Bar",tags:["Bar","Restaurant"],area:"Central",rating:"4.6",meta:"Cocktails · Open till 2 AM",grad:"linear-gradient(140deg,#1b2a4a,#2b5c7b)"},
- {id:"skyline",name:"Skyline Lounge",tags:["Lounge","Bar"],area:"Tsim Sha Tsui",rating:"4.7",meta:"Rooftop · Open till 1 AM",grad:"linear-gradient(140deg,#2a2140,#7b4b86)"},
- {id:"neon",name:"Neon Room",tags:["Club"],area:"Wan Chai",rating:"4.5",meta:"Techno nights · Open till 4 AM",event:true,grad:"linear-gradient(140deg,#101a3a,#3a2a6a)"},
- {id:"terrace",name:"The Terrace",tags:["Rooftop","Bar"],area:"Central",rating:"4.4",meta:"Sunset views · Open till 12 AM",grad:"linear-gradient(140deg,#123524,#256b4a)"},
+ {id:"boomerang",name:"Boomerang Club",tags:["Club"],area:"Central",rating:"4.8",meta:"Live DJ · Open till 5 AM",event:true,img:"photo-1516450360452-9312f5e86fc7"},
+ {id:"qura",name:"Qura Bar",tags:["Bar","Restaurant"],area:"Central",rating:"4.6",meta:"Cocktails · Open till 2 AM",img:"photo-1566737236500-c8ac43014a67"},
+ {id:"skyline",name:"Skyline Lounge",tags:["Lounge","Bar"],area:"Tsim Sha Tsui",rating:"4.7",meta:"Rooftop · Open till 1 AM",img:"photo-1517457373958-b7bdd4587205"},
+ {id:"neon",name:"Neon Room",tags:["Club"],area:"Wan Chai",rating:"4.5",meta:"Techno nights · Open till 4 AM",event:true,img:"photo-1574391884720-bbc3740c59d1"},
+ {id:"terrace",name:"The Terrace",tags:["Rooftop","Bar"],area:"Central",rating:"4.4",meta:"Sunset views · Open till 12 AM",img:"photo-1502136969935-8d8eef54d77b"},
 ];
 const venueCard=(v)=>`
   <div class="venue-card list-card" data-name="${v.name.toLowerCase()}" data-tags="${v.tags.join(',')}${v.event?',Event':''}" onclick="openVenue('${v.id}')" style="gap:0">
-    <div class="venue-img" style="height:118px;background:${v.grad};position:relative">${v.event?`<span class="badge b-event" style="position:absolute;top:10px;left:10px">Event Tonight</span>`:''}<span class="badge" style="position:absolute;top:10px;right:10px;background:rgba(0,0,0,.55);color:#fff">${ic('star','sm')} ${v.rating}</span></div>
+    <div class="venue-img" style="height:132px;background:linear-gradient(180deg,rgba(0,0,0,.08),rgba(0,0,0,.52)),url('${img(v.img,600)}') center/cover;position:relative">${v.event?`<span class="badge b-event" style="position:absolute;top:10px;left:10px">Event Tonight</span>`:''}<span class="badge" style="position:absolute;top:10px;right:10px;background:rgba(0,0,0,.55);color:#fff">${ic('star','sm')} ${v.rating}</span></div>
     <div style="padding:12px;display:flex;flex-direction:column;gap:7px">
       <div class="between"><div class="bold">${v.name}</div><span class="xs muted">${ic('loc','sm')} ${v.area}</span></div>
       <div class="row" style="flex-wrap:wrap;gap:6px">${v.tags.map(t=>`<span class="chip" style="padding:3px 10px;font-size:11px">${t}</span>`).join('')}</div>
@@ -680,7 +688,7 @@ const liveDateStrip=(sel,handler)=>{
 };
 function evtDayView(){ return `
   <div class="tabs"><div class="tab on" data-goto="c2-club">Tables</div><div class="tab" data-goto="c2-tickets">Tickets</div></div>
-  <div class="hero"><button class="icon-btn bg" style="position:absolute;top:12px;right:12px">${ic('bookmark','sm')}</button>
+  <div class="hero" style="min-height:230px;${heroImg('neon')}"><button class="icon-btn bg" style="position:absolute;top:12px;right:12px">${ic('bookmark','sm')}</button>
     <div class="hero-cap"><span class="badge b-event" style="margin-bottom:6px">EVENT NIGHT</span>
       <div class="big" style="letter-spacing:.02em">NEON NIGHTS</div>
       <div class="sm muted">House · Techno · Melodic</div>
@@ -717,13 +725,13 @@ SB["c1-entry-evt"]=()=>hdr("Booking",(CUR?CUR.name+" · "+CUR.area:"Boomerang Cl
 /* ---------- C1 EVENT DETAILS ---------- */
 SB["c1-event-details"]=()=>hdr("Event Details","",`<button class="icon-btn bg">${ic('bookmark','sm')}</button>`)+`
 <div class="screen-body">
-  <div class="hero"><div class="hero-cap"><div class="big">NEON NIGHTS</div><div class="sm muted">${D.venue.name}, Central</div></div></div>
+  <div class="hero" style="min-height:236px;${heroImg('crowd')}"><div class="hero-cap"><span class="badge b-event" style="margin-bottom:6px">TONIGHT · ${D.event.date}</span><div class="big">NEON NIGHTS</div><div class="sm muted">${D.venue.name}, Central · House · Techno · Melodic</div></div></div>
   <div class="card between"><div class="row">${ic('cal')}<div><div class="sm">${D.event.date}</div><div class="xs muted">9:00 PM onwards</div></div></div><div class="right"><div class="xs muted">Starts at</div><div class="accent bold">HK$${D.event.from}</div></div></div>
   <div><div class="sec-label">About the Event</div><div class="sm muted">A night of unstoppable energy. Deep grooves, heavy drops, and a crowd that lives for the music. <span class="accent">Read more</span></div></div>
   <div class="sec-label">Lineup</div>
-  <div class="between"><div class="col" style="align-items:center"><div class="avatar">N</div><div class="xs">NOVA</div><div class="xs muted">Headliner</div></div>
-    <div class="col" style="align-items:center"><div class="avatar">M</div><div class="xs">MIRA</div><div class="xs muted">Special Set</div></div>
-    <div class="col" style="align-items:center"><div class="avatar">K</div><div class="xs">KAIRO</div><div class="xs muted">Closing Set</div></div></div>
+  <div class="between"><div class="col" style="align-items:center;gap:6px">${avatarPhoto(13,58)}<div class="xs bold">NOVA</div><div class="xs muted">Headliner</div></div>
+    <div class="col" style="align-items:center;gap:6px">${avatarPhoto(45,58)}<div class="xs bold">MIRA</div><div class="xs muted">Special Set</div></div>
+    <div class="col" style="align-items:center;gap:6px">${avatarPhoto(60,58)}<div class="xs bold">KAIRO</div><div class="xs muted">Closing Set</div></div></div>
   <div class="sec-label">Ticket &amp; Table Options</div>
   <div class="card between"><div class="row"><div class="ticket-ic" style="background:var(--accent-soft);color:var(--accent)">${ic('ticket')}</div><div><div class="bold sm">General Entry</div><div class="xs muted">1 drink included · Fast track entry</div></div></div><div class="bold">HK$150</div></div>
 </div>
@@ -772,7 +780,7 @@ function hybClubNight(){ return '<div class="info-banner">'+ic('info','sm')+'<di
   +tableCard("V-6","VIP Table","4–6 guests",3000,1000,"Held for the night · premium booth.")
   +tableCard("B-2","Booth","6–8 guests",3000,1200,"Held for the night · private booth.")
   +'<div class="card between" style="border-radius:16px"><div><div class="bold sm">1 table · held for the night</div><div class="xs muted">V-5 · arrive 9:00 PM</div></div><button class="btn btn-primary sm" onclick="openSheet(\'c2-additional\')">View Summary '+ic('fwd','sm')+'</button></div>'; }
-function hybEventNight(){ return '<div class="hero" style="min-height:150px"><div class="hero-cap"><span class="badge b-event" style="margin-bottom:6px">EVENT NIGHT</span><div class="big">NEON NIGHTS</div><div class="sm muted">House · Techno · from HK$150</div></div></div>'
+function hybEventNight(){ return '<div class="hero" style="min-height:172px;'+heroImg('neon',700)+'"><div class="hero-cap"><span class="badge b-event" style="margin-bottom:6px">EVENT NIGHT</span><div class="big">NEON NIGHTS</div><div class="sm muted">House · Techno · from HK$150</div></div></div>'
   +'<div class="info-banner">'+ic('info','sm')+'<div>This date is an <b>event night</b> — entry is by ticket, with event tables available. Daytime tables are still bookable by slot.</div></div>'
   +'<button class="btn btn-primary" onclick="go(\'c1-event-details\')">View event · tickets &amp; tables</button>'; }
 function hybDate(el){ document.querySelectorAll('#hybDates .dc').forEach(function(d){d.classList.remove('sel')}); el.classList.add('sel'); var lbl=(el.querySelector('.d')?el.querySelector('.d').textContent:'')+' '+(el.querySelector('.n')?el.querySelector('.n').textContent:''); hybRender(el.dataset.day==='event',lbl); }
@@ -802,7 +810,7 @@ SB["c2-club"]=()=>hdr("Club Reservation")+`
 <div class="screen-body">
   ${liveDateStrip(2,'buildDate')}
   <div class="tabs"><div class="tab" data-goto="c2-tickets">Tickets</div><div class="tab on">Tables</div></div>
-  <div style="position:relative;border-radius:14px;overflow:hidden;height:96px;background:linear-gradient(120deg,#4a1e3c,#7b2d5b,#c23b6a)"><span class="badge b-completed" style="position:absolute;left:8px;bottom:8px;background:rgba(0,0,0,.55)">Photo (venue reference only)</span></div>
+  <div style="position:relative;border-radius:14px;overflow:hidden;height:128px;${heroImg('club',700)}"><span class="badge b-event" style="position:absolute;left:8px;top:8px">EVENT NIGHT</span><span class="badge b-completed" style="position:absolute;left:8px;bottom:8px;background:rgba(0,0,0,.55);color:#fff">Neon Nights · event tables</span></div>
   <div class="filterbar row" data-target="#c2-club" style="overflow:auto">
     <span class="chip on" data-filter="all" onclick="filt(this)">All</span>
     <span class="chip" data-filter="VIP Table" onclick="filt(this)">VIP</span>
@@ -833,7 +841,7 @@ SB["c2-additional"]=()=>`<div class="grab"></div>
   <div class="between sm muted">Selected Table(s)<span>1 table selected</span></div>
   <div class="list-card"><div class="between"><div><b>V-5</b> <span class="sm accent">VIP Table</span></div><span class="red sm">Remove</span></div><div class="sm muted">${ic('users','sm')} 2–4 guests · Deposit HK$1,000</div></div>
   <div class="between"><div class="bold sm">Contact Details</div><span class="accent sm">Edit</span></div>
-  <div class="card row"><div class="avatar">MX</div><div><div class="bold sm">${D.guest.name}</div><div class="xs muted">${D.guest.phone}</div><div class="xs muted">${D.guest.email}</div></div></div>
+  <div class="card row">${avatarPhoto(47)}<div><div class="bold sm">${D.guest.name}</div><div class="xs muted">${D.guest.phone}</div><div class="xs muted">${D.guest.email}</div></div></div>
   <div><div class="bold sm">Number of Guests</div><div class="xs muted">Must not exceed table capacity (4 guests)</div></div>
   <div class="stepper" data-min="1" data-max="4"><button class="stp-btn">${ic('minus')}</button><div class="stp-val">3</div><button class="stp-btn">${ic('plus')}</button></div>
   <div class="card tight"><div class="between sm"><span class="muted row">${ic('clock','sm')} Table held for</span><span class="bold">the whole night</span></div><div class="xs muted" style="margin-top:4px">Arrive anytime after 9 PM · yours until close</div></div>
@@ -845,6 +853,7 @@ SB["c2-tickets"]=()=>hdr("Club Reservation")+`
 <div class="screen-body">
   ${liveDateStrip(2,'buildDate')}
   <div class="tabs"><div class="tab on">Tickets</div><div class="tab" data-goto="c2-club">Tables</div></div>
+  <div class="hero" style="min-height:118px;${heroImg('neon',700)}"><div class="hero-cap"><div class="row" style="justify-content:space-between"><div><span class="badge b-event">NEON NIGHTS</span><div class="sm muted" style="margin-top:5px">Tue, 26 Dec · 9 PM</div></div><div class="right"><div class="xs muted">from</div><div class="accent bold">HK$150</div></div></div></div></div>
   <div class="bold">Choose Tickets</div>
   <div class="xs muted" style="margin-top:-6px">Each tier has its own colour — you'll get a matching QR pass and wristband at the door.</div>
   ${ticketCard("General Admission",150,"Standard entry to the club. Includes 1 drink.","Many available","s-low",1,'ga')}
@@ -1087,7 +1096,7 @@ SB["m3-scanner"]=()=>hdr("Scanner")+`
   <div class="scan-tier" style="--tc:${TIERS.table.color};--tk:${TIERS.table.ink}"><div class="lbl">${TIERS.table.label}</div><div class="bnd"><span class="w"></span>Give ${TIERS.table.band} wristband</div></div>
   <div class="card">
     <div class="between"><div class="sec-label" style="margin:0">Scan Result</div>${tierBadge('table',true)}</div>
-    <div class="row" style="margin-top:8px"><div class="avatar">MX</div><div class="grow"><div class="bold">${D.guest.name}</div><div class="xs muted">${D.booking.ref}</div></div><span class="badge b-confirmed">Match</span></div>
+    <div class="row" style="margin-top:8px">${avatarPhoto(47)}<div class="grow"><div class="bold">${D.guest.name}</div><div class="xs muted">${D.booking.ref}</div></div><span class="badge b-confirmed">Match</span></div>
     <div class="kv" style="margin-top:8px"><span class="k">Table</span><span>VIP Table V-5 · behind DJ booth</span></div>
     <div class="kv"><span class="k">Date &amp; Time</span><span>${D.booking.date} · ${D.booking.time}</span></div>
     <div class="kv"><span class="k">Guests</span><span>3</span></div>
@@ -1182,7 +1191,7 @@ SB["m2-reservation"]=()=>hdr("Reservations",'',`<button class="icon-btn bg">${ic
 </div>`;
 const resCard=(name,ini,req,reqd,time,type,g,open=false)=>`
   <div class="list-card" data-name="${name.toLowerCase()}">
-    <div class="between"><div class="row"><div class="avatar">${ini}</div><div class="bold sm">${name}</div></div><span class="badge b-pending">Pending</span></div>
+    <div class="between"><div class="row">${avatarPhoto(ini)}<div class="bold sm">${name}</div></div><span class="badge b-pending">Pending</span></div>
     <div class="xs muted">Req. ${reqd}</div>
     <div class="between sm"><span class="k muted">${ic('cal','sm')} 26 Dec · ${time}</span><span>${ic('users','sm')} ${g} guests</span></div>
     <div class="between sm"><span class="k muted">${ic('table','sm')} ${type}</span></div>
@@ -1194,7 +1203,7 @@ const resCard=(name,ini,req,reqd,time,type,g,open=false)=>`
 SB["m2-detail"]=()=>hdr("Booking Detail","",`<button class="icon-btn bg">${ic('dots-v','sm')}</button>`)+`
 <div class="screen-body">
   <div class="card">
-    <div class="between"><div class="row"><div class="avatar">MX</div><div><div class="bold">${D.guest.name}</div><div class="xs muted">VIP Table · ${D.booking.ref}</div></div></div><span class="badge b-pending">Pending</span></div>
+    <div class="between"><div class="row">${avatarPhoto(47)}<div><div class="bold">${D.guest.name}</div><div class="xs muted">VIP Table · ${D.booking.ref}</div></div></div><span class="badge b-pending">Pending</span></div>
     <div class="divider" style="margin:10px 0"></div>
     <div class="kv"><span class="k">${ic('cal','sm')} Date &amp; Time</span><span>${D.booking.date} · ${D.booking.time}</span></div>
     <div class="kv"><span class="k">${ic('users','sm')} Guests</span><span>3</span></div>
@@ -1332,7 +1341,7 @@ SB["m1-schedule"]=()=>hdr("Schedule &amp; Modes","Set Regular / Club / Event per
 
 const impactCard=(name,ini,tbl,meta,state)=>`
   <div class="list-card">
-    <div class="between"><div class="row"><div class="avatar">${ini}</div><div><div class="bold sm">${name}</div><div class="xs muted">${tbl} · ${meta}</div></div></div>${state==='resolved'?'<span class="badge b-confirmed">Moved</span>':'<span class="badge b-pending">Action needed</span>'}</div>
+    <div class="between"><div class="row">${avatarPhoto(ini)}<div><div class="bold sm">${name}</div><div class="xs muted">${tbl} · ${meta}</div></div></div>${state==='resolved'?'<span class="badge b-confirmed">Moved</span>':'<span class="badge b-pending">Action needed</span>'}</div>
     ${state==='open'?`<div class="qa">
       <div class="qi"><div class="ci">${ic('phone','sm')}</div>Contact</div>
       <div class="qi" onclick="openSheet('movereservation')"><div class="ci">${ic('move','sm')}</div>Move date</div>
@@ -1358,7 +1367,7 @@ SB["c2-enquiry"]=()=>hdr("Group Enquiry")+`
   <div class="card"><div class="bold sm" style="margin-bottom:8px">Party size</div>${stepper(14)}</div>
   <div class="field"><label>Preferred time</label><input class="input" value="9:00 PM"></div>
   <div class="field"><label>Occasion / notes</label><textarea class="textarea" placeholder="Birthday, bottle service, seating preference…"></textarea></div>
-  <div class="card row"><div class="avatar">MX</div><div><div class="bold sm">${D.guest.name}</div><div class="xs muted">${D.guest.phone} · ${D.guest.email}</div></div></div>
+  <div class="card row">${avatarPhoto(47)}<div><div class="bold sm">${D.guest.name}</div><div class="xs muted">${D.guest.phone} · ${D.guest.email}</div></div></div>
 </div>
 <div class="screen-footer"><button class="btn btn-primary" onclick="go('c3-enquiry-sent')">Send Enquiry</button><div class="foot-note">The venue allocates tables manually and replies to you</div></div>`;
 SB["c3-enquiry-sent"]=()=>hdr("Enquiry Sent")+`
@@ -1415,10 +1424,10 @@ SB["m2-enquiries"]=()=>hdr("Group Enquiries")+`
 <div class="screen-body">
   <div class="info-banner">${ic('users','sm')}<div>Parties of 10+ land here — call the guest, take a deposit, allocate tables manually, then confirm.</div></div>
   <div class="list-card">
-    <div class="between"><div class="row"><div class="avatar">MX</div><div><div class="bold sm">Mei Xiang · 14 guests</div><div class="xs muted">Fri 26 Dec · 9:00 PM · birthday, bottle service</div></div></div><span class="badge b-pending">New</span></div>
+    <div class="between"><div class="row">${avatarPhoto(47)}<div><div class="bold sm">Mei Xiang · 14 guests</div><div class="xs muted">Fri 26 Dec · 9:00 PM · birthday, bottle service</div></div></div><span class="badge b-pending">New</span></div>
     <div class="qa"><div class="qi"><div class="ci">${ic('phone','sm')}</div>Call</div><div class="qi" onclick="openSheet('senddeposit')"><div class="ci">${ic('dollar','sm')}</div>Deposit</div><div class="qi" onclick="openSheet('m3-assign')"><div class="ci">${ic('table','sm')}</div>Allocate</div><div class="qi"><div class="ci" style="color:var(--green);background:var(--green-soft)">${ic('check','sm')}</div>Confirm</div></div>
   </div>
-  <div class="list-card"><div class="between"><div class="row"><div class="avatar">RK</div><div><div class="bold sm">Raj Kumar · 20 guests</div><div class="xs muted">Sat 27 Dec · corporate night</div></div></div><span class="badge b-confirmed">Allocated</span></div><div class="xs green">${ic('check','sm')} 3 tables held · deposit paid · confirmed</div></div>
+  <div class="list-card"><div class="between"><div class="row">${avatarPhoto(52)}<div><div class="bold sm">Raj Kumar · 20 guests</div><div class="xs muted">Sat 27 Dec · corporate night</div></div></div><span class="badge b-confirmed">Allocated</span></div><div class="xs green">${ic('check','sm')} 3 tables held · deposit paid · confirmed</div></div>
 </div>`;
 
 /* ============================================================
@@ -1525,7 +1534,7 @@ const SHEETS = {
    <div class="tabbed">
      <div class="tabs"><div class="tab on" data-tab="d">Details</div><div class="tab" data-tab="tk">Tickets</div><div class="tab" data-tab="tb">Tables</div><div class="tab" data-tab="st">Settings</div><div class="tab" data-tab="pv">Preview</div></div>
      <div class="panel on" data-panel="d">
-       <div class="field"><label>Event Poster</label><div style="height:96px;border-radius:12px;background:linear-gradient(120deg,#3a1e5c,#c23b6a);display:grid;place-items:center;color:#fff">📷 Recommended 1080×1350</div></div>
+       <div class="field"><label>Event Poster</label><div style="height:128px;border-radius:12px;${heroImg('neon',700)}display:flex;align-items:flex-end;padding:10px"><span class="chip" style="background:rgba(0,0,0,.55);color:#fff">${ic('scan','sm')} Change poster · 1080×1350</span></div></div>
        <div class="field"><label>Event Name</label><input class="input" value="Neon Nights"></div>
        <div class="field"><label>Date &amp; Time</label><div class="row"><input class="input" value="Fri, 26 Dec 2025"><input class="input" value="9:00 PM"></div></div>
        <div class="field"><label>Description</label><textarea class="textarea">A night of unstoppable energy. Deep grooves, heavy drops, and a crowd that lives for the music.</textarea></div>
@@ -1552,7 +1561,7 @@ const SHEETS = {
      </div>
      <div class="panel" data-panel="pv">
        <div class="sm muted">This is what customers see.</div>
-       <div class="hero"><div class="hero-cap"><span class="badge b-event" style="margin-bottom:6px">TONIGHT</span><div class="big">NEON NIGHTS</div><div class="sm muted">House · Techno · Melodic</div><div class="between" style="margin-top:8px"><span class="sm">Fri, 26 Dec · 9:00 PM</span><span class="accent bold">from HK$150</span></div></div></div>
+       <div class="hero" style="min-height:210px;${heroImg('neon')}"><div class="hero-cap"><span class="badge b-event" style="margin-bottom:6px">TONIGHT</span><div class="big">NEON NIGHTS</div><div class="sm muted">House · Techno · Melodic</div><div class="between" style="margin-top:8px"><span class="sm">Fri, 26 Dec · 9:00 PM</span><span class="accent bold">from HK$150</span></div></div></div>
      </div>
    </div>
    <button class="btn btn-primary" onclick="closeSheet()">Save Event</button>`,
@@ -1658,7 +1667,7 @@ function setBkView(btn,view){
 const bkListCard=(name,ini,slot,table,g,st,tag)=>{
   var col=st==='seated'?'var(--blue)':st==='confirmed'?'var(--green)':st==='pending'?'var(--amber)':st==='noshow'?'var(--red)':'var(--dim2)';
   return `<div class="list-card" style="border-left:3px solid ${col}" onclick="go('m2-detail')">
-    <div class="between"><div class="row"><div class="avatar">${ini}</div><div class="bold sm">${name}</div></div>${tag?`<span class="badge b-owl">${tag}</span>`:`<span class="badge b-${st==='noshow'?'cancel':st}">${st[0].toUpperCase()+st.slice(1)}</span>`}</div>
+    <div class="between"><div class="row">${avatarPhoto(ini)}<div class="bold sm">${name}</div></div>${tag?`<span class="badge b-owl">${tag}</span>`:`<span class="badge b-${st==='noshow'?'cancel':st}">${st[0].toUpperCase()+st.slice(1)}</span>`}</div>
     <div class="tiles"><div class="tile"><div class="l">Slot</div><div class="v" style="font-size:15px">${slot}</div></div><div class="tile"><div class="l">Table</div><div class="v" style="font-size:15px">${table}</div></div><div class="tile"><div class="l">Guests</div><div class="v" style="font-size:15px">${g}</div></div></div>
   </div>`;
 };
