@@ -352,6 +352,34 @@ h1,h2,.big,.apphdr h1{text-wrap:balance}
   .drawer-ov{display:block;position:fixed;inset:0;background:rgba(0,0,0,.55);z-index:80;opacity:0;pointer-events:none;transition:opacity .25s}
   .drawer-ov.show{opacity:1;pointer-events:auto}
 }
+
+/* ================= ACCESS TIERS · colour-coded passes / wristbands ================= */
+.tier-badge{display:inline-flex;align-items:center;font-size:10.5px;font-weight:700;letter-spacing:.03em;padding:3px 9px;border-radius:7px;color:var(--tc);background:color-mix(in srgb,var(--tc) 16%,transparent);border:1px solid color-mix(in srgb,var(--tc) 42%,transparent);white-space:nowrap}
+.tier-badge.big{font-size:13px;padding:6px 13px;border-radius:9px}
+.pass{border:1px solid var(--line);border-radius:16px;overflow:hidden;background:var(--surface);position:relative;box-shadow:inset 0 1px 0 rgba(255,255,255,.03),0 6px 22px rgba(0,0,0,.35)}
+.pass::before{content:"";position:absolute;top:0;left:0;right:0;height:4px;background:var(--tc)}
+.pass-top{display:flex;justify-content:space-between;align-items:flex-start;padding:16px 16px 8px}
+.pass-tier{font-size:24px;font-weight:800;color:var(--tc);line-height:1}
+.pass-sub{font-size:12px;color:var(--dim);margin-top:4px}
+.pass-qrwrap{display:flex;justify-content:center;padding:8px 16px 18px}
+.pass .pass-qr{width:184px;height:184px;box-shadow:0 0 0 4px var(--tc),0 0 40px -4px var(--tc);border-radius:14px}
+.pass-band{display:flex;align-items:center;gap:9px;font-size:12.5px;color:var(--text);padding:13px 16px;border-top:1px solid var(--line);background:color-mix(in srgb,var(--tc) 9%,transparent)}
+.pass-band .dotc{width:14px;height:14px;border-radius:50%;flex:none;background:var(--tc);box-shadow:0 0 10px var(--tc)}
+.pass-guests{padding:0 16px 16px}
+/* scanner tier banner — must read instantly at a packed door */
+.scan-tier{border-radius:16px;padding:20px 16px;text-align:center;background:var(--tc);color:var(--tk);box-shadow:0 12px 36px -8px var(--tc)}
+.scan-tier .lbl{font-size:38px;font-weight:800;letter-spacing:.02em;line-height:1}
+.scan-tier .bnd{font-size:14px;font-weight:700;margin-top:8px;opacity:.92;display:flex;align-items:center;gap:8px;justify-content:center}
+.scan-tier .bnd .w{width:18px;height:12px;border-radius:3px;background:var(--tk);opacity:.9}
+/* table guest-list passes */
+.guestgrid{display:grid;grid-template-columns:1fr 1fr 1fr;gap:10px}
+.gpass{border:1px solid var(--line);border-radius:12px;padding:8px 8px 9px;text-align:center;background:var(--bg2)}
+.gpass .gpass-qr{width:100%;height:auto;aspect-ratio:1;padding:5px;box-shadow:0 0 0 2px var(--tc),0 0 14px -3px var(--tc);border-radius:8px}
+.gpass .gl{font-size:11px;color:var(--dim);margin-top:6px;font-weight:600}
+/* merchant colour palette (3–4 swatches → tier / wristband) */
+.swatches{display:flex;gap:9px;flex-wrap:wrap}
+.sw{width:30px;height:30px;border-radius:9px;background:var(--sc);cursor:pointer;border:2px solid transparent;box-shadow:inset 0 0 0 1px rgba(255,255,255,.14)}
+.sw.on{border-color:#fff;box-shadow:0 0 0 2px var(--sc),0 4px 12px -2px var(--sc)}
 </style>
 </head>
 <body>
@@ -531,6 +559,24 @@ const dateStrip = (sel=0)=>{
 };
 const venueRow = (v=D.venue,badge="")=>`
   <div class="row"><div class="venue-ic">🎧</div><div class="grow"><div class="bold">${v.name}</div><div class="sm muted">${v.area}</div></div>${badge}</div>`;
+
+/* ---------- ACCESS TIERS (colour palette drives QR frame + wristband + scanner) ---------- */
+const TIERS = {
+  ga:        {label:'GA',        full:'General Admission',  color:'#3b82f6', ink:'#04122e', band:'Blue'},
+  vip:       {label:'VIP',       full:'VIP Entry',          color:'#f5a623', ink:'#2a1a00', band:'Gold'},
+  backstage: {label:'Backstage', full:'Backstage Access',   color:'#d0479e', ink:'#2b0620', band:'Pink'},
+  table:     {label:'VIP Table', full:'Table service',      color:'#22c55e', ink:'#04240f', band:'Green'}
+};
+const TIER_PALETTE = ['#3b82f6','#f5a623','#d0479e','#22c55e'];
+const tierBadge = (t,big)=>{ const T=TIERS[t]||TIERS.ga; return `<span class="tier-badge${big?' big':''}" style="--tc:${T.color}">${T.label}</span>`; };
+function passCard(t,opts){ opts=opts||{}; const T=TIERS[t]||TIERS.ga; return `<div class="pass" style="--tc:${T.color}">
+  <div class="pass-top"><div><div class="pass-tier">${T.label}</div><div class="pass-sub">${opts.sub||T.full} · ${opts.ref||D.booking.ref}</div></div>${tierBadge(t,true)}</div>
+  <div class="pass-qrwrap"><div class="qr pass-qr" data-seed="${opts.seed||42}"></div></div>
+  <div class="pass-band"><span class="dotc"></span>Wristband:&nbsp;<b>${T.band}</b>&nbsp;— show this at entry</div>
+  ${opts.guests?`<div class="pass-guests"><button class="btn btn-dark sm" style="width:100%" onclick="openSheet('guestpasses')">${ic('users','sm')} View ${opts.guests} guest passes</button></div>`:''}
+</div>`; }
+const swatchRow = (sel=0)=>`<div class="swatches">${TIER_PALETTE.map((c,i)=>`<span class="sw${i===sel?' on':''}" style="--sc:${c}" onclick="pickSwatch(this)"></span>`).join('')}</div>`;
+function pickSwatch(el){ el.parentElement.querySelectorAll('.sw').forEach(s=>s.classList.remove('on')); el.classList.add('on'); }
 
 /* ------- SCREEN BUILDERS (return inner HTML of .screen-body/footer) ------- */
 /* ============ LIVE AVAILABILITY ENGINE (real computation) ============ */
@@ -800,20 +846,21 @@ SB["c2-tickets"]=()=>hdr("Club Reservation")+`
   ${liveDateStrip(2,'buildDate')}
   <div class="tabs"><div class="tab on">Tickets</div><div class="tab" data-goto="c2-club">Tables</div></div>
   <div class="bold">Choose Tickets</div>
-  ${ticketCard("Early Bird",200,"Skip the queue and head straight inside. Fast Track entry.","Limited · 20 left","s-mod",2,"var(--purple)")}
-  ${ticketCard("General Entry",150,"Standard entry to the club. Includes 1 drink.","Many available","s-low",1,"var(--blue)")}
-  ${ticketCard("VIP Fast Track",350,"Priority entry, dedicated queue, 2 drinks included.","Sold out","s-sold",0,"var(--accent)",true)}
+  <div class="xs muted" style="margin-top:-6px">Each tier has its own colour — you'll get a matching QR pass and wristband at the door.</div>
+  ${ticketCard("General Admission",150,"Standard entry to the club. Includes 1 drink.","Many available","s-low",1,'ga')}
+  ${ticketCard("VIP Entry",350,"Priority entry, dedicated queue, 2 drinks included.","Limited · 20 left","s-mod",2,'vip')}
+  ${ticketCard("Backstage",800,"Backstage access — meet the artists, private bar.","Sold out","s-sold",0,'backstage',true)}
   <div class="card between"><div class="row">${ic('tag')}<span class="sm">Have a promo code?</span></div><span class="muted sm">Enter code ${ic('fwd','sm')}</span></div>
 </div>
-<div class="screen-footer"><div class="between"><div><div class="big" id="tkTotal">HK$550</div><div class="xs muted" id="tkCount">3 Tickets</div></div><button class="btn btn-primary sm" onclick="go('c3-summary-ticket')">Proceed</button></div><div class="foot-note">Max 10 tickets per order ${ic('info','sm')}</div></div>`;
+<div class="screen-footer"><div class="between"><div><div class="big" id="tkTotal">HK$850</div><div class="xs muted" id="tkCount">3 Tickets</div></div><button class="btn btn-primary sm" onclick="go('c3-summary-ticket')">Proceed</button></div><div class="foot-note">Max 10 tickets per order ${ic('info','sm')}</div></div>`;
 
-const ticketCard=(name,price,desc,stock,scls,qty,col,sold=false)=>`
-  <div class="list-card">
-    <div class="between"><div class="row"><div class="ticket-ic" style="background:${col}22;color:${col}">${ic('ticket')}</div><div><div class="bold sm">${name}</div><div class="sm">HK$${price}</div></div></div>
+const ticketCard=(name,price,desc,stock,scls,qty,tier,sold=false)=>{ const T=TIERS[tier]||TIERS.ga; return `
+  <div class="list-card" style="border-left:3px solid ${T.color}">
+    <div class="between"><div class="row"><div class="ticket-ic" style="background:${T.color}22;color:${T.color}">${ic('ticket')}</div><div><div class="row" style="gap:8px">${tierBadge(tier)}<div class="bold sm">${name}</div></div><div class="sm">HK$${price}</div></div></div>
       ${sold?`<span class="xs s-sold" style="color:var(--dim2)">Sold out</span>`:`<div class="stepper mini" data-price="${price}"><button class="stp-btn">${ic('minus','sm')}</button><span class="stp-val">${qty}</span><button class="stp-btn">${ic('plus','sm')}</button></div>`}</div>
     <div class="xs muted">${desc}</div>
-    <div class="xs ${scls}">${stock}</div>
-  </div>`;
+    <div class="between xs"><span class="${scls}">${stock}</span><span class="muted">${ic('tag','sm')} ${T.band} wristband</span></div>
+  </div>`; };
 
 /* ---------- C3 SUMMARY (table + deposit) ---------- */
 SB["c3-summary"]=()=>hdr("Booking Summary")+`
@@ -848,25 +895,25 @@ SB["c3-summary-ticket"]=()=>hdr("Booking Summary")+`
     <div class="sec-label">Ticket Summary</div>
     <div class="kv"><span class="k">Date &amp; Time</span><span>${D.event.date} · ${D.event.time}</span></div>
     <div class="divider"></div>
-    <div class="kv"><span>2 × Early Bird</span><span>HK$400</span></div>
-    <div class="kv"><span>1 × General Entry</span><span>HK$150</span></div>
+    <div class="kv"><span class="row" style="gap:7px">${tierBadge('vip')} 2 × VIP Entry</span><span>HK$700</span></div>
+    <div class="kv"><span class="row" style="gap:7px">${tierBadge('ga')} 1 × General Admission</span><span>HK$150</span></div>
     <div class="center sm accent" style="margin-top:8px">Select more →</div>
   </div>
   <div class="card">
     <div class="sec-label">Payment Summary</div>
-    <div class="kv"><span class="k">Subtotal</span><span>HK$550</span></div>
-    <div class="kv"><span class="k">Coupon WELCOME20 (−20%)</span><span class="green">−HK$110</span></div>
+    <div class="kv"><span class="k">Subtotal</span><span>HK$850</span></div>
+    <div class="kv"><span class="k">Coupon WELCOME20 (−20%)</span><span class="green">−HK$170</span></div>
     <div class="kv"><span class="k">Booking fee</span><span>HK$40</span></div>
-    <div class="kv"><span class="k">Service charge (5%)</span><span>HK$22</span></div>
+    <div class="kv"><span class="k">Service charge (5%)</span><span>HK$34</span></div>
     <div class="divider"></div>
-    <div class="kv bold"><span>Total</span><span>HK$502</span></div>
+    <div class="kv bold"><span>Total</span><span>HK$754</span></div>
   </div>
 </div>
 <div class="screen-footer"><button class="btn btn-primary" onclick="go('c3-payment-ticket')">Payment →</button></div>`;
 
 /* ---------- C3 PAYMENT ---------- */
 SB["c3-payment"]=()=>paymentScreen("HK$1,000.00","Deposit hold (refundable)",true,"c3-pending");
-SB["c3-payment-ticket"]=()=>paymentScreen("HK$502.00","Full payment · 3 tickets",false,"c3-success");
+SB["c3-payment-ticket"]=()=>paymentScreen("HK$754.00","Full payment · 3 tickets",false,"c3-success");
 const paymentScreen=(amt,label,isHold,next)=>hdr("Payment",isHold?"Secure and encrypted":"Secure and encrypted")+`
 <div class="screen-body">
   <div class="card center"><div class="sm muted">Amount due</div><div class="big" style="font-size:30px">${amt}</div><div class="green sm">${label}</div></div>
@@ -907,9 +954,12 @@ SB["c3-success"]=()=>hdr("Booking")+`
   <div class="card">
     <div class="kv"><span class="k">Venue</span><span>${D.venue.name}</span></div>
     <div class="kv"><span class="k">Date &amp; Time</span><span>${D.event.date} · ${D.event.time}</span></div>
-    <div class="kv"><span class="k">Tickets</span><span>2 × Early Bird · 1 × General</span></div>
-    <div class="kv"><span class="k">Total paid</span><span>HK$502.00</span></div>
+    <div class="kv"><span class="k">Tickets</span><span class="row" style="gap:6px">${tierBadge('vip')}×2 ${tierBadge('ga')}×1</span></div>
+    <div class="kv"><span class="k">Total paid</span><span>HK$754.00</span></div>
   </div>
+  <div class="sec-label">Your passes are ready</div>
+  ${passCard('vip',{sub:D.event.name+' · VIP entry',ref:D.ticket.ref,seed:55})}
+  <div class="info-banner">${ic('info','sm')}<div>Each ticket has its <b>own QR and colour</b> — the door scans it and hands you the matching wristband (VIP = Gold, GA = Blue). Tap a pass to view all.</div></div>
   <div class="info-banner">${ic('mail','sm')} A confirmation email has been sent to ${D.guest.email}</div>
 </div>
 <div class="screen-footer"><button class="btn btn-primary" style="margin-bottom:8px" onclick="go('c4-detail')">View Booking</button><button class="btn btn-dark" onclick="go('c4-mybookings')">Done</button></div>`;
@@ -944,10 +994,9 @@ SB["c4-detail"]=()=>hdr("Booking Details","",`<button class="icon-btn bg">${ic('
     <div class="kv"><span class="k">Deposit</span><span>HK$1,000 <span class="badge b-paid">Paid</span></span></div>
     <div class="kv"><span class="k">${ic('note','sm')} Special Request</span><span>${D.booking.request}</span></div>
   </div>
-  <div class="card">
-    <div class="between"><div><div class="bold sm">Entry Pass</div><div class="xs muted">Show this QR at the venue entry</div></div><div class="qr" id="qr1"></div></div>
-    <button class="btn btn-dark sm" style="width:100%;margin-top:10px">${ic('wallet','sm')} Add to Apple Wallet</button>
-  </div>
+  <div class="sec-label">Your Entry Pass</div>
+  ${passCard('table',{sub:'Table V-5 · behind DJ booth',ref:D.booking.ref,guests:6,seed:88})}
+  <button class="btn btn-dark sm" style="width:100%">${ic('wallet','sm')} Add to Apple Wallet</button>
   <div class="qa">
     <div class="qi" onclick="go('c4-cancel')"><div class="ci" style="color:var(--red);background:var(--red-soft)">${ic('x','sm')}</div>Cancel</div>
     <div class="qi" onclick="go('c4-deposit-req')"><div class="ci">${ic('dollar','sm')}</div>Pay Balance</div>
@@ -1035,10 +1084,11 @@ SB["m3-scanner"]=()=>hdr("Scanner")+`
   <div style="border-radius:16px;height:190px;background:linear-gradient(150deg,#2a1a3a,#3a2a4a);position:relative;display:grid;place-items:center">
     <svg width="120" height="120" viewBox="0 0 24 24" style="stroke:#fff;fill:none;stroke-width:.8;opacity:.7"><use href="#i-scan"/></svg>
     <div class="xs muted" style="position:absolute;bottom:12px">Align QR code within the frame</div></div>
+  <div class="scan-tier" style="--tc:${TIERS.table.color};--tk:${TIERS.table.ink}"><div class="lbl">${TIERS.table.label}</div><div class="bnd"><span class="w"></span>Give ${TIERS.table.band} wristband</div></div>
   <div class="card">
-    <div class="sec-label">Scan Result</div>
-    <div class="row"><div class="avatar">MX</div><div class="grow"><div class="bold">${D.guest.name}</div><div class="xs muted">${D.booking.ref}</div></div><span class="badge b-confirmed">Match</span></div>
-    <div class="kv" style="margin-top:8px"><span class="k">Table</span><span>VIP Table V-5</span></div>
+    <div class="between"><div class="sec-label" style="margin:0">Scan Result</div>${tierBadge('table',true)}</div>
+    <div class="row" style="margin-top:8px"><div class="avatar">MX</div><div class="grow"><div class="bold">${D.guest.name}</div><div class="xs muted">${D.booking.ref}</div></div><span class="badge b-confirmed">Match</span></div>
+    <div class="kv" style="margin-top:8px"><span class="k">Table</span><span>VIP Table V-5 · behind DJ booth</span></div>
     <div class="kv"><span class="k">Date &amp; Time</span><span>${D.booking.date} · ${D.booking.time}</span></div>
     <div class="kv"><span class="k">Guests</span><span>3</span></div>
     <div class="row" style="margin-top:12px" id="scanActions"><button class="btn btn-green" onclick="scanResult(true)">${ic('check','sm')} Check In</button><button class="btn btn-outline" style="border-color:var(--red);color:var(--red)" onclick="scanResult(false)">${ic('x','sm')} Reject</button></div>
@@ -1245,7 +1295,7 @@ function pickChip(chip){ chip.parentElement.querySelectorAll('.chip').forEach(fu
 const capRow=(t,on)=>`<div class="card between"><div class="sm">${t}</div><div class="toggle ${on?'on':''}"></div></div>`;
 const schedRow=(d,mode,cls,detail)=>`<div class="card between"><div><div class="bold sm">${d}</div><div class="xs muted">${detail}</div></div><span class="badge ${cls==='reg'?'b-confirmed':cls==='evt'?'b-event':cls==='split'?'b-owl':'b-cancel'}">${mode}</span></div>`;
 const modeSlot=(t,label,cls)=>`<div class="between" style="padding:8px 0;border-bottom:1px solid var(--line)"><span class="sm">${t}</span><span class="xs ${cls==='reg'?'green':cls==='evt'?'accent':'muted'}">${label}</span></div>`;
-const evTicket=(name,price,stock)=>`<div class="list-card"><div class="between"><div><div class="bold sm">${name}</div><div class="sm">HK$${price}</div></div><span class="row">${ic('edit','sm')} <span class="xs muted">${stock}</span></span></div></div>`;
+const evTicket=(name,price,stock,tier=0)=>`<div class="list-card"><div class="between"><div><div class="bold sm">${name}</div><div class="sm">HK$${price}</div></div><span class="row">${ic('edit','sm')} <span class="xs muted">${stock}</span></span></div><div class="between"><span class="xs muted">Tier colour → wristband</span>${swatchRow(tier)}</div></div>`;
 const evTableRow=(id,meta,ms,pub)=>`<div class="card between"><div><div class="bold sm">${id} <span class="muted xs">${meta}</span></div><div class="xs muted">Event min spend HK$${ms}</div></div><div class="toggle ${pub?'on':''}"></div></div>`;
 function scanResult(ok){ var el=document.getElementById('scanActions'); if(el) el.innerHTML='<div class="card tight center" style="background:'+(ok?'var(--green-soft)':'var(--red-soft)')+';color:'+(ok?'var(--green)':'var(--red)')+'">'+(ok?'✓ Mei Xiang checked in · 9:01 PM':'✕ Entry rejected')+'</div>'; }
 
@@ -1384,11 +1434,18 @@ const SHEETS = {
    <div class="field"><label>Seating Capacity</label><select class="selectx"><option>2</option><option>4</option><option selected>6</option><option>8</option><option>10</option></select></div>
    <div class="field"><label>Floor</label><select class="selectx"><option>Floor 1 · Indoor</option><option selected>Floor 2 · Rooftop (Outdoor)</option></select></div>
    <div class="field"><div class="between"><label>Table Category</label><span class="accent xs" onclick="openSheet('editcategories')">Edit categories</span></div><select class="selectx"><option>Standard</option><option selected>VIP</option><option>Booth</option><option>Indoor</option><option>Outdoor</option></select></div>
+   <div class="field"><label>Tier colour → wristband <span class="muted">(e.g. VIP table behind the DJ booth)</span></label>${swatchRow(3)}<div class="xs muted" style="margin-top:6px">Guests on this table get this colour on their QR + wristband so the door places them right.</div></div>
    <div class="field"><label>Minimum Spend (HK$)</label><input class="input" value="3,000"></div>
    <div class="field"><label>Deposit (refundable, HK$)</label><input class="input" value="1,000"></div>
    <div class="field"><label>Description</label><textarea class="textarea" placeholder="Spacious booth with premium view…"></textarea></div>
    <div class="card between"><div class="sm row">${ic('loc','sm')} Position on floor map</div><span class="accent sm" onclick="toast('Drag the pin onto the floor-plan photo')">Set pin ${ic('fwd','sm')}</span></div>
    <div class="row"><button class="btn btn-outline sm" style="border-color:var(--red);color:var(--red)" onclick="closeSheet();toast('Table deleted')">${ic('x','sm')} Delete</button><button class="btn btn-primary sm" onclick="closeSheet();toast('Table saved')">Save Changes</button></div>`,
+ "guestpasses":()=>`<div class="grab"></div>
+   <div class="between"><div class="bold" style="font-size:17px">Table guest passes</div><button class="icon-btn" onclick="closeSheet()">${ic('x')}</button></div>
+   <div class="between"><span class="tier-badge big" style="--tc:${TIERS.table.color}">VIP Table · V-5</span><span class="sm">Wristband: <b>${TIERS.table.band}</b></span></div>
+   <div class="sm muted">One QR per guest (up to 6). Share the guest list — the door scans each and instantly sees the table + tier. Handy for promoter / guest-list drops.</div>
+   <div class="guestgrid">${[1,2,3,4,5,6].map(n=>`<div class="gpass" style="--tc:${TIERS.table.color}"><div class="qr gpass-qr" data-seed="${n*137+7}"></div><div class="gl">Guest ${n}</div></div>`).join('')}</div>
+   <div class="row"><button class="btn btn-dark sm" onclick="toast('Copied guest-list link')">${ic('share','sm')} Copy link</button><button class="btn btn-primary sm" onclick="closeSheet();toast('6 passes shared')">Share all passes</button></div>`,
  "editcategories":()=>`<div class="grab"></div>
    <div class="between"><div class="bold row" style="font-size:17px">Edit Table Categories ${ic('info','sm')}</div><button class="btn-ghost accent bold" onclick="toast('Add a category row')">${ic('plus')}</button></div>
    <div class="sm muted">Reorder, rename or remove the tags you sort tables by (e.g. Indoor / Outdoor / VIP).</div>
@@ -1474,10 +1531,10 @@ const SHEETS = {
        <div class="field"><label>Description</label><textarea class="textarea">A night of unstoppable energy. Deep grooves, heavy drops, and a crowd that lives for the music.</textarea></div>
      </div>
      <div class="panel" data-panel="tk">
-       <div class="sm muted">Ticket types customers can buy for this event.</div>
-       ${evTicket("Early Bird","200","20 / 50 sold")}
-       ${evTicket("General Entry","150","64 available")}
-       ${evTicket("VIP Fast Track","350","Sold out")}
+       <div class="sm muted">Ticket types customers can buy — pick a colour per tier. It drives the QR pass, the wristband, and what the door scanner shows.</div>
+       ${evTicket("General Admission","150","64 available",0)}
+       ${evTicket("VIP Entry","350","20 / 50 sold",1)}
+       ${evTicket("Backstage","800","Sold out",2)}
        <button class="btn btn-outline-dim sm">${ic('plus','sm')} Add ticket type</button>
      </div>
      <div class="panel" data-panel="tb">
@@ -1676,7 +1733,8 @@ const INFO = {
  "venuetype":{role:"Merchant",title:"Venue type",desc:"Pick Bar / Club / Restaurant — controls which booking modes appear. Multi-select allowed."},
  "editcategories":{role:"Merchant",title:"Table categories",desc:"Rename / reorder / remove the tags you sort tables by (Indoor, Outdoor, VIP…)."},
  "m3-assign":{role:"Merchant",title:"Assign table",desc:"Pick a table for a booking. Reserved = a real overlap; assigning locks it against double-booking."},
- "senddeposit":{role:"Merchant",title:"Request deposit",desc:"Send a secure pay-link (app / email / SMS). Flips to Paid here — no money moves till they pay."}
+ "senddeposit":{role:"Merchant",title:"Request deposit",desc:"Send a secure pay-link (app / email / SMS). Flips to Paid here — no money moves till they pay."},
+ "guestpasses":{role:"Customer",title:"Table guest passes",desc:"One QR per guest on a table (up to capacity), all carrying the table's tier colour.",points:["Share the guest list with friends / a promoter","Each scans individually at the door","Door sees the table + tier colour and gives the matching wristband"],tip:"This is the club guest-list drop — 10 codes for a table, no confusion at entry."}
 };
 function renderExplain(id){
   var el=document.getElementById('explain'); if(!el) return;
@@ -1749,13 +1807,13 @@ function openNav(){ document.querySelector('.sidebar')?.classList.add('open'); d
 function openInfo(){ document.getElementById('explain')?.classList.add('open'); document.querySelector('.sidebar')?.classList.remove('open'); drawerOv(true); }
 function closeDrawers(){ document.querySelector('.sidebar')?.classList.remove('open'); document.getElementById('explain')?.classList.remove('open'); drawerOv(false); }
 function back(){ const p=history.pop(); if(p) go2(p); }
-function openSheet(id){ document.getElementById('sheetBox').innerHTML=(SHEETS[id]||(()=>'—'))(); document.getElementById('sheetLayer').classList.add('open'); if(INFO[id]) renderExplain(id); }
+function openSheet(id){ const sb=document.getElementById('sheetBox'); sb.innerHTML=(SHEETS[id]||(()=>'—'))(); sb.querySelectorAll('.qr').forEach(makeQR); document.getElementById('sheetLayer').classList.add('open'); if(INFO[id]) renderExplain(id); }
 function closeSheet(){ const l=document.getElementById('sheetLayer'); if(l) l.classList.remove('open'); const a=document.querySelector('.screen.active'); if(a) renderExplain(a.id); }
 function setMode(m){ mode=m; document.getElementById('segC').classList.toggle('on',m==='customer'); document.getElementById('segM').classList.toggle('on',m==='merchant'); renderNav(); history=[]; go2(m==='customer'?'home':'m3-dashboard'); }
 
 /* fake QR generator */
 function makeQR(el){
-  const N=21; let seed=42; const rnd=()=>{seed=(seed*1103515245+12345)&0x7fffffff;return seed/0x7fffffff};
+  const N=21; let seed=(+el.dataset.seed)||42; const rnd=()=>{seed=(seed*1103515245+12345)&0x7fffffff;return seed/0x7fffffff};
   let r=`<svg viewBox="0 0 ${N} ${N}" width="100%" height="100%">`;
   for(let y=0;y<N;y++)for(let x=0;x<N;x++){ const finder=(x<7&&y<7)||(x>=N-7&&y<7)||(x<7&&y>=N-7); if(finder)continue; if(rnd()>.55) r+=`<rect x="${x}" y="${y}" width="1" height="1" fill="#000"/>`; }
   [[0,0],[N-7,0],[0,N-7]].forEach(([fx,fy])=>{ r+=`<rect x="${fx}" y="${fy}" width="7" height="7" fill="#000"/><rect x="${fx+1}" y="${fy+1}" width="5" height="5" fill="#fff"/><rect x="${fx+2}" y="${fy+2}" width="3" height="3" fill="#000"/>`; });
