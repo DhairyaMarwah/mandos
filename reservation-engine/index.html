@@ -611,11 +611,11 @@ const GROUP_TICKETS = [
   {tier:'ga',  number:'+852 9876 5432', status:'sent'}
 ];
 const FRIENDS = [
-  {name:'Aisha Lam',  handle:'@aisha',  seed:5},
-  {name:'Ken Wong',   handle:'@kenw',   seed:12},
   {name:'Priya Shah', handle:'@priya',  seed:45},
   {name:'Marco Reyes',handle:'@marco',  seed:52},
-  {name:'Diego R.',   handle:'@diego',  seed:33}
+  {name:'Diego R.',   handle:'@diego',  seed:33},
+  {name:'Aisha Lam',  handle:'@aisha',  seed:5,  added:true},
+  {name:'Ken Wong',   handle:'@kenw',   seed:12, added:true}
 ];
 function statusChip(s){
   if(s==='you')       return '<span class="badge b-confirmed">You</span>';
@@ -626,36 +626,41 @@ function statusChip(s){
 }
 const avatarStack=(seeds)=>`<div class="avstack">${seeds.map(s=>`<div class="avatar" style="background:url('https://i.pravatar.cc/80?img=${s}') center/cover"></div>`).join('')}</div>`;
 const iconAvatar=(icn)=>`<div class="avatar" style="width:36px;height:36px;display:grid;place-items:center;background:var(--surface2);color:var(--dim)">${ic(icn,'sm')}</div>`;
-function friendInviteRow(f){ return `<div class="glist-row">
+/* Friends picker — those already in the group show 'Added', not an Invite button */
+function friendInviteRow(f){ return `<div class="glist-row"${f.added?' style="opacity:.6"':''}>
   <div class="row" style="gap:10px;min-width:0"><div class="avatar" style="width:38px;height:38px;background:url('https://i.pravatar.cc/80?img=${f.seed}') center/cover"></div>
-    <div class="gmid"><div class="bold sm gname">${f.name}</div><div class="xs muted">${f.handle} · on Mandos</div></div></div>
-  <button class="btn btn-outline sm" onclick="inviteFriend(this)">${ic('plus','sm')} Invite</button></div>`; }
-function inviteFriend(btn){ btn.outerHTML='<span class="badge b-confirmed" style="padding:8px 12px">'+'✓ Sent'+'</span>'; toast('Pass sent in Mandos'); }
-/* a seat / ticket row — who it's for + status. QR is only on the pass at the door, not here. */
-function seatRow(p,i,fallbackTier){
+    <div class="gmid"><div class="bold sm gname">${f.name}</div><div class="xs muted">${f.added?'Already in your group':f.handle+' · on Mandos'}</div></div></div>
+  ${f.added?`<span class="badge b-confirmed">${ic('check','sm')} Added</span>`:`<button class="btn btn-outline sm" onclick="inviteFriend(this)">${ic('plus','sm')} Invite</button>`}</div>`; }
+function inviteFriend(btn){ btn.outerHTML='<span class="badge b-confirmed" style="padding:8px 12px">✓ Sent</span>'; toast('Pass sent in Mandos · added to your group'); }
+/* one person already in the group = avatar/name-or-number + status. QR lives on their pass at the door. */
+function seatRow(p,fallbackTier){
   const tier=p.tier||fallbackTier||'ga'; const T=TIERS[tier]||TIERS.ga;
-  const left = p.name?`<div class="avatar" style="width:36px;height:36px;background:url('https://i.pravatar.cc/80?img=${avSeed(p.name)}') center/cover"></div>`
-            : p.number?iconAvatar('phone') : iconAvatar('plus');
-  const label = p.name||p.number||'Open seat';
-  const sub = p.status==='you'?'Organiser · you' : p.status==='sent'?'Invited · awaiting claim' : p.name?'on Mandos':'tap Invite to fill';
+  const left = p.name?`<div class="avatar" style="width:36px;height:36px;background:url('https://i.pravatar.cc/80?img=${avSeed(p.name)}') center/cover"></div>` : iconAvatar('phone');
+  const sub = p.status==='you'?'Organiser · you' : p.status==='sent'?'Invited · awaiting claim' : p.status==='checkedin'?'Arrived · at the venue' : 'Claimed · on the way';
   return `<div class="glist-row">
     <div class="row" style="gap:10px;min-width:0">${left}
-      <div class="gmid"><div class="row" style="gap:6px"><span class="tdot" style="background:${T.color}"></span><span class="bold sm gname">${label}</span></div><div class="xs muted">${sub}</div></div></div>
-    <div class="row" style="gap:8px">${statusChip(p.status)}${p.status==='open'?`<button class="btn btn-outline sm" onclick="toast('Pick a friend or enter a number above')">Invite</button>`:''}</div>
+      <div class="gmid"><div class="row" style="gap:6px"><span class="tdot" style="background:${T.color}"></span><span class="bold sm gname">${p.name||p.number}</span></div><div class="xs muted">${sub}</div></div></div>
+    <div class="row" style="gap:8px">${statusChip(p.status)}${p.status==='sent'?`<button class="btn btn-outline-dim sm" onclick="toast('Reminder sent')">Remind</button>`:''}</div>
   </div>`;
 }
 function groupInviteSheet(cfg){
   const T=TIERS[cfg.tierKey]||TIERS.vip;
-  const named=cfg.items.filter(p=>p.name).map(p=>avSeed(p.name)).slice(0,4);
+  const roster=cfg.items.filter(p=>p.status!=='open');
+  const going=cfg.items.filter(p=>p.status==='you'||p.status==='claimed'||p.status==='checkedin');
+  const open=cfg.items.filter(p=>p.status==='open').length;
+  const friends=FRIENDS.slice().sort((a,b)=>(a.added?1:0)-(b.added?1:0));
   return `<div class="grab"></div>
    <div class="between"><div class="bold" style="font-size:17px">${cfg.title}</div><button class="icon-btn" onclick="closeSheet()">${ic('x')}</button></div>
    <div class="between"><span class="tier-badge big" style="--tc:${T.color}">${cfg.tierLabel}</span><span class="sm">Wristband: <b>${T.band}</b></span></div>
-   <div class="card tight between"><div class="row" style="min-width:0">${avatarStack(named)}<div><div class="bold sm">${cfg.summary}</div><div class="xs muted">${cfg.sub}</div></div></div><button class="btn btn-outline-dim sm" onclick="toast('Invite link copied')">${ic('share','sm')} Link</button></div>
+   <div class="card tight between"><div class="row" style="min-width:0">${avatarStack(going.filter(p=>p.name).map(p=>avSeed(p.name)).slice(0,4))}<div><div class="bold sm">${cfg.summary}</div><div class="xs muted">${cfg.sub}</div></div></div><button class="btn btn-outline-dim sm" onclick="toast('Invite link copied')">${ic('share','sm')} Link</button></div>
+   <div class="between"><div class="bold sm">${cfg.rosterLabel}</div><span class="xs muted">who's coming with you</span></div>
+   ${roster.map(p=>seatRow(p,cfg.tierKey)).join('')}
+   ${open>0?`<div class="between" style="margin-top:6px"><div class="bold sm">Add people</div><span class="xs muted">${open} open seat${open>1?'s':''}</span></div>
    <div class="tabbed">
      <div class="tabs"><div class="tab on" data-tab="fr">${ic('users','sm')} Friends</div><div class="tab" data-tab="nm">${ic('phone','sm')} By number</div></div>
      <div class="panel on" data-panel="fr">
        <input class="input" placeholder="🔍  Search your Mandos friends">
-       ${FRIENDS.map(friendInviteRow).join('')}
+       ${friends.map(friendInviteRow).join('')}
        <div class="xs muted center">Not on Mandos? Use <b>By number</b> to text them.</div>
      </div>
      <div class="panel" data-panel="nm">
@@ -664,9 +669,7 @@ function groupInviteSheet(cfg){
        <div class="card tight"><div class="xs muted" style="margin-bottom:5px">They'll receive</div><div class="sm" style="line-height:1.5">${cfg.msg}</div></div>
        <button class="btn btn-primary" onclick="toast('Invite sent')">Send invite</button>
      </div>
-   </div>
-   <div class="between"><div class="bold sm">${cfg.unit}</div><span class="xs muted">${cfg.status}</span></div>
-   ${cfg.items.map((p,i)=>seatRow(p,i,cfg.tierKey)).join('')}`;
+   </div>`:`<div class="info-banner">${ic('check','sm')}<div>All seats filled — your group is set. Anyone can still be swapped if plans change.</div></div>`}`;
 }
 
 /* ------- SCREEN BUILDERS (return inner HTML of .screen-body/footer) ------- */
@@ -1533,8 +1536,8 @@ const SHEETS = {
    <div class="field"><label>Description</label><textarea class="textarea" placeholder="Spacious booth with premium view…"></textarea></div>
    <div class="card between"><div class="sm row">${ic('loc','sm')} Position on floor map</div><span class="accent sm" onclick="toast('Drag the pin onto the floor-plan photo')">Set pin ${ic('fwd','sm')}</span></div>
    <div class="row"><button class="btn btn-outline sm" style="border-color:var(--red);color:var(--red)" onclick="closeSheet();toast('Table deleted')">${ic('x','sm')} Delete</button><button class="btn btn-primary sm" onclick="closeSheet();toast('Table saved')">Save Changes</button></div>`,
- "guestpasses":()=>groupInviteSheet({title:'Invite your table',tierKey:'table',tierLabel:'VIP Table · V-5',items:GROUP_TABLE,summary:'2 of 6 arriving',sub:'4 seats to fill',unit:'Seats (6)',status:'2 in · 1 invited · 2 open',msg:'<b>Mei invited you to Table V-5</b> at Boomerang Club · Fri 26 Dec, 9 PM. Tap to claim your VIP Table pass → mandos.app/g/8F3A'}),
- "grouptickets":()=>groupInviteSheet({title:'Share your tickets',tierKey:'vip',tierLabel:'Neon Nights · 3 tickets',items:GROUP_TICKETS,summary:'3 tickets · 2 in',sub:'1 not shared yet',unit:'Tickets (3)',status:'1 you · 1 claimed · 1 invited',msg:'<b>Mei sent you a ticket to Neon Nights</b> at Boomerang Club · Fri 26 Dec. Tap to claim → mandos.app/t/2K9P'}),
+ "guestpasses":()=>groupInviteSheet({title:'Your table group',tierKey:'table',tierLabel:'VIP Table · V-5',items:GROUP_TABLE,summary:'3 going · 1 invited',sub:'2 of 6 seats still open',rosterLabel:'Going (4)',msg:'<b>Mei invited you to Table V-5</b> at Boomerang Club · Fri 26 Dec, 9 PM. Tap to claim your VIP Table pass → mandos.app/g/8F3A'}),
+ "grouptickets":()=>groupInviteSheet({title:'Your tickets',tierKey:'vip',tierLabel:'Neon Nights · 3 tickets',items:GROUP_TICKETS,summary:'2 going · 1 invited',sub:'all 3 tickets shared',rosterLabel:'Tickets (3)',msg:'<b>Mei sent you a ticket to Neon Nights</b> at Boomerang Club · Fri 26 Dec. Tap to claim → mandos.app/t/2K9P'}),
  "editcategories":()=>`<div class="grab"></div>
    <div class="between"><div class="bold row" style="font-size:17px">Edit Table Categories ${ic('info','sm')}</div><button class="btn-ghost accent bold" onclick="toast('Add a category row')">${ic('plus')}</button></div>
    <div class="sm muted">Reorder, rename or remove the tags you sort tables by (e.g. Indoor / Outdoor / VIP).</div>
