@@ -288,16 +288,10 @@ h1,h2,.big,.apphdr h1{text-wrap:balance}
 .fm-pin.sel{background:var(--green);color:#04240f;border-color:transparent;box-shadow:0 0 0 3px rgba(34,197,94,.35),0 0 20px rgba(34,197,94,.55);z-index:2}
 .fm-pin.dim{opacity:.55}
 /* SVG floor plan — bookable pins, landmarks, dummy furniture */
-.fpin{cursor:pointer}
-.fpin circle{fill:rgba(18,18,22,.92);stroke:rgba(255,255,255,.6);stroke-width:1.5;transition:stroke .15s ease}
-.fpin text{fill:#fff;font-size:10px;font-weight:700;text-anchor:middle;pointer-events:none}
-.fpin.sel circle{fill:var(--green);stroke:transparent}
-.fpin.sel text{fill:#04240f}
-.fpin.peek circle{stroke:var(--accent);stroke-width:3}
+.fpin circle{fill:rgba(18,18,22,.92);stroke:rgba(255,255,255,.6);stroke-width:1.5}
+.fpin text{fill:#fff;font-size:10px;font-weight:700;text-anchor:middle}
 .fdummy{fill:#232329;opacity:.85}
 .flabel{fill:#6d6d76;font-size:8.5px;font-weight:700;letter-spacing:.12em;text-anchor:middle}
-.list-card.flash{animation:cardFlash 2.4s ease}
-@keyframes cardFlash{0%,55%{box-shadow:0 0 0 2px var(--accent),0 10px 30px rgba(245,133,31,.28)}100%{box-shadow:none}}
 .fm-change{position:absolute;top:10px;left:10px;background:var(--accent);color:#1a1200;border-radius:999px;padding:7px 12px;font-size:12px;font-weight:600;display:flex;gap:6px;align-items:center;box-shadow:0 4px 14px rgba(0,0,0,.4)}
 .fm-hint{position:absolute;bottom:9px;left:0;right:0;text-align:center;font-size:10.5px;color:#fff;text-shadow:0 1px 4px #000;display:flex;gap:6px;align-items:center;justify-content:center}
 .fm-expand{position:absolute;bottom:9px;right:11px;color:#fff;opacity:.9}
@@ -802,6 +796,7 @@ SB["c1-entry-reg"]=()=>hdr("Booking",(CUR?CUR.name+" · "+CUR.area:"Qura Bar · 
   <div class="between"><div class="bold">Pick a time</div><span class="xs green" id="availNote"></span></div>
   <div class="slotgrid" id="barSlots"></div>
   <div class="legend"><span><i style="background:var(--green)"></i>Available</span><span><i style="background:var(--amber)"></i>Filling</span><span><i style="background:var(--red)"></i>Few left</span><span><i style="background:var(--dim2)"></i>Sold out</span></div>
+  <div class="between xs"><span class="muted">Venue assigns your table on arrival</span><span class="accent" onclick="openFloorMap('assigns')">View floor map ${ic('fwd','sm')}</span></div>
   <div id="barFull"></div>
   <div class="card"><div class="bold sm" style="margin-bottom:8px">Guests</div><div class="stepper" data-party="1" data-min="1" data-max="16"><button class="stp-btn">${ic('minus')}</button><div class="stp-val">3</div><button class="stp-btn">${ic('plus')}</button></div><div class="between xs" style="margin-top:8px"><span class="muted">10 or more?</span><span class="accent" onclick="go('c2-enquiry')">Send enquiry ${ic('fwd','sm')}</span></div></div>
   <div class="card"><div class="bold sm" style="margin-bottom:8px">Duration</div><div class="chipsel row"><span class="chip on" onclick="pickChip(this)">1.5 hours</span><span class="chip" onclick="pickChip(this)">2 hours</span><span class="chip" onclick="pickChip(this)">3 hours</span></div></div>
@@ -907,7 +902,7 @@ function hybModes(ev){ return '<div class="segcard on" data-seg="day" onclick="h
 function hybClubNight(){ return '<div class="info-banner">'+ic('info','sm')+'<div>Book a table <b>for the night</b> — it\'s yours until close. A refundable deposit holds it.</div></div>'
   +'<div class="bold sm">Arrival (optional)</div>'
   +'<div class="chipsel row" style="flex-wrap:wrap"><span class="chip on" onclick="pickChip(this)">9:00 PM</span><span class="chip" onclick="pickChip(this)">10:00 PM</span><span class="chip" onclick="pickChip(this)">11:00 PM</span><span class="chip" onclick="pickChip(this)">After 12</span></div>'
-  +'<div class="filterbar row" data-target="#segnight" style="overflow:auto"><span class="chip on" data-filter="all" onclick="filt(this)">All</span><span class="chip" data-filter="VIP Table" onclick="filt(this)">VIP</span><span class="chip" data-filter="Booth" onclick="filt(this)">Booth</span><span class="chip" onclick="openSheet(\'floormapview\')">'+ic('loc','sm')+' Floor map</span></div>'
+  +'<div class="filterbar row" data-target="#segnight" style="overflow:auto"><span class="chip on" data-filter="all" onclick="filt(this)">All</span><span class="chip" data-filter="VIP Table" onclick="filt(this)">VIP</span><span class="chip" data-filter="Booth" onclick="filt(this)">Booth</span><span class="chip" onclick="openFloorMap(\'browse\')">'+ic('loc','sm')+' Floor map</span></div>'
   +tableCard("V-5","VIP Table","2–4 guests",2000,1000,"Held for the night · prime stage view.",true,"Floor 1 · behind the DJ booth")
   +tableCard("V-6","VIP Table","4–6 guests",3000,1000,"Held for the night · premium booth.",false,"Floor 1 · stage left")
   +tableCard("B-2","Booth","6–8 guests",3000,1200,"Held for the night · private booth.",false,"Floor 2 · rooftop mezzanine")
@@ -932,7 +927,7 @@ SB["c1-hybrid"]=()=>hdr("Booking",(CUR?CUR.name+" · "+CUR.area:"Skyline Lounge 
     </div>
     <div class="card"><div class="bold sm" style="margin-bottom:8px">Guests</div>${stepper(3)}</div>
     <div class="card"><div class="bold sm" style="margin-bottom:8px">Duration</div><div class="chipsel row"><span class="chip on" onclick="pickChip(this)">1.5 hours</span><span class="chip" onclick="pickChip(this)">2 hours</span><span class="chip" onclick="pickChip(this)">3 hours</span></div></div>
-    <div class="card"><div class="bold sm" style="margin-bottom:8px">Table</div><div class="chipsel row"><span class="chip on" onclick="dayPref(this,false)">Any · venue assigns</span><span class="chip" onclick="dayPref(this,true)">Choose your table</span></div></div>
+    <div class="card"><div class="bold sm" style="margin-bottom:8px">Table</div><div class="chipsel row"><span class="chip on" onclick="dayPref(this,false)">Any · venue assigns</span><span class="chip" onclick="dayPref(this,true)">Choose your table</span></div><div class="between xs" style="margin-top:9px"><span class="muted">See the space</span><span class="accent" onclick="openFloorMap('browse')">View floor map ${ic('fwd','sm')}</span></div></div>
     <div id="dayTables" style="display:none;flex-direction:column;gap:10px">${dayTableList()}</div>
     <button class="btn btn-primary" onclick="go('c3-summary-free')">Continue · Book for Free</button>
     <div class="foot-note">Daytime tables turn — booked for your slot only, no deposit</div>
@@ -949,7 +944,7 @@ SB["c2-club"]=()=>hdr("Club Reservation")+`
     <span class="chip" data-filter="VIP Table" onclick="filt(this)">VIP</span>
     <span class="chip" data-filter="High Table" onclick="filt(this)">High Table</span>
     <span class="chip" data-filter="Booth" onclick="filt(this)">Booth</span>
-    <span class="chip" onclick="openSheet('floormapview')">${ic('loc','sm')} Floor map</span>
+    <span class="chip" onclick="openFloorMap('browse')">${ic('loc','sm')} Floor map</span>
     <span class="chip">3 Guests ${ic('down','sm')}</span>
   </div>
   <div class="info-banner">${ic('ticket','sm')}<div><b>Event tables include entry</b> for the table's guests — no separate tickets needed. Everyone gets the table's wristband at the door.</div></div>
@@ -1144,7 +1139,7 @@ SB["c4-detail"]=()=>hdr("Booking Details","",`<button class="icon-btn bg">${ic('
   </div>
   <div class="sec-label">Your Entry Pass</div>
   ${passCard('table',{sub:'Table V-5 · behind DJ booth',ref:D.booking.ref,guests:6,seed:88})}
-  <div class="row"><button class="btn btn-dark sm grow">${ic('wallet','sm')} Apple Wallet</button><button class="btn btn-dark sm grow" onclick="openSheet('floormapview')">${ic('loc','sm')} Find your table</button></div>
+  <div class="row"><button class="btn btn-dark sm grow">${ic('wallet','sm')} Apple Wallet</button><button class="btn btn-dark sm grow" onclick="openFloorMap('mine')">${ic('loc','sm')} Find your table</button></div>
   <div class="qa">
     <div class="qi" onclick="go('c4-cancel')"><div class="ci" style="color:var(--red);background:var(--red-soft)">${ic('x','sm')}</div>Cancel</div>
     <div class="qi" onclick="go('c4-deposit-req')"><div class="ci">${ic('dollar','sm')}</div>Pay Balance</div>
@@ -1445,14 +1440,11 @@ function promoApply(card){ var s=card.querySelector('[data-promo]'); if(s){ s.in
 function segTab(btn,tab){ var box=btn.closest('.tabbed'); if(!box)return; btn.parentElement.querySelectorAll('button').forEach(function(b){b.classList.remove('on')}); btn.classList.add('on'); box.querySelectorAll('.panel').forEach(function(p){p.classList.toggle('on',p.dataset.panel===tab)}); }
 /* sheets that render their own header/body/footer frame (primary action pinned) */
 const FRAMED_SHEETS = new Set(['guestpasses','grouptickets','floormapview']);
+/* floor-map preview context: 'browse' (picking a table) · 'assigns' (venue assigns) · 'mine' (after booking) */
+let FM_CTX='browse';
+function openFloorMap(m){ FM_CTX=m||'browse'; openSheet('floormapview'); }
 /* customer floor plan — landmarks + dummy furniture + tappable bookable pins.
    Pin positions match the location copy: V-5 behind the DJ booth, V-6 stage left, H-3 by the bar. */
-const FM_TABLES={
- 'V-5':{cat:'VIP Table',cap:'2–4',ms:2000,loc:'Behind the DJ booth',added:true},
- 'V-6':{cat:'VIP Table',cap:'4–6',ms:3000,loc:'Stage left'},
- 'H-3':{cat:'High Table',cap:'4–6',ms:1500,loc:'By the main bar'},
- 'B-2':{cat:'Booth',cap:'6–8',ms:3000,loc:'Floor 2 · rooftop mezzanine'}
-};
 function floorPlanSVG(){ return `
 <svg viewBox="0 0 400 250" style="width:100%;border-radius:12px;background:linear-gradient(150deg,#17131f,#101018);outline:1px solid rgba(255,255,255,.08);outline-offset:-1px" xmlns="http://www.w3.org/2000/svg">
   <rect x="10" y="10" width="380" height="230" rx="14" fill="none" stroke="rgba(255,255,255,.14)" stroke-width="1.5"/>
@@ -1462,14 +1454,10 @@ function floorPlanSVG(){ return `
   <rect x="18" y="66" width="26" height="30" rx="6" class="fdummy"/><rect x="18" y="104" width="26" height="30" rx="6" class="fdummy"/><rect x="18" y="142" width="26" height="30" rx="6" class="fdummy"/>
   <circle cx="118" cy="205" r="7" class="fdummy"/><circle cx="170" cy="212" r="7" class="fdummy"/><circle cx="230" cy="212" r="7" class="fdummy"/><circle cx="282" cy="205" r="7" class="fdummy"/><circle cx="96" cy="60" r="7" class="fdummy"/>
   <rect x="176" y="236" width="48" height="4" fill="#0b0b0d"/><text x="200" y="231" class="flabel">ENTRANCE</text>
-  <g class="fpin sel" onclick="fmPick(this,'V-5')"><circle cx="262" cy="58" r="14"/><text x="262" y="62">V-5</text></g>
-  <g class="fpin" onclick="fmPick(this,'V-6')"><circle cx="96" cy="118" r="14"/><text x="96" y="122">V-6</text></g>
-  <g class="fpin" onclick="fmPick(this,'H-3')"><circle cx="312" cy="122" r="14"/><text x="312" y="126">H-3</text></g>
+  <g class="fpin"><circle cx="262" cy="58" r="14"/><text x="262" y="62">V-5</text></g>
+  <g class="fpin"><circle cx="96" cy="118" r="14"/><text x="96" y="122">V-6</text></g>
+  <g class="fpin"><circle cx="312" cy="122" r="14"/><text x="312" y="126">H-3</text></g>
 </svg>`; }
-function fmInfoCard(id){ var t=FM_TABLES[id]||{};
- return `<div class="card tight between"><div class="row" style="gap:10px;min-width:0"><span class="fm-pin ${t.added?'sel':''}" style="position:static;transform:none">${id}</span><div style="min-width:0"><div class="bold sm">${t.loc}</div><div class="xs muted">${t.cat} · ${t.cap} guests · Min spend HK$${(t.ms||0).toLocaleString()}</div></div></div>${t.added?'<span class="badge b-confirmed">Your table</span>':`<button class="btn btn-primary sm" onclick="fmGoto('${id}')">Select in list</button>`}</div>`; }
-function fmPick(el,id){ var svg=el.closest('svg'); if(svg) svg.querySelectorAll('.fpin').forEach(function(g){g.classList.remove('peek')}); if(!(FM_TABLES[id]||{}).added) el.classList.add('peek'); var inf=document.getElementById('fmInfo'); if(inf) inf.innerHTML=fmInfoCard(id); }
-function fmGoto(id){ closeSheet(); var btn=document.querySelector('.screen.active [data-add="'+id+'"]'); var card=btn?btn.closest('.list-card'):null; if(card){ card.classList.add('flash'); card.scrollIntoView({behavior:'smooth',block:'center'}); setTimeout(function(){card.classList.remove('flash')},2400); } toast(id+' — add it from the card'); }
 const capRow=(t,on)=>`<div class="card between"><div class="sm">${t}</div><div class="toggle ${on?'on':''}"></div></div>`;
 const schedRow=(d,mode,cls,detail)=>`<div class="card between"><div><div class="bold sm">${d}</div><div class="xs muted">${detail}</div></div><span class="badge ${cls==='reg'?'b-confirmed':cls==='evt'?'b-event':cls==='split'?'b-owl':'b-cancel'}">${mode}</span></div>`;
 const modeSlot=(t,label,cls)=>`<div class="between" style="padding:8px 0;border-bottom:1px solid var(--line)"><span class="sm">${t}</span><span class="xs ${cls==='reg'?'green':cls==='evt'?'accent':'muted'}">${label}</span></div>`;
@@ -1623,18 +1611,21 @@ const SHEETS = {
  "floormapview":()=>`
    <div class="sheet-hd">
      <div class="grab"></div>
-     <div class="between"><div><div class="bold" style="font-size:17px">Floor map</div><div class="xs muted" style="margin-top:2px">Tap a table to preview — booking stays in the list</div></div><button class="icon-btn" onclick="closeSheet()">${ic('x')}</button></div>
+     <div class="between"><div><div class="bold" style="font-size:17px">Floor map</div><div class="xs muted" style="margin-top:2px">The venue's floor plan · view only</div></div><button class="icon-btn" onclick="closeSheet()">${ic('x')}</button></div>
    </div>
    <div class="sheet-body">
      <div class="sec-title">Floor 1 · Indoor</div>
-     ${floorPlanSVG()}
-     <div class="legend"><span><i style="background:var(--green)"></i>Your table</span><span><i style="background:#fff"></i>Bookable · tap to preview</span><span><i style="background:var(--dim2)"></i>Not bookable</span></div>
-     <div id="fmInfo">${fmInfoCard('V-5')}</div>
+     <div style="position:relative">${floorPlanSVG()}<div class="fm-hint">${ic('plus','sm')} Pinch to zoom</div></div>
+     ${FM_CTX==='mine'
+       ? `<div class="card tight between"><div class="row" style="gap:9px"><span class="fm-pin sel" style="position:static;transform:none">V-5</span><div><div class="bold sm">Your table · behind the DJ booth</div><div class="xs muted">VIP Table · 2–4 guests · Green wristband</div></div></div><span class="badge b-confirmed">Yours</span></div>`
+       : FM_CTX==='assigns'
+       ? `<div class="xs muted">The venue assigns your table when you arrive — use the plan to get a feel for the space.</div>`
+       : `<div class="xs muted">V-5 · V-6 · H-3 are marked on the plan. Prices, deposits and live availability are in the table list.</div>`}
      <div class="sec-title">Floor 2 · Rooftop</div>
      <div class="card"><div class="row" style="gap:10px">${ic('info')}<div style="min-width:0"><div class="bold sm">No floor plan for this floor</div><div class="xs muted" style="margin-top:3px">The venue hasn't uploaded one. <b>B-2 · Booth (rooftop mezzanine)</b> is still bookable from the list — same details, just no map.</div></div></div></div>
-     <div class="info-banner">${ic('info','sm')}<div>Tap a pin to <b>preview</b> a table — "Select in list" jumps you to its card. Prices, deposits and live availability always live in the list.</div></div>
+     <div class="info-banner">${ic('info','sm')}<div>This is the venue's uploaded plan — <b>a picture, not a picker</b>. Booking happens in the list.</div></div>
    </div>
-   <div class="sheet-foot"><button class="btn btn-primary" onclick="closeSheet()">Back to table list</button></div>`,
+   <div class="sheet-foot"><button class="btn btn-primary" onclick="closeSheet()">${FM_CTX==='mine'?'Done':'Back to booking'}</button></div>`,
  "editcategories":()=>`<div class="grab"></div>
    <div class="between"><div class="bold row" style="font-size:17px">Edit Table Categories ${ic('info','sm')}</div><button class="btn-ghost accent bold" onclick="toast('Add a category row')">${ic('plus')}</button></div>
    <div class="sm muted">Reorder, rename or remove the tags you sort tables by (e.g. Indoor / Outdoor / VIP).</div>
@@ -1889,7 +1880,7 @@ const INFO = {
  "c1-fully-booked":{title:"Fully booked (state)",desc:"The sold-out path — instead of a dead end, we offer a way forward.",points:["Suggests other times the same day","Suggests other dates","One tap to call the venue"],tip:"A decided edge case: never leave the guest at a dead end."},
  "c2-bar":{title:"Bar reservation",desc:"Time-slot list with a live crowd indicator per slot.",points:["Crowd colour shows how busy each slot is","Sold-out slots disabled","No payment now — review before confirming"]},
  "c2-club":{title:"Club table list",desc:"List-based table selector, with a view-only floor map for spatial context.",points:["Filter by category (VIP / Booth / High)","Each card shows capacity, <b>location</b>, min spend, deposit","<b>Floor map</b> chip opens a read-only peek — selection stays in the list"],tip:"Honours the team decision: no map-based booking. The map is reference-only; the list is the picker."},
- "floormapview":{title:"Floor map",desc:"A real plan — DJ booth, dance floor, bar, entrance — with the bookable tables pinned where their descriptions say they are.",points:["<b>While choosing:</b> tap a pin to preview → 'Select in list' jumps to that card","<b>On the night:</b> 'Find your table' on your pass opens this with yours glowing","Floors without an uploaded plan fall back gracefully — nothing hidden"],tip:"Booking never happens on the map (team decision). The map answers 'where?', the list answers 'book it.'"},
+ "floormapview":{title:"Floor map · preview",desc:"The venue's uploaded plan (a PNG in production) — a picture, not a picker. Table labels are part of the image.",points:["Reachable wherever tables are booked: club night, event tables, daytime picking, even bar (venue-assigns) — if the venue uploaded a plan","Copy adapts: choosing → 'tables marked on the plan'; bar → 'venue assigns'; after booking → 'your table' callout","Floors without a plan fall back gracefully — nothing hidden"],tip:"View-only by design: no tap-targets on an arbitrary image, no map-maintenance burden, booking stays in the list."},
  "c2-tickets":{title:"Ticket picker",desc:"Buy event entry. Steppers per tier, live total.",points:["Early Bird / General / VIP tiers","Sold-out tiers disabled","Total + count update live (fixes the old price bug)"]},
  "c2-enquiry":{title:"Large-group enquiry",desc:"Parties of 10+ don't auto-book — they become an enquiry the venue arranges.",points:["No payment now","Venue allocates tables manually and replies"],tip:"Decided rule: big groups are a conversation, not a silent multi-table booking."},
  "c3-enquiry-sent":{title:"Enquiry sent",desc:"Confirmation that the group enquiry reached the venue."},
