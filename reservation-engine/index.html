@@ -386,6 +386,10 @@ h1,h2,.big,.apphdr h1{text-wrap:balance}
 .glist-row .gmid{min-width:0;flex:1}
 .glist-row .gname{white-space:nowrap;overflow:hidden;text-overflow:ellipsis;max-width:120px}
 .gshare{width:34px;height:34px;border-radius:50%;background:var(--surface2);display:grid;place-items:center;flex:none;cursor:pointer}
+.glist-row .tdot{width:9px;height:9px;border-radius:50%;flex:none}
+.avstack{display:flex}
+.avstack .avatar{width:30px;height:30px;margin-left:-9px;border:2px solid var(--bg2)}
+.avstack .avatar:first-child{margin-left:0}
 </style>
 </head>
 <body>
@@ -592,37 +596,77 @@ const heroImg=(key,w)=>`background:linear-gradient(180deg,rgba(8,6,16,.26) 0%,rg
 const avSeed=s=>{ s=(s||'')+''; let t=7; for(let i=0;i<s.length;i++) t+=s.charCodeAt(i)*(i+1); return (t%70)+1; };
 const avatarPhoto=(seed,size)=>`<div class="avatar" style="background:url('https://i.pravatar.cc/120?img=${(typeof seed==='number'?seed:avSeed(seed))}') center/cover${size?';width:'+size+'px;height:'+size+'px':''}"></div>`;
 
-/* ---------- group passes: multiple passes per booking, one per member ---------- */
+/* ---------- group invites: fill each seat from Mandos friends or a phone number ---------- */
 const GROUP_TABLE = [
   {tier:'table', name:'Mei Xiang', status:'you'},
   {tier:'table', name:'Aisha L.',  status:'checkedin'},
   {tier:'table', name:'Ken W.',    status:'claimed'},
-  {tier:'table', name:'Diego',     status:'sent'},
-  {tier:'table', name:'',          status:'open'},
-  {tier:'table', name:'',          status:'open'}
+  {tier:'table', number:'+852 9123 4567', status:'sent'},
+  {tier:'table', status:'open'},
+  {tier:'table', status:'open'}
 ];
 const GROUP_TICKETS = [
   {tier:'vip', name:'Mei Xiang', status:'you'},
   {tier:'vip', name:'Aisha L.',  status:'claimed'},
-  {tier:'ga',  name:'',          status:'sent'}
+  {tier:'ga',  number:'+852 9876 5432', status:'sent'}
+];
+const FRIENDS = [
+  {name:'Aisha Lam',  handle:'@aisha',  seed:5},
+  {name:'Ken Wong',   handle:'@kenw',   seed:12},
+  {name:'Priya Shah', handle:'@priya',  seed:45},
+  {name:'Marco Reyes',handle:'@marco',  seed:52},
+  {name:'Diego R.',   handle:'@diego',  seed:33}
 ];
 function statusChip(s){
   if(s==='you')       return '<span class="badge b-confirmed">You</span>';
   if(s==='claimed')   return `<span class="badge b-confirmed">${ic('check','sm')} Claimed</span>`;
   if(s==='checkedin') return '<span class="badge b-seated">Checked in</span>';
-  if(s==='sent')      return '<span class="badge b-pending">Sent</span>';
+  if(s==='sent')      return '<span class="badge b-pending">Invited</span>';
   return '<span class="badge b-completed">Open</span>';
 }
-function groupRow(p,i,fallbackTier){
+const avatarStack=(seeds)=>`<div class="avstack">${seeds.map(s=>`<div class="avatar" style="background:url('https://i.pravatar.cc/80?img=${s}') center/cover"></div>`).join('')}</div>`;
+const iconAvatar=(icn)=>`<div class="avatar" style="width:36px;height:36px;display:grid;place-items:center;background:var(--surface2);color:var(--dim)">${ic(icn,'sm')}</div>`;
+function friendInviteRow(f){ return `<div class="glist-row">
+  <div class="row" style="gap:10px;min-width:0"><div class="avatar" style="width:38px;height:38px;background:url('https://i.pravatar.cc/80?img=${f.seed}') center/cover"></div>
+    <div class="gmid"><div class="bold sm gname">${f.name}</div><div class="xs muted">${f.handle} · on Mandos</div></div></div>
+  <button class="btn btn-outline sm" onclick="inviteFriend(this)">${ic('plus','sm')} Invite</button></div>`; }
+function inviteFriend(btn){ btn.outerHTML='<span class="badge b-confirmed" style="padding:8px 12px">'+'✓ Sent'+'</span>'; toast('Pass sent in Mandos'); }
+/* a seat / ticket row — who it's for + status. QR is only on the pass at the door, not here. */
+function seatRow(p,i,fallbackTier){
   const tier=p.tier||fallbackTier||'ga'; const T=TIERS[tier]||TIERS.ga;
-  const shared=(p.status==='you'||p.status==='claimed'||p.status==='checkedin');
-  const label=p.name||('Guest '+(i+1));
-  const sub=p.status==='you'?'Organiser · your pass':(p.name?'':'Unassigned seat');
-  return `<div class="glist-row" style="--tc:${T.color}">
-    <div class="row" style="gap:10px;min-width:0"><div class="qr glist-qr" data-seed="${(i+1)*137+7}"></div>
-      <div class="gmid"><div class="row" style="gap:6px">${tierBadge(tier)}<span class="bold sm gname">${label}</span></div>${sub?`<div class="xs muted">${sub}</div>`:''}</div></div>
-    <div class="row" style="gap:8px">${statusChip(p.status)}${shared?'':`<div class="gshare" onclick="toast('${p.status==='sent'?'Reminder re-sent':'Share link sent'}')">${ic('share','sm')}</div>`}</div>
+  const left = p.name?`<div class="avatar" style="width:36px;height:36px;background:url('https://i.pravatar.cc/80?img=${avSeed(p.name)}') center/cover"></div>`
+            : p.number?iconAvatar('phone') : iconAvatar('plus');
+  const label = p.name||p.number||'Open seat';
+  const sub = p.status==='you'?'Organiser · you' : p.status==='sent'?'Invited · awaiting claim' : p.name?'on Mandos':'tap Invite to fill';
+  return `<div class="glist-row">
+    <div class="row" style="gap:10px;min-width:0">${left}
+      <div class="gmid"><div class="row" style="gap:6px"><span class="tdot" style="background:${T.color}"></span><span class="bold sm gname">${label}</span></div><div class="xs muted">${sub}</div></div></div>
+    <div class="row" style="gap:8px">${statusChip(p.status)}${p.status==='open'?`<button class="btn btn-outline sm" onclick="toast('Pick a friend or enter a number above')">Invite</button>`:''}</div>
   </div>`;
+}
+function groupInviteSheet(cfg){
+  const T=TIERS[cfg.tierKey]||TIERS.vip;
+  const named=cfg.items.filter(p=>p.name).map(p=>avSeed(p.name)).slice(0,4);
+  return `<div class="grab"></div>
+   <div class="between"><div class="bold" style="font-size:17px">${cfg.title}</div><button class="icon-btn" onclick="closeSheet()">${ic('x')}</button></div>
+   <div class="between"><span class="tier-badge big" style="--tc:${T.color}">${cfg.tierLabel}</span><span class="sm">Wristband: <b>${T.band}</b></span></div>
+   <div class="card tight between"><div class="row" style="min-width:0">${avatarStack(named)}<div><div class="bold sm">${cfg.summary}</div><div class="xs muted">${cfg.sub}</div></div></div><button class="btn btn-outline-dim sm" onclick="toast('Invite link copied')">${ic('share','sm')} Link</button></div>
+   <div class="tabbed">
+     <div class="tabs"><div class="tab on" data-tab="fr">${ic('users','sm')} Friends</div><div class="tab" data-tab="nm">${ic('phone','sm')} By number</div></div>
+     <div class="panel on" data-panel="fr">
+       <input class="input" placeholder="🔍  Search your Mandos friends">
+       ${FRIENDS.map(friendInviteRow).join('')}
+       <div class="xs muted center">Not on Mandos? Use <b>By number</b> to text them.</div>
+     </div>
+     <div class="panel" data-panel="nm">
+       <div class="row"><div class="field grow"><label>Name (optional)</label><input class="input" placeholder="e.g. Sam"></div><div class="field grow"><label>Mobile</label><input class="input" value="+852 "></div></div>
+       <div class="field"><label>Send via</label><div class="chipsel row"><span class="chip on" onclick="pickChip(this)">${ic('phone','sm')} WhatsApp</span><span class="chip" onclick="pickChip(this)">${ic('mail','sm')} SMS</span></div></div>
+       <div class="card tight"><div class="xs muted" style="margin-bottom:5px">They'll receive</div><div class="sm" style="line-height:1.5">${cfg.msg}</div></div>
+       <button class="btn btn-primary" onclick="toast('Invite sent')">Send invite</button>
+     </div>
+   </div>
+   <div class="between"><div class="bold sm">${cfg.unit}</div><span class="xs muted">${cfg.status}</span></div>
+   ${cfg.items.map((p,i)=>seatRow(p,i,cfg.tierKey)).join('')}`;
 }
 
 /* ------- SCREEN BUILDERS (return inner HTML of .screen-body/footer) ------- */
@@ -1489,21 +1533,8 @@ const SHEETS = {
    <div class="field"><label>Description</label><textarea class="textarea" placeholder="Spacious booth with premium view…"></textarea></div>
    <div class="card between"><div class="sm row">${ic('loc','sm')} Position on floor map</div><span class="accent sm" onclick="toast('Drag the pin onto the floor-plan photo')">Set pin ${ic('fwd','sm')}</span></div>
    <div class="row"><button class="btn btn-outline sm" style="border-color:var(--red);color:var(--red)" onclick="closeSheet();toast('Table deleted')">${ic('x','sm')} Delete</button><button class="btn btn-primary sm" onclick="closeSheet();toast('Table saved')">Save Changes</button></div>`,
- "guestpasses":()=>`<div class="grab"></div>
-   <div class="between"><div class="bold" style="font-size:17px">Table group · guest passes</div><button class="icon-btn" onclick="closeSheet()">${ic('x')}</button></div>
-   <div class="between"><span class="tier-badge big" style="--tc:${TIERS.table.color}">VIP Table · V-5</span><span class="sm">Wristband: <b>${TIERS.table.band}</b></span></div>
-   <div class="card tight"><div class="between"><div class="row" style="min-width:0">${ic('share','sm')}<div style="min-width:0"><div class="bold sm">Group invite link</div><div class="xs muted">Send once — each friend claims a seat (up to 6)</div></div></div><button class="btn btn-primary sm" onclick="toast('Invite link copied')">Copy</button></div></div>
-   <div class="between"><div class="bold sm">6 passes</div><span class="xs muted">2 in · 1 claimed · 1 sent · 2 open</span></div>
-   ${GROUP_TABLE.map((p,i)=>groupRow(p,i,'table')).join('')}
-   <div class="info-banner">${ic('info','sm')}<div>Each pass carries the table's colour. At the door, every guest scans their own QR and gets a <b>${TIERS.table.band}</b> wristband — no confusion even if they arrive separately.</div></div>
-   <button class="btn btn-dark" onclick="closeSheet();toast('Shared the 2 open passes')">${ic('share','sm')} Share remaining passes</button>`,
- "grouptickets":()=>`<div class="grab"></div>
-   <div class="between"><div class="bold" style="font-size:17px">Share tickets with your group</div><button class="icon-btn" onclick="closeSheet()">${ic('x')}</button></div>
-   <div class="sm muted">You bought 3 tickets. Send each person their own pass — every ticket keeps its tier colour + wristband, and they show their own QR at the door.</div>
-   <div class="card tight"><div class="between"><div class="row" style="min-width:0">${ic('share','sm')}<div style="min-width:0"><div class="bold sm">Group link</div><div class="xs muted">Anyone with the link claims one of the 3 tickets</div></div></div><button class="btn btn-primary sm" onclick="toast('Group link copied')">Copy</button></div></div>
-   <div class="between"><div class="bold sm">3 tickets</div><span class="xs muted">1 you · 1 claimed · 1 sent</span></div>
-   ${GROUP_TICKETS.map((p,i)=>groupRow(p,i,'ga')).join('')}
-   <button class="btn btn-dark" onclick="toast('Reminder sent to unclaimed')">${ic('mail','sm')} Nudge unclaimed</button>`,
+ "guestpasses":()=>groupInviteSheet({title:'Invite your table',tierKey:'table',tierLabel:'VIP Table · V-5',items:GROUP_TABLE,summary:'2 of 6 arriving',sub:'4 seats to fill',unit:'Seats (6)',status:'2 in · 1 invited · 2 open',msg:'<b>Mei invited you to Table V-5</b> at Boomerang Club · Fri 26 Dec, 9 PM. Tap to claim your VIP Table pass → mandos.app/g/8F3A'}),
+ "grouptickets":()=>groupInviteSheet({title:'Share your tickets',tierKey:'vip',tierLabel:'Neon Nights · 3 tickets',items:GROUP_TICKETS,summary:'3 tickets · 2 in',sub:'1 not shared yet',unit:'Tickets (3)',status:'1 you · 1 claimed · 1 invited',msg:'<b>Mei sent you a ticket to Neon Nights</b> at Boomerang Club · Fri 26 Dec. Tap to claim → mandos.app/t/2K9P'}),
  "editcategories":()=>`<div class="grab"></div>
    <div class="between"><div class="bold row" style="font-size:17px">Edit Table Categories ${ic('info','sm')}</div><button class="btn-ghost accent bold" onclick="toast('Add a category row')">${ic('plus')}</button></div>
    <div class="sm muted">Reorder, rename or remove the tags you sort tables by (e.g. Indoor / Outdoor / VIP).</div>
@@ -1792,8 +1823,8 @@ const INFO = {
  "editcategories":{role:"Merchant",title:"Table categories",desc:"Rename / reorder / remove the tags you sort tables by (Indoor, Outdoor, VIP…)."},
  "m3-assign":{role:"Merchant",title:"Assign table",desc:"Pick a table for a booking. Reserved = a real overlap; assigning locks it against double-booking."},
  "senddeposit":{role:"Merchant",title:"Request deposit",desc:"Send a secure pay-link (app / email / SMS). Flips to Paid here — no money moves till they pay."},
- "guestpasses":{role:"Customer",title:"Table group · guest passes",desc:"One pass per seat on a table (up to capacity). Assign a name, share each individually, and track who's claimed / checked in.",points:["One <b>group link</b>, or share each pass to a specific person","Live status per seat: You / Claimed / Sent / Open","Every pass = the table's colour → matching wristband at the door"],tip:"Solves 'multiple passes to one table' — friends arrive separately, each scans their own QR."},
- "grouptickets":{role:"Customer",title:"Share tickets with your group",desc:"Bought several tickets? Send each person their own pass — mixed tiers keep their own colour.",points:["Group link (first-come) or assign per person","Each ticket keeps its tier colour + wristband","Nudge whoever hasn't claimed yet"],tip:"Group entry: buy N tickets, share N passes — each member enters on their own QR."}
+ "guestpasses":{role:"Customer",title:"Invite your table",desc:"Fill each seat by picking a Mandos friend or texting a number. The QR lives on their pass at the door — here you just say who's coming.",points:["<b>Friends</b> tab: tap a Mandos friend → pass lands in their app","<b>By number</b>: WhatsApp / SMS a link (with a preview of the message)","Live status per seat: You / Checked-in / Claimed / Invited / Open"],tip:"'Multiple passes to one table' = one seat per person, each filled from friends or a number."},
+ "grouptickets":{role:"Customer",title:"Share your tickets",desc:"Bought several? Send each person their own — from friends or by number. Mixed tiers keep their colour.",points:["Invite by Mandos friend or phone number","Each ticket keeps its tier + wristband colour","See who's claimed; open seats stay shareable"],tip:"Group entry: buy N, invite N people — each enters on their own pass."}
 };
 function renderExplain(id){
   var el=document.getElementById('explain'); if(!el) return;
