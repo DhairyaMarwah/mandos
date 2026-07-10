@@ -1382,7 +1382,7 @@ SB["m1-settings"]=()=>hdr("Booking settings")+`
   ${sheetRow("Opening Hours","Mon – Sun · 6:00 PM – 5:00 AM","openinghours")}
   ${sheetRow("Deposits &amp; Payments","Refundable card hold · min spend HK$2,000","depositspay")}
   ${sheetRow("Reservation Settings","Turn time, buffer, slot interval","reservationsettings")}
-  ${navRow("Tables","18 Active · 4 Hidden · 2 floors","m1-tables")}
+  ${navRow("Tables","24 tables · 2 floors · 6 held for walk-ins/VIP","m1-tables")}
   ${sheetRow("Cancellation &amp; No Show","Policies and penalties","cancelnoshow")}
   <div class="card between"><div><div class="bold sm">Merchant Approval</div><div class="xs muted">Every request needs your confirmation</div></div><div class="toggle on"></div></div>
   <div class="sec-label">Capabilities</div>
@@ -1400,10 +1400,9 @@ const sheetRow=(t,s,sheet)=>`<div class="card between" onclick="openSheet('${she
 /* ---------- M1 TABLES ---------- */
 SB["m1-tables"]=()=>hdr("Tables","",`<button class="btn-ghost accent bold sm" onclick="openSheet('editcategories')">${ic('tag','sm')} Categories</button>`)+`
 <div class="screen-body">
-  <div class="tabs"><div class="tab on">All (24)</div><div class="tab">Published (18)</div><div class="tab">Hidden (6)</div></div>
-  <div class="between"><div class="row"><span class="chk" onclick="toggleChk(this)"></span><span class="sm bold">Select All</span></div><span class="xs muted">0 Selected</span></div>
-  <div class="info-banner">${ic('info','sm')}<div>Group tables by <b>floor</b>. Upload a floor-plan photo per floor so staff (and, for clubs, customers) can see exactly where each table sits.</div></div>
-  <div class="card between" onclick="openSheet('publishtables')"><div><div class="bold sm">Published per mode</div><div class="xs muted">Daytime 18 · Club night 12 · Events per-event</div></div><span class="accent sm">Edit ${ic('fwd','sm')}</span></div>
+  <div class="between"><div class="row"><span class="chk" onclick="toggleChk(this)"></span><span class="sm bold">Select All</span></div><span class="xs muted">24 tables · 6 held for walk-ins/VIP</span></div>
+  <div class="card between" onclick="openSheet('publishtables')"><div class="row">${ic('cal')}<div><div class="bold sm">What customers can book</div><div class="xs muted">Daytime 18 · Club night 12 · Events per-event</div></div></div><span class="accent sm">Manage ${ic('fwd','sm')}</span></div>
+  <div class="info-banner">${ic('info','sm')}<div>Below: your full inventory grouped by <b>floor</b>. Upload a floor-plan photo per floor so staff (and, for clubs, customers) see where each table sits.</div></div>
   ${floorCard("Floor 1","Indoor · Main bar",5,5,false,["V-1","V-2","V-3","T-1","T-2"])}
   ${floorCard("Floor 2","Rooftop terrace · Outdoor",3,3,true,["B-2","R-1","R-2"])}
   <button class="btn btn-outline-dim" onclick="openSheet('addfloor')">${ic('plus','sm')} Add Floor</button>
