@@ -906,11 +906,12 @@ const hybDateCell=(d,n,tg,sel)=>`<div class="dc ${sel?'sel':''} ${tg==='Event'?'
 function hybModes(ev){ return '<div class="segcard on" data-seg="day" onclick="hybSeg(this)">Daytime tables<div class="xs muted" style="font-weight:400;margin-top:2px">12:00 – 6:00 PM · by time slot</div></div>'+(ev?'<div class="segcard" data-seg="night" onclick="hybSeg(this)">Neon Nights<div class="xs muted" style="font-weight:400;margin-top:2px">event · from 9:00 PM</div></div>':'<div class="segcard" data-seg="night" onclick="hybSeg(this)">Club night<div class="xs muted" style="font-weight:400;margin-top:2px">from 9:00 PM · table for the night</div></div>'); }
 function hybClubNight(){ return '<div class="info-banner">'+ic('info','sm')+'<div>Book a table <b>for the night</b> — it\'s yours until close. A refundable deposit holds it.</div></div>'
   +'<div class="bold sm">Arrival (optional)</div>'
-  +'<div class="chipsel row" style="flex-wrap:wrap"><span class="chip on" onclick="pickChip(this)">9:00 PM</span><span class="chip" onclick="pickChip(this)">10:00 PM</span><span class="chip" onclick="pickChip(this)">11:00 PM</span><span class="chip" onclick="pickChip(this)">Late</span></div>'
+  +'<div class="chipsel row" style="flex-wrap:wrap"><span class="chip on" onclick="pickChip(this)">9:00 PM</span><span class="chip" onclick="pickChip(this)">10:00 PM</span><span class="chip" onclick="pickChip(this)">11:00 PM</span><span class="chip" onclick="pickChip(this)">After 12</span></div>'
   +'<div class="filterbar row" data-target="#segnight" style="overflow:auto"><span class="chip on" data-filter="all" onclick="filt(this)">All</span><span class="chip" data-filter="VIP Table" onclick="filt(this)">VIP</span><span class="chip" data-filter="Booth" onclick="filt(this)">Booth</span><span class="chip" onclick="openSheet(\'floormapview\')">'+ic('loc','sm')+' Floor map</span></div>'
   +tableCard("V-5","VIP Table","2–4 guests",2000,1000,"Held for the night · prime stage view.",true,"Floor 1 · behind the DJ booth")
   +tableCard("V-6","VIP Table","4–6 guests",3000,1000,"Held for the night · premium booth.",false,"Floor 1 · stage left")
   +tableCard("B-2","Booth","6–8 guests",3000,1200,"Held for the night · private booth.",false,"Floor 2 · rooftop mezzanine")
+  +'<div class="between xs" style="padding:2px 4px"><span class="muted">Party of 10 or more?</span><span class="accent" onclick="go(\'c2-enquiry\')">Send a group enquiry '+ic('fwd','sm')+'</span></div>' 
   +'<div class="card between" style="border-radius:16px"><div><div class="bold sm">1 table · held for the night</div><div class="xs muted">V-5 · arrive 9:00 PM</div></div><button class="btn btn-primary sm" onclick="openSheet(\'c2-additional\')">View Summary '+ic('fwd','sm')+'</button></div>'; }
 function hybEventNight(){ return '<div class="hero" style="min-height:172px;'+heroImg('neon',700)+'"><div class="hero-cap"><span class="badge b-event" style="margin-bottom:6px">EVENT NIGHT</span><div class="big">NEON NIGHTS</div><div class="sm muted">House · Techno · from HK$150</div></div></div>'
   +'<div class="info-banner">'+ic('info','sm')+'<div>This date is an <b>event night</b> — entry is by ticket, with event tables available. Daytime tables are still bookable by slot.</div></div>'
@@ -951,11 +952,13 @@ SB["c2-club"]=()=>hdr("Club Reservation")+`
     <span class="chip" onclick="openSheet('floormapview')">${ic('loc','sm')} Floor map</span>
     <span class="chip">3 Guests ${ic('down','sm')}</span>
   </div>
+  <div class="info-banner">${ic('ticket','sm')}<div><b>Event tables include entry</b> for the table's guests — no separate tickets needed. Everyone gets the table's wristband at the door.</div></div>
   <div class="sm muted">Tap a category to filter · tap Add to select</div>
   ${tableCard("V-5","VIP Table","2–4 guests",2000,1000,"Prime location with stage view.",true,"Floor 1 · behind the DJ booth")}
   ${tableCard("V-6","VIP Table","4–6 guests",3000,1000,"Spacious booth with premium view.",false,"Floor 1 · stage left")}
   ${tableCard("H-3","High Table","4–6 guests",1500,600,"Lively spot near the bar.",false,"Floor 1 · by the main bar")}
   ${tableCard("B-2","Booth","6–8 guests",3000,1200,"Private booth, great for groups.",false,"Floor 2 · rooftop mezzanine")}
+  <div class="between xs" style="padding:2px 4px"><span class="muted">Party of 10 or more?</span><span class="accent" onclick="go('c2-enquiry')">Send a group enquiry ${ic('fwd','sm')}</span></div>
 </div>
 <div class="screen-footer" style="padding-top:0"><div class="card between" style="border-radius:16px"><div><div class="bold sm" id="tblBarCount">1 table added</div><div class="xs muted" id="tblBarList">V-5</div></div><button class="btn btn-primary sm" onclick="go('c2-additional-club')">View Summary ${ic('fwd','sm')}</button></div></div>`;
 
@@ -993,7 +996,7 @@ SB["c2-tickets"]=()=>hdr("Club Reservation")+`
   ${ticketCard("General Admission",150,"Standard entry to the club. Includes 1 drink.","Many available","s-low",1,'ga')}
   ${ticketCard("VIP Entry",350,"Priority entry, dedicated queue, 2 drinks included.","Limited · 20 left","s-mod",2,'vip')}
   ${ticketCard("Backstage",800,"Backstage access — meet the artists, private bar.","Sold out","s-sold",0,'backstage',true)}
-  <div class="card between"><div class="row">${ic('tag')}<span class="sm">Have a promo code?</span></div><span class="muted sm">Enter code ${ic('fwd','sm')}</span></div>
+  <div class="card between" onclick="promoApply(this)"><div class="row">${ic('tag')}<span class="sm">Have a promo code?</span></div><span class="muted sm" data-promo>Enter code ${ic('fwd','sm')}</span></div>
 </div>
 <div class="screen-footer"><div class="between"><div><div class="big" id="tkTotal">HK$850</div><div class="xs muted" id="tkCount">3 Tickets</div></div><button class="btn btn-primary sm" onclick="go('c3-summary-ticket')">Proceed</button></div><div class="foot-note">Max 10 tickets per order ${ic('info','sm')}</div></div>`;
 
@@ -1016,9 +1019,9 @@ SB["c3-summary"]=()=>hdr("Booking Summary")+`
     <div class="kv"><span class="k">${ic('note','sm')} Special Request</span><span>${D.booking.request}</span></div>
     <div class="divider"></div>
     <div class="kv"><span><b>V-5</b> · VIP Table</span><span class="muted sm">Min spend HK$2,000</span></div>
-    <button class="btn btn-outline-dim sm" style="width:100%;margin-top:8px">${ic('plus','sm')} Select more tables</button>
+    <button class="btn btn-outline-dim sm" style="width:100%;margin-top:8px" onclick="go('c2-club')">${ic('plus','sm')} Select more tables</button>
   </div>
-  <div class="card between"><div class="row">${ic('tag')}<span class="sm">Offers</span></div><span class="muted sm">View all offers ${ic('fwd','sm')}</span></div>
+  <div class="card between" onclick="toast('WELCOME20 active — applied automatically at payment')"><div class="row">${ic('tag')}<span class="sm">Offers</span></div><span class="muted sm">1 active · WELCOME20 ${ic('fwd','sm')}</span></div>
   <div class="card">
     <div class="bold sm" style="margin-bottom:8px">Due now — refundable hold</div>
     <div class="kv"><span class="k">Deposit hold (refundable)</span><span>HK$1,000</span></div>
@@ -1040,7 +1043,7 @@ SB["c3-summary-ticket"]=()=>hdr("Booking Summary")+`
     <div class="divider"></div>
     <div class="kv"><span class="row" style="gap:7px">${tierBadge('vip')} 2 × VIP Entry</span><span>HK$700</span></div>
     <div class="kv"><span class="row" style="gap:7px">${tierBadge('ga')} 1 × General Admission</span><span>HK$150</span></div>
-    <div class="center sm accent" style="margin-top:8px">Select more →</div>
+    <div class="center sm accent" style="margin-top:8px" onclick="go('c2-tickets')">Select more →</div>
   </div>
   <div class="card">
     <div class="sec-label">Payment Summary</div>
@@ -1112,6 +1115,7 @@ SB["c3-success"]=()=>hdr("Booking")+`
 SB["c4-mybookings"]=()=>hdr("My Bookings")+`
 <div class="screen-body">
   <div class="seg" style="margin:0"><button class="on" style="flex:1;padding:9px;border-radius:999px;font-weight:600">Upcoming</button><button style="flex:1;padding:9px;color:var(--dim)">Past</button></div>
+  <div class="alert" onclick="go('c4-detail')"><div class="ci" style="background:var(--purple-soft);color:var(--purple)">${ic('star','sm')}</div><div class="grow"><div class="bold sm">Your Fri 26 Dec table was moved</div><div class="xs muted">Neon Nights took over the date — the venue moved you to Sat 27 Dec and added a comp (1 round of drinks)</div></div><span class="badge b-confirmed">Resolved</span></div>
   ${bkCard(D.venue.name,"Central, Hong Kong",D.booking.date,D.booking.time,"VIP Table V-5","3 Guests","Confirmed","b-confirmed")}
   ${bkCard(D.event.name,D.venue.name,D.event.date,"10:00 PM","General Entry","2 Tickets","Pending","b-pending")}
   ${bkCard("Skyline Lounge","Tsim Sha Tsui","Sat, 21 Dec 2025","8:30 PM","Table B-12","4 Guests","Completed","b-completed")}
@@ -1436,6 +1440,7 @@ const evRow=(n,dt,st,cls)=>`<div class="list-card" onclick="openSheet('createeve
 
 /* ---------- NEW: schedule/modes, event impact, enquiry, free summary ---------- */
 function pickChip(chip){ chip.parentElement.querySelectorAll('.chip').forEach(function(c){c.classList.remove('on')}); chip.classList.add('on'); }
+function promoApply(card){ var s=card.querySelector('[data-promo]'); if(s){ s.innerHTML='WELCOME20 ✓ · −20% at checkout'; s.classList.add('green'); } toast('Promo applied — reflected in the payment summary'); }
 /* pill segmented control inside a framed sheet — toggles its sibling panels */
 function segTab(btn,tab){ var box=btn.closest('.tabbed'); if(!box)return; btn.parentElement.querySelectorAll('button').forEach(function(b){b.classList.remove('on')}); btn.classList.add('on'); box.querySelectorAll('.panel').forEach(function(p){p.classList.toggle('on',p.dataset.panel===tab)}); }
 /* sheets that render their own header/body/footer frame (primary action pinned) */
@@ -1765,6 +1770,7 @@ const SHEETS = {
    <div class="sm muted">Send a secure payment link. The guest pays via app, email or SMS — you'll see it flip to “Paid” here. No money moves until they pay.</div>
    <div class="field"><label>Amount (HK$)</label><input class="input" value="1,000"></div>
    <div class="field"><label>Reason</label><input class="input" value="Table security deposit (promoter sale)"></div>
+   <div class="field"><label>Pay-by deadline</label><select class="selectx"><option selected>24h before the booking</option><option>12h before the booking</option><option>3h from now</option></select><div class="xs muted" style="margin-top:4px">Shown to the guest — the table may be released after this.</div></div>
    <div class="field"><label>Send via</label><div class="chipsel row"><span class="chip on" onclick="pickChip(this)">${ic('mail','sm')} Email</span><span class="chip" onclick="pickChip(this)">SMS</span><span class="chip" onclick="pickChip(this)">In-app</span></div></div>
    <div class="card between"><div class="sm">Status</div><span class="badge b-pending">Not sent</span></div>
    <div class="row"><button class="btn btn-dark sm" onclick="closeSheet()">Cancel</button><button class="btn btn-primary sm" onclick="closeSheet()">Send request link</button></div>`,
