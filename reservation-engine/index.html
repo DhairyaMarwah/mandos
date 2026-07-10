@@ -390,6 +390,28 @@ h1,h2,.big,.apphdr h1{text-wrap:balance}
 .avstack{display:flex}
 .avstack .avatar{width:30px;height:30px;margin-left:-9px;border:2px solid var(--bg2)}
 .avstack .avatar:first-child{margin-left:0}
+
+/* ===== Hallmark redesign · readability + framed sheets (pinned header/footer) =====
+   pre-emit critique: P5 H5 E4 S5 R5 V4 · colours locked, hierarchy + flow reworked */
+.big,.apphdr h1,.pass-tier,.scan-tier .lbl{letter-spacing:-.015em}
+.sec-title{font-size:11.5px;font-weight:700;letter-spacing:.04em;text-transform:uppercase;color:var(--dim);margin:8px 0 2px}
+.sec-title b{color:var(--text)}
+/* a sheet that manages its own header / scroll / footer so the primary action never scrolls away */
+.sheet.framed{padding:0;gap:0;overflow:hidden;max-height:90%}
+.sheet.framed .grab{margin:10px auto 8px}
+.sheet.framed .sheet-hd{padding:0 16px 12px;border-bottom:1px solid var(--line);flex:none}
+.sheet.framed .sheet-body{overflow:auto;padding:14px 16px 16px;display:flex;flex-direction:column;gap:11px;flex:1;min-height:0}
+.sheet.framed .sheet-body::-webkit-scrollbar{width:0}
+.sheet.framed .sheet-foot{padding:12px 16px calc(16px + env(safe-area-inset-bottom));border-top:1px solid var(--line);background:linear-gradient(transparent,var(--bg2) 34%);flex:none;display:flex;flex-direction:column;gap:6px}
+/* pill segmented control — clearer than an underline for a 2-way pick */
+.seg2{display:flex;gap:5px;background:var(--surface);border:1px solid var(--line);border-radius:999px;padding:4px}
+.seg2 button{flex:1;padding:9px 6px;border-radius:999px;font-size:12.5px;font-weight:600;color:var(--dim);display:flex;gap:6px;align-items:center;justify-content:center;cursor:pointer;transition:background-color .16s,color .16s}
+.seg2 button.on{background:var(--accent);color:#1a1200;box-shadow:0 3px 10px rgba(245,133,31,.28)}
+/* the SMS/WhatsApp preview, drawn like a real received message */
+.msg-bubble{position:relative;align-self:flex-start;max-width:94%;background:var(--surface2);border:1px solid var(--line);border-radius:15px;border-top-left-radius:5px;padding:11px 13px;font-size:12.5px;line-height:1.5;color:var(--text)}
+.msg-bubble b{font-weight:600}
+.msg-bubble .msg-meta{font-size:9.5px;color:var(--dim2);margin-top:7px;display:flex;gap:5px;align-items:center}
+.msg-bubble .msg-meta::before{content:"";width:5px;height:5px;border-radius:50%;background:var(--green)}
 </style>
 </head>
 <body>
@@ -649,27 +671,38 @@ function groupInviteSheet(cfg){
   const going=cfg.items.filter(p=>p.status==='you'||p.status==='claimed'||p.status==='checkedin');
   const open=cfg.items.filter(p=>p.status==='open').length;
   const friends=FRIENDS.slice().sort((a,b)=>(a.added?1:0)-(b.added?1:0));
-  return `<div class="grab"></div>
-   <div class="between"><div class="bold" style="font-size:17px">${cfg.title}</div><button class="icon-btn" onclick="closeSheet()">${ic('x')}</button></div>
-   <div class="between"><span class="tier-badge big" style="--tc:${T.color}">${cfg.tierLabel}</span><span class="sm">Wristband: <b>${T.band}</b></span></div>
-   <div class="card tight between"><div class="row" style="min-width:0">${avatarStack(going.filter(p=>p.name).map(p=>avSeed(p.name)).slice(0,4))}<div><div class="bold sm">${cfg.summary}</div><div class="xs muted">${cfg.sub}</div></div></div><button class="btn btn-outline-dim sm" onclick="toast('Invite link copied')">${ic('share','sm')} Link</button></div>
-   <div class="between"><div class="bold sm">${cfg.rosterLabel}</div><span class="xs muted">who's coming with you</span></div>
-   ${roster.map(p=>seatRow(p,cfg.tierKey)).join('')}
-   ${open>0?`<div class="between" style="margin-top:6px"><div class="bold sm">Add people</div><span class="xs muted">${open} open seat${open>1?'s':''}</span></div>
-   <div class="tabbed">
-     <div class="tabs"><div class="tab on" data-tab="fr">${ic('users','sm')} Friends</div><div class="tab" data-tab="nm">${ic('phone','sm')} By number</div></div>
-     <div class="panel on" data-panel="fr">
-       <input class="input" placeholder="🔍  Search your Mandos friends">
-       ${friends.map(friendInviteRow).join('')}
-       <div class="xs muted center">Not on Mandos? Use <b>By number</b> to text them.</div>
-     </div>
-     <div class="panel" data-panel="nm">
-       <div class="row"><div class="field grow"><label>Name (optional)</label><input class="input" placeholder="e.g. Sam"></div><div class="field grow"><label>Mobile</label><input class="input" value="+852 "></div></div>
-       <div class="field"><label>Send via</label><div class="chipsel row"><span class="chip on" onclick="pickChip(this)">${ic('phone','sm')} WhatsApp</span><span class="chip" onclick="pickChip(this)">${ic('mail','sm')} SMS</span></div></div>
-       <div class="card tight"><div class="xs muted" style="margin-bottom:5px">They'll receive</div><div class="sm" style="line-height:1.5">${cfg.msg}</div></div>
-       <button class="btn btn-primary" onclick="toast('Invite sent')">Send invite</button>
-     </div>
-   </div>`:`<div class="info-banner">${ic('check','sm')}<div>All seats filled — your group is set. Anyone can still be swapped if plans change.</div></div>`}`;
+  return `
+  <div class="sheet-hd">
+    <div class="grab"></div>
+    <div class="between"><div style="min-width:0"><div class="bold" style="font-size:17px">${cfg.title}</div><div class="xs muted" style="margin-top:2px">${cfg.tierLabel} · <b style="color:${T.color}">${T.band} wristband</b></div></div><button class="icon-btn" onclick="closeSheet()">${ic('x')}</button></div>
+  </div>
+  <div class="sheet-body">
+    <div class="card tight between"><div class="row" style="min-width:0">${avatarStack(going.filter(p=>p.name).map(p=>avSeed(p.name)).slice(0,4))}<div><div class="bold sm">${cfg.summary}</div><div class="xs muted">${cfg.sub}</div></div></div>${open>0?`<span class="tier-badge" style="--tc:${T.color}">${open} open</span>`:`<span class="badge b-confirmed">${ic('check','sm')} Full</span>`}</div>
+
+    ${open>0?`<div class="sec-title">Add ${open} more</div>
+    <div class="tabbed">
+      <div class="seg2"><button class="on" data-tab="fr" onclick="segTab(this,'fr')">${ic('users','sm')} Friends</button><button data-tab="nm" onclick="segTab(this,'nm')">${ic('phone','sm')} By number</button></div>
+      <div class="panel on" data-panel="fr">
+        <input class="input" placeholder="🔍  Search your Mandos friends">
+        ${friends.map(friendInviteRow).join('')}
+      </div>
+      <div class="panel" data-panel="nm">
+        <div class="row"><div class="field grow"><label>Name (optional)</label><input class="input" placeholder="e.g. Sam"></div><div class="field grow"><label>Mobile</label><input class="input" value="+852 "></div></div>
+        <div class="field"><label>Send via</label><div class="chipsel row"><span class="chip on" onclick="pickChip(this)">${ic('phone','sm')} WhatsApp</span><span class="chip" onclick="pickChip(this)">${ic('mail','sm')} SMS</span></div></div>
+        <div class="xs muted">They'll receive</div>
+        <div class="msg-bubble">${cfg.msg}<div class="msg-meta">Mandos · delivered</div></div>
+        <button class="btn btn-primary" onclick="toast('Invite sent')">Send invite</button>
+      </div>
+    </div>`:''}
+
+    <div class="sec-title">${cfg.rosterLabel}</div>
+    ${roster.map(p=>seatRow(p,cfg.tierKey)).join('')}
+  </div>
+  <div class="sheet-foot">
+    ${open>0
+      ? `<button class="btn btn-primary" onclick="toast('Invite link copied — anyone can claim a seat')">${ic('share','sm')} Share group link</button><div class="foot-note">Fastest way to fill the last ${open} — one link, each person claims a seat</div>`
+      : `<button class="btn btn-dark" onclick="closeSheet()">${ic('check','sm')} Done · everyone's set</button>`}
+  </div>`;
 }
 
 /* ------- SCREEN BUILDERS (return inner HTML of .screen-body/footer) ------- */
@@ -1388,6 +1421,10 @@ const evRow=(n,dt,st,cls)=>`<div class="list-card" onclick="openSheet('createeve
 
 /* ---------- NEW: schedule/modes, event impact, enquiry, free summary ---------- */
 function pickChip(chip){ chip.parentElement.querySelectorAll('.chip').forEach(function(c){c.classList.remove('on')}); chip.classList.add('on'); }
+/* pill segmented control inside a framed sheet — toggles its sibling panels */
+function segTab(btn,tab){ var box=btn.closest('.tabbed'); if(!box)return; btn.parentElement.querySelectorAll('button').forEach(function(b){b.classList.remove('on')}); btn.classList.add('on'); box.querySelectorAll('.panel').forEach(function(p){p.classList.toggle('on',p.dataset.panel===tab)}); }
+/* sheets that render their own header/body/footer frame (primary action pinned) */
+const FRAMED_SHEETS = new Set(['guestpasses','grouptickets']);
 const capRow=(t,on)=>`<div class="card between"><div class="sm">${t}</div><div class="toggle ${on?'on':''}"></div></div>`;
 const schedRow=(d,mode,cls,detail)=>`<div class="card between"><div><div class="bold sm">${d}</div><div class="xs muted">${detail}</div></div><span class="badge ${cls==='reg'?'b-confirmed':cls==='evt'?'b-event':cls==='split'?'b-owl':'b-cancel'}">${mode}</span></div>`;
 const modeSlot=(t,label,cls)=>`<div class="between" style="padding:8px 0;border-bottom:1px solid var(--line)"><span class="sm">${t}</span><span class="xs ${cls==='reg'?'green':cls==='evt'?'accent':'muted'}">${label}</span></div>`;
@@ -1900,8 +1937,8 @@ function openNav(){ document.querySelector('.sidebar')?.classList.add('open'); d
 function openInfo(){ document.getElementById('explain')?.classList.add('open'); document.querySelector('.sidebar')?.classList.remove('open'); drawerOv(true); }
 function closeDrawers(){ document.querySelector('.sidebar')?.classList.remove('open'); document.getElementById('explain')?.classList.remove('open'); drawerOv(false); }
 function back(){ const p=history.pop(); if(p) go2(p); }
-function openSheet(id){ const sb=document.getElementById('sheetBox'); sb.innerHTML=(SHEETS[id]||(()=>'—'))(); sb.querySelectorAll('.qr').forEach(makeQR); document.getElementById('sheetLayer').classList.add('open'); if(INFO[id]) renderExplain(id); }
-function closeSheet(){ const l=document.getElementById('sheetLayer'); if(l) l.classList.remove('open'); const a=document.querySelector('.screen.active'); if(a) renderExplain(a.id); }
+function openSheet(id){ const sb=document.getElementById('sheetBox'); sb.classList.toggle('framed', FRAMED_SHEETS.has(id)); sb.innerHTML=(SHEETS[id]||(()=>'—'))(); sb.querySelectorAll('.qr').forEach(makeQR); document.getElementById('sheetLayer').classList.add('open'); if(INFO[id]) renderExplain(id); }
+function closeSheet(){ const l=document.getElementById('sheetLayer'); if(l) l.classList.remove('open'); const sb=document.getElementById('sheetBox'); if(sb) sb.classList.remove('framed'); const a=document.querySelector('.screen.active'); if(a) renderExplain(a.id); }
 function setMode(m){ mode=m; document.getElementById('segC').classList.toggle('on',m==='customer'); document.getElementById('segM').classList.toggle('on',m==='merchant'); renderNav(); history=[]; go2(m==='customer'?'home':'m3-dashboard'); }
 
 /* fake QR generator */
