@@ -1588,10 +1588,11 @@ const SHEETS = {
    </div>
    <div class="sheet-body">
      <div class="sec-title">Floor 1 · Indoor</div>
-     <div class="floormap" style="background-image:${FLOORMAP}">${custPins([{id:'V-5',sel:true},{id:'V-6'},{id:'H-3'},{id:'T-1'},{id:'T-2'}])}</div>
+     <div class="floormap" style="background-image:${FLOORMAP}">${custPins([{id:'V-5',sel:true},{id:'V-6'},{id:'H-3'}])}</div>
+     <div class="xs muted">Showing the tables you can book tonight — V-5 · V-6 · H-3. B-2 is on Floor 2.</div>
      <div class="card tight between"><div class="row" style="gap:9px"><span class="fm-pin sel" style="position:static;transform:none">V-5</span><div><div class="bold sm">Your table · behind the DJ booth</div><div class="xs muted">VIP Table · 2–4 guests · ${TIERS.table.band} wristband</div></div></div><span class="badge b-confirmed">Selected</span></div>
      <div class="sec-title">Floor 2 · Rooftop</div>
-     <div class="card"><div class="row" style="gap:10px">${ic('info')}<div style="min-width:0"><div class="bold sm">No floor plan for this floor</div><div class="xs muted" style="margin-top:3px">The venue hasn't uploaded one. B-2 and the rooftop tables are still bookable from the list — nothing is hidden.</div></div></div></div>
+     <div class="card"><div class="row" style="gap:10px">${ic('info')}<div style="min-width:0"><div class="bold sm">No floor plan for this floor</div><div class="xs muted" style="margin-top:3px">The venue hasn't uploaded one. <b>B-2 · Booth (rooftop mezzanine)</b> is still bookable from the list — same details, just no map.</div></div></div></div>
      <div class="info-banner">${ic('info','sm')}<div>The map is a <b>reference</b>, not a picker — prices, deposits and live availability stay in the list. Tap a table there to select it.</div></div>
    </div>
    <div class="sheet-foot"><button class="btn btn-primary" onclick="closeSheet()">Back to table list</button></div>`,
