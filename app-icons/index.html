@@ -186,11 +186,39 @@
       const save = (blob, name) => { const a=document.createElement('a'); a.href=URL.createObjectURL(blob); a.download=name; a.click() }
       const fn = (v) => `mandos-icon-${v.name.toLowerCase().replace(/ /g,'-')}`
       async function downloadPng(v) { const c = await renderCanvas(v, 1024); c.toBlob((b)=>save(b, fn(v)+'.png')) }
+      // colour helpers so gradient stops work in every editor (Figma/Illustrator want stop-color + stop-opacity, not rgba())
+      const parseColor = (c) => { if (c[0]==='#'){ const n=parseInt(c.slice(1),16); return [n>>16&255,n>>8&255,n&255,1] } const m=c.match(/rgba?\(([^)]+)\)/); if(m){ const p=m[1].split(',').map(parseFloat); return [p[0],p[1],p[2], p[3]??1] } return [255,255,255,1] }
+      const hexOf = (rgb) => '#'+rgb.slice(0,3).map((x)=>Math.round(x).toString(16).padStart(2,'0')).join('')
+      const stopOf = (c, a) => { const rgb=parseColor(c); return `stop-color="${hexOf(rgb)}" stop-opacity="${a!=null?a:rgb[3]}"` }
+      const fillOf = (c, a) => { const rgb=parseColor(c); return `fill="${hexOf(rgb)}" fill-opacity="${a!=null?a:rgb[3]}"` }
+
       function downloadSvg(v) {
-        const svg = coloredSvg(v.logo); const inner = new XMLSerializer().serializeToString(svg).replace(/^[\s\S]*?<svg[^>]*>/,'').replace(/<\/svg>\s*$/,'')
-        const bgFill = v.bg.t==='s' ? v.bg.c : 'url(#bg)'
-        const defs = v.bg.t==='s' ? '' : `<defs><linearGradient id="bg" gradientTransform="rotate(${v.bg.a-90} .5 .5)">${v.bg.s.map(([p,c])=>`<stop offset="${p}" stop-color="${c}"/>`).join('')}</linearGradient></defs>`
-        const full = `<svg xmlns="http://www.w3.org/2000/svg" width="1024" height="1024" viewBox="0 0 1024 1024">${defs}<rect width="1024" height="1024" rx="230" fill="${bgFill}"/><g transform="translate(512,512) scale(${1024*(logoSize/100)/151}) translate(-57,-75.5)">${inner}</g></svg>`
+        const F = 1024, RX = F*0.225, cx = F/2, cy = F/2
+        const svg = coloredSvg(v.logo)
+        const logo = new XMLSerializer().serializeToString(svg).replace(/^[\s\S]*?<svg[^>]*>/,'').replace(/<\/svg>\s*$/,'')
+        const defs = [`<clipPath id="clip"><rect width="${F}" height="${F}" rx="${RX}"/></clipPath>`]
+        const body = []
+        // base background
+        if (v.bg.t === 's') body.push(`<rect width="${F}" height="${F}" fill="${v.bg.c}"/>`)
+        else { defs.push(`<linearGradient id="bg" gradientTransform="rotate(${v.bg.a-90} .5 .5)">${v.bg.s.map(([p,c])=>`<stop offset="${p}" stop-color="${c}"/>`).join('')}</linearGradient>`); body.push(`<rect width="${F}" height="${F}" fill="url(#bg)"/>`) }
+        // radial glow (Cloudflare / Ember Deep / Halo / Solar …) — real SVG radialGradient, fades out at size·farthest-corner
+        if (v.glow) { const g=v.glow, gx=g.at[0]*F, gy=g.at[1]*F
+          const far = Math.max(Math.hypot(gx,gy), Math.hypot(F-gx,gy), Math.hypot(gx,F-gy), Math.hypot(F-gx,F-gy))
+          defs.push(`<radialGradient id="glow" gradientUnits="userSpaceOnUse" cx="${gx.toFixed(1)}" cy="${gy.toFixed(1)}" r="${(g.size*far).toFixed(1)}"><stop offset="0" ${stopOf(g.color,g.alpha)}/><stop offset="1" ${stopOf(g.color,0)}/></radialGradient>`)
+          body.push(`<rect width="${F}" height="${F}" fill="url(#glow)"/>`) }
+        // logo
+        body.push(`<g transform="translate(${cx},${cy}) scale(${(F*(logoSize/100)/151).toFixed(4)}) translate(-57,-75.5)">${logo}</g>`)
+        // inner white glow (inset "from all sides") + top edge light
+        if (v.inner) {
+          defs.push(`<radialGradient id="inn" gradientUnits="userSpaceOnUse" cx="${cx}" cy="${cy}" r="${(F*0.72).toFixed(1)}"><stop offset="0.44" ${stopOf('#ffffff',0)}/><stop offset="1" ${stopOf('#ffffff',v.inner)}/></radialGradient>`)
+          body.push(`<rect width="${F}" height="${F}" fill="url(#inn)"/>`)
+          body.push(`<rect width="${F}" height="${(F*0.02).toFixed(1)}" ${fillOf('#ffffff', Math.min(1, v.inner*1.4))}/>`)
+        }
+        let out = `<g clip-path="url(#clip)">${body.join('')}</g>`
+        // gradient light border (iOS rim), stroke clipped so only the inner half shows
+        if (v.bd) { defs.push(`<linearGradient id="bd" x1="0" y1="0" x2="0" y2="1"><stop offset="0" ${stopOf(v.bd.t)}/><stop offset="1" ${stopOf(v.bd.b)}/></linearGradient>`)
+          out += `<g clip-path="url(#clip)"><rect width="${F}" height="${F}" rx="${RX}" fill="none" stroke="url(#bd)" stroke-width="${(F*0.014).toFixed(1)}"/></g>` }
+        const full = `<svg xmlns="http://www.w3.org/2000/svg" width="${F}" height="${F}" viewBox="0 0 ${F} ${F}"><defs>${defs.join('')}</defs>${out}</svg>`
         save(new Blob([full],{type:'image/svg+xml'}), fn(v)+'.svg')
       }
 
