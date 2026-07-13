@@ -412,6 +412,26 @@ h1,h2,h3{margin:0;font-weight:700;letter-spacing:-.02em;text-wrap:balance}
 .gpqr{width:38px;height:38px;background:#fff;border-radius:8px;padding:3px;flex:none}
 .democtl{max-width:520px;margin:18px auto 0;text-align:center;font-size:12px;color:var(--dim2);border:1px dashed var(--line);border-radius:12px;padding:12px}
 .democtl .btn{margin:0 3px}
+/* interactive floor booking (click-a-table) */
+.floorbook{display:grid;grid-template-columns:1fr 340px;gap:20px;align-items:start}
+@media(max-width:820px){.floorbook{grid-template-columns:1fr}}
+.floorcard{background:rgba(255,255,255,.03);border:1px solid var(--line);border-radius:20px;padding:16px}
+.floorplan{border-radius:14px;padding:8px;background:radial-gradient(120% 90% at 50% 0%,rgba(120,26,6,.28),transparent 62%),linear-gradient(160deg,#15100e,#0c0a09);border:1px solid var(--line)}
+.fnode text{pointer-events:none}
+.fnode.live{cursor:pointer}
+.fnode.live circle{transition:filter .12s,transform .12s;transform-box:fill-box;transform-origin:center}
+.fnode.live:hover circle{filter:brightness(1.35);transform:scale(1.12)}
+.fnode.dead{cursor:not-allowed}
+.flegend{display:flex;flex-wrap:wrap;gap:14px;justify-content:center;margin-top:14px;font-size:11.5px;color:var(--dim)}
+.flegend span{display:inline-flex;align-items:center;gap:6px}
+.flegend i{width:11px;height:11px;border-radius:4px;display:inline-block;border:1px solid}
+.flegend i.av{background:rgba(74,222,128,.16);border-color:rgba(74,222,128,.6)}
+.flegend i.hd{background:rgba(245,159,10,.16);border-color:rgba(245,159,10,.55)}
+.flegend i.so{background:rgba(255,255,255,.05);border-color:rgba(255,255,255,.14)}
+.flegend i.uf{background:rgba(255,255,255,.05);border-color:rgba(255,255,255,.16)}
+.flegend i.se{background:#f5851f;border-color:#f5851f}
+.pickempty{text-align:center;padding:34px 22px}
+#tblpick{position:sticky;top:20px}
 </style>
 </head>
 <body>
@@ -515,13 +535,28 @@ const TABLES=[
  {k:'cab',  zone:'Terrace Cabana',   loc:'Outdoor terrace · quieter, own bar',      cap:'8–12', min:12000,dep:3000, entry:12, img:IMG.roof, sold:true}
 ];
 const capRange=s=>s.split('–').map(Number);
+/* individual tables placed on the interactive floor plan (BookMyShow-style click-to-book).
+   zone -> pricing/capacity from TABLES · st: open | held | sold */
+const FLOORMAP=[
+ {id:'V1',zone:'vip',  x:172,y:54, st:'open'},
+ {id:'V2',zone:'vip',  x:268,y:54, st:'sold'},
+ {id:'S1',zone:'stage',x:60, y:104,st:'open'},
+ {id:'S2',zone:'stage',x:60, y:158,st:'open'},
+ {id:'S3',zone:'stage',x:60, y:212,st:'sold'},
+ {id:'D1',zone:'floor',x:150,y:236,st:'open'},
+ {id:'D2',zone:'floor',x:220,y:246,st:'held'},
+ {id:'D3',zone:'floor',x:290,y:236,st:'open'},
+ {id:'T1',zone:'stand',x:382,y:108,st:'open'},
+ {id:'T2',zone:'stand',x:382,y:160,st:'open'},
+ {id:'C1',zone:'cab',  x:382,y:214,st:'sold'}
+];
 /* ---- BAR: time-slot reservation (restaurant-style) ---- */
 const BAR={name:'Salt & Smoke',co:'Cocktail Bar · Central',venue:'22 Hollywood Rd, Central',img:IMG.bar,
   dates:[['Thu','17'],['Fri','18'],['Sat','19'],['Sun','20'],['Mon','21'],['Tue','22'],['Wed','23']],
   slots:[['6:00 PM',1],['6:30 PM',1],['7:00 PM',1],['7:30 PM',0],['8:00 PM',0],['8:30 PM',1],['9:00 PM',1],['9:30 PM',1],['10:00 PM',1],['10:30 PM',1]],
   areas:['Any area','Indoor lounge','Terrace','Bar counter']};
 /* ---- shared table state ---- */
-let BOOKTAB='tickets', TPARTY=6, BAR_SEL={date:1,slot:'8:30 PM',area:'Any area',party:2}, TBOOK=null, APPR='pending';
+let BOOKTAB='tickets', TPARTY=6, SEL_MAP=null, BAR_SEL={date:1,slot:'8:30 PM',area:'Any area',party:2}, TBOOK=null, APPR='pending';
 const FAQS=[
  ['Do you accept reservations?','Tables are booked separately through the Mandos app — an entry ticket doesn\'t hold a table. Tap “Book a table” in the app, or ask the venue when you arrive.'],
  ['What\'s the refund policy?','Free cancellation until 24 hours before doors, refunded to your original payment method. Inside 24 hours tickets are non-refundable but transferable — share the pass to a friend instead. If the event is cancelled, refunds are automatic within 5–7 business days.'],
@@ -983,16 +1018,82 @@ function renderTables(){
   const big=TPARTY>=10;
   el.innerHTML=`
   <div class="tblhead">
-    <div><div class="eyebrow">Book a table for the night</div><div class="muted" style="font-size:13px;margin-top:6px;max-width:440px">Tables include entry for your guests · one tab, one bill · the venue confirms your booking before you're charged.</div></div>
-    <div class="row" style="gap:12px;flex-wrap:wrap">
-      <div class="partybox"><span class="muted" style="font-size:11px;letter-spacing:.06em;text-transform:uppercase">Party</span><div class="qstep" style="margin-top:4px"><button onclick="tParty(-1)">${ic('minus','sm')}</button><span class="v" id="tpv">${TPARTY}</span><button onclick="tParty(1)">${ic('plus','sm')}</button></div></div>
-      <button class="btn btn-dark" onclick="openFloor()">${ic('map','sm')} View floor map</button>
-    </div>
+    <div><div class="eyebrow">Pick your table on the floor</div><div class="muted" style="font-size:13px;margin-top:6px;max-width:460px">Tap a table on the plan to book that exact spot. Tables include entry for your guests · one tab, one bill · the venue confirms before you're charged.</div></div>
+    <div class="partybox"><span class="muted" style="font-size:11px;letter-spacing:.06em;text-transform:uppercase">Party</span><div class="qstep" style="margin-top:4px"><button onclick="tParty(-1)">${ic('minus','sm')}</button><span class="v" id="tpv">${TPARTY}</span><button onclick="tParty(1)">${ic('plus','sm')}</button></div></div>
   </div>
   ${big?`<div class="enqbanner">${ic('users','sm')}<div class="grow"><b>Booking for 10 or more?</b><div class="muted" style="font-size:12.5px;margin-top:2px">Big groups go through a quick enquiry so the venue can arrange the right setup and pricing.</div></div><button class="btn btn-white" onclick="go('a-enquiry')">Send enquiry ${ic('fwd','sm')}</button></div>`:''}
-  <div class="tblgrid">${TABLES.map(tableCard).join('')}</div>`;
+  <div class="floorbook">
+    <div class="floorcard">
+      <div class="floorplan">${buildFloor(true)}</div>
+      <div class="flegend"><span><i class="av"></i>Available</span><span><i class="hd"></i>On hold</span><span><i class="so"></i>Taken</span><span><i class="uf"></i>Doesn't fit ${TPARTY}</span><span><i class="se"></i>Selected</span></div>
+    </div>
+    <div id="tblpick"></div>
+  </div>`;
+  renderTablePick();
 }
-function tParty(d){TPARTY=Math.max(1,Math.min(20,TPARTY+d));renderTables();}
+function tParty(d){
+  TPARTY=Math.max(1,Math.min(20,TPARTY+d));
+  if(SEL_MAP){const t=FLOORMAP.find(x=>x.id===SEL_MAP);const z=TABLES.find(x=>x.k===t.zone);const [lo,hi]=capRange(z.cap);if(TPARTY<lo||TPARTY>hi)SEL_MAP=null;}
+  renderTables();
+}
+/* interactive floor plan — clickable when interactive, highlight-only in the wayfinding modal */
+function buildFloor(interactive,hiId){
+  const nodes=FLOORMAP.map(t=>{
+    const z=TABLES.find(x=>x.k===t.zone);const [lo,hi]=capRange(z.cap);const fits=TPARTY>=lo&&TPARTY<=hi;
+    const avail=t.st==='open'&&fits;
+    const sel=interactive?SEL_MAP===t.id:hiId===t.id;
+    let fill,stroke,txt;
+    if(sel){fill='#f5851f';stroke='#f5851f';txt='#1a0d00';}
+    else if(t.st==='sold'){fill='rgba(255,255,255,.05)';stroke='rgba(255,255,255,.12)';txt='#55555c';}
+    else if(t.st==='held'){fill='rgba(245,159,10,.16)';stroke='rgba(245,159,10,.55)';txt='#ffb066';}
+    else if(!fits){fill='rgba(255,255,255,.05)';stroke='rgba(255,255,255,.16)';txt='#6f6f77';}
+    else{fill='rgba(74,222,128,.16)';stroke='rgba(74,222,128,.6)';txt='#dfeee4';}
+    const cls='fnode'+(interactive&&avail?' live':'')+(interactive&&!avail?' dead':'');
+    const click=interactive?`onclick="pickMapTable('${t.id}')"`:'';
+    return `<g class="${cls}" ${click}><circle cx="${t.x}" cy="${t.y}" r="15" fill="${fill}" stroke="${stroke}" stroke-width="${sel?'2.6':'1.5'}"/><text x="${t.x}" y="${t.y+3.5}" style="fill:${txt};font-size:9px;font-weight:700;text-anchor:middle">${t.id}</text></g>`;
+  }).join('');
+  return `<svg viewBox="0 0 440 270" style="width:100%;display:block">
+    <rect x="150" y="14" width="140" height="28" rx="6" fill="#241a16" stroke="rgba(255,255,255,.15)"/><text x="220" y="32" class="fp-label" style="fill:#8a8a94">STAGE / DJ</text>
+    <rect x="150" y="150" width="150" height="66" rx="12" class="fp-zone"/><text x="225" y="187" class="fp-label">DANCE FLOOR</text>
+    <rect x="352" y="70" width="70" height="24" rx="5" fill="rgba(255,255,255,.04)" stroke="rgba(255,255,255,.12)"/><text x="387" y="86" class="fp-label" style="fill:#8a8a94">BAR</text>
+    <text x="387" y="244" class="fp-label" style="fill:#6f6f77">TERRACE</text>
+    <text x="220" y="264" class="fp-label" style="fill:#6f6f77">▽ ENTRANCE</text>
+    ${nodes}
+  </svg>`;
+}
+function pickMapTable(id){
+  const t=FLOORMAP.find(x=>x.id===id);const z=TABLES.find(x=>x.k===t.zone);const [lo,hi]=capRange(z.cap);const fits=TPARTY>=lo&&TPARTY<=hi;
+  if(t.st==='sold'){toast('Table '+id+' is already taken tonight');return;}
+  if(t.st==='held'){toast('Table '+id+' is on hold for another group');return;}
+  if(!fits){toast('Table '+id+' seats '+z.cap+' — adjust your party of '+TPARTY);return;}
+  SEL_MAP=id;renderTables();
+}
+function renderTablePick(){
+  const el=document.getElementById('tblpick');if(!el)return;
+  if(!SEL_MAP){el.className='card pickempty';el.innerHTML=`<div class="apprbadge pend" style="margin:0 auto">${ic('sofa','lg')}</div>
+    <div class="serif" style="font-size:23px;margin-top:12px">Pick your table</div>
+    <p class="muted" style="font-size:13px;margin:8px 0 0;line-height:1.6">Tap any <b style="color:var(--green)">available</b> table on the plan to see its price and book that exact spot.</p>`;return;}
+  const t=FLOORMAP.find(x=>x.id===SEL_MAP);const z=TABLES.find(x=>x.k===t.zone);
+  el.className='card';
+  el.innerHTML=`
+   <div class="tcimg" style="background-image:url('${img(z.img,600)}');border-radius:14px;margin-bottom:14px">${z.tag?`<span class="chiplet">${z.tag}</span>`:''}<span class="leftchip" style="right:12px;margin:0">Table ${t.id}</span></div>
+   <div class="between"><div class="b7" style="font-size:20px">${z.zone}</div><span class="mono" style="color:var(--dim);font-size:12px">${ic('users','sm')} ${z.cap}</span></div>
+   <div class="muted" style="font-size:12.5px;margin:5px 0 13px">${ic('loc','sm')} ${z.loc}</div>
+   <div class="tcstats">
+     <div><span class="k">Min spend</span><b class="mono">${hk0(z.min)}</b></div>
+     <div><span class="k">Deposit hold</span><b class="mono">${hk0(z.dep)}</b></div>
+     <div><span class="k">Entry</span><b>${z.entry} guests</b></div>
+   </div>
+   <button class="btn btn-grad block" style="margin-top:14px" onclick="bookMapTable()">Book Table ${t.id} · hold ${hk0(z.dep)} ${ic('fwd','sm')}</button>
+   <div class="muted" style="font-size:11px;text-align:center;margin-top:9px">Deposit is held, not charged — applied to your min spend on arrival.</div>`;
+}
+function bookMapTable(){
+  const t=FLOORMAP.find(x=>x.id===SEL_MAP);const z=TABLES.find(x=>x.k===t.zone);
+  TBOOK={type:'club',venueName:'Aurora',title:EV.name+', '+EV.co,sub:EV.venue,img:z.img,
+    date:EV.date,time:'11:00 PM onwards',party:TPARTY,area:z.zone+' · Table '+t.id,loc:z.loc,cap:z.cap,
+    min:z.min,dep:z.dep,entry:z.entry,tableId:t.id,requests:'',instant:false};
+  go('a-tablebook');
+}
 function tableCard(t){
   const [lo,hi]=capRange(t.cap);const fitsLo=TPARTY>=lo,fitsHi=TPARTY<=hi;const off=t.sold||!fitsLo||!fitsHi;
   let note='',cta='Select table';
@@ -1021,23 +1122,15 @@ function selectTable(k){
   go('a-tablebook');
 }
 
-/* ---- floor map (view-only, per locked decision: a picture, not a picker) ---- */
-function tableFloorSVG(sel){
-  const nodes=[['vip','VIP',210,54],['stage','STAGE-SIDE',108,120],['floor','FLOOR',300,120],['stand','STAND',360,196],['cab','CABANA',60,196]];
-  return `<div class="floorwrap"><svg viewBox="0 0 420 240" style="width:100%;display:block">
-    <rect x="150" y="150" width="120" height="64" rx="10" class="fp-zone"/><text x="210" y="186" class="fp-label">DANCE FLOOR</text>
-    <rect x="160" y="14" width="100" height="26" rx="6" fill="#241a16" stroke="rgba(255,255,255,.15)"/><text x="210" y="31" class="fp-label" style="fill:#8a8a94">STAGE / DJ</text>
-    ${nodes.map(([k,lab,x,y])=>{const on=k===sel;return `<g><circle cx="${x}" cy="${y}" r="21" fill="${on?'rgba(245,133,31,.9)':'rgba(255,255,255,.06)'}" stroke="${on?'#f5851f':'rgba(255,255,255,.18)'}" stroke-width="${on?'2.5':'1.5'}"/><text x="${x}" y="${y+3}" class="lbl" style="fill:${on?'#1a0d00':'#c9c9d0'};font-size:8.5px;text-anchor:middle;font-weight:700">${lab}</text></g>`;}).join('')}
-  </svg></div>`;
-}
-function openFloor(sel){
+/* ---- wayfinding modal — same plan, highlight-only, shows the booked table ---- */
+function openFloor(hiId){
+  const hi=hiId||(TBOOK&&TBOOK.tableId)||'';
   document.getElementById('floorbox').innerHTML=`
-   <div class="between" style="margin-bottom:14px"><div><div class="eyebrow">Floor plan</div><div class="muted" style="font-size:12px;margin-top:3px">Galpao Aurora Stadium · a picture, not a picker</div></div><button class="btn btn-dark" style="padding:8px 11px" onclick="document.getElementById('floor').classList.remove('open')">${ic('x','sm')}</button></div>
-   ${tableFloorSVG(sel||(TBOOK&&TBOOK.type==='club'?tblKeyFromZone():''))}
-   <div class="muted" style="font-size:11.5px;margin-top:12px;line-height:1.6">${ic('info','sm')} Positions are approximate — the venue seats you in the exact spot on the night. Choose tables from the list; the map is just to feel the room.</div>`;
+   <div class="between" style="margin-bottom:14px"><div><div class="eyebrow">Find your table</div><div class="muted" style="font-size:12px;margin-top:3px">Galpao Aurora Stadium${hi?` · Table ${hi}`:''}</div></div><button class="btn btn-dark" style="padding:8px 11px" onclick="document.getElementById('floor').classList.remove('open')">${ic('x','sm')}</button></div>
+   <div class="floorplan">${buildFloor(false,hi)}</div>
+   <div class="muted" style="font-size:11.5px;margin-top:12px;line-height:1.6">${ic('info','sm')} ${hi?`Your table ${hi} is highlighted.`:'Positions are approximate.'} Staff will point you to it on the night.</div>`;
   document.getElementById('floor').classList.add('open');
 }
-function tblKeyFromZone(){const t=TABLES.find(x=>x.zone===(TBOOK&&TBOOK.area));return t?t.k:'';}
 
 /* ================= BAR — time-slot reservation ================= */
 SB['a-bar']=()=>pnav()+`
@@ -1225,7 +1318,7 @@ function renderTablePass(){
           <div class="muted" style="font-size:12px;margin-bottom:12px">Each guest gets their own QR — share a pass and it locks to their Mandos account on claim.</div>
           <div id="gpassList"></div>
         </div>
-        <div class="tkactions"><button class="btn btn-white" onclick="toast('Added to calendar')">${ic('cal','sm')} Add to calendar</button><button class="btn btn-dark" onclick="openFloor('${tblKeyFromZone()}')">${ic('map','sm')} Find my table</button><button class="btn btn-dark" onclick="go('a-profile')">${ic('user','sm')} View in Bookings</button></div>`;
+        <div class="tkactions"><button class="btn btn-white" onclick="toast('Added to calendar')">${ic('cal','sm')} Add to calendar</button><button class="btn btn-dark" onclick="openFloor()">${ic('map','sm')} Find my table</button><button class="btn btn-dark" onclick="go('a-profile')">${ic('user','sm')} View in Bookings</button></div>`;
     const q=document.getElementById('qrTbl');if(q){q.dataset.seed=88;makeQR(q);}
     const gl=document.getElementById('gpassList');if(gl){gl.innerHTML=tableGuestStrip();gl.querySelectorAll('.gpqr').forEach(makeQR);}
   }
