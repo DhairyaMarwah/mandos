@@ -359,6 +359,59 @@ h1,h2,h3{margin:0;font-weight:700;letter-spacing:-.02em;text-wrap:balance}
 .passchips{position:relative;display:flex;gap:8px;justify-content:center;flex-wrap:wrap}
 .pchip{border:1px solid var(--line);border-radius:999px;padding:8px 16px;font-size:12.5px;font-weight:600;color:var(--dim)}
 .pchip.on{background:var(--grad);color:#fff;border-color:transparent}
+
+/* ---------- TABLE BOOKING ---------- */
+.bktabs{display:flex;gap:4px;background:rgba(255,255,255,.05);border:1px solid var(--line);border-radius:999px;padding:4px}
+.bktab{display:flex;align-items:center;gap:7px;border-radius:999px;padding:9px 18px;font-size:13.5px;font-weight:600;color:var(--dim)}
+.bktab.on{background:var(--grad);color:#fff}
+.bkpanel{display:none}.bkpanel.on{display:block}
+.tblhead{display:flex;justify-content:space-between;align-items:flex-end;gap:18px;flex-wrap:wrap;margin-bottom:20px}
+.partybox{display:flex;flex-direction:column}
+.enqbanner{display:flex;align-items:center;gap:14px;background:rgba(245,133,31,.09);border:1px solid rgba(245,133,31,.32);border-radius:16px;padding:15px 18px;margin-bottom:20px}
+.enqbanner .ic{color:var(--orange);flex:none}
+.tblgrid{display:grid;grid-template-columns:repeat(auto-fill,minmax(280px,1fr));gap:18px}
+.tblcard{border:1px solid var(--line);border-radius:20px;overflow:hidden;background:rgba(255,255,255,.03);cursor:pointer;transition:border-color .15s,transform .15s}
+.tblcard:not(.off):hover{border-color:rgba(245,133,31,.5);transform:translateY(-2px)}
+.tblcard.off{opacity:.5;cursor:not-allowed}
+.tcimg{aspect-ratio:16/8;background-size:cover;background-position:center;position:relative}
+.tcimg .chiplet,.tcimg .leftchip{position:absolute;top:12px}.tcimg .chiplet{left:12px}.tcimg .leftchip{right:12px;margin:0}
+.tcbody{padding:16px 18px}
+.tcstats{display:grid;grid-template-columns:1fr 1fr 1fr;gap:8px;background:rgba(255,255,255,.03);border:1px solid var(--line);border-radius:12px;padding:11px 12px}
+.tcstats .k{display:block;color:var(--dim);font-size:10.5px;letter-spacing:.04em;text-transform:uppercase;margin-bottom:3px}
+.tcstats b{font-size:13.5px}
+.tcnote{display:flex;align-items:flex-start;gap:7px;color:#ffb066;font-size:11.5px;margin-top:11px;line-height:1.45}
+.tcnote .ic{flex:none;margin-top:1px}
+/* bar reservation */
+.datestrip{display:flex;gap:8px;overflow-x:auto;padding-bottom:2px}
+.dcell{flex:none;width:58px;border:1px solid var(--line);border-radius:14px;padding:10px 0;display:flex;flex-direction:column;align-items:center;gap:2px;color:var(--text)}
+.dcell.on{background:var(--grad);border-color:transparent;color:#fff}
+.dcell .dow{font-size:11px;color:var(--dim)}.dcell.on .dow{color:rgba(255,255,255,.85)}
+.dcell .dnum{font-size:19px;font-weight:700}.dcell .dmo{font-size:10px;color:var(--dim)}.dcell.on .dmo{color:rgba(255,255,255,.7)}
+.slotgrid{display:grid;grid-template-columns:repeat(auto-fill,minmax(88px,1fr));gap:9px}
+.slot{border:1px solid var(--line);border-radius:11px;padding:11px 0;font-size:13.5px;font-family:var(--mono);color:var(--text);position:relative}
+.slot.on{background:var(--grad);border-color:transparent;color:#fff}
+.slot.off{opacity:.4;cursor:not-allowed}
+.slot .full{position:absolute;bottom:2px;left:0;right:0;font-size:8.5px;font-family:var(--sans);color:var(--dim);letter-spacing:.06em;text-transform:uppercase}
+.areachip{border:1px solid var(--line);border-radius:999px;padding:9px 15px;font-size:13px;color:var(--dim)}
+.areachip.on{background:rgba(245,133,31,.14);border-color:rgba(245,133,31,.5);color:#ffb066}
+/* booking summary detail */
+.tbdetail{display:grid;grid-template-columns:1fr 1fr;gap:14px;padding:16px 18px}
+.tbdetail .k{display:block;color:var(--dim);font-size:10.5px;letter-spacing:.05em;text-transform:uppercase;margin-bottom:3px}
+.tbdetail b{font-size:15px}
+.apprbox{display:flex;align-items:flex-start;gap:11px;background:rgba(255,255,255,.04);border:1px solid var(--line);border-radius:13px;padding:13px 15px}
+.apprbox .ic{flex:none;color:#ffb066;margin-top:1px}
+.apprbox.ok{background:rgba(74,222,128,.08);border-color:rgba(74,222,128,.32)}.apprbox.ok .ic{color:var(--green)}
+/* approval states */
+.apprbadge{width:60px;height:60px;border-radius:50%;display:grid;place-items:center;margin:0 auto}
+.apprbadge.pend{background:rgba(245,133,31,.15);border:1.5px solid rgba(245,133,31,.5);color:var(--orange)}
+.apprbadge.ok{background:rgba(74,222,128,.15);border:1.5px solid rgba(74,222,128,.5);color:var(--green);animation:pop .35s cubic-bezier(.3,1.6,.5,1)}
+.apprbadge.dec{background:rgba(255,90,79,.13);border:1.5px solid rgba(255,90,79,.5);color:var(--red)}
+.tblqr{width:170px;height:170px;margin:0 auto;background:#fff;border-radius:14px;padding:12px;border:4px solid var(--orange)}
+.gpass{display:flex;align-items:center;gap:12px;padding:10px 0;border-top:1px solid var(--line)}
+.gpass:first-child{border-top:none}
+.gpqr{width:38px;height:38px;background:#fff;border-radius:8px;padding:3px;flex:none}
+.democtl{max-width:520px;margin:18px auto 0;text-align:center;font-size:12px;color:var(--dim2);border:1px dashed var(--line);border-radius:12px;padding:12px}
+.democtl .btn{margin:0 3px}
 </style>
 </head>
 <body>
@@ -394,6 +447,10 @@ h1,h2,h3{margin:0;font-weight:700;letter-spacing:-.02em;text-wrap:balance}
 <symbol id="i-edit" viewBox="0 0 24 24"><path d="M12 20h9"/><path d="M16.5 3.5a2.1 2.1 0 013 3L7 19l-4 1 1-4z"/></symbol>
 <symbol id="i-grid" viewBox="0 0 24 24"><rect x="3" y="3" width="7" height="7" rx="1"/><rect x="14" y="3" width="7" height="7" rx="1"/><rect x="3" y="14" width="7" height="7" rx="1"/><rect x="14" y="14" width="7" height="7" rx="1"/></symbol>
 <symbol id="i-dollar" viewBox="0 0 24 24"><path d="M12 2v20M17 6.5C17 4.6 14.8 4 12 4S7 5 7 7.5 9.5 11 12 11s5 .8 5 3.5S14.8 20 12 20s-5-1-5-3.5"/></symbol>
+<symbol id="i-sofa" viewBox="0 0 24 24"><path d="M4 11V8a2 2 0 012-2h12a2 2 0 012 2v3"/><path d="M2 13a2 2 0 012-2 2 2 0 012 2v3h12v-3a2 2 0 012-2 2 2 0 012 2v5H2z"/><path d="M6 16v2M18 16v2"/></symbol>
+<symbol id="i-phone" viewBox="0 0 24 24"><path d="M6 3h3l1.5 5-2 1.5a11 11 0 005 5l1.5-2 5 1.5v3a2 2 0 01-2 2A16 16 0 014 5a2 2 0 012-2z"/></symbol>
+<symbol id="i-info" viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"/><path d="M12 11v5M12 7.5v.2"/></symbol>
+<symbol id="i-wine" viewBox="0 0 24 24"><path d="M7 3h10l-1 6a4 4 0 01-8 0z"/><path d="M12 13v6M8 21h8"/></symbol>
 </defs></svg>
 
 <div class="app">
@@ -414,6 +471,7 @@ h1,h2,h3{margin:0;font-weight:700;letter-spacing:-.02em;text-wrap:balance}
 <div class="toast" id="toast"></div>
 <div class="sov" id="sov" onclick="if(event.target===this)this.classList.remove('open')"><div class="box"><input id="sovin" placeholder="Search events, venues, artists… (Esc to close)" oninput="sovFilter(this.value)"></div></div>
 <div class="pay" id="pay" onclick="if(event.target===this)payClose()"><div class="paybox" id="paybox"></div></div>
+<div class="pay" id="floor" onclick="if(event.target===this)this.classList.remove('open')"><div class="paybox" id="floorbox" style="width:min(560px,94vw)"></div></div>
 <div class="lb" id="lb" onclick="if(event.target===this)this.classList.remove('open')">
   <img id="lbimg" alt="Event gallery photo">
   <div class="row"><button class="btn btn-dark" onclick="lbNav(-1)">Prev</button><button class="btn btn-white" onclick="document.getElementById('lb').classList.remove('open')">Close</button><button class="btn btn-dark" onclick="lbNav(1)">Next</button></div>
@@ -447,6 +505,23 @@ const cartSub=()=>TICKETS.reduce((s,t)=>s+(CART[t.k]||0)*t.price,0);
 const entriesCount=()=>TICKETS.reduce((s,t)=>s+(CART[t.k]||0)*(t.per||1),0);
 const hk=n=>'HK$'+n.toFixed(2);
 let PROMO=null,LAST_ORDER=null;
+
+/* ---- TABLES: club-night table booking (book a table for the whole night) ---- */
+const TABLES=[
+ {k:'vip',  zone:'VIP Booth',       loc:'Elevated · directly behind the DJ booth', cap:'6–10', min:8000, dep:2000, entry:10, img:IMG.neon, tag:'Best view'},
+ {k:'stage',zone:'Stage-side Table', loc:'On the floor · stage right',              cap:'4–8',  min:5000, dep:1500, entry:8,  img:IMG.dj},
+ {k:'floor',zone:'Dancefloor Table', loc:'Right on the edge of the dancefloor',     cap:'2–6',  min:3000, dep:1000, entry:6,  img:IMG.club, left:3},
+ {k:'stand',zone:'Standing Table',   loc:'Beside the main bar',                     cap:'2–4',  min:1500, dep:500,  entry:4,  img:IMG.bar,  left:1},
+ {k:'cab',  zone:'Terrace Cabana',   loc:'Outdoor terrace · quieter, own bar',      cap:'8–12', min:12000,dep:3000, entry:12, img:IMG.roof, sold:true}
+];
+const capRange=s=>s.split('–').map(Number);
+/* ---- BAR: time-slot reservation (restaurant-style) ---- */
+const BAR={name:'Salt & Smoke',co:'Cocktail Bar · Central',venue:'22 Hollywood Rd, Central',img:IMG.bar,
+  dates:[['Thu','17'],['Fri','18'],['Sat','19'],['Sun','20'],['Mon','21'],['Tue','22'],['Wed','23']],
+  slots:[['6:00 PM',1],['6:30 PM',1],['7:00 PM',1],['7:30 PM',0],['8:00 PM',0],['8:30 PM',1],['9:00 PM',1],['9:30 PM',1],['10:00 PM',1],['10:30 PM',1]],
+  areas:['Any area','Indoor lounge','Terrace','Bar counter']};
+/* ---- shared table state ---- */
+let BOOKTAB='tickets', TPARTY=6, BAR_SEL={date:1,slot:'8:30 PM',area:'Any area',party:2}, TBOOK=null, APPR='pending';
 const FAQS=[
  ['Do you accept reservations?','Tables are booked separately through the Mandos app — an entry ticket doesn\'t hold a table. Tap “Book a table” in the app, or ask the venue when you arrive.'],
  ['What\'s the refund policy?','Free cancellation until 24 hours before doors, refunded to your original payment method. Inside 24 hours tickets are non-refundable but transferable — share the pass to a friend instead. If the event is cancelled, refunds are automatic within 5–7 business days.'],
@@ -462,17 +537,23 @@ const CARDS=[ // discover masonry — card variants from the design system
  {kind:'priv',r:'r34', img:IMG.neon, title:'YUME After Dark',    sub:'Invite only', price:0,   loc:'', dt:''},
  {kind:'pub', r:'r11', img:IMG.blu,  title:'Blue Hour',          sub:'Open-air sunset set', price:140, loc:'The Terrace, Central', dt:'5th July, 6pm'},
  {kind:'pub', r:'r34', img:IMG.club, title:'Pulse Sunday',       sub:'Techno all night', price:120, loc:'Neon Room, Wan Chai', dt:'28th June, 11pm'},
- {kind:'ext', r:'r45', img:IMG.sky,  title:'Skyline Sessions',   sub:'Rooftop rave', price:180, loc:'Skyline Lounge, TST', dt:'12th July, 8pm'}
+ {kind:'ext', r:'r45', img:IMG.sky,  title:'Skyline Sessions',   sub:'Rooftop rave', price:180, loc:'Skyline Lounge, TST', dt:'12th July, 8pm'},
+ {kind:'bar', r:'r34', img:IMG.bar,  title:'Salt & Smoke',       sub:'Cocktail bar · book a table', price:0, loc:'Hollywood Rd, Central', dt:'Open till 2am'},
+ {kind:'bar', r:'r11', img:IMG.roof, title:'The Terrace',        sub:'Rooftop lounge · reservations', price:0, loc:'Wan Chai', dt:'Open till 1am'}
 ];
 
 /* ================= SCREENS ================= */
 const SCREENS=[
  {id:'a-discover',t:'Discover',m:'a',g:'Browse'},
  {id:'a-club',t:'Club QR landing',m:'a',g:'Browse',tag:'QR entry'},
+ {id:'a-bar',t:'Bar · book a table',m:'a',g:'Browse',tag:'time slots'},
  {id:'a-private',t:'Private event',m:'a',g:'Browse',tag:'gated'},
- {id:'a-event',t:'Event · Joyhauser',m:'a',g:'Buy'},
+ {id:'a-event',t:'Event · Joyhauser',m:'a',g:'Buy',tag:'tickets+tables'},
  {id:'a-booking',t:'Booking summary',m:'a',g:'Buy',tag:'hold+pay'},
  {id:'a-ticket',t:'Tickets · passes',m:'a',g:'Buy'},
+ {id:'a-tablebook',t:'Table booking',m:'a',g:'Buy',tag:'deposit·hold'},
+ {id:'a-tablepass',t:'Table · request',m:'a',g:'Buy',tag:'approval'},
+ {id:'a-enquiry',t:'Large-group enquiry',m:'a',g:'Buy'},
  {id:'a-profile',t:'Profile & bookings',m:'a',g:'After'},
  {id:'o-dash',t:'Dashboard',m:'o',g:'Manage'},
  {id:'o-create',t:'Create / edit event',m:'o',g:'Manage',tag:'floor builder'},
@@ -511,6 +592,11 @@ function posterCard(c){
     <div class="pfoot"><span class="chiplet inv" style="position:static;margin-bottom:9px;display:inline-flex">Invite Only</span>
       <div class="ptitle">${c.title}</div><div class="psub">${c.sub}</div>
       <div class="pmeta blurhide"><span>${ic('lock','sm')} Event details are hidden by the organiser</span></div></div></div>`;
+  if(c.kind==='bar') return `<div class="pcard ${c.r}" data-name="${name}" style="background-image:url('${img(c.img,640)}')" onclick="go('a-bar')">
+    <span class="chiplet"><svg class="ic sm"><use href="#i-wine"/></svg> Bar · Tables</span><button class="savebtn" onclick="event.stopPropagation();toast('Saved to your list')">${ic('bookmark','sm')}</button>
+    <div class="pfoot"><span class="pricepill" style="margin-bottom:9px">Free booking</span>
+      <div class="ptitle">${c.title}</div><div class="psub">${c.sub}</div>
+      <div class="pmeta"><span>${ic('loc','sm')} ${c.loc}</span><span>${ic('clock','sm')} ${c.dt}</span></div></div></div>`;
   const chip=c.kind==='ext'?`<span class="chiplet ext">${ic('ext','sm')} External Event</span>`:`<span class="chiplet">${ic('star','sm')} Featured</span>`;
   return `<div class="pcard ${c.r}" data-name="${name}" style="background-image:url('${img(c.img,640)}')" onclick="go('a-event')">
     ${chip}<button class="savebtn" onclick="event.stopPropagation();toast('Saved to your list')">${ic('bookmark','sm')}</button>
@@ -564,18 +650,24 @@ SB['a-event']=()=>pnav()+`
   <button class="readmore" id="rmBtn" onclick="toggleAbout()">Read more ${ic('down','sm')}</button>
 
   <div class="bookpanel">
-    <div class="crumb"><span class="dimc">Book Ticket</span> › Choose Your Experience</div>
-    <div class="bookgrid">
-      <div>
-        <div id="trows"></div>
-        <button class="btn btn-grad lg block" style="margin-top:18px" onclick="goCheckout()" id="coBtn">Continue to Checkout</button>
-        <div class="muted" style="font-size:11px;text-align:center;margin-top:10px">Prices exclude the 8% service charge · secure checkout via Stripe</div>
-      </div>
-      <div class="stubwrap">
-        <div class="stub back"><div class="simg" style="background-image:url('${img(EV.img,600)}')"></div><div class="sbody"><div class="stype">GENERAL TICKET</div><div class="sname">${EV.name}, <span class="muted">${EV.co}</span></div></div></div>
-        <div class="stub front"><div class="simg" style="background-image:url('${img(EV.img,600)}')"></div><div class="sbody"><div class="stype" id="stubType">GENERAL TICKET</div><div class="sname">${EV.name}, <span class="muted">${EV.co}</span></div><div class="muted" style="font-size:11px;margin-top:6px">${EV.date} · ${EV.venue}</div></div></div>
+    <div class="between" style="flex-wrap:wrap;gap:16px;margin-bottom:20px">
+      <div class="crumb" style="margin-bottom:0">Book Your <em>Experience</em></div>
+      <div class="bktabs"><button class="bktab on" id="bkt-tickets" onclick="setBookTab('tickets')">${ic('ticket','sm')} Tickets</button><button class="bktab" id="bkt-tables" onclick="setBookTab('tables')">${ic('sofa','sm')} Tables</button></div>
+    </div>
+    <div id="tkpanel" class="bkpanel on">
+      <div class="bookgrid">
+        <div>
+          <div id="trows"></div>
+          <button class="btn btn-grad lg block" style="margin-top:18px" onclick="goCheckout()" id="coBtn">Continue to Checkout</button>
+          <div class="muted" style="font-size:11px;text-align:center;margin-top:10px">Prices exclude the 8% service charge · secure checkout via Stripe</div>
+        </div>
+        <div class="stubwrap">
+          <div class="stub back"><div class="simg" style="background-image:url('${img(EV.img,600)}')"></div><div class="sbody"><div class="stype">GENERAL TICKET</div><div class="sname">${EV.name}, <span class="muted">${EV.co}</span></div></div></div>
+          <div class="stub front"><div class="simg" style="background-image:url('${img(EV.img,600)}')"></div><div class="sbody"><div class="stype" id="stubType">GENERAL TICKET</div><div class="sname">${EV.name}, <span class="muted">${EV.co}</span></div><div class="muted" style="font-size:11px;margin-top:6px">${EV.date} · ${EV.venue}</div></div></div>
+        </div>
       </div>
     </div>
+    <div id="tblpanel" class="bkpanel"></div>
   </div>
 
   <div class="sechead" style="font-size:22px">${ic('clock','sm')}&nbsp; Whats <span class="lite">Included</span> <span class="arrow">${ic('fwd','sm')}</span></div>
@@ -700,6 +792,7 @@ SB['a-club']=()=>pnav()+`
         <div class="qstep"><button onclick="qbStep(-1)">${ic('minus','sm')}</button><span class="v" id="qbv">1</span><button onclick="qbStep(1)">${ic('plus','sm')}</button></div>
         <button class="btn apay" style="padding:11px 22px" onclick="quickBuy()"> Pay · <span class="mono" id="qbp" style="font-weight:400">${hk(120*1.08)}</span></button>
         <button class="btn btn-dark" onclick="go('a-event')">Choose tiers ${ic('fwd','sm')}</button>
+        <button class="btn btn-dark" onclick="goTables()">${ic('sofa','sm')} Book a table</button>
       </div>
       <div class="muted" style="font-size:11.5px;margin-top:12px">${ic('spark','sm')} Fastest path: scan → quantity → pay. General tickets, fees included. Guestlist, bundles &amp; VIP live on the event page.</div>
     </div>
@@ -865,6 +958,316 @@ function buildOrder(){
   LAST_ORDER={items,passes,...totals(),ref:EV.ref,email:CONTACT.email};
   CART={};PROMO=null;
 }
+
+/* ============================================================
+   TABLE BOOKING — clubs (table for the night) + bars (time slot)
+   Covers: tickets|tables toggle · party fit · floor map (view-only) ·
+   large-group enquiry · deposit hold · merchant approval (pending /
+   approved / declined) · instant bar reservation · per-guest passes.
+   ============================================================ */
+const hk0=n=>'HK$'+n.toLocaleString();
+const TCONTACT={name:'Dhairya Marwah',email:'dhairyamarwah01@gmail.com',ph:'+852 6023 4912'};
+
+/* ---- event page: Tickets | Tables toggle ---- */
+function setBookTab(t){
+  BOOKTAB=t;
+  const on=(id,v)=>{const e=document.getElementById(id);if(e)e.classList.toggle('on',v);};
+  on('bkt-tickets',t==='tickets');on('bkt-tables',t==='tables');
+  on('tkpanel',t==='tickets');on('tblpanel',t==='tables');
+  if(t==='tables')renderTables();else renderTrows();
+}
+function goTables(){go('a-event');setBookTab('tables');window.scrollTo(0,document.querySelector('.bookpanel').offsetTop-20);}
+
+function renderTables(){
+  const el=document.getElementById('tblpanel');if(!el)return;
+  const big=TPARTY>=10;
+  el.innerHTML=`
+  <div class="tblhead">
+    <div><div class="eyebrow">Book a table for the night</div><div class="muted" style="font-size:13px;margin-top:6px;max-width:440px">Tables include entry for your guests · one tab, one bill · the venue confirms your booking before you're charged.</div></div>
+    <div class="row" style="gap:12px;flex-wrap:wrap">
+      <div class="partybox"><span class="muted" style="font-size:11px;letter-spacing:.06em;text-transform:uppercase">Party</span><div class="qstep" style="margin-top:4px"><button onclick="tParty(-1)">${ic('minus','sm')}</button><span class="v" id="tpv">${TPARTY}</span><button onclick="tParty(1)">${ic('plus','sm')}</button></div></div>
+      <button class="btn btn-dark" onclick="openFloor()">${ic('map','sm')} View floor map</button>
+    </div>
+  </div>
+  ${big?`<div class="enqbanner">${ic('users','sm')}<div class="grow"><b>Booking for 10 or more?</b><div class="muted" style="font-size:12.5px;margin-top:2px">Big groups go through a quick enquiry so the venue can arrange the right setup and pricing.</div></div><button class="btn btn-white" onclick="go('a-enquiry')">Send enquiry ${ic('fwd','sm')}</button></div>`:''}
+  <div class="tblgrid">${TABLES.map(tableCard).join('')}</div>`;
+}
+function tParty(d){TPARTY=Math.max(1,Math.min(20,TPARTY+d));renderTables();}
+function tableCard(t){
+  const [lo,hi]=capRange(t.cap);const fitsLo=TPARTY>=lo,fitsHi=TPARTY<=hi;const off=t.sold||!fitsLo||!fitsHi;
+  let note='',cta='Select table';
+  if(t.sold){note='Fully booked tonight';cta='Sold out';}
+  else if(!fitsHi){note=`Seats up to ${hi} — reduce your party or pick a larger table`;cta=`Fits ${t.cap}`;}
+  else if(!fitsLo){note=`Minimum ${lo} guests for this table`;cta=`Min ${lo} guests`;}
+  return `<div class="tblcard${off?' off':''}" ${off?'':`onclick="selectTable('${t.k}')"`}>
+    <div class="tcimg" style="background-image:url('${img(t.img,600)}')">${t.tag?`<span class="chiplet">${t.tag}</span>`:''}${t.left&&!off?`<span class="leftchip">${t.left} left</span>`:''}</div>
+    <div class="tcbody">
+      <div class="between"><div class="b7" style="font-size:18px">${t.zone}</div><span class="mono" style="color:var(--dim);font-size:12px">${ic('users','sm')} ${t.cap}</span></div>
+      <div class="muted" style="font-size:12.5px;margin:5px 0 13px">${ic('loc','sm')} ${t.loc}</div>
+      <div class="tcstats">
+        <div><span class="k">Min spend</span><b class="mono">${hk0(t.min)}</b></div>
+        <div><span class="k">Deposit hold</span><b class="mono">${hk0(t.dep)}</b></div>
+        <div><span class="k">Entry</span><b>${t.entry} guests</b></div>
+      </div>
+      ${note?`<div class="tcnote">${ic('info','sm')} ${note}</div>`:''}
+      <button class="btn ${off?'btn-dark':'btn-grad'} block" style="margin-top:13px" ${off?'disabled':''}>${cta}${off?'':` ${ic('fwd','sm')}`}</button>
+    </div></div>`;
+}
+function selectTable(k){
+  const t=TABLES.find(x=>x.k===k);
+  TBOOK={type:'club',venueName:'Aurora',title:EV.name+', '+EV.co,sub:EV.venue,img:EV.img,
+    date:EV.date,time:'11:00 PM onwards',party:TPARTY,area:t.zone,loc:t.loc,cap:t.cap,
+    min:t.min,dep:t.dep,entry:t.entry,requests:'',instant:false};
+  go('a-tablebook');
+}
+
+/* ---- floor map (view-only, per locked decision: a picture, not a picker) ---- */
+function tableFloorSVG(sel){
+  const nodes=[['vip','VIP',210,54],['stage','STAGE-SIDE',108,120],['floor','FLOOR',300,120],['stand','STAND',360,196],['cab','CABANA',60,196]];
+  return `<div class="floorwrap"><svg viewBox="0 0 420 240" style="width:100%;display:block">
+    <rect x="150" y="150" width="120" height="64" rx="10" class="fp-zone"/><text x="210" y="186" class="fp-label">DANCE FLOOR</text>
+    <rect x="160" y="14" width="100" height="26" rx="6" fill="#241a16" stroke="rgba(255,255,255,.15)"/><text x="210" y="31" class="fp-label" style="fill:#8a8a94">STAGE / DJ</text>
+    ${nodes.map(([k,lab,x,y])=>{const on=k===sel;return `<g><circle cx="${x}" cy="${y}" r="21" fill="${on?'rgba(245,133,31,.9)':'rgba(255,255,255,.06)'}" stroke="${on?'#f5851f':'rgba(255,255,255,.18)'}" stroke-width="${on?'2.5':'1.5'}"/><text x="${x}" y="${y+3}" class="lbl" style="fill:${on?'#1a0d00':'#c9c9d0'};font-size:8.5px;text-anchor:middle;font-weight:700">${lab}</text></g>`;}).join('')}
+  </svg></div>`;
+}
+function openFloor(sel){
+  document.getElementById('floorbox').innerHTML=`
+   <div class="between" style="margin-bottom:14px"><div><div class="eyebrow">Floor plan</div><div class="muted" style="font-size:12px;margin-top:3px">Galpao Aurora Stadium · a picture, not a picker</div></div><button class="btn btn-dark" style="padding:8px 11px" onclick="document.getElementById('floor').classList.remove('open')">${ic('x','sm')}</button></div>
+   ${tableFloorSVG(sel||(TBOOK&&TBOOK.type==='club'?tblKeyFromZone():''))}
+   <div class="muted" style="font-size:11.5px;margin-top:12px;line-height:1.6">${ic('info','sm')} Positions are approximate — the venue seats you in the exact spot on the night. Choose tables from the list; the map is just to feel the room.</div>`;
+  document.getElementById('floor').classList.add('open');
+}
+function tblKeyFromZone(){const t=TABLES.find(x=>x.zone===(TBOOK&&TBOOK.area));return t?t.k:'';}
+
+/* ================= BAR — time-slot reservation ================= */
+SB['a-bar']=()=>pnav()+`
+<div class="page" style="max-width:1080px">
+  <div class="clubhero" style="min-height:200px;margin-top:16px">
+    <div class="bgimg" style="background-image:url('${img(BAR.img,1400)}')"></div><div class="tint"></div>
+    <div class="cinfo"><span class="chiplet" style="position:static;display:inline-flex;margin-bottom:12px">${ic('wine','sm')} Bar · book a table</span>
+      <h1 class="serif" style="font-size:40px;font-weight:400">${BAR.name}</h1>
+      <div class="metalist" style="margin-top:8px;font-size:13px"><span>${ic('loc','sm')} ${BAR.venue}</span><span>${ic('clock','sm')} Open till 2 AM</span><span>${ic('star','sm')} 4.6 · 980 ratings</span></div>
+    </div>
+  </div>
+  <div class="crumb" style="margin:24px 0 0">Reserve a <em>table</em></div>
+  <div class="cogrid" style="margin-top:16px"><div id="barform"></div><div id="barsum"></div></div>
+</div>`+dock('');
+function renderBar(){
+  const f=document.getElementById('barform');if(!f)return;
+  f.innerHTML=`
+  <div class="card" style="margin-bottom:16px">
+    <div class="eyebrow" style="margin-bottom:12px">Date</div>
+    <div class="datestrip">${BAR.dates.map((d,i)=>`<button class="dcell${i===BAR_SEL.date?' on':''}" onclick="barPick('date',${i})"><span class="dow">${d[0]}</span><span class="dnum">${d[1]}</span><span class="dmo">Jul</span></button>`).join('')}</div>
+  </div>
+  <div class="card" style="margin-bottom:16px">
+    <div class="between"><div class="eyebrow">Party size</div><div class="qstep"><button onclick="barParty(-1)">${ic('minus','sm')}</button><span class="v">${BAR_SEL.party}</span><button onclick="barParty(1)">${ic('plus','sm')}</button></div></div>
+    ${BAR_SEL.party>=12?`<div class="tcnote" style="margin-top:12px">${ic('info','sm')} Parties of 12+ are handled as an enquiry — <a class="rmlink" style="color:var(--orange)" onclick="go('a-enquiry')">send one here</a>.</div>`:BAR_SEL.party>=6?`<div class="tcnote" style="margin-top:12px">${ic('info','sm')} Groups of 6+ need a small deposit (${hk0(BAR_SEL.party*100)}) to hold the table — released on arrival.</div>`:''}
+  </div>
+  <div class="card" style="margin-bottom:16px">
+    <div class="eyebrow" style="margin-bottom:12px">Time</div>
+    <div class="slotgrid">${BAR.slots.map(([s,a])=>`<button class="slot${a?'':' off'}${s===BAR_SEL.slot&&a?' on':''}" ${a?`onclick="barPick('slot','${s}')"`:''}>${s}${a?'':'<span class="full">full</span>'}</button>`).join('')}</div>
+  </div>
+  <div class="card">
+    <div class="eyebrow" style="margin-bottom:12px">Seating preference</div>
+    <div class="row wrap" style="gap:8px">${BAR.areas.map(a=>`<button class="areachip${a===BAR_SEL.area?' on':''}" onclick="barPick('area','${a}')">${a}</button>`).join('')}</div>
+  </div>`;
+  const s=document.getElementById('barsum');const dep=BAR_SEL.party>=6?BAR_SEL.party*100:0;const d=BAR.dates[BAR_SEL.date];const enq=BAR_SEL.party>=12;
+  s.className='card';
+  s.innerHTML=`
+   <div class="eyebrow">Your reservation</div><div style="height:12px"></div>
+   <div class="kv"><span class="k">Venue</span><span>${BAR.name}</span></div>
+   <div class="kv"><span class="k">Date</span><span>${d[0]}, 18 Jul 2026</span></div>
+   <div class="kv"><span class="k">Time</span><span>${BAR_SEL.slot}</span></div>
+   <div class="kv"><span class="k">Party</span><span>${BAR_SEL.party} guest${BAR_SEL.party>1?'s':''}</span></div>
+   <div class="kv"><span class="k">Seating</span><span>${BAR_SEL.area}</span></div>
+   <div class="divider"></div>
+   ${dep?`<div class="kv"><span class="k">Deposit hold</span><span class="mono">${hk0(dep)}</span></div><div class="muted" style="font-size:11px;margin-top:2px">Held, not charged — released when you arrive.</div>`
+        :`<div class="kv" style="color:var(--green)"><span>Deposit</span><span>Not required</span></div><div class="muted" style="font-size:11px;margin-top:2px">Free reservation — confirmed instantly.</div>`}
+   <button class="btn btn-grad lg block" style="margin-top:16px" onclick="${enq?"go('a-enquiry')":"barReserve()"}">${enq?'Send group enquiry':(dep?`Reserve · hold ${hk0(dep)}`:'Reserve table')}</button>
+   <div class="muted" style="font-size:11px;text-align:center;margin-top:10px">${dep?ic('lock','sm')+' Card hold via Stripe':(BAR_SEL.party>=6?'':'No card needed')} · free cancellation up to 2 h before</div>`;
+}
+function barPick(kind,v){BAR_SEL[kind]=v;renderBar();}
+function barParty(d){BAR_SEL.party=Math.max(1,Math.min(16,BAR_SEL.party+d));renderBar();}
+function barReserve(){
+  const dep=BAR_SEL.party>=6?BAR_SEL.party*100:0;const d=BAR.dates[BAR_SEL.date];
+  TBOOK={type:'bar',venueName:BAR.name,title:BAR.name,sub:BAR.co,img:BAR.img,
+    date:`${d[0]}, 18 Jul 2026`,time:BAR_SEL.slot,party:BAR_SEL.party,area:BAR_SEL.area,loc:BAR.venue,
+    min:0,dep,entry:BAR_SEL.party,requests:'',instant:dep===0};
+  go('a-tablebook');
+}
+
+/* ================= TABLE BOOKING SUMMARY (club table or bar slot) ================= */
+SB['a-tablebook']=()=>pnav()+`
+<div class="page" style="max-width:1080px">
+  <div class="crumb" style="margin-top:16px"><span class="dimc" style="cursor:pointer" onclick="history.back()">Book</span> › <span class="dimc">Choose your table</span> › Confirm</div>
+  <div id="tbwrap"></div>
+</div>`+dock('');
+function renderTableBook(){
+  if(!TBOOK){const t=TABLES[0];TBOOK={type:'club',venueName:'Aurora',title:EV.name+', '+EV.co,sub:EV.venue,img:EV.img,date:EV.date,time:'11:00 PM onwards',party:6,area:t.zone,loc:t.loc,cap:t.cap,min:t.min,dep:t.dep,entry:t.entry,requests:'',instant:false};}
+  const b=TBOOK,el=document.getElementById('tbwrap');if(!el)return;
+  const needsApproval=!b.instant;
+  el.innerHTML=`
+  <div class="cogrid" style="margin-top:20px">
+    <div>
+      <div class="card" style="margin-bottom:16px;padding:0;overflow:hidden">
+        <div class="esimg" style="background-image:url('${img(b.img,900)}')"><div><div class="b7" style="font-size:20px">${b.title.toUpperCase()}</div><div style="color:var(--orange);font-size:13px;margin-top:4px">${b.date} · ${b.time}</div></div></div>
+        <div class="tbdetail">
+          <div><span class="k">${b.type==='club'?'Table':'Seating'}</span><b>${b.area}</b><div class="muted" style="font-size:11.5px">${b.loc}</div></div>
+          <div><span class="k">Party</span><b>${b.party} guest${b.party>1?'s':''}</b>${b.type==='club'?`<div class="muted" style="font-size:11.5px">entry included for ${b.entry}</div>`:''}</div>
+        </div>
+      </div>
+      <div class="card" style="margin-bottom:16px">
+        <div class="eyebrow" style="margin-bottom:10px">Special requests <span class="muted" style="text-transform:none;letter-spacing:0;font-weight:400">· optional</span></div>
+        <textarea class="input" id="tbReq" rows="2" placeholder="Birthday, allergies, bottle preference, arrival time…">${b.requests}</textarea>
+      </div>
+      <div class="card">
+        <div class="eyebrow" style="margin-bottom:12px">Contact — the venue reaches you here</div>
+        <div class="field"><label>Name</label><input class="input" id="tbName" value="${TCONTACT.name}" oninput="this.classList.remove('err')"></div>
+        <div class="field"><label>Email</label><input class="input" id="tbEmail" value="${TCONTACT.email}" oninput="this.classList.remove('err')"></div>
+        <div class="field" style="margin-bottom:0"><label>Mobile</label><input class="input" id="tbPh" value="${TCONTACT.ph}" oninput="this.classList.remove('err')"></div>
+      </div>
+    </div>
+    <div class="card">
+      <div class="eyebrow">${b.type==='club'?'Table summary':'Reservation'}</div><div style="height:10px"></div>
+      ${b.min?`<div class="kv"><span class="k">Minimum spend</span><span class="mono">${hk0(b.min)}</span></div>
+        <div class="muted" style="font-size:11px;margin:2px 0 8px;line-height:1.5">Spend on drinks &amp; bottles across the night — not an extra fee.</div>`:''}
+      ${b.dep?`<div class="kv"><span class="k">Deposit hold</span><span class="mono">${hk0(b.dep)}</span></div>
+        <div class="muted" style="font-size:11px;margin:2px 0 8px;line-height:1.5">${b.min?'Held now, applied to your min spend on arrival.':'Held now, released when you arrive.'} Released in full if the venue can't confirm.</div>`
+       :`<div class="kv" style="color:var(--green)"><span>Deposit</span><span>Not required</span></div>`}
+      <div class="divider"></div>
+      ${needsApproval
+        ?`<div class="apprbox">${ic('clock','sm')}<div><b>Needs venue confirmation</b><div class="muted" style="font-size:11.5px;margin-top:2px">We place the hold and send your request. You're only charged toward your bill once ${b.venueName} accepts — usually within 2 hours.</div></div></div>`
+        :`<div class="apprbox ok">${ic('check','sm')}<div><b>Instant confirmation</b><div class="muted" style="font-size:11.5px;margin-top:2px">This reservation is auto-accepted — you're set the moment you confirm.</div></div></div>`}
+      <button class="btn btn-grad lg block" style="margin-top:14px" onclick="startTableRequest()">${b.dep?`${needsApproval?'Request table':'Reserve'} · hold ${hk0(b.dep)}`:'Reserve table'}</button>
+      <div class="muted" style="font-size:11px;text-align:center;margin-top:10px">${b.dep?ic('lock','sm')+' Secure hold via Stripe':'Free · no card needed'}${b.type==='club'?' · 8% platform fee applies to your final tab':''}</div>
+    </div>
+  </div>`;
+}
+function validateTableContact(){
+  const n=document.getElementById('tbName'),e=document.getElementById('tbEmail'),p=document.getElementById('tbPh'),r=document.getElementById('tbReq');
+  let ok=true;
+  if(n){TCONTACT.name=n.value.trim();if(TCONTACT.name.length<2){n.classList.add('err');ok=false;}}
+  if(e){TCONTACT.email=e.value.trim();if(!/^[^@\s]+@[^@\s]+\.[^@\s]+$/.test(TCONTACT.email)){e.classList.add('err');ok=false;}}
+  if(p){TCONTACT.ph=p.value.trim();if(TCONTACT.ph.replace(/\D/g,'').length<8){p.classList.add('err');ok=false;}}
+  if(r&&TBOOK)TBOOK.requests=r.value.trim();
+  if(!ok)toast('Check the highlighted contact fields');
+  return ok;
+}
+function startTableRequest(){if(!validateTableContact())return;if(TBOOK.dep>0)openHold();else confirmTableRequest();}
+
+/* ---- deposit-hold sheet (reuses the #pay overlay) ---- */
+function openHold(){
+  PAY_BUSY=false;document.getElementById('pay').classList.add('open');
+  document.getElementById('paybox').innerHTML=`
+   <div class="between" style="align-items:flex-start"><div><div class="eyebrow">Mandos · Stripe · authorization hold</div><div class="b7" style="font-size:22px;margin-top:4px">${hk0(TBOOK.dep)}</div><div class="muted" style="font-size:11.5px">Hold, not a charge — ${TBOOK.title}</div></div>
+     <button class="btn btn-dark" style="padding:8px 11px" onclick="payClose()">${ic('x','sm')}</button></div>
+   <div class="apprbox" style="margin-top:14px">${ic('info','sm')}<div class="muted" style="font-size:11.5px">We authorise ${hk0(TBOOK.dep)} on your card but don't capture it. It's ${TBOOK.min?'applied to your minimum spend on arrival':'released when you arrive'}, or released in full if the venue can't confirm.</div></div>
+   <button class="btn apay block" style="margin-top:16px" onclick="holdNow(true)"> Hold with Apple Pay</button>
+   <div class="ordiv"><span>or use a card</span></div>
+   <div class="field"><label>Card number</label><input class="input mono" id="hNum" value="4242 4242 4242 4242" oninput="fmtNum(this)"></div>
+   <div class="row" style="gap:12px"><div class="field grow"><label>Expiry</label><input class="input mono" id="hExp" value="12/27" oninput="fmtExp(this)"></div><div class="field grow"><label>CVC</label><input class="input mono" id="hCvc" value="123" oninput="fmtCvc(this)"></div></div>
+   <button class="btn btn-grad lg block" onclick="holdNow(false)">Place hold · ${hk0(TBOOK.dep)}</button>
+   <div class="muted" style="font-size:10.5px;text-align:center;margin-top:10px">Demo — <span class="mono">4242…</span> authorises · ending <span class="mono">0002</span> is declined</div>`;
+}
+function holdNow(express){
+  if(!express){const n=document.getElementById('hNum');const digits=n.value.replace(/\D/g,'');
+    if(digits.length<16){n.classList.add('err');toast('Enter a full card number');return;}
+    if(digits.endsWith('0002')){document.getElementById('paybox').insertAdjacentHTML('afterbegin',`<div class="payerr">${ic('x','sm')} Card declined — the hold couldn't be placed. Try another card.</div>`);return;}}
+  payBusy(express?'Apple Pay — confirming hold…':'Placing hold with your bank…');
+  setTimeout(confirmTableRequest,1300);
+}
+function confirmTableRequest(){
+  APPR=TBOOK.instant?'approved':'pending';
+  payClose(true);go('a-tablepass');
+  toast(TBOOK.instant?'Table reserved — see you there':'Request sent to '+TBOOK.venueName);
+}
+
+/* ================= TABLE REQUEST / CONFIRMATION (approval states) ================= */
+SB['a-tablepass']=()=>{
+  if(!TBOOK){const t=TABLES[0];TBOOK={type:'club',venueName:'Aurora',title:EV.name+', '+EV.co,sub:EV.venue,img:EV.img,date:EV.date,time:'11:00 PM onwards',party:6,area:t.zone,loc:t.loc,min:t.min,dep:t.dep,entry:t.entry,requests:'',instant:false};APPR='pending';}
+  return pnav()+`<div class="tkstage"><div class="bg" style="background-image:url('${img(TBOOK.img,1200)}')"></div><div id="tpwrap" style="position:relative"></div></div>`+dock('');
+};
+function setAppr(s){APPR=s;renderTablePass();window.scrollTo(0,0);}
+function renderTablePass(){
+  const el=document.getElementById('tpwrap');if(!el)return;const b=TBOOK;
+  const head=(cls,ic1,t1,t2)=>`<div style="text-align:center;margin-bottom:18px"><div class="apprbadge ${cls}">${ic(ic1,'lg')}</div><div class="serif" style="font-size:30px;margin-top:14px">${t1}</div><div class="muted" style="font-size:13px;margin-top:4px;max-width:440px;margin-left:auto;margin-right:auto">${t2}</div></div>`;
+  const bookCard=`<div class="card" style="max-width:520px;margin:0 auto 16px;padding:0;overflow:hidden">
+    <div class="esimg" style="background-image:url('${img(b.img,900)}');aspect-ratio:16/6"><div><div class="b7" style="font-size:18px">${b.title.toUpperCase()}</div><div style="color:var(--orange);font-size:12.5px;margin-top:3px">${b.date} · ${b.time}</div></div></div>
+    <div class="tbdetail">
+      <div><span class="k">${b.type==='club'?'Table':'Seating'}</span><b>${b.area}</b></div>
+      <div><span class="k">Party</span><b>${b.party} guests</b></div>
+      ${b.min?`<div><span class="k">Min spend</span><b class="mono">${hk0(b.min)}</b></div>`:''}
+      ${b.dep?`<div><span class="k">Deposit held</span><b class="mono">${hk0(b.dep)}</b></div>`:''}
+    </div>${b.requests?`<div class="muted" style="font-size:12px;padding:0 18px 14px">${ic('info','sm')} “${b.requests}”</div>`:''}</div>`;
+
+  if(APPR==='pending'){
+    el.innerHTML=head('pend','clock','Request sent',`${b.venueName} is reviewing your table. You’ll get a notification the moment they respond — usually within 2 hours.`)
+      +bookCard
+      +`<div class="card" style="max-width:520px;margin:0 auto 16px"><div class="apprbox">${ic('lock','sm')}<div class="muted" style="font-size:12px">${b.dep?`${hk0(b.dep)} is held on your card — not charged. It’s released in full if ${b.venueName} can’t confirm.`:'No charge until the venue confirms.'}</div></div>
+        <div class="steps" style="margin-top:6px">
+          <div class="st"><span class="n on">1</span><span><b>Request sent</b> — the venue has your details.</span></div>
+          <div class="st"><span class="n">2</span><span><b>Venue confirms</b> — your table &amp; guest passes unlock here.</span></div>
+          <div class="st"><span class="n">3</span><span><b>Invite your guests</b> — each gets their own entry QR.</span></div>
+        </div></div>
+      <div class="tkactions"><button class="btn btn-dark" onclick="toast('Calling ${b.venueName} — front desk')">${ic('phone','sm')} Contact venue</button><button class="btn btn-dark" onclick="cancelRequest()">${ic('x','sm')} Cancel request</button></div>
+      <div class="democtl">Demo — simulate the venue’s response: <button class="btn btn-white" style="padding:7px 14px;font-size:12px" onclick="setAppr('approved')">Approve</button> <button class="btn btn-dark" style="padding:7px 14px;font-size:12px" onclick="setAppr('declined')">Decline</button></div>`;
+  }
+  else if(APPR==='approved'){
+    el.innerHTML=head('ok','check','Table confirmed',`${b.venueName} accepted your booking. Your table QR and ${b.party} guest passes are ready below.`)
+      +bookCard
+      +`<div class="card" style="max-width:520px;margin:0 auto 16px;text-align:center">
+          <div class="eyebrow" style="margin-bottom:12px">Table check-in QR</div>
+          <div class="qrbox tblqr" id="qrTbl"></div>
+          <div class="muted" style="font-size:12px;margin-top:12px">Show at the door — checks in the whole table. ${b.dep?`Your ${hk0(b.dep)} deposit is applied to the min spend.`:''}</div>
+        </div>
+        <div class="card" style="max-width:520px;margin:0 auto 16px">
+          <div class="between" style="margin-bottom:6px"><div class="eyebrow">Guest passes</div><span class="muted" style="font-size:12px">${b.party} entries</span></div>
+          <div class="muted" style="font-size:12px;margin-bottom:12px">Each guest gets their own QR — share a pass and it locks to their Mandos account on claim.</div>
+          <div id="gpassList"></div>
+        </div>
+        <div class="tkactions"><button class="btn btn-white" onclick="toast('Added to calendar')">${ic('cal','sm')} Add to calendar</button><button class="btn btn-dark" onclick="openFloor('${tblKeyFromZone()}')">${ic('map','sm')} Find my table</button><button class="btn btn-dark" onclick="go('a-profile')">${ic('user','sm')} View in Bookings</button></div>`;
+    const q=document.getElementById('qrTbl');if(q){q.dataset.seed=88;makeQR(q);}
+    const gl=document.getElementById('gpassList');if(gl){gl.innerHTML=tableGuestStrip();gl.querySelectorAll('.gpqr').forEach(makeQR);}
+  }
+  else{ // declined
+    el.innerHTML=head('dec','x','Couldn’t confirm',`${b.venueName} can’t take this table for the night.${b.dep?` Your ${hk0(b.dep)} hold has been released in full.`:''} Here are tables still open.`)
+      +`<div class="tblgrid" style="max-width:720px;margin:0 auto 16px">${TABLES.filter(t=>!t.sold&&t.k!=='cab').slice(0,2).map(tableCard).join('')}</div>
+        <div class="tkactions"><button class="btn btn-white" onclick="goTables()">Browse all tables</button><button class="btn btn-dark" onclick="go('a-bar')">Try a bar instead</button></div>`;
+  }
+}
+function tableGuestStrip(){
+  let rows='';for(let i=0;i<TBOOK.party;i++){const you=i===0;
+    rows+=`<div class="gpass"><div class="gpqr" data-seed="${140+i*5}"></div><div class="grow"><div class="b7" style="font-size:14px">${you?'You · host':'Guest '+(i+1)}</div><div class="muted" style="font-size:11.5px">${you?'Pass active':'Open — not claimed yet'}</div></div>${you?'<span class="badge b-live">Active</span>':`<button class="btn btn-dark" style="padding:7px 12px;font-size:12px" onclick="toast('Share link copied — locks to their Mandos account on claim')">${ic('share','sm')} Share</button>`}</div>`;}
+  return rows;
+}
+function cancelRequest(){APPR='pending';TBOOK=null;go('a-discover');toast('Request cancelled — any hold released');}
+
+/* ================= LARGE-GROUP ENQUIRY ================= */
+let ENQ_SENT=false;
+SB['a-enquiry']=()=>pnav()+`
+<div class="page" style="max-width:760px">
+  <div class="crumb" style="margin-top:16px">Large group <em>enquiry</em></div>
+  <div id="enqwrap"></div>
+</div>`+dock('');
+function renderEnquiry(){
+  const el=document.getElementById('enqwrap');if(!el)return;
+  if(ENQ_SENT){el.innerHTML=`<div class="card" style="text-align:center;padding:44px"><div class="apprbadge ok" style="margin:0 auto">${ic('check','lg')}</div>
+    <div class="serif" style="font-size:30px;margin-top:14px">Enquiry sent</div>
+    <p class="muted" style="font-size:13.5px;margin:10px 0 20px;line-height:1.7">The venue’s events team will reach out by email within a few hours with options and pricing for your group. No card needed yet.</p>
+    <button class="btn btn-grad lg" onclick="go('a-discover')">Back to Discover</button></div>`;return;}
+  el.innerHTML=`
+  <div class="muted" style="font-size:13.5px;line-height:1.7;margin-bottom:18px">Booking for 10 or more? Tell us what you need — bottle packages, multiple tables, a private area — and the venue’s team will set it up for you.</div>
+  <div class="card">
+    <div class="row" style="gap:12px"><div class="field grow"><label>Your name</label><input class="input" id="eqName" value="${TCONTACT.name}"></div><div class="field grow"><label>Mobile</label><input class="input" id="eqPh" value="${TCONTACT.ph}"></div></div>
+    <div class="field"><label>Email</label><input class="input" id="eqEmail" value="${TCONTACT.email}"></div>
+    <div class="row" style="gap:12px"><div class="field grow"><label>Group size</label><input class="input" id="eqSize" value="18"></div><div class="field grow"><label>Preferred date</label><input class="input" id="eqDate" value="Sat, 30 May"></div></div>
+    <div class="field"><label>Budget per head <span class="muted" style="font-weight:400">· optional</span></label><input class="input" id="eqBudget" placeholder="e.g. HK$800"></div>
+    <div class="field" style="margin-bottom:0"><label>What are you planning?</label><textarea class="input" id="eqMsg" rows="3" placeholder="Birthday, bottle service, a private booth for 18…"></textarea></div>
+  </div>
+  <button class="btn btn-grad lg block" style="margin-top:16px" onclick="sendEnquiry()">Send enquiry</button>
+  <div class="muted" style="font-size:11px;text-align:center;margin-top:10px">No payment now — the venue responds with a tailored quote.</div>`;
+}
+function sendEnquiry(){const n=document.getElementById('eqName');if(n&&n.value.trim().length<2){n.classList.add('err');toast('Add your name');return;}ENQ_SENT=true;renderEnquiry();window.scrollTo(0,0);}
 
 let PASS_I=0;
 SB['a-ticket']=()=>{
@@ -1123,9 +1526,14 @@ function go(id){
   if(m&&m!==MODE){MODE=m;document.querySelectorAll('#modeseg button').forEach((b,i)=>b.classList.toggle('on',['a','o','d'][i]===MODE));renderNav();document.querySelectorAll('.navitem').forEach(n=>n.classList.toggle('on',n.dataset.id===id));}
   el.querySelectorAll('[id^=qr]').forEach(makeQR);
   document.getElementById('pay').classList.remove('open');PAY_BUSY=false;
+  const fl=document.getElementById('floor');if(fl)fl.classList.remove('open');
   if(id!=='a-booking'&&HOLD.iv){clearInterval(HOLD.iv);HOLD.iv=null;}
-  if(id==='a-event')renderTrows();
+  if(id==='a-event'){BOOKTAB='tickets';renderTrows();}
   if(id==='a-booking'){renderBooking();startHold();}
+  if(id==='a-bar')renderBar();
+  if(id==='a-tablebook')renderTableBook();
+  if(id==='a-tablepass')renderTablePass();
+  if(id==='a-enquiry')renderEnquiry();
   if(id==='a-profile')profilePane('booked');
 }
 function setMode(m){MODE=m;document.querySelectorAll('#modeseg button').forEach((b,i)=>b.classList.toggle('on',['a','o','d'][i]===m));renderNav();go(SCREENS.find(s=>s.m===m).id);}
