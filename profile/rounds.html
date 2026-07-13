@@ -1,0 +1,284 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Mandos — profile empty state</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700&display=swap" rel="stylesheet" />
+    <style>
+      * { margin: 0; padding: 0; box-sizing: border-box; }
+      :root { --pw: 322px; --accent: #f5851f; --gold: #ffb64a; --bg: #141414; color-scheme: dark; }
+      body { background: #17171b; color: #e8e8ea; font-family: "Poppins", system-ui, -apple-system, sans-serif; padding: 34px 26px 70px; }
+      header { max-width: 1500px; margin: 0 auto 6px; }
+      h1 { font-size: 20px; font-weight: 600; }
+      .sub { font-size: 13px; color: #8f8f98; margin-top: 4px; max-width: 640px; }
+      .row { max-width: 1500px; margin: 30px auto 0; display: flex; flex-wrap: wrap; gap: 40px 34px; justify-content: center; }
+      .item { width: var(--pw); }
+      .cap { margin: 0 0 12px 4px; }
+      .cap b { font-size: 14px; font-weight: 600; }
+      .cap span { display: block; font-size: 11.5px; color: #8f8f98; margin-top: 2px; }
+
+      /* phone */
+      .phone { width: var(--pw); aspect-ratio: 428/928; position: relative; border-radius: 44px; padding: 4px;
+        background: linear-gradient(140deg,#6f6f77,#25252a 16%,#3b3b42 38%,#141416 62%,#4c4c56 84%,#1c1c20); box-shadow: 0 24px 60px -18px rgba(0,0,0,.75), inset 0 1px 1px rgba(255,255,255,.14); }
+      .scr { position: absolute; inset: 4px; border-radius: 40px; overflow: hidden; background: var(--bg); }
+      .stat { position: absolute; top: 0; left: 0; right: 0; height: 34px; display: flex; align-items: center; justify-content: space-between; padding: 8px 20px 0; font-size: 12px; font-weight: 600; color: #fff; z-index: 20; }
+      .stat .sbr { display: flex; gap: 5px; align-items: center; }
+      .isl { position: absolute; top: 9px; left: 50%; transform: translateX(-50%); width: 84px; height: 22px; background: #000; border-radius: 14px; z-index: 25; }
+
+      .acts { position: absolute; top: 40px; right: 16px; display: flex; gap: 9px; z-index: 15; }
+      .acts .b { width: 33px; height: 33px; border-radius: 50%; display: grid; place-items: center; color: #fff;
+        background: rgba(255,255,255,.10); backdrop-filter: blur(6px); border: 1px solid rgba(255,255,255,.14); }
+      .acts svg { width: 15px; height: 15px; }
+
+      .banner { position: relative; height: 210px; }
+      /* fade every banner into the page bg at the bottom */
+      .banner::after { content: ""; position: absolute; inset: 0; background: linear-gradient(180deg, transparent 34%, var(--bg)); }
+      .banner .bctl { position: absolute; z-index: 4; }
+
+      /* variant banners */
+      .b-aurora { background:
+        radial-gradient(58% 80% at 18% 6%, rgba(245,133,31,.55), transparent 60%),
+        radial-gradient(52% 74% at 88% 16%, rgba(201,51,10,.62), transparent 60%),
+        radial-gradient(80% 70% at 60% 116%, rgba(255,182,74,.42), transparent 62%),
+        #120a08; }
+      .b-spot { background: radial-gradient(62% 78% at 50% 122%, rgba(245,133,31,.5), transparent 66%), radial-gradient(90% 60% at 50% -10%, rgba(201,51,10,.3), transparent 60%), #0c0709; }
+      .b-tex { background:
+        radial-gradient(rgba(245,133,31,.20) 1.1px, transparent 1.3px) 0 0 / 15px 15px,
+        radial-gradient(70% 80% at 50% -6%, rgba(201,51,10,.5), transparent 60%), #0e0908; }
+      .b-line { height: 118px; background: linear-gradient(180deg, rgba(245,133,31,.20), rgba(201,51,10,.05) 55%, transparent 78%), #0c0809; }
+      .b-line::before { content: ""; position: absolute; top: 0; left: 0; right: 0; height: 2px; background: linear-gradient(90deg, transparent, var(--accent), var(--gold), transparent); z-index: 3; }
+
+      /* ── round 2 banners ── */
+      .b-none { height: 128px; background: transparent; }
+      .b-none::after { display: none; }
+
+      .b-mark { background: radial-gradient(70% 90% at 50% 118%, rgba(245,133,31,.20), transparent 62%), var(--bg); }
+      .b-mark .wm { position: absolute; right: -34px; top: 4px; height: 118%; opacity: .32; transform: rotate(8deg); }
+
+      .b-marquee { background: radial-gradient(62% 72% at 50% 122%, rgba(245,133,31,.30), transparent 64%), #100d0b; }
+      .bulbs { position: absolute; left: 0; right: 0; height: 8px; z-index: 3;
+        background: radial-gradient(circle at 5px 4px, #ffc46a 2.2px, rgba(255,196,106,.22) 3.4px, transparent 4.4px);
+        background-size: 27px 8px; background-repeat: repeat-x;
+        filter: drop-shadow(0 0 7px rgba(255,180,80,.85)); }
+
+      .b-echo { background: var(--bg); }
+      .b-echo .blob { position: absolute; left: 50%; bottom: -80px; width: 320px; height: 320px; transform: translateX(-50%); border-radius: 50%;
+        background: radial-gradient(circle, rgba(245,133,31,.55), rgba(224,80,14,.22) 46%, transparent 70%); filter: blur(28px); }
+      .b-echo .dd { position: absolute; left: 50%; top: 34%; transform: translate(-50%,-50%); font-size: 128px; font-weight: 700; letter-spacing: -.04em;
+        color: rgba(245,133,31,.10); filter: blur(2px); }
+
+      .b-drop { background: var(--bg); }
+      .dropzone { position: absolute; inset: 46px 16px 60px; border-radius: 18px; z-index: 3;
+        border: 1.6px dashed rgba(245,133,31,.45); background: rgba(245,133,31,.05);
+        display: grid; place-items: center; text-align: center; }
+      .dropzone .dz-ic { width: 42px; height: 42px; border-radius: 50%; display: grid; place-items: center; margin: 0 auto 8px;
+        background: rgba(245,133,31,.15); color: var(--gold); }
+      .dropzone .dz-ic svg { width: 19px; height: 19px; }
+      .dropzone b { font-size: 12.5px; font-weight: 600; display: block; color: #eaeaee; }
+      .dropzone span { font-size: 10.5px; color: #8f8f96; }
+
+      .b-vinyl { background:
+        repeating-radial-gradient(circle at 50% 130%, rgba(255,255,255,.05) 0 1.4px, transparent 1.4px 9px),
+        radial-gradient(78% 88% at 50% 126%, #2a1a10, var(--bg) 72%); }
+      .spark { position: absolute; color: var(--gold); text-shadow: 0 0 10px rgba(255,182,74,.9); z-index: 3; }
+
+      .mini-acts { display: flex; gap: 8px; justify-content: center; margin-top: 13px; }
+      .mini { display: inline-flex; align-items: center; gap: 6px; padding: 7px 13px; border-radius: 999px; font-size: 11.5px; font-weight: 500;
+        color: var(--gold); background: rgba(245,133,31,.10); border: 1px solid rgba(245,133,31,.3); }
+      .mini svg { width: 13px; height: 13px; }
+
+      .sect { max-width: 1500px; margin: 0 auto; }
+      .sect h2 { font-size: 12px; font-weight: 600; letter-spacing: .14em; text-transform: uppercase; color: #77777f; margin: 34px 0 0; }
+
+      .headline { position: absolute; left: 0; right: 0; top: 66px; text-align: center; z-index: 4; }
+      .headline b { font-size: 18px; font-weight: 600; }
+      .headline b i { color: var(--accent); font-style: normal; }
+      .headline p { font-size: 11.5px; color: #c6c6cc; margin-top: 5px; line-height: 1.45; }
+
+      .cover-pill { display: inline-flex; align-items: center; gap: 7px; padding: 8px 15px; border-radius: 999px; font-size: 12.5px; font-weight: 500; color: #fff;
+        background: rgba(20,14,10,.5); border: 1px solid rgba(255,255,255,.2); backdrop-filter: blur(6px); }
+      .cover-pill svg { width: 15px; height: 15px; }
+      .cover-round { width: 40px; height: 40px; border-radius: 50%; display: grid; place-items: center; color: #fff; background: rgba(20,14,10,.45); border: 1px solid rgba(255,255,255,.2); backdrop-filter: blur(6px); }
+      .cover-round svg { width: 17px; height: 17px; }
+      .cover-ghost { display: inline-flex; align-items: center; gap: 8px; padding: 9px 17px; border-radius: 12px; font-size: 12.5px; font-weight: 500; color: var(--gold);
+        background: rgba(245,133,31,.10); border: 1px dashed rgba(245,133,31,.5); }
+      .cover-ghost svg { width: 15px; height: 15px; }
+
+      /* identity */
+      .body { position: relative; margin-top: -46px; z-index: 6; padding: 0 20px; text-align: center; }
+      .avatar { width: 92px; height: 92px; border-radius: 50%; margin: 0 auto; position: relative;
+        display: grid; place-items: center; font-size: 26px; font-weight: 700; color: #fff; letter-spacing: .02em;
+        background: linear-gradient(145deg,#ffc357,#f5851f 46%,#e0500e);
+        box-shadow: 0 10px 26px -8px rgba(245,133,31,.6), inset 0 1px 2px rgba(255,255,255,.5); }
+      .avatar.ring { border: 3px solid var(--bg); outline: 2px solid rgba(245,133,31,.9); }
+      .avatar.glow::before { content: ""; position: absolute; inset: -14px; border-radius: 50%; background: radial-gradient(circle, rgba(245,133,31,.5), transparent 70%); z-index: -1; }
+      .cam-badge { position: absolute; right: -2px; bottom: -2px; width: 30px; height: 30px; border-radius: 50%; display: grid; place-items: center;
+        background: #1c1c20; border: 2.5px solid var(--bg); color: #fff; }
+      .cam-badge svg { width: 14px; height: 14px; }
+
+      .name { font-size: 21px; font-weight: 600; margin-top: 13px; }
+      .chip-u { display: inline-flex; align-items: center; gap: 7px; margin-top: 11px; padding: 8px 15px; border-radius: 999px; font-size: 13px; font-weight: 500; color: #fff; background: rgba(255,255,255,.06); border: 1px solid rgba(255,255,255,.09); }
+      .chip-u svg { width: 15px; height: 15px; color: #9a9aa2; }
+      .chip-s { display: inline-flex; align-items: center; gap: 6px; margin-top: 10px; padding: 7px 15px; border-radius: 999px; font-size: 12.5px; color: #9a9aa2; background: rgba(255,255,255,.04); }
+      .chip-s svg { width: 13px; height: 13px; }
+
+      /* completion pill */
+      .complete { margin: 16px 4px 0; padding: 11px 14px; border-radius: 14px; text-align: left; background: rgba(255,255,255,.045); border: 1px solid rgba(255,255,255,.07); }
+      .complete .ct { display: flex; justify-content: space-between; font-size: 11.5px; color: #c6c6cc; margin-bottom: 8px; }
+      .complete .ct b { color: var(--gold); font-weight: 600; }
+      .cbar { height: 6px; border-radius: 4px; background: rgba(255,255,255,.09); overflow: hidden; }
+      .cbar i { display: block; height: 100%; border-radius: 4px; background: linear-gradient(90deg, var(--accent), var(--gold)); }
+
+      /* setup checklist */
+      .setup { margin: 16px 4px 0; padding: 14px; border-radius: 16px; text-align: left; background: rgba(255,255,255,.045); border: 1px solid rgba(255,255,255,.08); }
+      .setup .sh { display: flex; justify-content: space-between; align-items: center; font-size: 13px; font-weight: 600; margin-bottom: 10px; }
+      .setup .sh b { color: var(--gold); font-size: 12px; }
+      .setup .cbar { margin-bottom: 12px; }
+      .task { display: flex; align-items: center; gap: 11px; padding: 8px 0; border-top: 1px solid rgba(255,255,255,.06); }
+      .task:first-of-type { border-top: 0; }
+      .task .ti { width: 30px; height: 30px; border-radius: 9px; display: grid; place-items: center; color: var(--gold); background: rgba(245,133,31,.13); flex: 0 0 auto; }
+      .task .ti svg { width: 15px; height: 15px; }
+      .task .tt { flex: 1; font-size: 12.5px; font-weight: 500; }
+      .task .tt span { display: block; font-size: 10.5px; color: #86868e; font-weight: 400; margin-top: 1px; }
+      .task .add { width: 24px; height: 24px; border-radius: 50%; display: grid; place-items: center; color: var(--accent); background: rgba(245,133,31,.14); }
+      .task .add svg { width: 13px; height: 13px; }
+
+      /* stats */
+      .stats { display: flex; margin: 16px 4px 0; padding: 15px 0; border-radius: 16px; background: rgba(255,255,255,.045); border: 1px solid rgba(255,255,255,.07); }
+      .stats .st { flex: 1; text-align: center; }
+      .stats .st + .st { border-left: 1px solid rgba(255,255,255,.08); }
+      .stats .n { font-size: 18px; font-weight: 600; }
+      .stats .l { font-size: 11px; color: #9a9aa2; margin-top: 2px; }
+
+      /* bottom nav */
+      .nav { position: absolute; left: 0; right: 0; bottom: 0; height: 72px; z-index: 12; display: flex; align-items: center; justify-content: center; }
+      .nav .bar { display: flex; gap: 26px; padding: 11px 22px; border-radius: 999px; background: rgba(28,28,32,.86); border: 1px solid rgba(255,255,255,.08); backdrop-filter: blur(10px); }
+      .nav .n { width: 22px; height: 22px; color: #7f7f88; }
+      .nav .n.on { color: #fff; }
+      .homeind { position: absolute; bottom: 7px; left: 50%; transform: translateX(-50%); width: 110px; height: 4px; border-radius: 3px; background: rgba(255,255,255,.4); z-index: 13; }
+    </style>
+  </head>
+  <body>
+    <header>
+      <h1>Mandos — profile empty state</h1>
+      <div class="sub">Takes on the "no photo / no banner yet" profile — dark (#141414) with warm orange–yellow only. Round 2 changes the structure (kill the banner, brand it, make it a button, auto-generate it) instead of just re-colouring the gradient.</div>
+    </header>
+    <div class="row" id="row"></div>
+
+    <script>
+      const IC = {
+        share:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 15V4"/><path d="M8 8l4-4 4 4"/><path d="M5 12v6a2 2 0 0 0 2 2h10a2 2 0 0 0 2-2v-6"/></svg>',
+        search:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><circle cx="11" cy="11" r="7"/><path d="M21 21l-4.2-4.2"/></svg>',
+        gear:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="3.2"/><path d="M12 3v2.4M12 18.6V21M3 12h2.4M18.6 12H21M5.6 5.6l1.7 1.7M16.7 16.7l1.7 1.7M18.4 5.6l-1.7 1.7M7.3 16.7l-1.7 1.7"/></svg>',
+        cam:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4.5 8h2.6l1.3-1.9h7l1.3 1.9h2.6a1.2 1.2 0 0 1 1.2 1.2v8.6a1.2 1.2 0 0 1-1.2 1.2H4.5a1.2 1.2 0 0 1-1.2-1.2V9.2A1.2 1.2 0 0 1 4.5 8z"/><circle cx="12" cy="13" r="3.1"/></svg>',
+        img:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="4" width="18" height="16" rx="2.5"/><circle cx="8.5" cy="9.5" r="1.7"/><path d="M4 17l4.5-4.5 4 3.5L16 12l4 4"/></svg>',
+        pen:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14.5 5.5l4 4M4 20l1-4L16 5a1.8 1.8 0 0 1 2.5 0l.5.5a1.8 1.8 0 0 1 0 2.5L8 19l-4 1z"/></svg>',
+        plus:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round"><path d="M12 5v14M5 12h14"/></svg>',
+        at:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><circle cx="12" cy="12" r="3.8"/><path d="M15.8 12v1.6a2.4 2.4 0 0 0 4.8 0V12a8.6 8.6 0 1 0-3.3 6.8"/></svg>',
+        chev:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M6 9l6 6 6-6"/></svg>',
+        chevR:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 6l6 6-6 6"/></svg>',
+        home:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 11l9-8 9 8"/><path d="M5 10v10h14V10"/></svg>',
+        ticket:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="6.5" width="18" height="11" rx="2.5"/><path d="M9 6.5v11"/></svg>',
+        chat:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 11.5a7.5 7.5 0 0 1-10.9 6.7L4 20l1.4-4.3A7.5 7.5 0 1 1 21 11.5z"/></svg>',
+        person:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="8" r="3.6"/><path d="M4.5 20c.7-4 3.8-6 7.5-6s6.8 2 7.5 6"/></svg>',
+      }
+
+      const statusbar = `<div class="isl"></div><div class="stat"><span>1:40</span><span class="sbr">
+        <svg width="17" height="11" viewBox="0 0 17 11" fill="currentColor"><rect x="0" y="7" width="3" height="4" rx="1"/><rect x="4.5" y="5" width="3" height="6" rx="1"/><rect x="9" y="2.5" width="3" height="8.5" rx="1"/><rect x="13.5" y="0" width="3" height="11" rx="1"/></svg>
+        <svg width="15" height="11" viewBox="0 0 16 12" fill="currentColor"><path d="M8 2.5c2.3 0 4.4.9 5.9 2.4l1.2-1.2A9.5 9.5 0 008 .8 9.5 9.5 0 00.9 3.7l1.2 1.2A8 8 0 018 2.5z"/><path d="M8 6c1.2 0 2.3.5 3.1 1.3l1.2-1.2A6 6 0 008 4.3a6 6 0 00-4.3 1.8l1.2 1.2A4.4 4.4 0 018 6z"/><circle cx="8" cy="9.5" r="1.6"/></svg>
+        <span style="display:inline-flex;align-items:center;gap:3px"><svg width="22" height="11" viewBox="0 0 25 12" fill="none"><rect x="1" y="1" width="21" height="10" rx="2.5" stroke="currentColor" opacity=".5"/><rect x="3" y="3" width="12" height="6" rx="1.2" fill="#3ddc6d"/><rect x="23" y="4" width="1.5" height="4" rx="1" fill="currentColor" opacity=".5"/></svg></span>
+      </span></div>`
+      const acts = `<div class="acts"><div class="b">${IC.share}</div><div class="b">${IC.search}</div><div class="b">${IC.gear}</div></div>`
+      const nav = `<div class="nav"><div class="bar"><span class="n">${IC.home}</span><span class="n">${IC.ticket}</span><span class="n">${IC.chat}</span><span class="n on">${IC.person}</span></div></div><div class="homeind"></div>`
+      const identity = `<div class="name">dhairya dhairya</div>
+        <div class="chip-u">${IC.at} Add username</div><br>
+        <div class="chip-s">Add Status ${IC.chev}</div>`
+      const stats = `<div class="stats"><div class="st"><div class="n">0</div><div class="l">Followers</div></div><div class="st"><div class="n">0</div><div class="l">Following</div></div></div>`
+      const complete = (p) => `<div class="complete"><div class="ct"><span>Complete your profile</span><b>${p}%</b></div><div class="cbar"><i style="width:${p}%"></i></div></div>`
+
+      // Mandos pin (globe + ring) for the watermark option
+      const GLOBE_D = "M54.3966 50.4294C53.8313 49.7945 53.0677 49.9819 52.3805 50.0006C49.3261 50.0837 46.2705 50.3393 43.2201 50.2813C41.1238 50.2414 40.4172 51.2335 40.3996 53.0711C40.3659 56.5837 40.3793 60.0967 40.3344 63.6091C40.317 64.9713 41.0263 65.4339 42.2679 65.4666C45.5173 65.5521 48.7682 65.6257 52.0139 65.7927C53.9092 65.8902 54.5756 64.9882 54.56 63.2278C54.5232 59.0656 54.5331 54.903 54.3966 50.4294ZM69.6745 65.473C71.567 65.6299 72.3799 64.8265 72.3151 62.8678C72.197 59.298 72.2118 55.7228 72.2226 52.15C72.2261 50.9656 71.8644 50.3601 70.5622 50.3372C67.1219 50.2769 63.6816 50.1567 60.2447 49.9891C58.7181 49.9147 58.166 50.5332 58.1915 52.0365C58.2587 55.9986 58.2726 59.963 58.2171 63.9252C58.1966 65.3789 58.7556 65.9007 60.173 65.8283C63.2204 65.6726 66.2719 65.5972 69.6745 65.473ZM41.1338 75.7929C41.3735 77.3983 41.642 79.0001 41.8417 80.6105C41.9501 81.4852 42.4079 81.7835 43.2418 81.8992C46.477 82.3482 49.7298 82.2796 52.9794 82.326C54.003 82.3406 54.5684 81.8633 54.5677 80.803C54.5657 77.5502 54.563 74.2975 54.5619 71.0447C54.5615 70.1342 54.2142 69.5541 53.2079 69.5196C49.5691 69.3949 45.9306 69.2633 42.2926 69.1199C41.1087 69.0733 40.6282 69.64 40.7272 70.783C40.8616 72.3351 40.9894 73.8878 41.1338 75.7929ZM59.0289 34.7248C58.3396 34.9518 58.2211 35.531 58.2198 36.1318C58.2138 39.0592 58.2301 41.9866 58.2367 44.914C58.2392 46.0307 58.9064 46.3177 59.892 46.3412C63.2069 46.4201 66.5226 46.5005 69.8343 46.6564C71.423 46.7311 71.9652 46.0141 71.7666 44.5443C71.4099 41.9046 71.0077 39.2701 70.705 36.6243C70.5734 35.474 69.9752 35.1473 68.9181 35.0245C65.7426 34.6555 62.5594 34.6523 59.0289 34.7248ZM51.7025 85.9248C49.4309 85.804 47.1578 85.7067 44.8883 85.554C43.3984 85.4538 42.8319 86.0226 43.2313 87.512C44.1772 91.0395 45.3174 94.4986 47.2033 97.644C48.4489 99.7215 49.9494 101.611 52.3028 102.575C54.0669 103.297 54.553 103.016 54.5717 101.126C54.6135 96.8999 54.5072 92.6701 54.6494 88.4481C54.7171 86.4387 53.9846 85.6877 51.7025 85.9248ZM58.1845 89.9884C58.1807 91.2267 58.1924 92.4653 58.1697 93.7032C58.1317 95.7867 58.041 97.8697 58.0346 99.9531C58.0315 100.961 57.7633 102.247 58.8114 102.779C59.8214 103.291 60.817 102.498 61.6512 101.887C62.3807 101.352 63.0775 100.739 63.6696 100.057C66.7932 96.458 68.2329 92.0658 69.4136 87.5702C69.7926 86.127 69.098 85.5011 67.6477 85.5763C65.0458 85.7112 62.4433 85.8407 59.8396 85.9282C58.6773 85.9673 58.2087 86.5699 58.1958 87.6527C58.188 88.3042 58.1868 88.9558 58.1845 89.9884ZM31.0177 68.3713C29.855 68.2694 28.6897 68.1909 27.5303 68.06C26.0303 67.8905 25.29 68.4421 25.5124 70.029C25.918 72.9232 26.5292 75.768 27.3806 78.5676C27.6684 79.5139 28.2322 79.9931 29.1419 80.1216C31.5794 80.4659 34.02 80.7888 36.4603 81.1128C37.9127 81.3056 38.2988 80.5555 38.1077 79.2601C37.8619 77.5944 37.6389 75.9251 37.4215 74.2554C36.5717 67.7284 38.4027 69.0766 31.0177 68.3713ZM75.5231 71.3349C75.2543 73.9878 75.0048 76.6429 74.7087 79.2927C74.556 80.6597 75.1182 81.2394 76.4735 81.1313C78.9434 80.9341 81.3828 80.5563 83.7951 79.9871C84.4904 79.8231 84.9722 79.4871 85.1813 78.7818C86.0139 75.9729 86.7629 73.1502 87.0763 70.2219C87.2328 68.76 86.6393 68.1363 85.2219 68.237C82.7561 68.4122 80.2806 68.3323 77.8163 68.664C76.3342 68.8635 75.5281 69.4624 75.5231 71.3349ZM43.5489 29.5126C43.2696 30.7887 43.9692 31.1419 45.065 31.1173C47.6635 31.0592 50.2623 31.0108 52.8603 30.9344C53.777 30.9074 54.5586 30.6421 54.5619 29.5062C54.5744 25.2823 54.5783 21.0583 54.5909 16.8344C54.5941 15.7529 54.0521 15.4859 53.0758 15.7372C51.7179 16.0868 50.5754 16.7715 49.5713 17.7475C46.3154 20.9123 44.9678 25.0559 43.5489 29.5126ZM58.22 24.6557C58.2198 26.2185 58.2093 27.7813 58.2241 29.3439C58.2304 30.0029 58.2502 30.8289 59.0924 30.8609C62.4379 30.9877 65.7913 31.2948 69.133 30.956C69.0354 24.0506 63.272 15.8857 58.429 15.8041C57.6218 18.5898 58.5077 21.4535 58.22 24.6557ZM38.4479 36.7548C38.6109 35.5987 37.9026 35.4095 37.0165 35.5334C34.4457 35.8929 31.8799 36.2892 29.3121 36.6702C28.84 36.7402 28.3901 36.9038 28.2091 37.3673C26.9148 40.6804 25.9737 44.0725 25.776 47.8745C29.3075 47.5594 32.5968 47.2994 35.8773 46.9559C37.1062 46.8271 37.2761 45.8277 37.3953 44.7908C37.6917 42.2124 38.0557 39.6418 38.4479 36.7548ZM86.4347 43.7397C85.9236 41.9275 85.3912 40.1211 84.91 38.3011C84.6481 37.3106 84.1246 36.7671 83.0517 36.6273C80.8645 36.3423 78.6974 35.9053 76.5116 35.6065C74.533 35.3361 74.1654 35.7376 74.4304 37.6917C74.7792 40.2634 75.201 42.8271 75.4703 45.4069C75.589 46.5449 76.0446 47.001 77.1618 47.0525C79.2374 47.1481 81.3098 47.3224 83.382 47.4831C87.0873 47.7705 87.0868 47.7765 86.4347 43.7397ZM39.8768 98.139C41.3343 98.9991 42.6109 100.23 44.8214 100.574C42.071 95.7882 40.4271 90.9655 39.2891 85.9615C39.1598 85.393 38.7311 85.0357 38.2043 84.9586C35.3436 84.5401 32.4761 84.1681 29.2714 83.7341C31.584 89.6618 34.9258 94.3168 39.8768 98.139ZM77.1722 94.051C79.7068 91.0713 81.8057 87.8402 83.28 83.7716C80.4836 84.1418 78.0592 84.5654 75.6169 84.7469C74.187 84.8531 73.5504 85.4541 73.2364 86.7876C72.2484 90.9826 70.9488 95.073 68.8523 98.8717C68.6433 99.2504 68.3588 99.6893 69.0572 100.212C72.1635 98.9441 74.6505 96.7074 77.1722 94.051ZM12.1785 62.4327C14.5423 63.5004 17.1235 63.3735 19.6104 63.7421C20.7242 63.9072 21.3868 63.0921 21.2551 62.0563C20.9074 59.3207 21.3097 56.611 21.3668 53.8917C21.3948 52.5589 20.7822 52.1339 19.5823 52.3024C17.6569 52.5727 15.7367 52.8811 13.8102 53.1426C12.59 53.3083 11.9565 53.9925 11.8926 55.1966C11.7692 57.5249 11.5722 59.8557 12.1785 62.4327ZM91.5345 61.2781C91.645 63.7259 91.8813 63.9165 94.343 63.5997C94.923 63.525 95.5195 63.5498 96.0906 63.438C101.278 62.4224 100.918 63.4968 100.825 57.8382C100.809 56.8634 100.745 55.8883 100.672 54.9157C100.606 54.0347 100.133 53.4522 99.2504 53.2981C97.2675 52.9521 95.2821 52.6188 93.2923 52.3155C91.946 52.1103 91.3947 52.7386 91.4393 54.0866C91.5146 56.3616 91.5108 58.6392 91.5345 61.2781ZM19.1531 67.2282C17.6147 67.0172 16.0753 66.8135 14.5382 66.5933C12.7383 66.3354 12.3039 66.6975 12.6873 68.39C13.2165 70.7268 13.871 73.0346 14.8237 75.2438C15.0546 75.7792 15.237 76.4238 15.7966 76.6538C18.2818 77.6755 20.8189 78.5288 23.6761 78.8705C23.1296 75.6476 22.1809 72.7986 22.0017 69.8162C21.9055 68.2134 21.1272 67.3171 19.1531 67.2282ZM89.1896 77.9094C89.1277 79.1073 89.9919 78.7515 90.5311 78.606C92.4786 78.0804 94.4042 77.4727 96.3331 76.8796C96.8368 76.7246 97.3372 76.4932 97.5545 75.9752C98.8078 72.987 99.8867 69.9503 100.192 66.339C97.2614 66.7768 94.5838 67.1634 91.9114 67.5836C91.0206 67.7237 90.8739 68.4425 90.7928 69.1939C90.485 72.0471 89.8617 74.8425 89.1896 77.9094ZM38.4981 21.3595C34.963 24.3842 32.1635 27.9377 30.1438 32.7165C32.9658 32.3901 35.3154 32.0336 37.6782 31.8776C39.0431 31.7874 39.5714 31.1615 39.8704 29.9157C40.7979 26.0519 42.0767 22.313 44.2312 18.9289C44.4013 18.6618 44.6008 18.384 44.1883 17.8456C42.159 18.5438 40.4068 19.8146 38.4981 21.3595ZM73.0576 30.5722C73.2148 31.1498 73.3864 31.6907 74.126 31.7782C76.8654 32.1021 79.6026 32.4453 82.7069 32.8261C79.484 26.0787 75.2486 20.884 68.4191 18.1355C70.3096 22.0792 72.0207 26.0336 73.0576 30.5722ZM18.145 39.3319C17.4553 39.5224 16.6308 39.6122 16.2676 40.2668C14.6949 43.1008 13.6851 46.1396 12.8597 49.5603C15.807 49.3805 18.3314 48.8052 20.8691 48.3371C21.3419 48.2499 21.7578 47.9952 21.8684 47.5078C22.579 44.3763 23.2638 41.2389 23.9908 37.9509C21.8428 38.0232 20.1586 38.7196 18.145 39.3319ZM90.5635 38.1997C90.0191 38.1141 89.452 37.6854 88.8285 38.4518C89.4544 41.3114 90.1064 44.2862 90.7562 47.2615C90.9389 48.0977 91.5725 48.4078 92.3105 48.5328C93.9783 48.8155 95.6468 49.1097 97.326 49.3043C98.6276 49.4551 99.3269 48.8066 99.159 47.4627C99.0791 46.8239 98.8074 46.2116 98.6705 45.5769C97.7551 41.3317 95.4445 38.5855 90.5635 38.1997ZM32.0563 95.6255C29.4934 91.9198 27.188 88.0719 25.5402 83.8591C25.3184 83.292 24.9791 82.8117 24.3519 82.6574C22.25 82.1403 20.1439 81.6403 17.6492 81.0398C21.2333 87.2491 25.7073 92.0414 31.3839 95.7149C31.5851 95.8451 31.8126 96.0497 32.0563 95.6255ZM82.4087 94.9458C87.464 91.2966 91.6653 86.8803 95.0374 80.9617C92.3959 81.6645 90.2264 82.2329 88.0631 82.8241C87.5836 82.9551 87.3736 83.3747 87.1929 83.8083C85.4153 88.0727 83.2706 92.1332 80.0534 96.2348C81.0992 95.6882 81.65 95.4003 82.4087 94.9458ZM22.3583 30.6379C21.3414 32.0336 20.0806 33.2679 19.2969 35.1928C21.0229 34.7906 22.4964 34.3771 23.9966 34.1197C25.2082 33.9118 25.9145 33.3208 26.4241 32.1917C27.7319 29.2938 29.2702 26.5157 31.2072 23.9742C31.4428 23.665 31.9127 23.3482 31.4922 22.7522C27.9267 24.6567 25.2168 27.5247 22.3583 30.6379ZM82.2812 23.3409C81.7544 23.0327 81.2276 22.7245 80.7008 22.4164C82.2422 25.2817 84.1875 27.8054 85.556 30.6759C87.0733 33.8585 89.2538 35.0482 93.0622 34.5807C90.3425 30.0241 86.6475 26.5457 82.2812 23.3409Z"
+      const PIN_D = "M49.2754 1.47266C60.8874 -0.150979 71.9033 1.83018 82.3252 7.18262C87.2339 9.70363 91.6554 12.9274 95.6221 16.8662V16.8672C105.362 26.6668 110.811 38.4054 112.156 52.0791C113.076 61.4331 111.309 70.4007 107.908 79.1562C104.894 86.917 100.606 94.0098 96.0078 101C90.4923 109.385 84.4487 117.399 78.0947 125.176C71.4447 133.315 64.5907 141.278 57.7998 149.33C57.3273 149.89 56.8699 150.074 56.5098 150.078C56.1513 150.082 55.6957 149.91 55.2197 149.362C48.265 141.355 41.3215 133.337 34.3779 125.319C34.1346 125.038 34.1068 124.89 34.1045 124.851C34.1276 124.817 34.2345 124.692 34.6191 124.564C40.3698 122.654 46.218 120.84 51.959 118.788C59.9329 115.938 67.7068 112.56 75.1055 108.368C84.4223 103.089 92.4823 96.2794 98.2422 87.0762C105.631 75.2704 107.955 62.3972 105.123 48.7412C103.023 38.613 98.409 29.7196 90.7812 22.5615C83.4595 15.6907 74.8327 11.278 64.8604 9.6748C52.7212 7.72333 41.3433 9.99349 30.8633 16.3643C21.8396 21.8497 15.1367 29.482 10.6211 39.0166C5.667 49.4772 4.43318 60.4506 5.73633 71.7949C6.20845 75.9048 7.00515 79.9344 7.92188 83.9219C4.98461 78.296 2.85047 72.39 1.73828 66.1279C0.210013 57.5227 0.844581 49.0588 3.49316 40.7334C7.10942 29.3666 13.582 19.9597 22.9424 12.583C30.6834 6.48256 39.513 2.83769 49.2754 1.47266Z"
+      const wmSvg = `<svg class="wm" viewBox="0 0 114 151" xmlns="http://www.w3.org/2000/svg"><path d="${GLOBE_D}" fill="#f5851f" fill-opacity=".16"/><path d="${PIN_D}" fill="#f5851f" fill-opacity=".22"/></svg>`
+      const miniActs = `<div class="mini-acts"><div class="mini">${IC.img} Add cover</div><div class="mini">${IC.cam} Add photo</div></div>`
+
+      // ── round 2: different structures, not gradient tweaks ──
+      const V2 = [
+        { title: 'No banner at all', note: 'If it’s empty, collapse it — no dead zone. Two small warm chips invite setup; banner space appears only once a cover exists.',
+          banner: `<div class="banner b-none"></div>`,
+          avatar: `<div class="avatar ring glow">DD<div class="cam-badge">${IC.cam}</div></div>`,
+          extra: miniActs + complete(15) },
+
+        { title: 'Brand watermark', note: 'The Mandos pin as a big dim watermark — unmistakably branded, never looks like a missing image.',
+          banner: `<div class="banner b-mark">${wmSvg}<div class="bctl" style="left:14px;bottom:60px"><div class="cover-pill">${IC.cam} Add cover</div></div></div>`,
+          avatar: `<div class="avatar ring">DD<div class="cam-badge">${IC.cam}</div></div>`,
+          extra: complete(15) },
+
+        { title: 'Marquee lights', note: 'A string of warm bulbs — club-signage energy. The glow underneath pools toward the avatar.',
+          banner: `<div class="banner b-marquee"><div class="bulbs" style="top:46px"></div><div class="bulbs" style="bottom:64px;opacity:.55"></div><div class="bctl" style="right:14px;bottom:88px"><div class="cover-round">${IC.cam}</div></div></div>`,
+          avatar: `<div class="avatar ring">DD<div class="cam-badge">${IC.cam}</div></div>`,
+          extra: complete(15) },
+
+        { title: 'Auto banner (echo)', note: 'Generate the banner from their avatar colour + initials — zero user effort, no profile ever looks empty.',
+          banner: `<div class="banner b-echo"><div class="dd">DD</div><div class="blob"></div><div class="bctl" style="right:14px;bottom:60px"><div class="cover-round">${IC.cam}</div></div></div>`,
+          avatar: `<div class="avatar ring">DD<div class="cam-badge">${IC.cam}</div></div>`,
+          extra: complete(15) },
+
+        { title: 'Tap-to-add zone', note: 'Make the whole banner the button — a dashed warm drop-zone. The clearest possible affordance.',
+          banner: `<div class="banner b-drop"><div class="dropzone"><div><div class="dz-ic">${IC.img}</div><b>Add your cover</b><span>Show the world your vibe</span></div></div></div>`,
+          avatar: `<div class="avatar ring">DD<div class="cam-badge">${IC.cam}</div></div>`,
+          extra: complete(15) },
+
+        { title: 'Vinyl grooves', note: 'Record grooves radiating from the avatar + a few sparkles — texture that says nightlife without needing a photo.',
+          banner: `<div class="banner b-vinyl"><span class="spark" style="left:16%;top:52px;font-size:13px">✦</span><span class="spark" style="left:78%;top:84px;font-size:10px;opacity:.8">✦</span><span class="spark" style="left:64%;top:38px;font-size:8px;opacity:.6">✦</span><div class="bctl" style="right:14px;bottom:60px"><div class="cover-pill">${IC.cam} Add cover</div></div></div>`,
+          avatar: `<div class="avatar ring glow">DD<div class="cam-badge">${IC.cam}</div></div>`,
+          extra: complete(15) },
+      ]
+
+      // ── round 1 (kept for reference) ──
+      const V = [
+        { title: 'Aurora banner', note: 'A warm mesh-gradient banner so “empty” already looks designed; small Add-cover chip.',
+          banner: `<div class="banner b-aurora"><div class="bctl" style="right:14px;bottom:60px"><div class="cover-pill">${IC.cam} Add cover</div></div></div>`,
+          avatar: `<div class="avatar ring">DD<div class="cam-badge">${IC.cam}</div></div>`,
+          extra: complete(15) },
+
+        { title: 'Spotlight', note: 'On-brand: a warm light pools from below and lifts the avatar out of the dark. Ties to the splash.',
+          banner: `<div class="banner b-spot"><div class="headline" style="top:80px"><b>Make it <i>yours</i></b></div><div class="bctl" style="right:14px;bottom:60px"><div class="cover-pill">${IC.cam} Add cover</div></div></div>`,
+          avatar: `<div class="avatar ring glow">DD<div class="cam-badge">${IC.cam}</div></div>`,
+          extra: complete(15) },
+
+        { title: 'Brand texture', note: 'A subtle dotted brand texture reads as intentional, not blank; floating camera button.',
+          banner: `<div class="banner b-tex"><div class="bctl" style="right:14px;bottom:60px"><div class="cover-round">${IC.cam}</div></div></div>`,
+          avatar: `<div class="avatar ring">DD<div class="cam-badge">${IC.cam}</div></div>`,
+          extra: complete(15) },
+
+        { title: 'Guided setup', note: 'Turns the emptiness into a quick 3-step checklist with progress — clear next actions.',
+          banner: `<div class="banner b-line"></div>`,
+          avatar: `<div class="avatar ring">DD<div class="cam-badge">${IC.cam}</div></div>`,
+          extra: `<div class="setup"><div class="sh"><span>Finish your profile</span><b>15%</b></div><div class="cbar"><i style="width:15%"></i></div>
+            <div class="task"><div class="ti">${IC.cam}</div><div class="tt">Add a profile photo</div><div class="add">${IC.plus}</div></div>
+            <div class="task"><div class="ti">${IC.img}</div><div class="tt">Add a cover</div><div class="add">${IC.plus}</div></div>
+            <div class="task"><div class="ti">${IC.pen}</div><div class="tt">Write a short bio</div><div class="add">${IC.plus}</div></div>
+          </div>` },
+      ]
+
+      const root = document.getElementById('row')
+      const SECTIONS = [['Round 2 — new directions', V2], ['Round 1 — earlier takes', V]]
+      SECTIONS.forEach(([title, list]) => {
+        const sect = document.createElement('div'); sect.className = 'sect'
+        sect.innerHTML = `<h2>${title}</h2>`
+        const row = document.createElement('div'); row.className = 'row'
+        list.forEach((v) => {
+          const item = document.createElement('div'); item.className = 'item'
+          item.innerHTML = `<div class="cap"><b>${v.title}</b><span>${v.note}</span></div>
+            <div class="phone"><div class="scr">${statusbar}${acts}${v.banner}
+              <div class="body">${v.avatar}${identity}${stats}${v.extra}</div>${nav}</div></div>`
+          row.appendChild(item)
+        })
+        sect.appendChild(row); root.appendChild(sect)
+      })
+    </script>
+  </body>
+</html>
