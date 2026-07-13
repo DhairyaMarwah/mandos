@@ -159,6 +159,16 @@ button{font-family:inherit;cursor:pointer;border:none;background:none;color:inhe
 .tbl.pending{border-color:var(--amber)} .tbl.pending .st{background:var(--amber-soft);color:var(--amber)}
 .tbl.noshow{border-color:var(--red)} .tbl.noshow .st{background:var(--red-soft);color:var(--red)}
 .tbl.vacant{opacity:.5} .tbl.blocked{opacity:.5;border-style:dashed}
+.swipewrap{position:relative;border-radius:16px;overflow:hidden;transition:max-height .28s ease,opacity .28s ease,margin .28s ease}
+.swipewrap.sw-gone{max-height:0!important;opacity:0;margin:0;pointer-events:none}
+.swipe-under{position:absolute;inset:0;display:flex;align-items:center;justify-content:space-between;padding:0 16px;font-size:12px;font-weight:700;border-radius:16px;opacity:0;transition:opacity .12s}
+.swipewrap.sw-r .swipe-under{opacity:1;background:var(--green-soft)} .swipewrap.sw-r .su-r{visibility:hidden}
+.swipewrap.sw-l .swipe-under{opacity:1;background:var(--red-soft)} .swipewrap.sw-l .su-l{visibility:hidden}
+.su-l{color:var(--green);display:inline-flex;gap:6px;align-items:center}
+.su-r{color:var(--red);display:inline-flex;gap:6px;align-items:center}
+.swipe-card{position:relative;touch-action:pan-y}
+.tbl.ending{border-color:#ff8c1a;animation:endPulse 1.5s ease-in-out infinite} .tbl.ending .st{background:rgba(255,140,26,.16);color:#ff8c1a}
+@keyframes endPulse{0%,100%{box-shadow:0 0 0 0 rgba(255,140,26,.35)}50%{box-shadow:0 0 0 5px rgba(255,140,26,0)}}
 
 /* ---------- Inputs ---------- */
 .field{display:flex;flex-direction:column;gap:6px}
@@ -601,17 +611,19 @@ const venueRow = (v=D.venue,badge="")=>`
 
 /* ---------- ACCESS TIERS (colour palette drives QR frame + wristband + scanner) ---------- */
 const TIERS = {
-  ga:        {label:'GA',        full:'General Admission',  color:'#3b82f6', ink:'#04122e', band:'Blue'},
-  vip:       {label:'VIP',       full:'VIP Entry',          color:'#f5a623', ink:'#2a1a00', band:'Gold'},
-  backstage: {label:'Backstage', full:'Backstage Access',   color:'#d0479e', ink:'#2b0620', band:'Pink'},
-  table:     {label:'VIP Table', full:'Table service',      color:'#22c55e', ink:'#04240f', band:'Green'}
+  ga:        {label:'GA',        full:'General Admission',  color:'#3b82f6', ink:'#04122e', band:'Blue',   elig:'All genders'},
+  ladies:    {label:'Ladies',    full:'Ladies Entry',       color:'#ff5fa8', ink:'#33081d', band:'Pink',   elig:'Women only'},
+  vip:       {label:'VIP',       full:'VIP Entry',          color:'#f5a623', ink:'#2a1a00', band:'Gold',   elig:'All genders'},
+  backstage: {label:'Backstage', full:'Backstage Access',   color:'#a855f7', ink:'#20083a', band:'Purple', elig:'All genders'},
+  table:     {label:'VIP Table', full:'Table service',      color:'#22c55e', ink:'#04240f', band:'Green',  elig:'All genders'}
 };
-const TIER_PALETTE = ['#3b82f6','#f5a623','#d0479e','#22c55e'];
+const TIER_PALETTE = ['#3b82f6','#ff5fa8','#f5a623','#a855f7','#22c55e'];
 const tierBadge = (t,big)=>{ const T=TIERS[t]||TIERS.ga; return `<span class="tier-badge${big?' big':''}" style="--tc:${T.color}">${T.label}</span>`; };
 function passCard(t,opts){ opts=opts||{}; const T=TIERS[t]||TIERS.ga; return `<div class="pass" style="--tc:${T.color}">
   <div class="pass-top"><div><div class="pass-tier">${T.label}</div><div class="pass-sub">${opts.sub||T.full} · ${opts.ref||D.booking.ref}</div></div>${tierBadge(t,true)}</div>
   <div class="pass-qrwrap"><div class="qr pass-qr" data-seed="${opts.seed||42}"></div></div>
   <div class="pass-band"><span class="dotc"></span>Wristband:&nbsp;<b>${T.band}</b>&nbsp;— show this at entry</div>
+  ${opts.elig?`<div class="pass-band" style="background:none"><span style="color:var(--tc)">${ic('users','sm')}</span>${opts.elig}</div>`:''}
   ${opts.guests?`<div class="pass-guests"><button class="btn btn-dark sm" style="width:100%" onclick="openSheet('guestpasses')">${ic('users','sm')} View ${opts.guests} guest passes</button></div>`:''}
 </div>`; }
 const swatchRow = (sel=0)=>`<div class="swatches">${TIER_PALETTE.map((c,i)=>`<span class="sw${i===sel?' on':''}" style="--sc:${c}" onclick="pickSwatch(this)"></span>`).join('')}</div>`;
@@ -698,7 +710,8 @@ function groupInviteSheet(cfg){
         <div class="field"><label>Send via</label><div class="chipsel row"><span class="chip on" onclick="pickChip(this)">${ic('phone','sm')} WhatsApp</span><span class="chip" onclick="pickChip(this)">${ic('mail','sm')} SMS</span></div></div>
         <div class="xs muted">They'll receive</div>
         <div class="msg-bubble">${cfg.msg}<div class="msg-meta">Mandos · delivered</div></div>
-        <button class="btn btn-primary" onclick="toast('Invite sent')">Send invite</button>
+        <div class="xs muted" style="display:flex;gap:6px;align-items:flex-start">${ic('lock','sm')}<span>They <b>download Mandos to claim</b> — the pass locks to their account. No screenshots, no reselling, and two "Mei Xiang"s can never collide: each pass is account-bound.</span></div>
+        <button class="btn btn-primary" onclick="toast('Invite sent — they claim it in the app')">Send invite</button>
       </div>
     </div>`:''}
 
@@ -740,7 +753,7 @@ function refreshBarSlots(){ var stp=document.querySelector('#c1-entry-reg .stepp
 var ASSIGN_SEL=[];
 function toggleAssign(el){ var id=el.dataset.tid,i=ASSIGN_SEL.indexOf(id); if(i>-1){ASSIGN_SEL.splice(i,1);el.classList.remove('sel');el.style.borderColor='';}else{ASSIGN_SEL.push(id);el.classList.add('sel');el.style.borderColor='var(--accent)';} var b=document.getElementById('assignSel'); if(b)b.textContent=ASSIGN_SEL.length?ASSIGN_SEL.join(', '):'none'; }
 function assignLock(){ if(!ASSIGN_SEL.length){toast('Pick a table first');return;} ASSIGN_SEL.forEach(function(id){ ENGINE.lock({tableId:id,date:'2025-12-26',start:1260,dur:120,party:3}); }); toast('Assigned '+ASSIGN_SEL.join(', ')+' — locked 9:00–11:00 PM'); ASSIGN_SEL=[]; closeSheet(); }
-function toast(msg){ var t=document.createElement('div'); t.className='toast'; t.textContent=msg; document.querySelector('.phone').appendChild(t); setTimeout(function(){t.classList.add('show')},10); setTimeout(function(){t.classList.remove('show');setTimeout(function(){t.remove()},300)},2400); }
+function toast(msg,action){ var t=document.createElement('div'); t.className='toast'; t.textContent=msg; if(action){t.style.cursor='pointer';t.addEventListener('click',function(){action();t.remove();});} document.querySelector('.phone').appendChild(t); setTimeout(function(){t.classList.add('show')},10); setTimeout(function(){t.classList.remove('show');setTimeout(function(){t.remove()},300)},action?4200:2400); }
 var CUR={name:'Skyline Lounge',area:'Tsim Sha Tsui'};
 function hybSeg(el){ el.parentElement.querySelectorAll('.segcard').forEach(function(c){c.classList.remove('on')}); el.classList.add('on'); var seg=el.dataset.seg; document.querySelectorAll('#segday,#segnight').forEach(function(d){ d.style.display=(d.id==='seg'+seg)?'flex':'none'; }); }
 function dayPref(el,show){ pickChip(el); var t=document.getElementById('dayTables'); if(t) t.style.display=show?'flex':'none'; }
@@ -989,18 +1002,22 @@ SB["c2-tickets"]=()=>hdr("Club Reservation")+`
   <div class="bold">Choose Tickets</div>
   <div class="xs muted" style="margin-top:-6px">Each tier has its own colour — you'll get a matching QR pass and wristband at the door.</div>
   ${ticketCard("General Admission",150,"Standard entry to the club. Includes 1 drink.","Many available","s-low",1,'ga')}
+  ${ticketCard("Ladies Entry",100,"Women-only entry · free-flow till midnight.","Available","s-low",0,'ladies')}
   ${ticketCard("VIP Entry",350,"Priority entry, dedicated queue, 2 drinks included.","Limited · 20 left","s-mod",2,'vip')}
   ${ticketCard("Backstage",800,"Backstage access — meet the artists, private bar.","Sold out","s-sold",0,'backstage',true)}
   <div class="card between" onclick="promoApply(this)"><div class="row">${ic('tag')}<span class="sm">Have a promo code?</span></div><span class="muted sm" data-promo>Enter code ${ic('fwd','sm')}</span></div>
 </div>
 <div class="screen-footer"><div class="between"><div><div class="big" id="tkTotal">HK$850</div><div class="xs muted" id="tkCount">3 Tickets</div></div><button class="btn btn-primary sm" onclick="go('c3-summary-ticket')">Proceed</button></div><div class="foot-note">Max 10 tickets per order ${ic('info','sm')}</div></div>`;
 
-const ticketCard=(name,price,desc,stock,scls,qty,tier,sold=false)=>{ const T=TIERS[tier]||TIERS.ga; return `
+const ticketCard=(name,price,desc,stock,scls,qty,tier,sold=false)=>{ const T=TIERS[tier]||TIERS.ga;
+  const eligChip=`<span class="tier-badge" style="--tc:${T.elig==='All genders'?'#8a8a94':T.color};font-size:9.5px">${T.elig}</span>`;
+  const you=T.elig==='Women only'?`<span class="green xs">${ic('check','sm')} You're eligible</span>`:'';
+  return `
   <div class="list-card" style="border-left:3px solid ${T.color}">
-    <div class="between"><div class="row"><div class="ticket-ic" style="background:${T.color}22;color:${T.color}">${ic('ticket')}</div><div><div class="row" style="gap:8px">${tierBadge(tier)}<div class="bold sm">${name}</div></div><div class="sm">HK$${price}</div></div></div>
+    <div class="between"><div class="row"><div class="ticket-ic" style="background:${T.color}22;color:${T.color}">${ic('ticket')}</div><div><div class="row" style="gap:7px;flex-wrap:wrap">${tierBadge(tier)}${eligChip}<div class="bold sm">${name}</div></div><div class="sm">HK$${price}</div></div></div>
       ${sold?`<span class="xs s-sold" style="color:var(--dim2)">Sold out</span>`:`<div class="stepper mini" data-price="${price}"><button class="stp-btn">${ic('minus','sm')}</button><span class="stp-val">${qty}</span><button class="stp-btn">${ic('plus','sm')}</button></div>`}</div>
     <div class="xs muted">${desc}</div>
-    <div class="between xs"><span class="${scls}">${stock}</span><span class="muted">${ic('tag','sm')} ${T.band} wristband</span></div>
+    <div class="between xs"><span class="${scls}">${stock} ${you?'· ':''}</span>${you||`<span class="muted">${ic('tag','sm')} ${T.band} wristband</span>`}</div>
   </div>`; };
 
 /* ---------- C3 SUMMARY (table + deposit) ---------- */
@@ -1095,11 +1112,12 @@ SB["c3-success"]=()=>hdr("Booking")+`
   <div class="card">
     <div class="kv"><span class="k">Venue</span><span>${D.venue.name}</span></div>
     <div class="kv"><span class="k">Date &amp; Time</span><span>${D.event.date} · ${D.event.time}</span></div>
-    <div class="kv"><span class="k">Tickets</span><span class="row" style="gap:6px">${tierBadge('vip')}×2 ${tierBadge('ga')}×1</span></div>
+    <div class="kv"><span class="k">Tickets</span><span class="row" style="gap:6px">${tierBadge('vip')}×2 ${tierBadge('ladies')}×1</span></div>
     <div class="kv"><span class="k">Total paid</span><span>HK$754.00</span></div>
   </div>
   <div class="sec-label">Your passes are ready</div>
   ${passCard('vip',{sub:D.event.name+' · VIP entry',ref:D.ticket.ref,seed:55})}
+  ${passCard('ladies',{sub:D.event.name+' · Women-only entry',ref:'NEO-261226-2K9L',seed:77,elig:'Women only · verified against the account it\'s claimed on'})}
   <button class="btn btn-primary" onclick="openSheet('grouptickets')">${ic('users','sm')} Share tickets with your group</button>
   <div class="info-banner">${ic('info','sm')}<div>Bought for friends? Send each person their <b>own QR + colour</b> — the door scans it and hands the matching wristband (VIP = Gold, GA = Blue).</div></div>
   <div class="info-banner">${ic('mail','sm')} A confirmation email has been sent to ${D.guest.email}</div>
@@ -1234,11 +1252,13 @@ SB["m3-scanner"]=()=>hdr("Scanner")+`
     <div class="kv" style="margin-top:8px"><span class="k">Table</span><span>VIP Table V-5 · behind DJ booth</span></div>
     <div class="kv"><span class="k">Date &amp; Time</span><span>${D.booking.date} · ${D.booking.time}</span></div>
     <div class="kv"><span class="k">Group check-in</span><span><b class="green">2 / 6</b> in · this is Guest 3</span></div>
+    <div class="kv"><span class="k">Type · eligibility</span><span class="row" style="gap:6px">${tierBadge('table')}<span class="green">All genders ✓</span></span></div>
     <div class="row" style="margin-top:12px" id="scanActions"><button class="btn btn-green" onclick="scanResult(true)">${ic('check','sm')} Check In</button><button class="btn btn-outline" style="border-color:var(--red);color:var(--red)" onclick="scanResult(false)">${ic('x','sm')} Reject</button></div>
   </div>
   <div class="between"><div class="bold sm">Recent Scans</div><span class="accent xs">View all</span></div>
   <div class="card tight between"><div class="row"><div class="avatar" style="width:30px;height:30px">AP</div><div><div class="sm bold">Arjun Patel</div><div class="xs muted">BMR-261225-91AB</div></div></div><div class="right"><div class="xs green">Checked in</div><div class="xs muted">8:42 PM</div></div></div>
-  <div class="card tight between"><div class="row"><div class="avatar" style="width:30px;height:30px">JL</div><div><div class="sm bold">John Lee</div><div class="xs muted">BMR-261225-44CD</div></div></div><div class="right"><div class="xs red">Rejected</div><div class="xs muted">8:35 PM</div></div></div>
+  <div class="card tight between"><div class="row"><div class="avatar" style="width:30px;height:30px">JL</div><div><div class="sm bold">John Lee</div><div class="xs muted">${tierBadge('ladies')} Ladies Entry · account: male</div></div></div><div class="right"><div class="xs red">✗ Gender mismatch</div><div class="xs muted">8:35 PM · rejected</div></div></div>
+  <button class="btn btn-dark" onclick="openSheet('manualcheckin')">${ic('users','sm')} Manual check-in — guest lost their QR?</button>
 </div>`;
 
 /* ---------- M3 ASSIGN (sheet) ---------- */
@@ -1267,23 +1287,24 @@ SB["m2-bookings"]=()=>hdr("Booking Management","",`<button class="icon-btn bg">$
   <div class="tabs"><div class="tab on">Bookings</div><div class="tab" onclick="go('m2-reservation')">Reservation</div><div class="tab" onclick="go('m2-control')">Booking Control</div></div>
   <div class="tiles"><div class="tile"><div class="l">Total</div><div class="v">48</div></div><div class="tile"><div class="l">Expected</div><div class="v">32</div></div><div class="tile b"><div class="l">Seated</div><div class="v">20</div></div></div>
   <div class="tiles two"><div class="tile g"><div class="l">Finished</div><div class="v">8</div></div><div class="tile r"><div class="l">No-show</div><div class="v">2</div></div></div>
+  <div class="card tight" style="border-left:3px solid var(--accent)"><div class="between"><div class="row" style="min-width:0">${ic('note','sm')}<div style="min-width:0"><div class="xs muted">Today's note — pinned for all staff</div><div class="sm">Neon Nights tonight · hold V-7 for promoter Alvin · comp Mei's table 1 round</div></div></div><span class="accent xs" onclick="openSheet('daynote')">Edit</span></div></div>
   <input class="input" placeholder="🔍  Search for attendee name">
   <div class="viewseg"><button class="on" onclick="setBkView(this,'grid')">${ic('table','sm')} Grid</button><button onclick="setBkView(this,'list')">${ic('menu','sm')} List</button><button onclick="setBkView(this,'timeline')">${ic('clock','sm')} Timeline</button></div>
 
   <div id="bk-grid">
     <div class="row" style="margin-bottom:10px"><span class="chip">All Status ${ic('down','sm')}</span><span class="chip">All Areas ${ic('down','sm')}</span><span class="chip">${ic('dots','sm')}</span></div>
     <div class="tblgrid">
-      ${gt("V-1","2–4","","","vacant")}${gt("V-2","2–4","Mei Xiang","9:00 · 3","confirmed",'m2-detail')}${gt("V-3","4–6","Arjun Patel","9:15 · 4","seated")}${gt("V-4","2–4","","","vacant")}
+      ${gt("V-1","2–4","","","vacant")}${gt("V-2","2–4","Mei Xiang","9:00 · 3","confirmed",'m2-detail',"Birthday · comp 1 round")}${gt("V-3","4–6","Arjun Patel","ends 10:45","ending","","Allergy: nuts")}${gt("V-4","2–4","","","vacant")}
       ${gt("V-5","2–4","Neha K.","9:00 · 2","seated")}${gt("V-6","4–6","Pending","9:30 · 6","pending")}${gt("V-7","6–8","John Lee","8:45 · 6","confirmed")}${gt("V-8","2–4","","","vacant")}
       ${gt("T-1","2–4","","","vacant")}${gt("T-2","2–4","Lucas W.","9:30 · 2","confirmed")}${gt("R-1","6–10","Party Grp","9:00 · 8","confirmed")}${gt("R-2","6–10","","","noshow")}
     </div>
-    <div class="legend" style="margin-top:10px"><span><i style="background:var(--green)"></i>Confirmed</span><span><i style="background:var(--blue)"></i>Seated</span><span><i style="background:var(--amber)"></i>Pending</span><span><i style="background:var(--dim2)"></i>Vacant</span><span><i style="background:var(--red)"></i>No-show</span></div>
+    <div class="legend" style="margin-top:10px"><span><i style="background:var(--green)"></i>Confirmed</span><span><i style="background:var(--blue)"></i>Seated</span><span><i style="background:var(--amber)"></i>Pending</span><span><i style="background:#ff8c1a"></i>Ending soon — tap to extend / empty</span><span><i style="background:var(--dim2)"></i>Vacant</span><span><i style="background:var(--red)"></i>No-show</span></div>
   </div>
 
   <div id="bk-list" style="display:none;flex-direction:column;gap:10px">
-    <div class="between"><div class="bold sm">Today</div><span class="xs muted">3 bookings</span></div>
+    <div class="between"><div class="bold sm">Today</div><span class="xs muted">swipe → empty · ← cancel</span></div>
     ${bkListCard("Lian Hua","LH","8:00 PM","T-1","3","confirmed","Night Owl")}
-    ${bkListCard("Arjun Patel","AP","7:15 PM","V-3","4","seated","")}
+    ${bkListCard("Arjun Patel","AP","7:15 PM","V-3","4","ending","")}
     ${bkListCard("Neha K.","NK","9:30 PM","V-2","2","pending","")}
     <div class="between" style="margin-top:4px"><div class="bold sm">Later tonight</div><span class="xs muted">2 bookings</span></div>
     ${bkListCard("Jing Wei","JW","11:00 PM","B-2","6","event","VIP")}
@@ -1311,7 +1332,7 @@ SB["m2-timeline-tablet"]=()=>`
   ${timelineHTML(112,140)}
   <div class="info-banner">${ic('info','sm')}<div>Landscape resource timeline — one lane per table, the full night on the x-axis. Drag-style blocks show each booking; the dashed purple line marks the event takeover (11 PM). This is the merchant tablet layout for the door / floor manager.</div></div>
 </div>`;
-const gt=(id,cap,name,meta,st,goto="")=>`<div class="tbl ${st}" ${goto?`onclick="go('${goto}')"`:''} style="text-align:left"><div class="id">${id}</div><div class="c">(${cap})</div>${name?`<div class="xs bold" style="margin-top:2px">${name}</div><div class="st">${meta}</div>`:`<div class="st">Vacant</div>`}</div>`;
+const gt=(id,cap,name,meta,st,goto="",note="")=>`<div class="tbl ${st}" ${st==='ending'?`onclick="openSheet('endsoon')"`:goto?`onclick="go('${goto}')"`:''} style="text-align:left"><div class="id">${id}</div><div class="c">(${cap})</div>${name?`<div class="xs bold" style="margin-top:2px">${name}</div><div class="st">${meta}</div>`:`<div class="st">Vacant</div>`}${note?`<div class="xs" style="color:var(--amber);margin-top:3px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis">🗒 ${note}</div>`:''}</div>`;
 
 /* ---------- M2 RESERVATION ---------- */
 SB["m2-reservation"]=()=>hdr("Reservations",'',`<button class="icon-btn bg">${ic('info','sm')}</button>`)+`
@@ -1461,7 +1482,7 @@ function floorPlanSVG(){ return `
 const capRow=(t,on)=>`<div class="card between"><div class="sm">${t}</div><div class="toggle ${on?'on':''}"></div></div>`;
 const schedRow=(d,mode,cls,detail)=>`<div class="card between"><div><div class="bold sm">${d}</div><div class="xs muted">${detail}</div></div><span class="badge ${cls==='reg'?'b-confirmed':cls==='evt'?'b-event':cls==='split'?'b-owl':'b-cancel'}">${mode}</span></div>`;
 const modeSlot=(t,label,cls)=>`<div class="between" style="padding:8px 0;border-bottom:1px solid var(--line)"><span class="sm">${t}</span><span class="xs ${cls==='reg'?'green':cls==='evt'?'accent':'muted'}">${label}</span></div>`;
-const evTicket=(name,price,stock,tier=0)=>`<div class="list-card"><div class="between"><div><div class="bold sm">${name}</div><div class="sm">HK$${price}</div></div><span class="row">${ic('edit','sm')} <span class="xs muted">${stock}</span></span></div><div class="between"><span class="xs muted">Tier colour → wristband</span>${swatchRow(tier)}</div></div>`;
+const evTicket=(name,price,stock,tier=0,elig='All')=>`<div class="list-card"><div class="between"><div><div class="bold sm">${name}</div><div class="sm">HK$${price}</div></div><span class="row">${ic('edit','sm')} <span class="xs muted">${stock}</span></span></div><div class="between"><span class="xs muted">Tier colour → wristband</span>${swatchRow(tier)}</div><div class="between"><span class="xs muted">Who can book</span><div class="chipsel row">${['All','Women','Men'].map(g=>`<span class="chip${g===elig?' on':''}" style="padding:4px 11px;font-size:11px" onclick="pickChip(this)">${g}</span>`).join('')}</div></div></div>`;
 const evTableRow=(id,meta,ms,pub)=>`<div class="card between"><div><div class="bold sm">${id} <span class="muted xs">${meta}</span></div><div class="xs muted">Event min spend HK$${ms}</div></div><div class="toggle ${pub?'on':''}"></div></div>`;
 function scanResult(ok){ var el=document.getElementById('scanActions'); if(el) el.innerHTML='<div class="card tight center" style="background:'+(ok?'var(--green-soft)':'var(--red-soft)')+';color:'+(ok?'var(--green)':'var(--red)')+'">'+(ok?'✓ Mei Xiang checked in · 9:01 PM':'✕ Entry rejected')+'</div>'; }
 
@@ -1733,9 +1754,10 @@ const SHEETS = {
      </div>
      <div class="panel" data-panel="tk">
        <div class="sm muted">Ticket types customers can buy — pick a colour per tier. It drives the QR pass, the wristband, and what the door scanner shows.</div>
-       ${evTicket("General Admission","150","64 available",0)}
-       ${evTicket("VIP Entry","350","20 / 50 sold",1)}
-       ${evTicket("Backstage","800","Sold out",2)}
+       ${evTicket("General Admission","150","64 available",0,'All')}
+       ${evTicket("Ladies Entry","100","Available",1,'Women')}
+       ${evTicket("VIP Entry","350","20 / 50 sold",2,'All')}
+       ${evTicket("Backstage","800","Sold out",3,'All')}
        <button class="btn btn-outline-dim sm">${ic('plus','sm')} Add ticket type</button>
      </div>
      <div class="panel" data-panel="tb">
@@ -1796,10 +1818,30 @@ const SHEETS = {
    <div class="between"><div class="bold" style="font-size:17px">Add walk-in</div><button class="icon-btn" onclick="closeSheet()">${ic('x')}</button></div>
    <div class="sm muted">Create a booking for a guest at the door — it occupies inventory immediately (same lock as an online booking).</div>
    <div class="field"><label>Guest name</label><input class="input" placeholder="Name at the door"></div>
+   <div class="row"><div class="field grow"><label>Phone (required)</label><input class="input" value="+852 " placeholder="+852 …"></div><div class="field grow"><label>Email (optional)</label><input class="input" placeholder="guest@email.com"></div></div>
    <div class="field"><label>Guests</label><div style="margin-top:2px">${stepper(2)}</div></div>
    <div class="field"><label>Session / time</label><input class="input" value="Club night · seated now 9:15 PM"></div>
    <div class="field"><label>Table</label><select class="selectx"><option>V-3 · VIP · 4 seats</option><option>V-9 · High · 3 seats</option><option>R-1 · Rooftop · 10 seats</option></select></div>
-   <div class="row"><button class="btn btn-dark sm" onclick="closeSheet()">Cancel</button><button class="btn btn-primary sm" onclick="closeSheet();toast('Walk-in seated at V-3 — table locked')">Seat &amp; lock</button></div>`,
+   <div class="info-banner">${ic('info','sm')}<div>An account is <b>auto-created</b> for every walk-in — builds guest history you can search by phone (visits, spend, notes), like a lightweight CRM.</div></div>
+   <div class="row"><button class="btn btn-dark sm" onclick="closeSheet()">Cancel</button><button class="btn btn-primary sm" onclick="closeSheet();toast('Walk-in seated at V-3 · account created — history starts now')">Seat &amp; lock</button></div>`,
+ "endsoon":()=>`<div class="grab"></div>
+   <div class="between"><div class="bold" style="font-size:17px">V-3 · booking ends soon</div><button class="icon-btn" onclick="closeSheet()">${ic('x')}</button></div>
+   <div class="card tight between"><div class="row">${avatarPhoto('AP')}<div><div class="bold sm">Arjun Patel · 4 guests</div><div class="xs muted">Seated 7:15 PM · 2h turn</div></div></div><span class="badge" style="background:rgba(255,140,26,.16);color:#ff8c1a">Ends 10:45 PM · in 12 min</span></div>
+   <div class="field"><label>Extend by</label><div class="chipsel row"><span class="chip on" onclick="pickChip(this)">30 min</span><span class="chip" onclick="pickChip(this)">1 hour</span><span class="chip" onclick="pickChip(this)">Till close</span></div></div>
+   <div class="info-banner">${ic('clock','sm')}<div>The table is <b>held for 30 minutes</b> while you decide — no new booking can take it. Next booking on V-3 is 11:30 PM, so a 30-min extension fits.</div></div>
+   <div class="row"><button class="btn btn-dark sm" onclick="closeSheet();toast('V-3 marked empty — table released')">Guest left · mark empty</button><button class="btn btn-primary sm" onclick="closeSheet();toast('V-3 extended 30 min · table held')">Extend booking</button></div>`,
+ "daynote":()=>`<div class="grab"></div>
+   <div class="between"><div class="bold" style="font-size:17px">Today's note</div><button class="icon-btn" onclick="closeSheet()">${ic('x')}</button></div>
+   <div class="sm muted">Pinned at the top of Bookings for every staff account, tonight only.</div>
+   <div class="field"><label>Note for ${D.booking.date}</label><textarea class="textarea">Neon Nights tonight · hold V-7 for promoter Alvin · comp Mei's table 1 round</textarea></div>
+   <div class="row"><button class="btn btn-dark sm" onclick="closeSheet()">Cancel</button><button class="btn btn-primary sm" onclick="closeSheet();toast('Note pinned for today')">Pin note</button></div>`,
+ "manualcheckin":()=>`<div class="grab"></div>
+   <div class="between"><div class="bold" style="font-size:17px">Manual check-in</div><button class="icon-btn" onclick="closeSheet()">${ic('x')}</button></div>
+   <div class="sm muted">Guest lost their QR (web link expired, phone dead)? Find the booking by name or phone, verify ID, check them in — attendance stays accurate.</div>
+   <input class="input" placeholder="🔍  Name or phone number" value="mei">
+   <div class="list-card"><div class="between"><div class="row">${avatarPhoto(47)}<div><div class="bold sm">Mei Xiang</div><div class="xs muted">+852 6023 4912 · ${D.booking.ref}</div><div class="xs muted">${tierBadge('table')} VIP Table V-5 · 2/6 checked in</div></div></div><button class="btn btn-green sm" onclick="closeSheet();toast('Mei Xiang checked in manually · logged')">${ic('check','sm')} Check in</button></div></div>
+   <div class="list-card" style="opacity:.7"><div class="between"><div class="row">${avatarPhoto('MW')}<div><div class="bold sm">Mei Wong</div><div class="xs muted">+852 9331 0021 · no booking tonight</div></div></div><span class="badge b-completed">No match</span></div></div>
+   <div class="info-banner">${ic('info','sm')}<div>Verify a photo ID matches the booking name first. Manual check-ins are <b>logged with your staff account</b>.</div></div>`,
  "editbooking":()=>`<div class="grab"></div>
    <div class="between"><div class="bold" style="font-size:17px">Modify booking</div><button class="icon-btn" onclick="closeSheet()">${ic('x')}</button></div>
    <div class="sm muted">Change your details and re-submit — the venue reviews the change.</div>
@@ -1857,13 +1899,44 @@ function setBkView(btn,view){
 }
 
 /* ---------- booking-management LIST view (status-coloured cards) ---------- */
+let SWX=false;
+function cardTap(id){ if(SWX){SWX=false;return;} go(id); }
 const bkListCard=(name,ini,slot,table,g,st,tag)=>{
-  var col=st==='seated'?'var(--blue)':st==='confirmed'?'var(--green)':st==='pending'?'var(--amber)':st==='noshow'?'var(--red)':'var(--dim2)';
-  return `<div class="list-card" style="border-left:3px solid ${col}" onclick="go('m2-detail')">
-    <div class="between"><div class="row">${avatarPhoto(ini)}<div class="bold sm">${name}</div></div>${tag?`<span class="badge b-owl">${tag}</span>`:`<span class="badge b-${st==='noshow'?'cancel':st}">${st[0].toUpperCase()+st.slice(1)}</span>`}</div>
+  var ending=st==='ending';
+  var col=st==='seated'?'var(--blue)':st==='confirmed'?'var(--green)':st==='pending'?'var(--amber)':ending?'#ff8c1a':st==='noshow'?'var(--red)':'var(--dim2)';
+  var badge=tag?`<span class="badge b-owl">${tag}</span>`:ending?`<span class="badge" style="background:rgba(255,140,26,.16);color:#ff8c1a">Ends 10:45 PM</span>`:`<span class="badge b-${st==='noshow'?'cancel':st}">${st[0].toUpperCase()+st.slice(1)}</span>`;
+  return `<div class="swipewrap" data-guest="${name}">
+    <div class="swipe-under"><span class="su-l">${ic('check','sm')} Table empty</span><span class="su-r">Cancel booking ${ic('x','sm')}</span></div>
+    <div class="swipe-card"><div class="list-card" style="border-left:3px solid ${col};margin:0" onclick="cardTap('m2-detail')">
+    <div class="between"><div class="row">${avatarPhoto(ini)}<div class="bold sm">${name}</div></div>${badge}</div>
     <div class="tiles"><div class="tile"><div class="l">Slot</div><div class="v" style="font-size:15px">${slot}</div></div><div class="tile"><div class="l">Table</div><div class="v" style="font-size:15px">${table}</div></div><div class="tile"><div class="l">Guests</div><div class="v" style="font-size:15px">${g}</div></div></div>
+    ${ending?`<div class="row" style="gap:8px;margin-top:10px"><button class="btn btn-outline sm" onclick="event.stopPropagation();openSheet('endsoon')">${ic('clock','sm')} Extend</button><button class="btn btn-dark sm" onclick="event.stopPropagation();swipeDo(this.closest('.swipewrap'),'empty')">Guest left · empty</button></div>`:''}
+    </div></div>
   </div>`;
 };
+/* swipe: left = cancel booking · right = mark table empty */
+function attachSwipe(scope){
+  scope.querySelectorAll('.swipe-card').forEach(function(card){
+    let sx=0,dx=0,drag=false;
+    card.addEventListener('pointerdown',function(e){drag=true;dx=0;sx=e.clientX;card.setPointerCapture(e.pointerId);card.style.transition='none';});
+    card.addEventListener('pointermove',function(e){if(!drag)return;dx=e.clientX-sx;card.style.transform='translateX('+dx+'px)';var w=card.closest('.swipewrap');w.classList.toggle('sw-r',dx>14);w.classList.toggle('sw-l',dx<-14);});
+    function end(){if(!drag)return;drag=false;card.style.transition='transform .22s ease';
+      if(Math.abs(dx)>8)SWX=true;
+      var w=card.closest('.swipewrap');
+      if(dx<-92)swipeDo(w,'cancel'); else if(dx>92)swipeDo(w,'empty'); else {card.style.transform='';w.classList.remove('sw-l','sw-r');}
+      dx=0;}
+    card.addEventListener('pointerup',end);card.addEventListener('pointercancel',end);
+  });
+}
+let LAST_SWIPE=null;
+function swipeDo(w,kind){
+  var card=w.querySelector('.swipe-card');var guest=w.dataset.guest;
+  card.style.transition='transform .22s ease';card.style.transform='translateX('+(kind==='cancel'?'-110%':'110%')+')';
+  LAST_SWIPE=w;
+  setTimeout(function(){w.style.maxHeight=w.scrollHeight+'px';w.offsetHeight;w.classList.add('sw-gone');},180);
+  toast((kind==='cancel'?guest+' — booking cancelled':guest+' — table marked empty')+' · tap to undo',function(){
+    if(!LAST_SWIPE)return;LAST_SWIPE.classList.remove('sw-gone','sw-l','sw-r');LAST_SWIPE.style.maxHeight='';var c=LAST_SWIPE.querySelector('.swipe-card');c.style.transform='';LAST_SWIPE=null;toast('Restored');});
+}
 
 /* ---------- table management: floors + floor map ---------- */
 const FLOORMAP="linear-gradient(125deg,#3a1330 0%,#6a1f4a 35%,#1a2a52 70%,#0e1730 100%)";
@@ -1936,6 +2009,9 @@ const INFO = {
  "venuetype":{role:"Merchant",title:"Venue type",desc:"Pick Bar / Club / Restaurant — controls which booking modes appear. Multi-select allowed."},
  "editcategories":{role:"Merchant",title:"Table categories",desc:"Rename / reorder / remove the tags you sort tables by (Indoor, Outdoor, VIP…)."},
  "m3-assign":{role:"Merchant",title:"Assign table",desc:"Pick a table for a booking. Reserved = a real overlap; assigning locks it against double-booking."},
+ "endsoon":{role:"Merchant",title:"Ending soon — extend or empty",desc:"A booking hits its end time: the table pulses amber in every view and the merchant chooses.",points:["Extend 30 min / 1 h / till close — engine confirms no clash with the next booking","The table is <b>held 30 minutes</b> while you decide — nothing can grab it","Guest already left? Mark empty and release it instantly"],tip:"From the team feedback: colour = status, manual duration extend, 30-min hold window."},
+ "daynote":{role:"Merchant",title:"Today's note",desc:"One pinned note for the whole team, shown at the top of Bookings for that day only.",tip:"Notes now live at-a-glance: day note up top, per-booking notes on the table tiles — no more digging into details."},
+ "manualcheckin":{role:"Merchant",title:"Manual check-in",desc:"Guest lost their QR? Search by name or phone, verify ID, check them in — attendance stays accurate.",points:["Search across tonight's bookings + guest history","Shows tier colour + how many of the party are already in","Every manual check-in is logged with the staff account"],tip:"Solves the lost-QR / expired-web-link case from the feedback."},
  "senddeposit":{role:"Merchant",title:"Request deposit",desc:"Send a secure pay-link (app / email / SMS). Flips to Paid here — no money moves till they pay."},
  "publishtables":{role:"Merchant",title:"Published tables · per mode",desc:"Schedule-based availability: choose which tables customers see for daytime slots vs club night.",points:["Daytime can publish 18 of 24; club night only 12 — the rest stay for walk-ins / promoters / VIPs","Reachable from Schedule &amp; Modes (any block) and from Tables","Per-table override too: 'Available for' in Add/Edit Table"],tip:"This is the spec's 'a table is published into sessions' — hidden inventory finally has its UI."},
  "guestpasses":{role:"Customer",title:"Invite your table",desc:"Fill each seat by picking a Mandos friend or texting a number. The QR lives on their pass at the door — here you just say who's coming.",points:["<b>Friends</b> tab: tap a Mandos friend → pass lands in their app","<b>By number</b>: WhatsApp / SMS a link (with a preview of the message)","Live status per seat: You / Checked-in / Claimed / Invited / Open"],tip:"'Multiple passes to one table' = one seat per person, each filled from friends or a number."},
@@ -1989,6 +2065,7 @@ function buildScreen(id){
   if(id==='c2-tickets') recalcTickets();
   if(id==='c2-club') recalcTables();
   if(id==='c1-entry-reg') refreshBarSlots();
+  if(id==='m2-bookings') attachSwipe(el);
 }
 function go2(id){
   closeSheet();                       // navigating always dismisses an open sheet
