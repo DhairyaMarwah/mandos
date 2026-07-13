@@ -3,25 +3,24 @@
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Mandos — profile · vinyl</title>
+    <title>Mandos — profile empty state</title>
     <link rel="preconnect" href="https://fonts.googleapis.com" />
     <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700&display=swap" rel="stylesheet" />
     <style>
       * { margin: 0; padding: 0; box-sizing: border-box; }
       :root { --accent: #f5851f; --gold: #ffb64a; --bg: #141414; color-scheme: dark; }
       body { background: #101012; color: #e8e8ea; font-family: "Poppins", system-ui, -apple-system, sans-serif; padding: 36px 28px 80px; }
-      header { max-width: 1380px; margin: 0 auto; }
+      header { max-width: 1480px; margin: 0 auto; }
       h1 { font-size: 20px; font-weight: 600; }
-      .sub { font-size: 13px; color: #8f8f98; margin-top: 4px; max-width: 660px; line-height: 1.55; }
-      .row { max-width: 1380px; margin: 34px auto 0; display: flex; flex-wrap: wrap; gap: 44px 40px; justify-content: center; align-items: flex-start; }
-      .item { width: 330px; }
-      .item.hero { width: 384px; }
+      .sub { font-size: 13px; color: #8f8f98; margin-top: 4px; max-width: 680px; line-height: 1.55; }
+      .row { max-width: 1480px; margin: 34px auto 0; display: flex; flex-wrap: wrap; gap: 46px 40px; justify-content: center; align-items: flex-start; }
+      .item { width: 328px; }
       .cap { margin: 0 0 12px 4px; }
       .cap b { font-size: 14px; font-weight: 600; }
-      .cap b i { font-style: normal; color: var(--gold); font-size: 10.5px; font-weight: 600; letter-spacing: .1em; text-transform: uppercase; margin-left: 8px; background: rgba(245,133,31,.12); padding: 3px 8px; border-radius: 999px; }
+      .cap b i { font-style: normal; color: var(--gold); font-size: 10px; font-weight: 600; letter-spacing: .1em; text-transform: uppercase; margin-left: 8px; background: rgba(245,133,31,.12); padding: 3px 8px; border-radius: 999px; }
       .cap span { display: block; font-size: 11.5px; color: #8f8f98; margin-top: 3px; line-height: 1.5; }
 
-      /* ───────── phone ───────── */
+      /* phone */
       .phone { width: 100%; aspect-ratio: 428/928; position: relative; border-radius: 48px; padding: 4px;
         background: linear-gradient(140deg,#6f6f77,#25252a 16%,#3b3b42 38%,#141416 62%,#4c4c56 84%,#1c1c20);
         box-shadow: 0 26px 64px -18px rgba(0,0,0,.78), inset 0 1px 1px rgba(255,255,255,.14); }
@@ -30,83 +29,30 @@
       .stat .sbr { display: flex; gap: 5px; align-items: center; }
       .isl { position: absolute; top: 10px; left: 50%; transform: translateX(-50%); width: 90px; height: 24px; background: #000; border-radius: 15px; z-index: 35; }
       .acts { position: absolute; top: 46px; right: 16px; display: flex; gap: 9px; z-index: 25; }
-      .acts .b { width: 34px; height: 34px; border-radius: 50%; display: grid; place-items: center; color: #fff;
-        background: rgba(255,255,255,.08); backdrop-filter: blur(8px); border: 1px solid rgba(255,255,255,.12); }
+      .acts .b { width: 34px; height: 34px; border-radius: 50%; display: grid; place-items: center; color: #fff; background: rgba(255,255,255,.08); backdrop-filter: blur(8px); border: 1px solid rgba(255,255,255,.12); }
       .acts svg { width: 15px; height: 15px; }
 
-      /* ───────── the stage (banner) ───────── */
-      .stage { position: relative; height: 252px; background: radial-gradient(130% 100% at 50% 0%, #191919 0%, var(--bg) 66%); }
-      .stage::after { content: ""; position: absolute; inset: 0; z-index: 6; pointer-events: none;
-        background: linear-gradient(180deg, transparent 56%, rgba(20,20,20,.55) 100%); }
-
-      /* vinyl disc — centred exactly on the avatar centre (stage bottom) */
-      .disc { position: absolute; left: 50%; top: 100%; width: 330px; height: 330px; transform: translate(-50%,-50%); border-radius: 50%; z-index: 2;
-        background:
-          radial-gradient(circle, transparent 0 46px, rgba(255,182,74,.14) 47px, transparent 48.5px),               /* label ring   */
-          radial-gradient(circle, transparent 0 92px, rgba(255,182,74,.09) 93px, transparent 95px),                 /* accent ring 1 */
-          radial-gradient(circle, transparent 0 132px, rgba(255,196,106,.07) 133px, transparent 135px),             /* accent ring 2 */
-          repeating-radial-gradient(circle, rgba(255,255,255,.05) 0 1.2px, transparent 1.2px 7.5px),                /* grooves      */
-          radial-gradient(circle, #2b1c11 0%, #201410 34%, #17100c 62%, #120d0b 100%);                              /* vinyl body   */
-        box-shadow: 0 0 0 1px rgba(255,182,74,.13), 0 0 54px -8px rgba(245,133,31,.4), inset 0 0 44px rgba(0,0,0,.55);
-        -webkit-mask-image: linear-gradient(180deg, #000 52%, rgba(0,0,0,.3) 76%, transparent 94%);
-        mask-image: linear-gradient(180deg, #000 52%, rgba(0,0,0,.3) 76%, transparent 94%); }
-      .disc .sheen { position: absolute; inset: 0; border-radius: 50%; animation: spin 15s linear infinite;
-        background: conic-gradient(from 210deg, transparent 0deg, rgba(255,182,74,.16) 16deg, rgba(255,182,74,.03) 38deg, transparent 55deg,
-          transparent 175deg, rgba(255,255,255,.07) 196deg, transparent 222deg, transparent 360deg); }
-      .disc.dim { opacity: .62; }
-      .disc.dim .sheen { animation-duration: 22s; }
-      .disc.arc { -webkit-mask-image: linear-gradient(180deg, #000 30%, transparent 74%); mask-image: linear-gradient(180deg, #000 30%, transparent 74%); box-shadow: none; opacity: .8; }
-      @keyframes spin { to { transform: rotate(360deg); } }
-
-      /* floor bloom behind the identity */
-      .bloom { position: absolute; left: 50%; bottom: -110px; width: 400px; height: 260px; transform: translateX(-50%); z-index: 1; pointer-events: none;
-        background: radial-gradient(ellipse 50% 52% at 50% 50%, rgba(245,133,31,.34), transparent 70%); filter: blur(10px); }
-
-      /* sparkles */
-      .sp { position: absolute; color: var(--gold); z-index: 7; text-shadow: 0 0 9px rgba(255,182,74,.95); animation: tw 3.2s ease-in-out infinite; }
-      @keyframes tw { 0%, 100% { opacity: .12; transform: scale(.82); } 50% { opacity: .95; transform: scale(1); } }
-
-      .cover-pill { position: absolute; z-index: 20; display: inline-flex; align-items: center; gap: 7px; padding: 8px 14px; border-radius: 999px;
-        font-size: 12px; font-weight: 500; color: #fff; background: rgba(16,12,9,.42); border: 1px solid rgba(255,255,255,.16); backdrop-filter: blur(8px); }
-      .cover-pill svg { width: 14px; height: 14px; }
-
-      /* ───────── identity ───────── */
-      .body { position: relative; margin-top: -46px; z-index: 10; padding: 0 20px; text-align: center; }
-      .avatar { width: 92px; height: 92px; border-radius: 50%; margin: 0 auto; position: relative;
-        display: grid; place-items: center; font-size: 26px; font-weight: 700; color: #fff;
-        background: linear-gradient(145deg,#ffc357,#f5851f 46%,#e0500e);
-        border: 3px solid #17100c; outline: 2px solid rgba(255,182,74,.75);
+      .stage { position: relative; }
+      /* shared identity */
+      .body { position: relative; z-index: 10; padding: 0 20px; text-align: center; }
+      .avatar { width: 90px; height: 90px; border-radius: 50%; margin: 0 auto; position: relative; display: grid; place-items: center; font-size: 25px; font-weight: 700; color: #fff;
+        background: linear-gradient(145deg,#ffc357,#f5851f 46%,#e0500e); border: 3px solid var(--bg); outline: 2px solid rgba(255,182,74,.7);
         box-shadow: 0 12px 30px -8px rgba(245,133,31,.55), inset 0 1px 2px rgba(255,255,255,.5); }
-      .avatar::after { content: ""; position: absolute; left: 50%; top: 50%; width: 7px; height: 7px; border-radius: 50%;
-        transform: translate(-50%,-50%); background: rgba(23,16,12,0); }
-      .cam-badge { position: absolute; right: -3px; bottom: -3px; width: 31px; height: 31px; border-radius: 50%; display: grid; place-items: center;
-        background: #1f1f22; border: 2.5px solid var(--bg); color: #fff; }
+      .cam-badge { position: absolute; right: -3px; bottom: -3px; width: 30px; height: 30px; border-radius: 50%; display: grid; place-items: center; background: #1f1f22; border: 2.5px solid var(--bg); color: #fff; }
       .cam-badge svg { width: 14px; height: 14px; }
-
-      .name { font-size: 21px; font-weight: 600; margin-top: 14px; }
+      .name { font-size: 21px; font-weight: 600; margin-top: 13px; }
       .chips { display: flex; gap: 8px; justify-content: center; margin-top: 12px; }
       .chip-u { display: inline-flex; align-items: center; gap: 7px; padding: 8px 15px; border-radius: 999px; font-size: 12.5px; font-weight: 500; color: #fff; background: rgba(255,255,255,.06); border: 1px solid rgba(255,255,255,.09); }
       .chip-u svg { width: 14px; height: 14px; color: #9a9aa2; }
       .chip-u.warm { color: var(--gold); background: rgba(245,133,31,.10); border-color: rgba(245,133,31,.28); }
       .chip-u.warm svg { color: var(--gold); }
-
       .stats { display: flex; margin: 18px 4px 0; padding: 15px 0; border-radius: 16px; background: rgba(255,255,255,.045); border: 1px solid rgba(255,255,255,.07); }
       .stats .st { flex: 1; text-align: center; }
       .stats .st + .st { border-left: 1px solid rgba(255,255,255,.08); }
       .stats .n { font-size: 18px; font-weight: 600; }
       .stats .l { font-size: 11px; color: #9a9aa2; margin-top: 2px; }
-
-      .complete { margin: 12px 4px 0; padding: 12px 14px; border-radius: 14px; text-align: left; display: flex; align-items: center; gap: 12px;
-        background: linear-gradient(120deg, rgba(245,133,31,.10), rgba(245,133,31,.03) 55%), rgba(255,255,255,.03);
-        border: 1px solid rgba(245,133,31,.22); }
-      .ringp { width: 40px; height: 40px; border-radius: 50%; flex: 0 0 auto; display: grid; place-items: center; font-size: 9.5px; font-weight: 700; color: var(--gold);
-        background: conic-gradient(var(--accent) 0 15%, rgba(255,255,255,.10) 15% 100%); }
-      .ringp i { width: 30px; height: 30px; border-radius: 50%; background: #191512; display: grid; place-items: center; font-style: normal; }
-      .complete .tx { flex: 1; }
-      .complete .tx b { display: block; font-size: 12.5px; font-weight: 600; }
-      .complete .tx span { font-size: 10.5px; color: #97979e; }
-      .complete .go { width: 26px; height: 26px; border-radius: 50%; display: grid; place-items: center; color: var(--gold); background: rgba(245,133,31,.14); }
-      .complete .go svg { width: 13px; height: 13px; }
+      .get { display: inline-flex; align-items: center; gap: 8px; padding: 11px 26px; border-radius: 999px; font: inherit; font-size: 13px; font-weight: 600; color: #1c1206; cursor: pointer; border: 0;
+        background: linear-gradient(120deg, var(--gold), var(--accent)); box-shadow: 0 10px 24px -8px rgba(245,133,31,.6); }
 
       /* nav */
       .nav { position: absolute; left: 0; right: 0; bottom: 0; height: 74px; z-index: 12; display: flex; align-items: center; justify-content: center; }
@@ -114,12 +60,87 @@
       .nav .n { width: 22px; height: 22px; color: #7f7f88; }
       .nav .n.on { color: var(--gold); }
       .homeind { position: absolute; bottom: 7px; left: 50%; transform: translateX(-50%); width: 112px; height: 4px; border-radius: 3px; background: rgba(255,255,255,.38); z-index: 13; }
+
+      /* ── 1. spotlight "you're the highlight" ── */
+      .sp { height: 320px; background: radial-gradient(120% 80% at 50% 0%, #1a1712, var(--bg) 70%); overflow: hidden; }
+      .beam { position: absolute; left: 50%; top: -14px; width: 300px; height: 340px; transform: translateX(-50%); z-index: 1; pointer-events: none;
+        background: conic-gradient(from 180deg at 50% 0%, transparent 160deg, rgba(255,214,150,.06) 168deg, rgba(255,224,170,.34) 180deg, rgba(255,214,150,.06) 192deg, transparent 200deg);
+        -webkit-mask-image: linear-gradient(180deg,#000 12%, transparent 88%); mask-image: linear-gradient(180deg,#000 12%, transparent 88%); }
+      .beam-src { position: absolute; left: 50%; top: 0; width: 26px; height: 7px; transform: translateX(-50%); border-radius: 50%; background: #ffe9c2; filter: blur(2px); box-shadow: 0 0 20px 7px rgba(255,222,160,.7); z-index: 2; }
+      .sp-in { position: absolute; left: 0; right: 0; top: 74px; z-index: 4; text-align: center; }
+      .ghost { width: 92px; height: 92px; border-radius: 50%; margin: 0 auto; display: grid; place-items: center; position: relative; color: #cfa06a;
+        border: 2px solid rgba(255,182,74,.55); background: radial-gradient(circle at 50% 40%, rgba(255,182,74,.14), rgba(255,255,255,.02)); }
+      .ghost svg { width: 40px; height: 40px; }
+      .ghost .star { position: absolute; right: 4px; bottom: 6px; color: var(--gold); font-size: 15px; text-shadow: 0 0 8px rgba(255,182,74,.9); }
+      .hl-t { font-size: 20px; font-weight: 600; margin-top: 16px; }
+      .hl-t i { font-style: normal; color: var(--gold); }
+      .hl-s { font-size: 12px; color: #a7a7ae; margin-top: 5px; }
+      .sp-in .get { margin-top: 15px; }
+
+      /* ── 2. memories photo stack ── */
+      .mem { height: 300px; background: radial-gradient(90% 80% at 50% 46%, #1d130d, var(--bg) 72%); overflow: hidden; }
+      .stack { position: absolute; left: 50%; top: 120px; transform: translate(-50%,-50%); width: 200px; height: 150px; z-index: 2; }
+      .pcard { position: absolute; left: 50%; top: 50%; width: 104px; height: 128px; border-radius: 11px; background: #221a13; border: 1px solid rgba(255,150,70,.28);
+        box-shadow: 0 14px 30px -10px rgba(0,0,0,.75); }
+      .pcard::before { content: ""; position: absolute; inset: 8px 8px 24px; border-radius: 5px; background: linear-gradient(135deg,#3a2415,#1a110b); box-shadow: inset 0 0 20px rgba(0,0,0,.5); }
+      .pcard::after { content: ""; position: absolute; left: 8px; right: 8px; bottom: 8px; height: 8px; border-radius: 2px; background: rgba(255,182,74,.12); }
+      .c1 { transform: translate(-50%,-50%) rotate(-13deg) translateX(-34px); }
+      .c2 { transform: translate(-50%,-50%) rotate(9deg) translateX(34px); }
+      .c3 { transform: translate(-50%,-50%) rotate(-2deg); z-index: 3; }
+      .plus { position: absolute; left: 50%; top: 50%; transform: translate(-50%,-50%); z-index: 6; width: 46px; height: 46px; border-radius: 50%; display: grid; place-items: center; color: #1c1206;
+        background: linear-gradient(140deg, var(--gold), var(--accent)); box-shadow: 0 8px 22px -4px rgba(245,133,31,.8), 0 0 0 5px rgba(20,20,20,.85); }
+      .plus svg { width: 20px; height: 20px; }
+      .mem-cap { position: absolute; left: 0; right: 0; top: 210px; text-align: center; z-index: 4; font-size: 15px; font-weight: 600; }
+      .mem-sub { position: absolute; left: 0; right: 0; top: 234px; text-align: center; z-index: 4; font-size: 11.5px; color: #9a9aa2; }
+
+      /* ── 3. event collage grid ── */
+      .col { height: 258px; overflow: hidden; }
+      .grid3 { position: absolute; inset: 40px 14px auto; display: grid; grid-template-columns: repeat(3, 1fr); gap: 7px; z-index: 1; }
+      .tile { aspect-ratio: 1; border-radius: 10px; position: relative; overflow: hidden; }
+      .tile.p1 { background: linear-gradient(135deg,#5a3018,#22140c); }
+      .tile.p2 { background: linear-gradient(135deg,#6e3d16,#281a0f); }
+      .tile.p3 { background: linear-gradient(135deg,#402548,#1b131d); }
+      .tile.p4 { background: linear-gradient(135deg,#1a463a,#111d18); }
+      .tile.p5 { background: linear-gradient(135deg,#561e2e,#211215); }
+      .tile.p6 { background: linear-gradient(135deg,#5e3a1c,#22160c); }
+      .col::after { content: ""; position: absolute; inset: 0; z-index: 2; background: linear-gradient(180deg, transparent 44%, var(--bg) 94%), radial-gradient(64% 56% at 50% 42%, transparent, rgba(20,20,20,.42)); }
+      .col-cta { position: absolute; left: 50%; top: 118px; transform: translate(-50%,-50%); z-index: 5; text-align: center; }
+      .col-cta .plus { position: static; margin: 0 auto 9px; transform: none; }
+      .col-cta b { font-size: 14px; font-weight: 600; display: block; }
+      .col-cta span { font-size: 11px; color: #b7b7bd; }
+
+      /* ── 4. neon marquee "you're the headliner" ── */
+      .mrq { height: 300px; background: radial-gradient(80% 74% at 50% 116%, rgba(245,133,31,.26), var(--bg) 66%); overflow: hidden; }
+      .mrq .frame { position: absolute; inset: 90px 18px auto; height: 138px; border: 1.5px solid rgba(255,182,74,.28); border-radius: 14px; z-index: 1; box-shadow: 0 0 26px -8px rgba(245,133,31,.35), inset 0 0 34px rgba(245,133,31,.05); }
+      .bulbs { position: absolute; left: 0; right: 0; height: 9px; z-index: 3;
+        background: radial-gradient(circle at 6px 4px, #ffcf7a 2.3px, rgba(255,196,106,.25) 3.6px, transparent 4.6px); background-size: 30px 9px; background-repeat: repeat-x; filter: drop-shadow(0 0 7px rgba(255,180,80,.9)); }
+      .mrq-in { position: absolute; left: 0; right: 0; top: 108px; text-align: center; z-index: 4; }
+      .mrq-in b { font-size: 18px; font-weight: 700; letter-spacing: .01em; display: block; }
+      .mrq-in b i { font-style: normal; color: var(--gold); }
+      .mrq-in span { display: block; font-size: 11.5px; color: #a7a7ae; margin-top: 5px; }
+      .mrq-in .get { margin-top: 14px; }
+
+      /* ── 5. ticket stub ── */
+      .tkt { height: 262px; background: radial-gradient(90% 80% at 50% 40%, #1a130d, var(--bg) 74%); overflow: hidden; }
+      .tkt { height: 272px; }
+      .stub { position: absolute; left: 22px; right: 22px; top: 62px; height: 132px; z-index: 2; border-radius: 16px; border: 1.6px dashed rgba(255,182,74,.45); background: rgba(245,133,31,.05);
+        display: flex; align-items: center; }
+      .stub .notch { position: absolute; top: 50%; width: 20px; height: 20px; border-radius: 50%; background: var(--bg); transform: translateY(-50%); }
+      .stub .notch.l { left: -11px; } .stub .notch.r { right: -11px; }
+      .stub .perf { position: absolute; left: 62px; top: 14px; bottom: 14px; border-left: 1.5px dashed rgba(255,182,74,.3); }
+      .stub .stub-l { width: 62px; text-align: center; color: var(--gold); }
+      .stub .stub-l svg { width: 22px; height: 22px; }
+      .stub .stub-r { flex: 1; padding-left: 14px; }
+      .stub .stub-r b { font-size: 14px; font-weight: 600; display: block; }
+      .stub .stub-r span { display: block; font-size: 11px; color: #9a9aa2; margin-top: 2px; }
+      .stub .stub-r .go { margin-top: 8px; display: inline-flex; align-items: center; gap: 6px; font-size: 11.5px; font-weight: 600; color: var(--gold); }
+      .stub .stub-r .go svg { width: 13px; height: 13px; }
     </style>
   </head>
   <body>
     <header>
-      <h1>Mandos — profile · vinyl grooves, crafted</h1>
-      <div class="sub">The avatar becomes the <b>record label</b> — grooves radiate from it, a light sheen slowly spins across the vinyl, sparkles twinkle, and a warm glow lifts the identity. Empty ≠ blank: the profile ships looking like a stage. Three intensities below (live page animates).</div>
+      <h1>Mandos — profile empty state (party / events)</h1>
+      <div class="sub">The banner has no photo yet. Instead of a record, these speak to a nightlife app — a spotlight on you, memories waiting to be filled, event collage, marquee, or a ticket stub. All dark, warm orange–yellow. Pick one.</div>
     </header>
     <div class="row" id="row"></div>
 
@@ -130,53 +151,65 @@
         gear:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="3.2"/><path d="M12 3v2.4M12 18.6V21M3 12h2.4M18.6 12H21M5.6 5.6l1.7 1.7M16.7 16.7l1.7 1.7M18.4 5.6l-1.7 1.7M7.3 16.7l-1.7 1.7"/></svg>',
         cam:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4.5 8h2.6l1.3-1.9h7l1.3 1.9h2.6a1.2 1.2 0 0 1 1.2 1.2v8.6a1.2 1.2 0 0 1-1.2 1.2H4.5a1.2 1.2 0 0 1-1.2-1.2V9.2A1.2 1.2 0 0 1 4.5 8z"/><circle cx="12" cy="13" r="3.1"/></svg>',
         at:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><circle cx="12" cy="12" r="3.8"/><path d="M15.8 12v1.6a2.4 2.4 0 0 0 4.8 0V12a8.6 8.6 0 1 0-3.3 6.8"/></svg>',
-        chev:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M6 9l6 6 6-6"/></svg>',
-        chevR:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 6l6 6-6 6"/></svg>',
+        chevR:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M9 6l6 6-6 6"/></svg>',
+        plus:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round"><path d="M12 5v14M5 12h14"/></svg>',
+        person:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="8.5" r="3.7"/><path d="M5 19.5c.7-3.7 3.6-5.6 7-5.6s6.3 1.9 7 5.6"/></svg>',
         home:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 11l9-8 9 8"/><path d="M5 10v10h14V10"/></svg>',
         ticket:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="6.5" width="18" height="11" rx="2.5"/><path d="M9 6.5v11"/></svg>',
         chat:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 11.5a7.5 7.5 0 0 1-10.9 6.7L4 20l1.4-4.3A7.5 7.5 0 1 1 21 11.5z"/></svg>',
-        person:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="8" r="3.6"/><path d="M4.5 20c.7-4 3.8-6 7.5-6s6.8 2 7.5 6"/></svg>',
+        person2:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="8" r="3.6"/><path d="M4.5 20c.7-4 3.8-6 7.5-6s6.8 2 7.5 6"/></svg>',
       }
-
       const statusbar = `<div class="isl"></div><div class="stat"><span>1:40</span><span class="sbr">
         <svg width="17" height="11" viewBox="0 0 17 11" fill="currentColor"><rect x="0" y="7" width="3" height="4" rx="1"/><rect x="4.5" y="5" width="3" height="6" rx="1"/><rect x="9" y="2.5" width="3" height="8.5" rx="1"/><rect x="13.5" y="0" width="3" height="11" rx="1"/></svg>
         <svg width="15" height="11" viewBox="0 0 16 12" fill="currentColor"><path d="M8 2.5c2.3 0 4.4.9 5.9 2.4l1.2-1.2A9.5 9.5 0 008 .8 9.5 9.5 0 00.9 3.7l1.2 1.2A8 8 0 018 2.5z"/><path d="M8 6c1.2 0 2.3.5 3.1 1.3l1.2-1.2A6 6 0 008 4.3a6 6 0 00-4.3 1.8l1.2 1.2A4.4 4.4 0 018 6z"/><circle cx="8" cy="9.5" r="1.6"/></svg>
         <svg width="22" height="11" viewBox="0 0 25 12" fill="none"><rect x="1" y="1" width="21" height="10" rx="2.5" stroke="currentColor" opacity=".5"/><rect x="3" y="3" width="12" height="6" rx="1.2" fill="#3ddc6d"/><rect x="23" y="4" width="1.5" height="4" rx="1" fill="currentColor" opacity=".5"/></svg>
       </span></div>`
       const acts = `<div class="acts"><div class="b">${IC.share}</div><div class="b">${IC.search}</div><div class="b">${IC.gear}</div></div>`
-      const nav = `<div class="nav"><div class="bar"><span class="n">${IC.home}</span><span class="n">${IC.ticket}</span><span class="n">${IC.chat}</span><span class="n on">${IC.person}</span></div></div><div class="homeind"></div>`
+      const nav = `<div class="nav"><div class="bar"><span class="n">${IC.home}</span><span class="n">${IC.ticket}</span><span class="n">${IC.chat}</span><span class="n on">${IC.person2}</span></div></div><div class="homeind"></div>`
+      const avatarDD = `<div class="avatar">DD<div class="cam-badge">${IC.cam}</div></div>`
+      const idBlock = `<div class="name">dhairya dhairya</div><div class="chips"><span class="chip-u">${IC.at} Add username</span><span class="chip-u warm">${IC.cam} Add photo</span></div>`
+      const stats = `<div class="stats"><div class="st"><div class="n">0</div><div class="l">Followers</div></div><div class="st"><div class="n">0</div><div class="l">Following</div></div><div class="st"><div class="n">0</div><div class="l">Nights out</div></div></div>`
 
-      const sparks = (n) => {
-        const pos = [[14,60,12,0],[80,96,9,1.1],[64,42,8,.6],[26,132,7,1.8],[88,170,10,2.4]]
-        return pos.slice(0, n).map(([x,y,s,d]) => `<span class="sp" style="left:${x}%;top:${y}px;font-size:${s}px;animation-delay:${d}s">✦</span>`).join('')
-      }
-
-      const identity = `<div class="name">dhairya dhairya</div>
-        <div class="chips"><span class="chip-u">${IC.at} Add username</span><span class="chip-u warm">${IC.cam} Add photo</span></div>`
-      const stats = `<div class="stats"><div class="st"><div class="n">0</div><div class="l">Followers</div></div><div class="st"><div class="n">0</div><div class="l">Following</div></div><div class="st"><div class="n">0</div><div class="l">Nights</div></div></div>`
-      const complete = `<div class="complete"><div class="ringp"><i>15%</i></div><div class="tx"><b>Set the stage</b><span>Add a photo &amp; cover to get seen</span></div><div class="go">${IC.chevR}</div></div>`
-      const avatar = `<div class="avatar">DD<div class="cam-badge">${IC.cam}</div></div>`
-
+      // each variant fully composes the screen body
       const V = [
-        { hero: true, title: 'Record label', tag: 'RECOMMENDED',
-          note: 'Full stage: the disc behind the avatar, spinning sheen, label ring, warm bloom, five sparkles. Avatar reads as the record’s label.',
-          stage: `<div class="stage"><div class="disc"><div class="sheen"></div></div><div class="bloom"></div>${sparks(5)}<div class="cover-pill" style="right:14px;bottom:74px">${IC.cam} Add cover</div></div>` },
+        { title: 'Spotlight', tag: 'from your ref',
+          note: '“You’re the highlight.” A stage-light beam from the top lands on a ghost avatar; Get Started drives setup.',
+          body: `<div class="stage sp"><div class="beam-src"></div><div class="beam"></div>
+            <div class="sp-in"><div class="ghost">${IC.person}<span class="star">✦</span></div>
+              <div class="hl-t">You’re the <i>highlight</i></div><div class="hl-s">Add a banner and photo to shine</div>
+              <button class="get">Get Started</button></div></div>
+            <div class="body">${idBlock}${stats}</div>` },
 
-        { title: 'Low light',
-          note: 'Same idea at 60% — dimmer disc, slower sheen, three sparkles. For when the header should whisper.',
-          stage: `<div class="stage"><div class="disc dim"><div class="sheen"></div></div><div class="bloom" style="opacity:.6"></div>${sparks(3)}<div class="cover-pill" style="right:14px;bottom:74px">${IC.cam} Add cover</div></div>` },
+        { title: 'Memories', tag: 'from your ref',
+          note: '“Memories start here.” A stack of photo cards with a glowing + — tap to fill your page with nights out.',
+          body: `<div class="stage mem"><div class="stack"><div class="pcard c1"></div><div class="pcard c2"></div><div class="pcard c3"></div><div class="plus">${IC.plus}</div></div>
+              <div class="mem-cap">Memories start here</div><div class="mem-sub">Add photos from your nights out</div></div>
+            <div class="body" style="margin-top:-42px">${avatarDD}${idBlock}${stats}</div>` },
 
-        { title: 'Groove arc',
-          note: 'Minimal: only the upper arc of the grooves survives, dissolving into the dark. Quietest, most “premium-default”.',
-          stage: `<div class="stage"><div class="disc arc"><div class="sheen"></div></div>${sparks(2)}<div class="cover-pill" style="right:14px;bottom:74px">${IC.cam} Add cover</div></div>` },
+        { title: 'Event collage',
+          note: 'A faded grid of event tiles hints at the gallery to come; the + invites the first upload. Ties to the login look.',
+          body: `<div class="stage col"><div class="grid3"><div class="tile p1"></div><div class="tile p2"></div><div class="tile p3"></div><div class="tile p4"></div><div class="tile p5"></div><div class="tile p6"></div></div>
+              <div class="col-cta"><div class="plus">${IC.plus}</div><b>Add your moments</b><span>Show the nights you’ve lived</span></div></div>
+            <div class="body" style="margin-top:-42px">${avatarDD}${idBlock}${stats}</div>` },
+
+        { title: 'Marquee',
+          note: '“You’re the headliner.” Club-signage bulbs frame the empty banner — puts the user on the bill.',
+          body: `<div class="stage mrq"><div class="frame"></div><div class="bulbs" style="top:84px"></div><div class="bulbs" style="top:224px;opacity:.6"></div>
+              <div class="mrq-in"><b>You’re the <i>headliner</i></b><span>Add a banner to take the stage</span><button class="get">Get Started</button></div></div>
+            <div class="body" style="margin-top:-40px">${avatarDD}${idBlock}${stats}</div>` },
+
+        { title: 'Ticket stub',
+          note: 'An event-pass metaphor: a dashed ticket stub — the most on-the-nose “booking app” framing.',
+          body: `<div class="stage tkt"><div class="stub"><div class="notch l"></div><div class="notch r"></div><div class="perf"></div>
+              <div class="stub-l">${IC.ticket}</div><div class="stub-r"><b>Your pass to the night</b><span>Add a photo &amp; banner</span><div class="go">Set it up ${IC.chevR}</div></div></div></div>
+            <div class="body" style="margin-top:-30px">${avatarDD}${idBlock}${stats}</div>` },
       ]
 
       const row = document.getElementById('row')
       V.forEach((v) => {
-        const item = document.createElement('div'); item.className = 'item' + (v.hero ? ' hero' : '')
+        const item = document.createElement('div'); item.className = 'item'
         item.innerHTML = `<div class="cap"><b>${v.title}${v.tag ? `<i>${v.tag}</i>` : ''}</b><span>${v.note}</span></div>
-          <div class="phone"><div class="scr">${statusbar}${acts}${v.stage}
-            <div class="body">${avatar}${identity}${stats}${complete}</div>${nav}</div></div>`
+          <div class="phone"><div class="scr">${statusbar}${acts}${v.body}${nav}</div></div>`
         row.appendChild(item)
       })
     </script>
