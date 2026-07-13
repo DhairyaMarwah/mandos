@@ -432,6 +432,24 @@ h1,h2,h3{margin:0;font-weight:700;letter-spacing:-.02em;text-wrap:balance}
 .flegend i.se{background:#f5851f;border-color:#f5851f}
 .pickempty{text-align:center;padding:34px 22px}
 #tblpick{position:sticky;top:20px}
+/* ---------- dropdown ---------- */
+.dd{position:relative;display:inline-block}
+.dd-btn{display:inline-flex;align-items:center;gap:7px;background:rgba(255,255,255,.05);border:1px solid var(--line);border-radius:999px;padding:8px 14px;font-size:13px;font-weight:600;color:var(--text);white-space:nowrap}
+.dd-btn:hover{background:rgba(255,255,255,.08)}
+.dd.open .dd-btn{border-color:rgba(245,133,31,.55);background:rgba(245,133,31,.1)}
+.dd-chev{transition:transform .18s;color:var(--dim)}
+.dd.open .dd-chev{transform:rotate(180deg)}
+.dd-menu{position:absolute;top:calc(100% + 7px);left:0;min-width:180px;background:#181211;border:1px solid rgba(255,255,255,.13);border-radius:14px;padding:6px;box-shadow:0 22px 50px -14px rgba(0,0,0,.85);z-index:150;display:none;animation:ddIn .14s ease}
+.dd.open .dd-menu{display:block}
+@keyframes ddIn{from{opacity:0;transform:translateY(-5px)}}
+.dd-opt{display:flex;align-items:center;justify-content:space-between;gap:14px;width:100%;text-align:left;border-radius:9px;padding:9px 12px;font-size:13.5px;color:var(--dim);white-space:nowrap}
+.dd-opt:hover{background:rgba(255,255,255,.06);color:var(--text)}
+.dd-opt.on{color:var(--text);font-weight:600}
+.dd-opt.on .ic{color:var(--orange)}
+/* sentence-filter dropdowns read as inline emphasis */
+.sentence .dd-btn{background:rgba(245,133,31,.08);border-color:rgba(245,133,31,.28);color:#ffd9a8;padding:5px 12px}
+.sentence .dd-btn:hover{background:rgba(245,133,31,.14)}
+.sentence .dd-menu{min-width:150px}
 </style>
 </head>
 <body>
@@ -599,14 +617,41 @@ const SCREENS=[
 const SB={};
 
 /* ---------- product chrome ---------- */
-const FILTERS=[['All Events',['All Events','Clubs','Bars','Festivals']],['This week',['This week','This month','Any date']],['Hong Kong',['Hong Kong','Kowloon','HK Island']]];
 const pnav=()=>`
  <div class="pnav">
    <div class="wordmark">MANDOS</div>
-   <div class="pillnav">${FILTERS.map((f,i)=>`<span class="pn" data-fi="${i}" onclick="cycleFilter(this)">${f[0]} ${ic('down','sm')}</span>`).join('')}</div>
+   <div class="pillnav">${dd('f-type')}${dd('f-when')}${dd('f-city')}</div>
    <div class="row" style="gap:10px;margin-left:auto"><button class="btn btn-ghostp" onclick="toast('Partner onboarding — merchant side')">Become a Partner</button><button class="btn btn-white">Download the app</button></div>
  </div>`;
-function cycleFilter(el){const f=FILTERS[+el.dataset.fi];const cur=el.textContent.trim();const i=f[1].findIndex(v=>cur.startsWith(v));el.innerHTML=f[1][(i+1)%f[1].length]+' '+ic('down','sm');toast('Filter · '+f[1][(i+1)%f[1].length]);}
+
+/* ---------- reusable dropdown ---------- */
+const DDF={
+ 'f-type':{opts:['All Events','Clubs','Bars','Festivals']},
+ 'f-when':{opts:['This week','This month','Any date']},
+ 'f-city':{opts:['Hong Kong','Kowloon','HK Island']},
+ 's-loc' :{icon:'loc',opts:['Hong Kong','Kowloon','HK Island','All regions']},
+ 's-from':{icon:'cal',opts:['20th May','1st June','15th June','1st July']},
+ 's-to'  :{icon:'cal',opts:['31st June','15th July','31st July','Any date']}
+};
+const DDsel={};
+const ddOpt=(id,i)=>`${DDF[id].opts[i]}${i===(DDsel[id]||0)?ic('check','sm'):''}`;
+function dd(id){const c=DDF[id],sel=DDsel[id]||0;
+  return `<span class="dd" data-dd="${id}">
+    <button class="dd-btn" onclick="ddToggle('${id}',event)">${c.icon?ic(c.icon,'sm'):''}<span class="dd-val">${c.opts[sel]}</span><svg class="ic sm dd-chev"><use href="#i-down"/></svg></button>
+    <div class="dd-menu">${c.opts.map((o,i)=>`<button class="dd-opt${i===sel?' on':''}" onclick="ddPick('${id}',${i},event)">${ddOpt(id,i)}</button>`).join('')}</div>
+  </span>`;}
+function ddToggle(id,e){e.stopPropagation();const me=document.querySelector(`.dd[data-dd="${id}"]`);const was=me.classList.contains('open');closeDD();if(!was)me.classList.add('open');}
+function ddPick(id,i,e){e.stopPropagation();DDsel[id]=i;const me=document.querySelector(`.dd[data-dd="${id}"]`);
+  me.querySelector('.dd-val').textContent=DDF[id].opts[i];
+  me.querySelectorAll('.dd-opt').forEach((b,j)=>{b.classList.toggle('on',j===i);b.innerHTML=ddOpt(id,j);});
+  closeDD();applyDD(id,i);}
+function closeDD(){document.querySelectorAll('.dd.open').forEach(d=>d.classList.remove('open'));}
+function applyDD(id,i){const v=DDF[id].opts[i];const mas=document.querySelector('.masonry');
+  if(id==='f-type'&&mas){const map={'All Events':null,'Clubs':['pub','priv'],'Bars':['bar'],'Festivals':['ext']};const allow=map[v];
+    let n=0;mas.querySelectorAll('.pcard').forEach(c=>{const show=!allow||allow.includes(c.dataset.kind);c.style.display=show?'':'none';if(show)n++;});
+    toast(v==='All Events'?'Showing all events':`Showing ${v} · ${n} result${n===1?'':'s'}`);return;}
+  toast(`Filter · ${v}`);}
+document.addEventListener('click',e=>{if(!e.target.closest('.dd'))closeDD();});
 const dock=(active)=>`
  <div class="dock">
    <button class="dpill" onclick="go('a-discover')">${ic('disc','sm')} Discover</button>
@@ -622,18 +667,18 @@ document.addEventListener('keydown',e=>{if(e.key==='Escape')document.getElementB
 const avrow=(n)=>`<span class="avstack">${[31,22,15].map(s=>`<i style="background-image:url('${face(s)}')"></i>`).join('')}</span>+${n} interested`;
 function posterCard(c){
   const name=(c.title+' '+c.sub).toLowerCase();
-  if(c.kind==='priv') return `<div class="pcard ${c.r}" data-name="${name}" style="background-image:url('${img(c.img,640)}')" onclick="go('a-private')">
+  if(c.kind==='priv') return `<div class="pcard ${c.r}" data-name="${name}" data-kind="priv" style="background-image:url('${img(c.img,640)}')" onclick="go('a-private')">
     <span class="chiplet inv">${ic('lock','sm')} Private Event</span><button class="savebtn" onclick="event.stopPropagation();toast('Saved')">${ic('bookmark','sm')}</button>
     <div class="pfoot"><span class="chiplet inv" style="position:static;margin-bottom:9px;display:inline-flex">Invite Only</span>
       <div class="ptitle">${c.title}</div><div class="psub">${c.sub}</div>
       <div class="pmeta blurhide"><span>${ic('lock','sm')} Event details are hidden by the organiser</span></div></div></div>`;
-  if(c.kind==='bar') return `<div class="pcard ${c.r}" data-name="${name}" style="background-image:url('${img(c.img,640)}')" onclick="go('a-bar')">
+  if(c.kind==='bar') return `<div class="pcard ${c.r}" data-name="${name}" data-kind="bar" style="background-image:url('${img(c.img,640)}')" onclick="go('a-bar')">
     <span class="chiplet"><svg class="ic sm"><use href="#i-wine"/></svg> Bar · Tables</span><button class="savebtn" onclick="event.stopPropagation();toast('Saved to your list')">${ic('bookmark','sm')}</button>
     <div class="pfoot"><span class="pricepill" style="margin-bottom:9px">Free booking</span>
       <div class="ptitle">${c.title}</div><div class="psub">${c.sub}</div>
       <div class="pmeta"><span>${ic('loc','sm')} ${c.loc}</span><span>${ic('clock','sm')} ${c.dt}</span></div></div></div>`;
   const chip=c.kind==='ext'?`<span class="chiplet ext">${ic('ext','sm')} External Event</span>`:`<span class="chiplet">${ic('star','sm')} Featured</span>`;
-  return `<div class="pcard ${c.r}" data-name="${name}" style="background-image:url('${img(c.img,640)}')" onclick="go('a-event')">
+  return `<div class="pcard ${c.r}" data-name="${name}" data-kind="${c.kind}" style="background-image:url('${img(c.img,640)}')" onclick="go('a-event')">
     ${chip}<button class="savebtn" onclick="event.stopPropagation();toast('Saved to your list')">${ic('bookmark','sm')}</button>
     <div class="pfoot">
       <span class="pricepill" style="margin-bottom:9px">HK $${c.price}</span>
@@ -658,7 +703,7 @@ SB['a-discover']=()=>pnav()+`
   </div>
   <div class="sechead">Top Picks <span class="lite">for this week</span> <span class="arrow">${ic('fwd','sm')}</span></div>
   <div class="toppicks">${[IMG.dj,IMG.neon,IMG.haze].map(topPick).join('')}</div>
-  <div class="sentence">Happening in <span class="sfilter">${ic('loc','sm')} Hong Kong ${ic('down','sm')}</span> from <span class="sfilter">${ic('cal','sm')} 20th May ${ic('down','sm')}</span> to <span class="sfilter">${ic('cal','sm')} 31st June ${ic('down','sm')}</span>.</div>
+  <div class="sentence">Happening in ${dd('s-loc')} from ${dd('s-from')} to ${dd('s-to')}.</div>
   <div style="height:18px"></div>
   <div class="masonry">${CARDS.map(posterCard).join('')}</div>
 </div>`+dock('discover');
