@@ -3,213 +3,129 @@
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Mandos — profile empty state</title>
+    <title>Mandos — profile · spotlight</title>
     <link rel="preconnect" href="https://fonts.googleapis.com" />
     <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700&display=swap" rel="stylesheet" />
     <style>
       * { margin: 0; padding: 0; box-sizing: border-box; }
-      :root { --accent: #f5851f; --gold: #ffb64a; --bg: #141414; color-scheme: dark; }
-      body { background: #101012; color: #e8e8ea; font-family: "Poppins", system-ui, -apple-system, sans-serif; padding: 36px 28px 80px; }
-      header { max-width: 1480px; margin: 0 auto; }
+      :root { --accent: #f5851f; --gold: #ffb64a; --bg: #0e0d0d; color-scheme: dark; }
+      body { background: #101012; color: #e8e8ea; font-family: "Poppins", system-ui, -apple-system, sans-serif; padding: 34px 28px 70px; }
+      header { max-width: 1200px; margin: 0 auto; }
       h1 { font-size: 20px; font-weight: 600; }
-      .sub { font-size: 13px; color: #8f8f98; margin-top: 4px; max-width: 680px; line-height: 1.55; }
-      .row { max-width: 1480px; margin: 34px auto 0; display: flex; flex-wrap: wrap; gap: 46px 40px; justify-content: center; align-items: flex-start; }
-      .item { width: 328px; }
+      .sub { font-size: 13px; color: #8f8f98; margin-top: 4px; max-width: 640px; line-height: 1.55; }
+      .row { max-width: 1200px; margin: 32px auto 0; display: flex; flex-wrap: wrap; gap: 46px; justify-content: center; align-items: flex-start; }
+      .item { width: 372px; }
+      .item.big { width: 396px; }
       .cap { margin: 0 0 12px 4px; }
       .cap b { font-size: 14px; font-weight: 600; }
       .cap b i { font-style: normal; color: var(--gold); font-size: 10px; font-weight: 600; letter-spacing: .1em; text-transform: uppercase; margin-left: 8px; background: rgba(245,133,31,.12); padding: 3px 8px; border-radius: 999px; }
-      .cap span { display: block; font-size: 11.5px; color: #8f8f98; margin-top: 3px; line-height: 1.5; }
+      .cap span { display: block; font-size: 11.5px; color: #8f8f98; margin-top: 3px; }
 
-      /* phone */
-      .phone { width: 100%; aspect-ratio: 428/928; position: relative; border-radius: 48px; padding: 4px;
+      .phone { width: 100%; aspect-ratio: 428/928; position: relative; border-radius: 50px; padding: 4px;
         background: linear-gradient(140deg,#6f6f77,#25252a 16%,#3b3b42 38%,#141416 62%,#4c4c56 84%,#1c1c20);
-        box-shadow: 0 26px 64px -18px rgba(0,0,0,.78), inset 0 1px 1px rgba(255,255,255,.14); }
-      .scr { position: absolute; inset: 4px; border-radius: 44px; overflow: hidden; background: var(--bg); }
-      .stat { position: absolute; top: 0; left: 0; right: 0; height: 36px; display: flex; align-items: center; justify-content: space-between; padding: 9px 22px 0; font-size: 12.5px; font-weight: 600; color: #fff; z-index: 30; }
+        box-shadow: 0 28px 68px -18px rgba(0,0,0,.8), inset 0 1px 1px rgba(255,255,255,.14); }
+      .scr { position: absolute; inset: 4px; border-radius: 46px; overflow: hidden;
+        background: radial-gradient(130% 66% at 50% 4%, #1a1613 0%, #100e0d 46%, var(--bg) 100%); }
+
+      .wall { position: absolute; inset: 0; z-index: 0; opacity: .6;
+        background: repeating-linear-gradient(90deg, transparent 0 46px, rgba(255,255,255,.014) 46px 47px);
+        -webkit-mask-image: linear-gradient(180deg,#000,transparent 62%); mask-image: linear-gradient(180deg,#000,transparent 62%); }
+
+      .stat { position: absolute; top: 0; left: 0; right: 0; height: 36px; display: flex; align-items: center; justify-content: space-between; padding: 10px 24px 0; font-size: 13px; font-weight: 600; color: #fff; z-index: 30; }
       .stat .sbr { display: flex; gap: 5px; align-items: center; }
-      .isl { position: absolute; top: 10px; left: 50%; transform: translateX(-50%); width: 90px; height: 24px; background: #000; border-radius: 15px; z-index: 35; }
-      .acts { position: absolute; top: 46px; right: 16px; display: flex; gap: 9px; z-index: 25; }
-      .acts .b { width: 34px; height: 34px; border-radius: 50%; display: grid; place-items: center; color: #fff; background: rgba(255,255,255,.08); backdrop-filter: blur(8px); border: 1px solid rgba(255,255,255,.12); }
-      .acts svg { width: 15px; height: 15px; }
+      .isl { position: absolute; top: 11px; left: 50%; transform: translateX(-50%); width: 92px; height: 25px; background: #000; border-radius: 15px; z-index: 6; }
+      .acts { position: absolute; top: 44px; right: 18px; display: flex; gap: 10px; z-index: 20; }
+      .acts .b { width: 38px; height: 38px; border-radius: 50%; display: grid; place-items: center; color: #f0c79a; background: rgba(255,255,255,.02); border: 1px solid rgba(245,133,31,.4); }
+      .acts svg { width: 16px; height: 16px; }
 
-      .stage { position: relative; }
-      /* shared identity */
-      .body { position: relative; z-index: 10; padding: 0 20px; text-align: center; }
-      .avatar { width: 90px; height: 90px; border-radius: 50%; margin: 0 auto; position: relative; display: grid; place-items: center; font-size: 25px; font-weight: 700; color: #fff;
-        background: linear-gradient(145deg,#ffc357,#f5851f 46%,#e0500e); border: 3px solid var(--bg); outline: 2px solid rgba(255,182,74,.7);
-        box-shadow: 0 12px 30px -8px rgba(245,133,31,.55), inset 0 1px 2px rgba(255,255,255,.5); }
-      .cam-badge { position: absolute; right: -3px; bottom: -3px; width: 30px; height: 30px; border-radius: 50%; display: grid; place-items: center; background: #1f1f22; border: 2.5px solid var(--bg); color: #fff; }
-      .cam-badge svg { width: 14px; height: 14px; }
-      .name { font-size: 21px; font-weight: 600; margin-top: 13px; }
-      .chips { display: flex; gap: 8px; justify-content: center; margin-top: 12px; }
-      .chip-u { display: inline-flex; align-items: center; gap: 7px; padding: 8px 15px; border-radius: 999px; font-size: 12.5px; font-weight: 500; color: #fff; background: rgba(255,255,255,.06); border: 1px solid rgba(255,255,255,.09); }
-      .chip-u svg { width: 14px; height: 14px; color: #9a9aa2; }
-      .chip-u.warm { color: var(--gold); background: rgba(245,133,31,.10); border-color: rgba(245,133,31,.28); }
-      .chip-u.warm svg { color: var(--gold); }
-      .stats { display: flex; margin: 18px 4px 0; padding: 15px 0; border-radius: 16px; background: rgba(255,255,255,.045); border: 1px solid rgba(255,255,255,.07); }
-      .stats .st { flex: 1; text-align: center; }
-      .stats .st + .st { border-left: 1px solid rgba(255,255,255,.08); }
-      .stats .n { font-size: 18px; font-weight: 600; }
-      .stats .l { font-size: 11px; color: #9a9aa2; margin-top: 2px; }
-      .get { display: inline-flex; align-items: center; gap: 8px; padding: 11px 26px; border-radius: 999px; font: inherit; font-size: 13px; font-weight: 600; color: #1c1206; cursor: pointer; border: 0;
-        background: linear-gradient(120deg, var(--gold), var(--accent)); box-shadow: 0 10px 24px -8px rgba(245,133,31,.6); }
+      /* the lamp */
+      .lamp { position: absolute; left: 50%; top: -2px; width: 66px; height: 84px; transform: translateX(-50%); z-index: 8;
+        background: linear-gradient(180deg,#202024 0%, #131316 26%, #0c0b0b 52%, #1d1510 80%, #34230f 100%);
+        border-radius: 4px 4px 17px 17px;
+        box-shadow: 0 12px 24px rgba(0,0,0,.66), inset 0 -15px 20px rgba(0,0,0,.6), inset 0 2px 0 rgba(255,255,255,.09), inset 2px 0 3px rgba(255,255,255,.04), inset -2px 0 4px rgba(0,0,0,.5); }
+      .lamp::before { content: ""; position: absolute; left: 50%; top: -8px; transform: translateX(-50%); width: 8px; height: 10px; background: #16161a; border-radius: 2px; }
+      .lamp .lens { position: absolute; left: 50%; bottom: -5px; transform: translateX(-50%); width: 48px; height: 18px; border-radius: 50%;
+        background: radial-gradient(ellipse at 50% 34%, #fff0d6 0%, #ffb057 48%, #a8500e 86%);
+        box-shadow: 0 0 34px 12px rgba(255,180,92,.82), 0 0 74px 28px rgba(255,150,70,.34); }
 
-      /* nav */
-      .nav { position: absolute; left: 0; right: 0; bottom: 0; height: 74px; z-index: 12; display: flex; align-items: center; justify-content: center; }
-      .nav .bar { display: flex; gap: 27px; padding: 12px 23px; border-radius: 999px; background: rgba(26,26,29,.88); border: 1px solid rgba(255,255,255,.08); backdrop-filter: blur(10px); }
-      .nav .n { width: 22px; height: 22px; color: #7f7f88; }
-      .nav .n.on { color: var(--gold); }
-      .homeind { position: absolute; bottom: 7px; left: 50%; transform: translateX(-50%); width: 112px; height: 4px; border-radius: 3px; background: rgba(255,255,255,.38); z-index: 13; }
+      /* volumetric cone */
+      .cone { position: absolute; left: 50%; top: 66px; transform: translateX(-50%); z-index: 1; pointer-events: none; mix-blend-mode: screen; filter: blur(12px);
+        width: 460px; height: 600px; clip-path: polygon(47.6% 0, 52.4% 0, 87% 100%, 13% 100%);
+        background: linear-gradient(180deg, rgba(255,201,133,.42) 0%, rgba(255,170,90,.17) 30%, rgba(255,150,70,.05) 56%, transparent 78%); }
+      .cone.hot { width: 460px; filter: blur(9px); clip-path: polygon(48.7% 0, 51.3% 0, 73% 94%, 27% 94%);
+        background: linear-gradient(180deg, rgba(255,228,178,.52) 0%, rgba(255,193,124,.16) 38%, transparent 72%); }
+      .pool { position: absolute; left: 50%; top: 250px; width: 340px; height: 300px; transform: translateX(-50%); z-index: 1; pointer-events: none; mix-blend-mode: screen; filter: blur(10px);
+        background: radial-gradient(ellipse 48% 44% at 50% 42%, rgba(255,172,84,.30), transparent 64%); }
 
-      /* ── 1. spotlight "you're the highlight" ── */
-      .sp { height: 320px; background: radial-gradient(120% 80% at 50% 0%, #1a1712, var(--bg) 70%); overflow: hidden; }
-      .beam { position: absolute; left: 50%; top: -14px; width: 300px; height: 340px; transform: translateX(-50%); z-index: 1; pointer-events: none;
-        background: conic-gradient(from 180deg at 50% 0%, transparent 160deg, rgba(255,214,150,.06) 168deg, rgba(255,224,170,.34) 180deg, rgba(255,214,150,.06) 192deg, transparent 200deg);
-        -webkit-mask-image: linear-gradient(180deg,#000 12%, transparent 88%); mask-image: linear-gradient(180deg,#000 12%, transparent 88%); }
-      .beam-src { position: absolute; left: 50%; top: 0; width: 26px; height: 7px; transform: translateX(-50%); border-radius: 50%; background: #ffe9c2; filter: blur(2px); box-shadow: 0 0 20px 7px rgba(255,222,160,.7); z-index: 2; }
-      .sp-in { position: absolute; left: 0; right: 0; top: 74px; z-index: 4; text-align: center; }
-      .ghost { width: 92px; height: 92px; border-radius: 50%; margin: 0 auto; display: grid; place-items: center; position: relative; color: #cfa06a;
-        border: 2px solid rgba(255,182,74,.55); background: radial-gradient(circle at 50% 40%, rgba(255,182,74,.14), rgba(255,255,255,.02)); }
-      .ghost svg { width: 40px; height: 40px; }
-      .ghost .star { position: absolute; right: 4px; bottom: 6px; color: var(--gold); font-size: 15px; text-shadow: 0 0 8px rgba(255,182,74,.9); }
-      .hl-t { font-size: 20px; font-weight: 600; margin-top: 16px; }
-      .hl-t i { font-style: normal; color: var(--gold); }
-      .hl-s { font-size: 12px; color: #a7a7ae; margin-top: 5px; }
-      .sp-in .get { margin-top: 15px; }
+      /* hero content */
+      .hero { position: absolute; left: 0; right: 0; top: 26%; z-index: 8; text-align: center; padding: 0 30px; }
+      .ghost { width: 112px; height: 112px; border-radius: 50%; margin: 0 auto; position: relative; display: grid; place-items: center; color: #d8d8dc;
+        border: 2px solid rgba(255,255,255,.32); background: radial-gradient(circle at 50% 36%, rgba(255,196,120,.16), rgba(255,255,255,.015)); box-shadow: 0 0 44px rgba(255,170,80,.16); }
+      .ghost svg { width: 50px; height: 50px; }
+      .ghost .plusb { position: absolute; right: 2px; bottom: 6px; width: 32px; height: 32px; border-radius: 50%; display: grid; place-items: center; color: #fff;
+        background: linear-gradient(140deg,#ffb14a,#f5851f); border: 3px solid var(--bg); box-shadow: 0 4px 12px -2px rgba(245,133,31,.7); }
+      .ghost .plusb svg { width: 15px; height: 15px; }
+      .hl-t { font-size: 25px; font-weight: 600; margin-top: 22px; letter-spacing: -.01em; }
+      .hl-s { font-size: 14px; color: #a2a2aa; margin-top: 8px; line-height: 1.45; }
+      .add-banner { display: inline-flex; align-items: center; gap: 9px; margin-top: 24px; padding: 12px 24px; border-radius: 999px; font: inherit; font-size: 14px; font-weight: 600; cursor: pointer;
+        color: var(--accent); background: rgba(245,133,31,.06); border: 1.5px solid rgba(245,133,31,.65); }
+      .add-banner svg { width: 17px; height: 17px; }
 
-      /* ── 2. memories photo stack ── */
-      .mem { height: 300px; background: radial-gradient(90% 80% at 50% 46%, #1d130d, var(--bg) 72%); overflow: hidden; }
-      .stack { position: absolute; left: 50%; top: 120px; transform: translate(-50%,-50%); width: 200px; height: 150px; z-index: 2; }
-      .pcard { position: absolute; left: 50%; top: 50%; width: 104px; height: 128px; border-radius: 11px; background: #221a13; border: 1px solid rgba(255,150,70,.28);
-        box-shadow: 0 14px 30px -10px rgba(0,0,0,.75); }
-      .pcard::before { content: ""; position: absolute; inset: 8px 8px 24px; border-radius: 5px; background: linear-gradient(135deg,#3a2415,#1a110b); box-shadow: inset 0 0 20px rgba(0,0,0,.5); }
-      .pcard::after { content: ""; position: absolute; left: 8px; right: 8px; bottom: 8px; height: 8px; border-radius: 2px; background: rgba(255,182,74,.12); }
-      .c1 { transform: translate(-50%,-50%) rotate(-13deg) translateX(-34px); }
-      .c2 { transform: translate(-50%,-50%) rotate(9deg) translateX(34px); }
-      .c3 { transform: translate(-50%,-50%) rotate(-2deg); z-index: 3; }
-      .plus { position: absolute; left: 50%; top: 50%; transform: translate(-50%,-50%); z-index: 6; width: 46px; height: 46px; border-radius: 50%; display: grid; place-items: center; color: #1c1206;
-        background: linear-gradient(140deg, var(--gold), var(--accent)); box-shadow: 0 8px 22px -4px rgba(245,133,31,.8), 0 0 0 5px rgba(20,20,20,.85); }
-      .plus svg { width: 20px; height: 20px; }
-      .mem-cap { position: absolute; left: 0; right: 0; top: 210px; text-align: center; z-index: 4; font-size: 15px; font-weight: 600; }
-      .mem-sub { position: absolute; left: 0; right: 0; top: 234px; text-align: center; z-index: 4; font-size: 11.5px; color: #9a9aa2; }
+      .fab-cam { position: absolute; right: 18px; top: 70%; width: 54px; height: 54px; border-radius: 50%; display: grid; place-items: center; z-index: 9; color: #cfcfd4;
+        background: rgba(255,255,255,.055); border: 1px solid rgba(255,255,255,.12); backdrop-filter: blur(6px); }
+      .fab-cam svg { width: 21px; height: 21px; }
 
-      /* ── 3. event collage grid ── */
-      .col { height: 258px; overflow: hidden; }
-      .grid3 { position: absolute; inset: 40px 14px auto; display: grid; grid-template-columns: repeat(3, 1fr); gap: 7px; z-index: 1; }
-      .tile { aspect-ratio: 1; border-radius: 10px; position: relative; overflow: hidden; }
-      .tile.p1 { background: linear-gradient(135deg,#5a3018,#22140c); }
-      .tile.p2 { background: linear-gradient(135deg,#6e3d16,#281a0f); }
-      .tile.p3 { background: linear-gradient(135deg,#402548,#1b131d); }
-      .tile.p4 { background: linear-gradient(135deg,#1a463a,#111d18); }
-      .tile.p5 { background: linear-gradient(135deg,#561e2e,#211215); }
-      .tile.p6 { background: linear-gradient(135deg,#5e3a1c,#22160c); }
-      .col::after { content: ""; position: absolute; inset: 0; z-index: 2; background: linear-gradient(180deg, transparent 44%, var(--bg) 94%), radial-gradient(64% 56% at 50% 42%, transparent, rgba(20,20,20,.42)); }
-      .col-cta { position: absolute; left: 50%; top: 118px; transform: translate(-50%,-50%); z-index: 5; text-align: center; }
-      .col-cta .plus { position: static; margin: 0 auto 9px; transform: none; }
-      .col-cta b { font-size: 14px; font-weight: 600; display: block; }
-      .col-cta span { font-size: 11px; color: #b7b7bd; }
-
-      /* ── 4. neon marquee "you're the headliner" ── */
-      .mrq { height: 300px; background: radial-gradient(80% 74% at 50% 116%, rgba(245,133,31,.26), var(--bg) 66%); overflow: hidden; }
-      .mrq .frame { position: absolute; inset: 90px 18px auto; height: 138px; border: 1.5px solid rgba(255,182,74,.28); border-radius: 14px; z-index: 1; box-shadow: 0 0 26px -8px rgba(245,133,31,.35), inset 0 0 34px rgba(245,133,31,.05); }
-      .bulbs { position: absolute; left: 0; right: 0; height: 9px; z-index: 3;
-        background: radial-gradient(circle at 6px 4px, #ffcf7a 2.3px, rgba(255,196,106,.25) 3.6px, transparent 4.6px); background-size: 30px 9px; background-repeat: repeat-x; filter: drop-shadow(0 0 7px rgba(255,180,80,.9)); }
-      .mrq-in { position: absolute; left: 0; right: 0; top: 108px; text-align: center; z-index: 4; }
-      .mrq-in b { font-size: 18px; font-weight: 700; letter-spacing: .01em; display: block; }
-      .mrq-in b i { font-style: normal; color: var(--gold); }
-      .mrq-in span { display: block; font-size: 11.5px; color: #a7a7ae; margin-top: 5px; }
-      .mrq-in .get { margin-top: 14px; }
-
-      /* ── 5. ticket stub ── */
-      .tkt { height: 262px; background: radial-gradient(90% 80% at 50% 40%, #1a130d, var(--bg) 74%); overflow: hidden; }
-      .tkt { height: 272px; }
-      .stub { position: absolute; left: 22px; right: 22px; top: 62px; height: 132px; z-index: 2; border-radius: 16px; border: 1.6px dashed rgba(255,182,74,.45); background: rgba(245,133,31,.05);
-        display: flex; align-items: center; }
-      .stub .notch { position: absolute; top: 50%; width: 20px; height: 20px; border-radius: 50%; background: var(--bg); transform: translateY(-50%); }
-      .stub .notch.l { left: -11px; } .stub .notch.r { right: -11px; }
-      .stub .perf { position: absolute; left: 62px; top: 14px; bottom: 14px; border-left: 1.5px dashed rgba(255,182,74,.3); }
-      .stub .stub-l { width: 62px; text-align: center; color: var(--gold); }
-      .stub .stub-l svg { width: 22px; height: 22px; }
-      .stub .stub-r { flex: 1; padding-left: 14px; }
-      .stub .stub-r b { font-size: 14px; font-weight: 600; display: block; }
-      .stub .stub-r span { display: block; font-size: 11px; color: #9a9aa2; margin-top: 2px; }
-      .stub .stub-r .go { margin-top: 8px; display: inline-flex; align-items: center; gap: 6px; font-size: 11.5px; font-weight: 600; color: var(--gold); }
-      .stub .stub-r .go svg { width: 13px; height: 13px; }
+      /* profile footer (peeking) */
+      .foot { position: absolute; left: 0; right: 0; top: 80%; z-index: 8; text-align: center; }
+      .avatar { width: 96px; height: 96px; border-radius: 50%; margin: 0 auto; position: relative; display: grid; place-items: center; font-size: 27px; font-weight: 700; color: #fff;
+        background: linear-gradient(145deg,#ffc357,#f5851f 46%,#e0500e); box-shadow: 0 12px 30px -8px rgba(245,133,31,.6), inset 0 1px 2px rgba(255,255,255,.5); }
+      .cam-badge { position: absolute; right: -2px; bottom: -2px; width: 32px; height: 32px; border-radius: 50%; display: grid; place-items: center; background: #1f1f22; border: 3px solid var(--bg); color: #fff; }
+      .cam-badge svg { width: 15px; height: 15px; }
+      .name { font-size: 22px; font-weight: 600; margin-top: 14px; }
     </style>
   </head>
   <body>
     <header>
-      <h1>Mandos — profile empty state (party / events)</h1>
-      <div class="sub">The banner has no photo yet. Instead of a record, these speak to a nightlife app — a spotlight on you, memories waiting to be filled, event collage, marquee, or a ticket stub. All dark, warm orange–yellow. Pick one.</div>
+      <h1>Mandos — profile · spotlight</h1>
+      <div class="sub">The empty banner as a stage: a hanging light throws a warm cone onto “you”. Same idea as your reference. Two intensities below.</div>
     </header>
     <div class="row" id="row"></div>
 
     <script>
       const IC = {
-        share:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 15V4"/><path d="M8 8l4-4 4 4"/><path d="M5 12v6a2 2 0 0 0 2 2h10a2 2 0 0 0 2-2v-6"/></svg>',
+        qr:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="7" height="7" rx="1.6"/><rect x="14" y="3" width="7" height="7" rx="1.6"/><rect x="3" y="14" width="7" height="7" rx="1.6"/><path d="M14 14.5h2.5M20.5 14v2.5M14 20.5h2.5M20.5 19.5v1M17.5 17.5h.01"/></svg>',
         search:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><circle cx="11" cy="11" r="7"/><path d="M21 21l-4.2-4.2"/></svg>',
         gear:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="3.2"/><path d="M12 3v2.4M12 18.6V21M3 12h2.4M18.6 12H21M5.6 5.6l1.7 1.7M16.7 16.7l1.7 1.7M18.4 5.6l-1.7 1.7M7.3 16.7l-1.7 1.7"/></svg>',
         cam:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4.5 8h2.6l1.3-1.9h7l1.3 1.9h2.6a1.2 1.2 0 0 1 1.2 1.2v8.6a1.2 1.2 0 0 1-1.2 1.2H4.5a1.2 1.2 0 0 1-1.2-1.2V9.2A1.2 1.2 0 0 1 4.5 8z"/><circle cx="12" cy="13" r="3.1"/></svg>',
-        at:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><circle cx="12" cy="12" r="3.8"/><path d="M15.8 12v1.6a2.4 2.4 0 0 0 4.8 0V12a8.6 8.6 0 1 0-3.3 6.8"/></svg>',
-        chevR:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M9 6l6 6-6 6"/></svg>',
+        img:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="4" width="18" height="16" rx="2.5"/><circle cx="8.5" cy="9.5" r="1.7"/><path d="M4 17l4.5-4.5 4 3.5L16 12l4 4"/></svg>',
         plus:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round"><path d="M12 5v14M5 12h14"/></svg>',
-        person:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="8.5" r="3.7"/><path d="M5 19.5c.7-3.7 3.6-5.6 7-5.6s6.3 1.9 7 5.6"/></svg>',
-        home:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 11l9-8 9 8"/><path d="M5 10v10h14V10"/></svg>',
-        ticket:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="6.5" width="18" height="11" rx="2.5"/><path d="M9 6.5v11"/></svg>',
-        chat:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 11.5a7.5 7.5 0 0 1-10.9 6.7L4 20l1.4-4.3A7.5 7.5 0 1 1 21 11.5z"/></svg>',
-        person2:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="8" r="3.6"/><path d="M4.5 20c.7-4 3.8-6 7.5-6s6.8 2 7.5 6"/></svg>',
+        person:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="8.5" r="3.9"/><path d="M4.8 19.6c.8-3.8 3.7-5.8 7.2-5.8s6.4 2 7.2 5.8"/></svg>',
       }
-      const statusbar = `<div class="isl"></div><div class="stat"><span>1:40</span><span class="sbr">
+      const statusbar = `<div class="stat"><span>1:40</span><span class="sbr">
         <svg width="17" height="11" viewBox="0 0 17 11" fill="currentColor"><rect x="0" y="7" width="3" height="4" rx="1"/><rect x="4.5" y="5" width="3" height="6" rx="1"/><rect x="9" y="2.5" width="3" height="8.5" rx="1"/><rect x="13.5" y="0" width="3" height="11" rx="1"/></svg>
         <svg width="15" height="11" viewBox="0 0 16 12" fill="currentColor"><path d="M8 2.5c2.3 0 4.4.9 5.9 2.4l1.2-1.2A9.5 9.5 0 008 .8 9.5 9.5 0 00.9 3.7l1.2 1.2A8 8 0 018 2.5z"/><path d="M8 6c1.2 0 2.3.5 3.1 1.3l1.2-1.2A6 6 0 008 4.3a6 6 0 00-4.3 1.8l1.2 1.2A4.4 4.4 0 018 6z"/><circle cx="8" cy="9.5" r="1.6"/></svg>
         <svg width="22" height="11" viewBox="0 0 25 12" fill="none"><rect x="1" y="1" width="21" height="10" rx="2.5" stroke="currentColor" opacity=".5"/><rect x="3" y="3" width="12" height="6" rx="1.2" fill="#3ddc6d"/><rect x="23" y="4" width="1.5" height="4" rx="1" fill="currentColor" opacity=".5"/></svg>
       </span></div>`
-      const acts = `<div class="acts"><div class="b">${IC.share}</div><div class="b">${IC.search}</div><div class="b">${IC.gear}</div></div>`
-      const nav = `<div class="nav"><div class="bar"><span class="n">${IC.home}</span><span class="n">${IC.ticket}</span><span class="n">${IC.chat}</span><span class="n on">${IC.person2}</span></div></div><div class="homeind"></div>`
-      const avatarDD = `<div class="avatar">DD<div class="cam-badge">${IC.cam}</div></div>`
-      const idBlock = `<div class="name">dhairya dhairya</div><div class="chips"><span class="chip-u">${IC.at} Add username</span><span class="chip-u warm">${IC.cam} Add photo</span></div>`
-      const stats = `<div class="stats"><div class="st"><div class="n">0</div><div class="l">Followers</div></div><div class="st"><div class="n">0</div><div class="l">Following</div></div><div class="st"><div class="n">0</div><div class="l">Nights out</div></div></div>`
+      const acts = `<div class="acts"><div class="b">${IC.qr}</div><div class="b">${IC.search}</div><div class="b">${IC.gear}</div></div>`
 
-      // each variant fully composes the screen body
+      const screen = (dim) => `<div class="scr"><div class="wall"></div>${statusbar}${acts}
+        <div class="lamp"><div class="lens"></div></div>
+        <div class="cone"${dim ? ' style="opacity:.7"' : ''}></div><div class="cone hot"${dim ? ' style="opacity:.7"' : ''}></div><div class="pool"${dim ? ' style="opacity:.6"' : ''}></div>
+        <div class="hero"><div class="ghost">${IC.person}<span class="plusb">${IC.plus}</span></div>
+          <div class="hl-t">You’re the highlight</div><div class="hl-s">Add a banner and photo<br>to shine.</div>
+          <button class="add-banner">${IC.img} Add Banner</button></div>
+        <div class="fab-cam">${IC.cam}</div>
+        <div class="foot"><div class="avatar">DD<span class="cam-badge">${IC.cam}</span></div><div class="name">dhairya dhairya</div></div>
+      </div>`
+
       const V = [
-        { title: 'Spotlight', tag: 'from your ref',
-          note: '“You’re the highlight.” A stage-light beam from the top lands on a ghost avatar; Get Started drives setup.',
-          body: `<div class="stage sp"><div class="beam-src"></div><div class="beam"></div>
-            <div class="sp-in"><div class="ghost">${IC.person}<span class="star">✦</span></div>
-              <div class="hl-t">You’re the <i>highlight</i></div><div class="hl-s">Add a banner and photo to shine</div>
-              <button class="get">Get Started</button></div></div>
-            <div class="body">${idBlock}${stats}</div>` },
-
-        { title: 'Memories', tag: 'from your ref',
-          note: '“Memories start here.” A stack of photo cards with a glowing + — tap to fill your page with nights out.',
-          body: `<div class="stage mem"><div class="stack"><div class="pcard c1"></div><div class="pcard c2"></div><div class="pcard c3"></div><div class="plus">${IC.plus}</div></div>
-              <div class="mem-cap">Memories start here</div><div class="mem-sub">Add photos from your nights out</div></div>
-            <div class="body" style="margin-top:-42px">${avatarDD}${idBlock}${stats}</div>` },
-
-        { title: 'Event collage',
-          note: 'A faded grid of event tiles hints at the gallery to come; the + invites the first upload. Ties to the login look.',
-          body: `<div class="stage col"><div class="grid3"><div class="tile p1"></div><div class="tile p2"></div><div class="tile p3"></div><div class="tile p4"></div><div class="tile p5"></div><div class="tile p6"></div></div>
-              <div class="col-cta"><div class="plus">${IC.plus}</div><b>Add your moments</b><span>Show the nights you’ve lived</span></div></div>
-            <div class="body" style="margin-top:-42px">${avatarDD}${idBlock}${stats}</div>` },
-
-        { title: 'Marquee',
-          note: '“You’re the headliner.” Club-signage bulbs frame the empty banner — puts the user on the bill.',
-          body: `<div class="stage mrq"><div class="frame"></div><div class="bulbs" style="top:84px"></div><div class="bulbs" style="top:224px;opacity:.6"></div>
-              <div class="mrq-in"><b>You’re the <i>headliner</i></b><span>Add a banner to take the stage</span><button class="get">Get Started</button></div></div>
-            <div class="body" style="margin-top:-40px">${avatarDD}${idBlock}${stats}</div>` },
-
-        { title: 'Ticket stub',
-          note: 'An event-pass metaphor: a dashed ticket stub — the most on-the-nose “booking app” framing.',
-          body: `<div class="stage tkt"><div class="stub"><div class="notch l"></div><div class="notch r"></div><div class="perf"></div>
-              <div class="stub-l">${IC.ticket}</div><div class="stub-r"><b>Your pass to the night</b><span>Add a photo &amp; banner</span><div class="go">Set it up ${IC.chevR}</div></div></div></div>
-            <div class="body" style="margin-top:-30px">${avatarDD}${idBlock}${stats}</div>` },
+        { big: true, title: 'Spotlight', tag: 'your ref', note: 'Hanging lamp + warm volumetric cone onto the ghost avatar. Add Banner CTA, camera FAB, DD peeking below.', dim: false },
+        { title: 'Dimmed', note: 'Same, softer — for a calmer header.', dim: true },
       ]
-
       const row = document.getElementById('row')
       V.forEach((v) => {
-        const item = document.createElement('div'); item.className = 'item'
-        item.innerHTML = `<div class="cap"><b>${v.title}${v.tag ? `<i>${v.tag}</i>` : ''}</b><span>${v.note}</span></div>
-          <div class="phone"><div class="scr">${statusbar}${acts}${v.body}${nav}</div></div>`
+        const item = document.createElement('div'); item.className = 'item' + (v.big ? ' big' : '')
+        item.innerHTML = `<div class="cap"><b>${v.title}${v.tag ? `<i>${v.tag}</i>` : ''}</b><span>${v.note}</span></div><div class="phone">${screen(v.dim)}</div>`
         row.appendChild(item)
       })
     </script>
