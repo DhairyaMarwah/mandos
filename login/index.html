@@ -3,13 +3,12 @@
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Mandos — login · photo disco ball (Lottie)</title>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/lottie-web/5.12.2/lottie.min.js"></script>
+    <title>Mandos — login · disco ball</title>
     <link rel="preconnect" href="https://fonts.googleapis.com" />
     <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700&display=swap" rel="stylesheet" />
     <style>
       * { margin: 0; padding: 0; box-sizing: border-box; }
-      :root { --accent: #f5851f; --gold: #ffb64a; --bg: #0b0a0c; color-scheme: dark; }
+      :root { --accent: #f5851f; --gold: #ffb64a; color-scheme: dark; }
       body { background: #101012; color: #e8e8ea; font-family: "Poppins", system-ui, -apple-system, sans-serif; padding: 34px 28px 70px; display: grid; place-items: start center; }
       header { max-width: 900px; margin: 0 auto 24px; text-align: center; }
       h1 { font-size: 20px; font-weight: 600; }
@@ -18,43 +17,47 @@
       .phone { width: 400px; aspect-ratio: 428/928; position: relative; border-radius: 50px; padding: 4px;
         background: linear-gradient(140deg,#6f6f77,#25252a 16%,#3b3b42 38%,#141416 62%,#4c4c56 84%,#1c1c20);
         box-shadow: 0 28px 68px -18px rgba(0,0,0,.82), inset 0 1px 1px rgba(255,255,255,.14); }
-      .scr { position: absolute; inset: 4px; border-radius: 46px; overflow: hidden;
-        background: radial-gradient(120% 70% at 50% 24%, #16121a 0%, #0c0b0e 52%, var(--bg) 100%); }
+      /* ── ONE constant ember background for the whole screen (from the splash "Ember" bed) ── */
+      .scr { position: absolute; inset: 4px; border-radius: 46px; overflow: hidden; display: flex; flex-direction: column;
+        background:
+          radial-gradient(ellipse 120% 54% at 50% 119%, rgba(255,106,18,.82) 0%, rgba(255,106,18,0) 56%),
+          linear-gradient(180deg, #08080a 0%, #0b0906 46%, #4a1d06 100%); }
+
       .stat { position: absolute; top: 0; left: 0; right: 0; height: 34px; display: flex; align-items: center; justify-content: space-between; padding: 10px 24px 0; font-size: 13px; font-weight: 600; color: #fff; z-index: 40; }
       .isl { position: absolute; top: 10px; left: 50%; transform: translateX(-50%); width: 90px; height: 24px; background: #000; border-radius: 15px; z-index: 45; }
-      .skip { position: absolute; top: 44px; right: 20px; z-index: 30; font-size: 14px; font-weight: 500; color: #fff; background: rgba(0,0,0,.28); padding: 5px 14px; border-radius: 999px; backdrop-filter: blur(6px); }
+      .skip { position: absolute; top: 44px; right: 20px; z-index: 30; font-size: 14px; font-weight: 500; color: rgba(255,255,255,.85); }
 
-      .hero { position: absolute; left: 0; right: 0; top: 0; height: 60%; z-index: 1; }
-      #ball { position: absolute; left: 50%; top: 45%; transform: translate(-50%,-50%); width: 96%; aspect-ratio: 1; z-index: 2; }
-      .glowfloor { position: absolute; left: 50%; bottom: -50px; width: 420px; height: 240px; transform: translateX(-50%); z-index: 1; pointer-events: none;
-        background: radial-gradient(ellipse 50% 52% at 50% 50%, rgba(245,133,31,.24), transparent 66%); filter: blur(10px); }
-      .heroscrim { position: absolute; inset: 0; z-index: 3; pointer-events: none;
-        background: linear-gradient(180deg, rgba(11,10,12,.1) 0%, transparent 30%, rgba(11,10,12,.6) 84%, var(--bg) 100%); }
-      .brand { position: absolute; left: 0; right: 0; bottom: 18px; z-index: 5; text-align: center; padding: 0 30px; }
-      .brand h2 { font-size: 26px; font-weight: 600; }
-      .brand p { font-size: 12.5px; color: #c2c2c8; margin-top: 7px; line-height: 1.5; }
+      /* hero: disco ball + welcome, no flare, no card */
+      .hero { flex: 1; position: relative; min-height: 0; }
+      disco-ball { position: absolute; left: 50%; top: 46%; transform: translate(-50%,-50%); width: 108%; height: 92%; display: block; }
+      disco-ball canvas { width: 100% !important; height: 100% !important; }
+      .welcome { position: absolute; left: 0; right: 0; bottom: 14px; z-index: 5; text-align: center; padding: 0 34px; }
+      .welcome h2 { font-size: 27px; font-weight: 600; }
+      .welcome p { font-size: 12.5px; color: #d8c3b0; margin-top: 7px; line-height: 1.5; }
 
-      .sheet { position: absolute; left: 0; right: 0; bottom: 0; z-index: 20; background: #151517; border-radius: 28px 28px 0 0; padding: 22px 22px 16px; box-shadow: 0 -22px 46px rgba(0,0,0,.6); }
-      .s-title { text-align: center; font-size: 18px; font-weight: 600; margin-bottom: 16px; }
+      /* form sits directly on the bg — no separate sheet/card */
+      .form { position: relative; z-index: 20; padding: 4px 28px 22px; }
+      .s-title { text-align: center; font-size: 17px; font-weight: 600; margin-bottom: 15px; color: #fff; }
       .frow { display: flex; gap: 9px; margin-bottom: 12px; }
-      .cc { display: flex; align-items: center; gap: 7px; padding: 0 14px; height: 50px; border-radius: 12px; border: 1px solid rgba(255,255,255,.12); background: rgba(255,255,255,.03); font-size: 15px; font-weight: 500; }
-      .cc svg { width: 12px; color: #9a9aa2; }
-      .minput { flex: 1; height: 50px; border-radius: 12px; border: 1px solid rgba(255,255,255,.12); background: rgba(255,255,255,.03); display: flex; align-items: center; padding: 0 16px; color: #78787f; font-size: 15px; }
-      .continue { width: 100%; height: 52px; border-radius: 12px; border: 0; font: inherit; font-size: 15px; font-weight: 600; color: #1c1206; cursor: pointer; margin-bottom: 12px; background: linear-gradient(120deg, var(--gold), var(--accent)); box-shadow: 0 12px 26px -8px rgba(245,133,31,.55); }
-      .terms { font-size: 11px; color: #8a8a92; line-height: 1.55; margin-bottom: 14px; }
-      .terms a { color: var(--accent); }
-      .ordiv { display: flex; align-items: center; gap: 12px; color: #77777f; font-size: 12px; margin-bottom: 14px; }
-      .ordiv::before, .ordiv::after { content: ""; flex: 1; height: 1px; background: rgba(255,255,255,.1); }
-      .social { display: flex; gap: 14px; justify-content: center; margin-bottom: 10px; }
-      .soc { width: 50px; height: 50px; border-radius: 50%; border: 1px solid rgba(255,255,255,.14); display: grid; place-items: center; background: rgba(255,255,255,.02); }
+      .cc { display: flex; align-items: center; gap: 7px; padding: 0 14px; height: 50px; border-radius: 13px; border: 1px solid rgba(255,255,255,.16); background: rgba(0,0,0,.32); font-size: 15px; font-weight: 500; }
+      .cc svg { width: 12px; color: #cbb8a6; }
+      .minput { flex: 1; height: 50px; border-radius: 13px; border: 1px solid rgba(255,255,255,.16); background: rgba(0,0,0,.32); display: flex; align-items: center; padding: 0 16px; color: #b7a595; font-size: 15px; }
+      .continue { width: 100%; height: 52px; border-radius: 13px; border: 0; font: inherit; font-size: 15px; font-weight: 600; color: #241100; cursor: pointer; margin-bottom: 12px;
+        background: linear-gradient(120deg, #ffd18a, var(--gold) 45%, var(--accent)); box-shadow: 0 12px 28px -8px rgba(255,150,60,.6); }
+      .terms { font-size: 11px; color: #cbb1a0; line-height: 1.55; margin-bottom: 14px; text-align: center; }
+      .terms a { color: #ffd7a6; font-weight: 500; }
+      .ordiv { display: flex; align-items: center; gap: 12px; color: #c6ac9b; font-size: 12px; margin-bottom: 14px; }
+      .ordiv::before, .ordiv::after { content: ""; flex: 1; height: 1px; background: rgba(255,255,255,.16); }
+      .social { display: flex; gap: 14px; justify-content: center; margin-bottom: 12px; }
+      .soc { width: 50px; height: 50px; border-radius: 50%; border: 1px solid rgba(255,255,255,.18); display: grid; place-items: center; background: rgba(0,0,0,.28); }
       .soc svg { width: 22px; height: 22px; }
-      .ver { text-align: center; font-size: 11px; color: #66666e; }
+      .ver { text-align: center; font-size: 11px; color: #b79a88; }
     </style>
   </head>
   <body>
     <header>
-      <h1>Mandos — login · photo disco ball (Lottie)</h1>
-      <div class="subh">The event photos matted onto the disco-ball tiles, in the Lottie itself. Static ball (photos can't spin in Lottie), tiles shimmer/pulse.</div>
+      <h1>Mandos — login · disco ball (WebGL)</h1>
+      <div class="subh">No flare, ember background from the splash, one constant bg — form sits straight on it, no card.</div>
     </header>
 
     <div class="phone"><div class="scr">
@@ -67,13 +70,11 @@
       <div class="skip">Skip</div>
 
       <div class="hero">
-        <div id="ball"></div>
-        <div class="glowfloor"></div>
-        <div class="heroscrim"></div>
-        <div class="brand"><h2>Welcome to Mandos</h2><p>Discover Hong Kong's hottest clubs, exclusive passes, and real-time events — all in one app.</p></div>
+        <disco-ball id="ball"></disco-ball>
+        <div class="welcome"><h2>Welcome to Mandos</h2><p>Discover Hong Kong's hottest clubs, exclusive passes, and real-time events — all in one app.</p></div>
       </div>
 
-      <div class="sheet">
+      <div class="form">
         <div class="s-title">Login or Register</div>
         <div class="frow"><div class="cc">+91 <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M6 9l6 6 6-6"/></svg></div><div class="minput">Enter mobile number</div></div>
         <button class="continue">Continue</button>
@@ -87,10 +88,28 @@
       </div>
     </div></div>
 
-    <script>
-      // load via animationData (NOT path) so the external image URLs on the tiles resolve correctly
-      fetch('./discoball-photos.json?v=' + Date.now()).then((r) => r.json()).then((data) => {
-        lottie.loadAnimation({ container: document.getElementById('ball'), renderer: 'svg', loop: true, autoplay: true, animationData: data })
+    <script type="module">
+      import './disco-ball.js?v=login2'
+      // flare removed: glow-strength 0, sparkles small (no big star flares); mosaic photos + beat pulse kept
+      const config = {
+        theme: 'dark', disco: true, speed: 0.34, size: 300, segments: 18, zoom: 0.84, clarity: 0.2, distortion: 0.93,
+        shininess: 1, specular: 0, keyX: -0.3, keyY: 3, keyZ: 3, keyStrength: 1.04, fillX: -2, fillY: 1, fillZ: 2, fillStrength: 0.5,
+        topX: -4, topY: -6, topZ: 1, topStrength: 1.37, rim1Strength: 0.5, rim1Sharpness: 0.41, rim1X: -2.98, rim1Y: 1,
+        rim2Strength: 0.4, rim2Sharpness: 0.5, rim2X: 0, rim2Y: -1, lightIntensity: 0.98, ambient: 0.2, tint: '#959595', tintStrength: 0.7,
+        sparkleCount: 6, sparkleSize: 0.42, sparkleStrength: 0.9, sparkleSpeed: 1,
+        showReflections: true, reflectionCount: 12, reflectionSize: 0.9, reflectionStrength: 0.9, reflectionSpread: 1.2, reflectionTint: 0,
+        targetX: -0.01, targetY: 0.16, webcam: false,
+        mosaic: true, photoRatio: 0.62, envPulse: 0.9, cycleSpeed: 0.3,
+        glowStrength: 0, glowSize: 0.4, glowColor: '#f5851f', showHelpers: false,
+      }
+      const kebab = (s) => s.replace(/([a-z0-9])([A-Z])/g, '$1-$2').toLowerCase()
+      const el = document.getElementById('ball')
+      customElements.whenDefined('disco-ball').then(() => {
+        for (const [k, v] of Object.entries(config)) {
+          const name = kebab(k)
+          if (typeof v === 'boolean') { if (v) el.setAttribute(name, ''); else el.removeAttribute(name) }
+          else el.setAttribute(name, v)
+        }
       })
     </script>
   </body>

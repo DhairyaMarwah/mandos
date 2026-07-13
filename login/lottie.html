@@ -3,7 +3,8 @@
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Mandos — login · disco ball</title>
+    <title>Mandos — login · photo disco ball (Lottie)</title>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/lottie-web/5.12.2/lottie.min.js"></script>
     <link rel="preconnect" href="https://fonts.googleapis.com" />
     <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700&display=swap" rel="stylesheet" />
     <style>
@@ -18,32 +19,28 @@
         background: linear-gradient(140deg,#6f6f77,#25252a 16%,#3b3b42 38%,#141416 62%,#4c4c56 84%,#1c1c20);
         box-shadow: 0 28px 68px -18px rgba(0,0,0,.82), inset 0 1px 1px rgba(255,255,255,.14); }
       .scr { position: absolute; inset: 4px; border-radius: 46px; overflow: hidden;
-        background: radial-gradient(120% 70% at 50% 24%, #17131a 0%, #0c0b0e 52%, var(--bg) 100%); }
+        background: radial-gradient(120% 70% at 50% 24%, #16121a 0%, #0c0b0e 52%, var(--bg) 100%); }
       .stat { position: absolute; top: 0; left: 0; right: 0; height: 34px; display: flex; align-items: center; justify-content: space-between; padding: 10px 24px 0; font-size: 13px; font-weight: 600; color: #fff; z-index: 40; }
       .isl { position: absolute; top: 10px; left: 50%; transform: translateX(-50%); width: 90px; height: 24px; background: #000; border-radius: 15px; z-index: 45; }
       .skip { position: absolute; top: 44px; right: 20px; z-index: 30; font-size: 14px; font-weight: 500; color: #fff; background: rgba(0,0,0,.28); padding: 5px 14px; border-radius: 999px; backdrop-filter: blur(6px); }
 
-      /* disco-ball hero */
       .hero { position: absolute; left: 0; right: 0; top: 0; height: 60%; z-index: 1; }
-      disco-ball { position: absolute; inset: -6% 0 0; width: 100%; height: 108%; display: block; }
-      disco-ball canvas { width: 100% !important; height: 100% !important; }
-      .glowfloor { position: absolute; left: 50%; bottom: -50px; width: 420px; height: 240px; transform: translateX(-50%); z-index: 2; pointer-events: none;
-        background: radial-gradient(ellipse 50% 52% at 50% 50%, rgba(245,133,31,.28), transparent 66%); filter: blur(10px); }
+      #ball { position: absolute; left: 50%; top: 45%; transform: translate(-50%,-50%); width: 96%; aspect-ratio: 1; z-index: 2; }
+      .glowfloor { position: absolute; left: 50%; bottom: -50px; width: 420px; height: 240px; transform: translateX(-50%); z-index: 1; pointer-events: none;
+        background: radial-gradient(ellipse 50% 52% at 50% 50%, rgba(245,133,31,.24), transparent 66%); filter: blur(10px); }
       .heroscrim { position: absolute; inset: 0; z-index: 3; pointer-events: none;
-        background: linear-gradient(180deg, rgba(11,10,12,.15) 0%, transparent 30%, rgba(11,10,12,.55) 82%, var(--bg) 100%); }
-      .brand { position: absolute; left: 0; right: 0; bottom: 20px; z-index: 5; text-align: center; padding: 0 30px; }
+        background: linear-gradient(180deg, rgba(11,10,12,.1) 0%, transparent 30%, rgba(11,10,12,.6) 84%, var(--bg) 100%); }
+      .brand { position: absolute; left: 0; right: 0; bottom: 18px; z-index: 5; text-align: center; padding: 0 30px; }
       .brand h2 { font-size: 26px; font-weight: 600; }
       .brand p { font-size: 12.5px; color: #c2c2c8; margin-top: 7px; line-height: 1.5; }
 
-      /* login sheet */
       .sheet { position: absolute; left: 0; right: 0; bottom: 0; z-index: 20; background: #151517; border-radius: 28px 28px 0 0; padding: 22px 22px 16px; box-shadow: 0 -22px 46px rgba(0,0,0,.6); }
       .s-title { text-align: center; font-size: 18px; font-weight: 600; margin-bottom: 16px; }
       .frow { display: flex; gap: 9px; margin-bottom: 12px; }
       .cc { display: flex; align-items: center; gap: 7px; padding: 0 14px; height: 50px; border-radius: 12px; border: 1px solid rgba(255,255,255,.12); background: rgba(255,255,255,.03); font-size: 15px; font-weight: 500; }
       .cc svg { width: 12px; color: #9a9aa2; }
       .minput { flex: 1; height: 50px; border-radius: 12px; border: 1px solid rgba(255,255,255,.12); background: rgba(255,255,255,.03); display: flex; align-items: center; padding: 0 16px; color: #78787f; font-size: 15px; }
-      .continue { width: 100%; height: 52px; border-radius: 12px; border: 0; font: inherit; font-size: 15px; font-weight: 600; color: #1c1206; cursor: pointer; margin-bottom: 12px;
-        background: linear-gradient(120deg, var(--gold), var(--accent)); box-shadow: 0 12px 26px -8px rgba(245,133,31,.55); }
+      .continue { width: 100%; height: 52px; border-radius: 12px; border: 0; font: inherit; font-size: 15px; font-weight: 600; color: #1c1206; cursor: pointer; margin-bottom: 12px; background: linear-gradient(120deg, var(--gold), var(--accent)); box-shadow: 0 12px 26px -8px rgba(245,133,31,.55); }
       .terms { font-size: 11px; color: #8a8a92; line-height: 1.55; margin-bottom: 14px; }
       .terms a { color: var(--accent); }
       .ordiv { display: flex; align-items: center; gap: 12px; color: #77777f; font-size: 12px; margin-bottom: 14px; }
@@ -56,8 +53,8 @@
   </head>
   <body>
     <header>
-      <h1>Mandos — login · disco ball (WebGL)</h1>
-      <div class="subh">Real 3D disco ball, spinning, with event photos on the tiles pulsing to the beat — the WebGL effect, live in the login hero.</div>
+      <h1>Mandos — login · photo disco ball (Lottie)</h1>
+      <div class="subh">The event photos matted onto the disco-ball tiles, in the Lottie itself. Static ball (photos can't spin in Lottie), tiles shimmer/pulse.</div>
     </header>
 
     <div class="phone"><div class="scr">
@@ -70,7 +67,7 @@
       <div class="skip">Skip</div>
 
       <div class="hero">
-        <disco-ball id="ball"></disco-ball>
+        <div id="ball"></div>
         <div class="glowfloor"></div>
         <div class="heroscrim"></div>
         <div class="brand"><h2>Welcome to Mandos</h2><p>Discover Hong Kong's hottest clubs, exclusive passes, and real-time events — all in one app.</p></div>
@@ -90,29 +87,10 @@
       </div>
     </div></div>
 
-    <script type="module">
-      import './disco-ball.js?v=login1'
-
-      // full tuned config from the WebGL app + env-pulse so the photo tiles pulse to the beat, amber glow to brand it
-      const config = {
-        theme: 'dark', disco: true, speed: 0.34, size: 300, segments: 18, zoom: 0.82, clarity: 0.2, distortion: 0.93,
-        shininess: 1, specular: 0, keyX: -0.3, keyY: 3, keyZ: 3, keyStrength: 1.04, fillX: -2, fillY: 1, fillZ: 2, fillStrength: 0.5,
-        topX: -4, topY: -6, topZ: 1, topStrength: 1.37, rim1Strength: 0.5, rim1Sharpness: 0.41, rim1X: -2.98, rim1Y: 1,
-        rim2Strength: 0.4, rim2Sharpness: 0.5, rim2X: 0, rim2Y: -1, lightIntensity: 0.98, ambient: 0.2, tint: '#959595', tintStrength: 0.7,
-        sparkleCount: 9, sparkleSize: 0.85, sparkleStrength: 2, sparkleSpeed: 1,
-        showReflections: true, reflectionCount: 12, reflectionSize: 0.9, reflectionStrength: 0.95, reflectionSpread: 1.2, reflectionTint: 0,
-        targetX: -0.01, targetY: 0.16, webcam: false,
-        mosaic: true, photoRatio: 0.62, envPulse: 0.9, cycleSpeed: 0.3,
-        glowStrength: 0.4, glowSize: 0.42, glowColor: '#f5851f', showHelpers: false,
-      }
-      const kebab = (s) => s.replace(/([a-z0-9])([A-Z])/g, '$1-$2').toLowerCase()
-      const el = document.getElementById('ball')
-      customElements.whenDefined('disco-ball').then(() => {
-        for (const [k, v] of Object.entries(config)) {
-          const name = kebab(k)
-          if (typeof v === 'boolean') { if (v) el.setAttribute(name, ''); else el.removeAttribute(name) }
-          else el.setAttribute(name, v)
-        }
+    <script>
+      // load via animationData (NOT path) so the external image URLs on the tiles resolve correctly
+      fetch('./discoball-photos.json?v=' + Date.now()).then((r) => r.json()).then((data) => {
+        lottie.loadAnimation({ container: document.getElementById('ball'), renderer: 'svg', loop: true, autoplay: true, animationData: data })
       })
     </script>
   </body>

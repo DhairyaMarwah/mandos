@@ -1,0 +1,77 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Mandos — design pages</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700&display=swap" rel="stylesheet" />
+    <style>
+      * { margin: 0; padding: 0; box-sizing: border-box; }
+      :root { --accent: #f5851f; --gold: #ffb64a; color-scheme: dark; }
+      body { background: radial-gradient(120% 60% at 50% 0%, #17110c, #0d0c0e 60%); color: #e8e8ea; min-height: 100vh;
+        font-family: "Poppins", system-ui, -apple-system, sans-serif; padding: 48px 26px 90px; }
+      .wrap { max-width: 1060px; margin: 0 auto; }
+      .top { display: flex; align-items: center; gap: 14px; margin-bottom: 6px; }
+      .dot { width: 30px; height: 30px; border-radius: 9px; background: linear-gradient(140deg, var(--gold), var(--accent)); box-shadow: 0 6px 18px -4px rgba(245,133,31,.6); }
+      h1 { font-size: 23px; font-weight: 600; }
+      .sub { font-size: 13.5px; color: #8f8f98; margin: 4px 0 34px; }
+
+      h2 { font-size: 12px; font-weight: 600; letter-spacing: .16em; text-transform: uppercase; color: #7a7a83; margin: 34px 0 14px; }
+      .grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(300px, 1fr)); gap: 14px; }
+      a.card { display: block; text-decoration: none; color: inherit; border: 1px solid #24242b; background: #141418; border-radius: 15px; padding: 18px; transition: border-color .15s, transform .12s, background .15s; position: relative; }
+      a.card:hover { border-color: #46464f; transform: translateY(-2px); background: #17171c; }
+      .card .r { display: flex; align-items: center; justify-content: space-between; }
+      .card .nm { font-size: 15px; font-weight: 600; }
+      .card .badge { font-size: 9.5px; font-weight: 600; letter-spacing: .08em; text-transform: uppercase; color: var(--gold); background: rgba(245,133,31,.12); padding: 3px 8px; border-radius: 999px; }
+      .card .desc { font-size: 12px; color: #9a9aa2; margin-top: 7px; line-height: 1.5; }
+      .card .path { font-size: 11px; color: #6a6a72; margin-top: 10px; font-family: ui-monospace, "SF Mono", Menlo, monospace; }
+      .card .arrow { color: #6a6a72; transition: color .15s, transform .15s; }
+      a.card:hover .arrow { color: var(--gold); transform: translateX(3px); }
+    </style>
+  </head>
+  <body>
+    <div class="wrap">
+      <div class="top"><div class="dot"></div><h1>Mandos — design pages</h1></div>
+      <div class="sub">Every screen/prototype built so far. Click through to view each. Live under this deployment.</div>
+      <div id="root"></div>
+    </div>
+
+    <script>
+      const SECTIONS = [
+        ['Login', [
+          ['Disco ball (WebGL)', 'current', 'Spinning photo disco ball, flare removed, ember background, form on one constant bg — no card.', '/login/'],
+          ['Photo ball (Lottie)', '', 'Event photos matted onto the disco-ball tiles inside the Lottie itself; static + pulsing.', '/login/lottie.html'],
+          ['6 variations', '', 'Globe hero · cube wall · pulse grid · split · spotlight · glass-over-collage.', '/login/options.html'],
+        ]],
+        ['Profile — empty state', [
+          ['Spotlight', 'current', 'Stage-light fixture casts a warm cone onto the avatar — “You’re the highlight”, Add Banner.', '/profile/'],
+          ['5 options', '', 'Spotlight · Memories · Event collage · Marquee · Ticket stub.', '/profile/options.html'],
+          ['Vinyl (retired)', '', 'Earlier record-label concept — kept for reference.', '/profile/vinyl.html'],
+        ]],
+        ['Splash', [
+          ['Splash variations', '', 'Disco ball → Mandos pin over colour beds: Ember Deep family + teal / rose / violet.', '/splash/'],
+        ]],
+        ['Brand', [
+          ['App icon studio', '', 'The logo across colour + light treatments (Ember Deep set, glow, glass, border). PNG/SVG export.', '/app-icons/'],
+        ]],
+        ['Prototype', [
+          ['Reservation engine', '', 'The main Mandos prototype (bar + club booking).', '/index.html'],
+          ['Comparison', '', 'Side-by-side comparison view.', '/comparison.html'],
+        ]],
+      ]
+      const ARR = '<svg class="arrow" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 6l6 6-6 6"/></svg>'
+      const root = document.getElementById('root')
+      for (const [title, items] of SECTIONS) {
+        const h = document.createElement('h2'); h.textContent = title; root.appendChild(h)
+        const g = document.createElement('div'); g.className = 'grid'
+        for (const [nm, badge, desc, path] of items) {
+          const a = document.createElement('a'); a.className = 'card'; a.href = path; a.target = '_blank'; a.rel = 'noopener'
+          a.innerHTML = `<div class="r"><span class="nm">${nm}</span>${badge ? `<span class="badge">${badge}</span>` : ARR}</div><div class="desc">${desc}</div><div class="path">${path}</div>`
+          g.appendChild(a)
+        }
+        root.appendChild(g)
+      }
+    </script>
+  </body>
+</html>
