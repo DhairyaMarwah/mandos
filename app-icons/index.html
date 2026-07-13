@@ -1,0 +1,222 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Mandos — app icon variants</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600&display=swap" rel="stylesheet" />
+    <style>
+      * { margin: 0; padding: 0; box-sizing: border-box; }
+      :root { color-scheme: dark; }
+      body {
+        background: #0c0c0f; color: #e8e8ea; min-height: 100vh;
+        font-family: "Poppins", system-ui, -apple-system, sans-serif;
+        padding: 40px 32px 90px;
+      }
+      header { max-width: 1200px; margin: 0 auto 6px; }
+      h1 { font-size: 20px; font-weight: 600; }
+      .sub { font-size: 13px; color: #8a8a92; margin-top: 4px; }
+      .bar { max-width: 1200px; margin: 18px auto 22px; display: flex; gap: 10px; align-items: center; flex-wrap: wrap; }
+      .bar button { appearance: none; border: 1px solid #2a2a30; background: #17171b; color: #e8e8ea; font: inherit; font-size: 12.5px; padding: 8px 14px; border-radius: 9px; cursor: pointer; }
+      .bar button:hover { border-color: #46464f; }
+      .bar .seg { display: flex; background: #17171b; border: 1px solid #2a2a30; border-radius: 9px; overflow: hidden; }
+      .bar .seg button { border: 0; border-radius: 0; background: transparent; }
+      .bar .seg button.on { background: #2b2b33; }
+
+      .sec { max-width: 1200px; margin: 0 auto; }
+      .sec h2 { font-size: 12px; font-weight: 600; letter-spacing: .14em; text-transform: uppercase; color: #6f6f78; margin: 28px 0 16px; }
+      .grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(180px, 1fr)); gap: 28px; }
+      .card { text-align: center; }
+      .icon {
+        width: 100%; aspect-ratio: 1; border-radius: 22.5%; position: relative; overflow: hidden;
+        display: grid; place-items: center; cursor: pointer; transition: transform .12s ease;
+      }
+      .icon:hover { transform: translateY(-3px); }
+      .icon .glow { position: absolute; inset: 0; pointer-events: none; }
+      .icon svg { position: relative; z-index: 2; display: block; filter: drop-shadow(0 3px 8px rgba(0,0,0,.22)); }
+      /* gradient border ring */
+      .icon.bd::before {
+        content: ''; position: absolute; inset: 0; border-radius: inherit; padding: 1.7px; z-index: 3;
+        background: linear-gradient(180deg, var(--bt), var(--bb));
+        -webkit-mask: linear-gradient(#000 0 0) content-box, linear-gradient(#000 0 0);
+        -webkit-mask-composite: xor; mask-composite: exclude; pointer-events: none;
+      }
+      .name { margin-top: 11px; font-size: 12.5px; font-weight: 500; }
+      .dl { margin-top: 6px; display: flex; gap: 6px; justify-content: center; opacity: 0; transition: opacity .15s; }
+      .card:hover .dl { opacity: 1; }
+      .dl button { appearance: none; border: 1px solid #2a2a30; background: #17171b; color: #b8b8c0; font: inherit; font-size: 10.5px; letter-spacing: .04em; padding: 4px 9px; border-radius: 7px; cursor: pointer; }
+      .dl button:hover { color: #fff; border-color: #46464f; }
+    </style>
+  </head>
+  <body>
+    <header>
+      <h1>Mandos — app icon variants</h1>
+      <div class="sub">The real logo across colour + light treatments. Hover an icon → download PNG (1024) or SVG.</div>
+    </header>
+
+    <div class="bar">
+      <span style="font-size:12.5px;color:#8a8a92">Logo size</span>
+      <div class="seg" id="sizeSeg">
+        <button data-s="50">S</button><button data-s="56" class="on">M</button><button data-s="64">L</button>
+      </div>
+      <button id="dlAll">⬇ Download all PNGs</button>
+    </div>
+
+    <div id="sections"></div>
+
+    <script>
+      const rgba = (hex, a) => { const n = parseInt(hex.slice(1), 16); return `rgba(${n>>16&255},${n>>8&255},${n&255},${a})` }
+
+      // ── ORANGE with light effects (glow / inset / border / shadow) ──
+      const ORANGE_FX = [
+        { name: 'Cloudflare',  bg: { t:'g', a:150, s:[[0,'#ff7a1a'],[1,'#f04e17']] }, logo:'#fff', glow:{ at:[.5,1.12], color:'#ffe6b0', alpha:.95, size:.6 } },
+        { name: 'Marmalade',   bg: { t:'g', a:135, s:[[0,'#ffa52e'],[1,'#ff5722']] }, logo:'#fff', glow:{ at:[.5,1.14], color:'#fff2cf', alpha:.9, size:.52 }, bd:{ t:'rgba(255,255,255,.5)', b:'rgba(255,255,255,.04)' } },
+        { name: 'Sunrise',     bg: { t:'g', a:160, s:[[0,'#ff8a3d'],[1,'#ff5e2c']] }, logo:'#fff', glow:{ at:[.5,1.15], color:'#fff0c8', alpha:.9, size:.55 }, bd:{ t:'rgba(255,255,255,.55)', b:'rgba(255,255,255,.05)' } },
+        { name: 'Molten',      bg: { t:'g', a:140, s:[[0,'#ff7420'],[1,'#e8430f']] }, logo:'#fff', inner:.28, drop:1 },
+        { name: 'Glass',       bg: { t:'g', a:145, s:[[0,'#ff9036'],[1,'#f2601c']] }, logo:'#fff', inner:.34, bd:{ t:'rgba(255,255,255,.68)', b:'rgba(255,255,255,.06)' } },
+        { name: 'Amber Frost', bg: { t:'g', a:150, s:[[0,'#ff8f3a'],[1,'#ef5f1c']] }, logo:'#fff', inner:.42 },
+        { name: 'Halo',        bg: { t:'s', c:'#f2601c' },                            logo:'#fff', glow:{ at:[.5,.42], color:'#ffd59a', alpha:.6, size:.5 } },
+        { name: 'Solar',       bg: { t:'g', a:160, s:[[0,'#ff9e1f'],[1,'#ff6a00']] }, logo:'#fff', glow:{ at:[.5,.48], color:'#ffe08a', alpha:.45, size:.6 }, inner:.22 },
+        { name: 'Ember Deep',  bg: { t:'g', a:150, s:[[0,'#ff6a12'],[1,'#c9330a']] }, logo:'#fff', glow:{ at:[.5,1.15], color:'#ffbf6a', alpha:.85, size:.5 }, inner:.2 },
+        { name: 'Copper Sheen',bg: { t:'g', a:150, s:[[0,'#ff8a2e'],[1,'#d95a12']] }, logo:'#fff', bd:{ t:'rgba(255,244,224,.8)', b:'rgba(120,50,0,.28)' }, inner:.18 },
+        { name: 'Tangelo',     bg: { t:'g', a:145, s:[[0,'#ff7e29'],[1,'#f24d0e']] }, logo:'#fff', drop:1, inner:.16, glow:{ at:[.5,1.12], color:'#ffd08a', alpha:.7, size:.5 } },
+        { name: 'Peach',       bg: { t:'g', a:150, s:[[0,'#ffb27a'],[1,'#ff7a3c']] }, logo:'#fff', inner:.3, bd:{ t:'rgba(255,255,255,.6)', b:'rgba(255,255,255,.05)' } },
+      ]
+
+      // ── ORANGE solid / gradient (flat) ──
+      const ORANGE_FLAT = [
+        { name: 'Amber',     bg:{ t:'s', c:'#f5851f' },                          logo:'#fff' },
+        { name: 'Gold Rush', bg:{ t:'g', a:135, s:[[0,'#ff8008'],[1,'#ffc837']] }, logo:'#fff' },
+        { name: 'Ember',     bg:{ t:'g', a:140, s:[[0,'#ff6a00'],[1,'#ee0979']] }, logo:'#fff' },
+        { name: 'Amber Glow',bg:{ t:'s', c:'#0b0b0d' },                          logo:'#f5851f' },
+        { name: 'Neon Yellow',bg:{ t:'s', c:'#111014' },                        logo:'#ffd23e' },
+        { name: 'Honey',     bg:{ t:'g', a:160, s:[[0,'#f7971e'],[1,'#ffd200']] }, logo:'#3a2400' },
+      ]
+
+      // ── other colours ──
+      const OTHER = [
+        { name:'Grape', bg:{t:'g',a:135,s:[[0,'#7b2ff7'],[1,'#f107a3']]}, logo:'#fff' },
+        { name:'Magenta', bg:{t:'s',c:'#bb37bf'}, logo:'#fff' },
+        { name:'Neon Pink', bg:{t:'s',c:'#0b0b0d'}, logo:'#ff2fa0' },
+        { name:'Dusk', bg:{t:'g',a:135,s:[[0,'#6a11cb'],[1,'#f5851f']]}, logo:'#fff' },
+        { name:'Teal', bg:{t:'g',a:135,s:[[0,'#0f9b8e'],[1,'#16d0b0']]}, logo:'#fff' },
+        { name:'Vapor', bg:{t:'g',a:135,s:[[0,'#a044ff'],[1,'#ff6ec4']]}, logo:'#fff' },
+        { name:'Noir', bg:{t:'s',c:'#0b0b0d'}, logo:'#fff' },
+        { name:'Ivory', bg:{t:'s',c:'#f3f3f0'}, logo:'#141416' },
+        { name:'Steel', bg:{t:'g',a:140,s:[[0,'#20242c'],[1,'#0b0d11']]}, logo:'original' },
+        { name:'Iridescent', bg:{t:'g',a:130,s:[[0,'#12c2e9'],[.5,'#c471ed'],[1,'#f64f59']]}, logo:'#fff' },
+      ]
+
+      const SECTIONS = [
+        ['Orange · glow, glass & light', ORANGE_FX],
+        ['Orange · solid & gradient', ORANGE_FLAT],
+        ['Other colours', OTHER],
+      ]
+      const ALL = [...ORANGE_FX, ...ORANGE_FLAT, ...OTHER]
+
+      let LOGO = '', logoSize = 56
+      const bgCss = (bg) => bg.t === 's' ? bg.c : `linear-gradient(${bg.a}deg, ${bg.s.map(([p,c]) => `${c} ${p*100}%`).join(', ')})`
+      const glowCss = (g) => `radial-gradient(circle at ${g.at[0]*100}% ${g.at[1]*100}%, ${rgba(g.color, g.alpha)} 0%, ${rgba(g.color,0)} ${g.size*100}%)`
+
+      function coloredSvg(color) {
+        const svg = new DOMParser().parseFromString(LOGO, 'image/svg+xml').querySelector('svg')
+        if (color !== 'original') svg.querySelectorAll('path').forEach((p) => { p.setAttribute('fill', color); p.removeAttribute('stroke') })
+        return svg
+      }
+
+      function makeIcon(v) {
+        const icon = document.createElement('div'); icon.className = 'icon' + (v.bd ? ' bd' : '')
+        icon.style.background = bgCss(v.bg)
+        if (v.bd) { icon.style.setProperty('--bt', v.bd.t); icon.style.setProperty('--bb', v.bd.b) }
+        const sh = ['0 12px 30px -10px rgba(0,0,0,.55)']
+        if (v.inner) sh.push(`inset 0 0 34px ${rgba('#ffffff', v.inner)}`, `inset 0 2px 2px ${rgba('#ffffff', Math.min(1, v.inner*1.7))}`)
+        if (v.drop) sh.push('0 22px 46px -14px rgba(255,90,0,.5)', '0 6px 16px -4px rgba(0,0,0,.5)')
+        icon.style.boxShadow = sh.join(', ')
+        if (v.glow) { const g = document.createElement('div'); g.className = 'glow'; g.style.background = glowCss(v.glow); icon.appendChild(g) }
+        const svg = coloredSvg(v.logo); svg.style.width = svg.style.height = logoSize + '%'; icon.appendChild(svg)
+        return icon
+      }
+
+      function build() {
+        const root = document.getElementById('sections'); root.innerHTML = ''
+        for (const [title, vs] of SECTIONS) {
+          const sec = document.createElement('div'); sec.className = 'sec'
+          sec.innerHTML = `<h2>${title}</h2>`
+          const grid = document.createElement('div'); grid.className = 'grid'
+          vs.forEach((v) => {
+            const card = document.createElement('div'); card.className = 'card'
+            const dl = document.createElement('div'); dl.className = 'dl'
+            const png = document.createElement('button'); png.textContent = 'PNG'; png.onclick = () => downloadPng(v)
+            const svgb = document.createElement('button'); svgb.textContent = 'SVG'; svgb.onclick = () => downloadSvg(v)
+            dl.append(png, svgb)
+            const name = document.createElement('div'); name.className = 'name'; name.textContent = v.name
+            card.append(makeIcon(v), name, dl)
+            grid.appendChild(card)
+          })
+          sec.appendChild(grid); root.appendChild(sec)
+        }
+      }
+
+      // ── canvas render (bg → glow → logo → inner highlight → border) ──
+      function roundClip(ctx, size) { const r = size*0.225; ctx.beginPath(); ctx.moveTo(r,0); ctx.arcTo(size,0,size,size,r); ctx.arcTo(size,size,0,size,r); ctx.arcTo(0,size,0,0,r); ctx.arcTo(0,0,size,0,r); ctx.closePath() }
+      function paintBg(ctx, bg, size) {
+        if (bg.t === 's') ctx.fillStyle = bg.c
+        else { const rad=(bg.a-90)*Math.PI/180, cx=size/2, cy=size/2, hx=Math.cos(rad)*size/2, hy=Math.sin(rad)*size/2; const g=ctx.createLinearGradient(cx-hx,cy-hy,cx+hx,cy+hy); bg.s.forEach(([p,c])=>g.addColorStop(p,c)); ctx.fillStyle=g }
+        ctx.fillRect(0,0,size,size)
+      }
+      async function renderCanvas(v, size) {
+        const c = document.createElement('canvas'); c.width = c.height = size; const ctx = c.getContext('2d')
+        ctx.save(); roundClip(ctx, size); ctx.clip()
+        paintBg(ctx, v.bg, size)
+        if (v.glow) { const g = v.glow; const gr = ctx.createRadialGradient(g.at[0]*size, g.at[1]*size, 0, g.at[0]*size, g.at[1]*size, g.size*size); gr.addColorStop(0, rgba(g.color,g.alpha)); gr.addColorStop(1, rgba(g.color,0)); ctx.fillStyle=gr; ctx.fillRect(0,0,size,size) }
+        // logo
+        const svg = coloredSvg(v.logo); const s = new XMLSerializer().serializeToString(svg)
+        const img = new Image(); await new Promise((res)=>{ img.onload=res; img.src='data:image/svg+xml;base64,'+btoa(unescape(encodeURIComponent(s))) })
+        const vb = svg.getAttribute('viewBox').split(' ').map(Number); const sc=(size*(logoSize/100))/vb[3]; const w=vb[2]*sc, h=vb[3]*sc
+        ctx.drawImage(img, (size-w)/2, (size-h)/2, w, h)
+        // inner white glow (approx the inset shadow)
+        if (v.inner) { const gr=ctx.createRadialGradient(size/2,size/2,size*0.32,size/2,size/2,size*0.72); gr.addColorStop(0, rgba('#ffffff',0)); gr.addColorStop(1, rgba('#ffffff',v.inner)); ctx.fillStyle=gr; ctx.fillRect(0,0,size,size)
+          ctx.fillStyle=rgba('#ffffff', Math.min(1,v.inner*1.4)); ctx.fillRect(0,0,size,size*0.02) }
+        ctx.restore()
+        // border ring
+        if (v.bd) { ctx.save(); roundClip(ctx,size); ctx.lineWidth=size*0.007; const bg2=ctx.createLinearGradient(0,0,0,size); bg2.addColorStop(0,v.bd.t); bg2.addColorStop(1,v.bd.b); ctx.strokeStyle=bg2; ctx.stroke(); ctx.restore() }
+        return c
+      }
+      const save = (blob, name) => { const a=document.createElement('a'); a.href=URL.createObjectURL(blob); a.download=name; a.click() }
+      const fn = (v) => `mandos-icon-${v.name.toLowerCase().replace(/ /g,'-')}`
+      async function downloadPng(v) { const c = await renderCanvas(v, 1024); c.toBlob((b)=>save(b, fn(v)+'.png')) }
+      function downloadSvg(v) {
+        const svg = coloredSvg(v.logo); const inner = new XMLSerializer().serializeToString(svg).replace(/^[\s\S]*?<svg[^>]*>/,'').replace(/<\/svg>\s*$/,'')
+        const bgFill = v.bg.t==='s' ? v.bg.c : 'url(#bg)'
+        const defs = v.bg.t==='s' ? '' : `<defs><linearGradient id="bg" gradientTransform="rotate(${v.bg.a-90} .5 .5)">${v.bg.s.map(([p,c])=>`<stop offset="${p}" stop-color="${c}"/>`).join('')}</linearGradient></defs>`
+        const full = `<svg xmlns="http://www.w3.org/2000/svg" width="1024" height="1024" viewBox="0 0 1024 1024">${defs}<rect width="1024" height="1024" rx="230" fill="${bgFill}"/><g transform="translate(512,512) scale(${1024*(logoSize/100)/151}) translate(-57,-75.5)">${inner}</g></svg>`
+        save(new Blob([full],{type:'image/svg+xml'}), fn(v)+'.svg')
+      }
+
+      document.getElementById('dlAll').onclick = async () => { for (const v of ALL) { await downloadPng(v); await new Promise((r)=>setTimeout(r,320)) } }
+      document.getElementById('sizeSeg').onclick = (e) => { const b=e.target.closest('button'); if(!b)return; document.querySelectorAll('#sizeSeg button').forEach(x=>x.classList.remove('on')); b.classList.add('on'); logoSize=+b.dataset.s; build() }
+
+      // ── logo inlined so the page is self-contained (works from file:// with no server; PNG export needs no fetch) ──
+      LOGO = `<svg width="114" height="151" viewBox="0 0 114 151" fill="none" xmlns="http://www.w3.org/2000/svg">
+<path d="M54.3966 50.4294C53.8313 49.7945 53.0677 49.9819 52.3805 50.0006C49.3261 50.0837 46.2705 50.3393 43.2201 50.2813C41.1238 50.2414 40.4172 51.2335 40.3996 53.0711C40.3659 56.5837 40.3793 60.0967 40.3344 63.6091C40.317 64.9713 41.0263 65.4339 42.2679 65.4666C45.5173 65.5521 48.7682 65.6257 52.0139 65.7927C53.9092 65.8902 54.5756 64.9882 54.56 63.2278C54.5232 59.0656 54.5331 54.903 54.3966 50.4294ZM69.6745 65.473C71.567 65.6299 72.3799 64.8265 72.3151 62.8678C72.197 59.298 72.2118 55.7228 72.2226 52.15C72.2261 50.9656 71.8644 50.3601 70.5622 50.3372C67.1219 50.2769 63.6816 50.1567 60.2447 49.9891C58.7181 49.9147 58.166 50.5332 58.1915 52.0365C58.2587 55.9986 58.2726 59.963 58.2171 63.9252C58.1966 65.3789 58.7556 65.9007 60.173 65.8283C63.2204 65.6726 66.2719 65.5972 69.6745 65.473ZM41.1338 75.7929C41.3735 77.3983 41.642 79.0001 41.8417 80.6105C41.9501 81.4852 42.4079 81.7835 43.2418 81.8992C46.477 82.3482 49.7298 82.2796 52.9794 82.326C54.003 82.3406 54.5684 81.8633 54.5677 80.803C54.5657 77.5502 54.563 74.2975 54.5619 71.0447C54.5615 70.1342 54.2142 69.5541 53.2079 69.5196C49.5691 69.3949 45.9306 69.2633 42.2926 69.1199C41.1087 69.0733 40.6282 69.64 40.7272 70.783C40.8616 72.3351 40.9894 73.8878 41.1338 75.7929ZM59.0289 34.7248C58.3396 34.9518 58.2211 35.531 58.2198 36.1318C58.2138 39.0592 58.2301 41.9866 58.2367 44.914C58.2392 46.0307 58.9064 46.3177 59.892 46.3412C63.2069 46.4201 66.5226 46.5005 69.8343 46.6564C71.423 46.7311 71.9652 46.0141 71.7666 44.5443C71.4099 41.9046 71.0077 39.2701 70.705 36.6243C70.5734 35.474 69.9752 35.1473 68.9181 35.0245C65.7426 34.6555 62.5594 34.6523 59.0289 34.7248ZM51.7025 85.9248C49.4309 85.804 47.1578 85.7067 44.8883 85.554C43.3984 85.4538 42.8319 86.0226 43.2313 87.512C44.1772 91.0395 45.3174 94.4986 47.2033 97.644C48.4489 99.7215 49.9494 101.611 52.3028 102.575C54.0669 103.297 54.553 103.016 54.5717 101.126C54.6135 96.8999 54.5072 92.6701 54.6494 88.4481C54.7171 86.4387 53.9846 85.6877 51.7025 85.9248ZM58.1845 89.9884C58.1807 91.2267 58.1924 92.4653 58.1697 93.7032C58.1317 95.7867 58.041 97.8697 58.0346 99.9531C58.0315 100.961 57.7633 102.247 58.8114 102.779C59.8214 103.291 60.817 102.498 61.6512 101.887C62.3807 101.352 63.0775 100.739 63.6696 100.057C66.7932 96.458 68.2329 92.0658 69.4136 87.5702C69.7926 86.127 69.098 85.5011 67.6477 85.5763C65.0458 85.7112 62.4433 85.8407 59.8396 85.9282C58.6773 85.9673 58.2087 86.5699 58.1958 87.6527C58.188 88.3042 58.1868 88.9558 58.1845 89.9884ZM31.0177 68.3713C29.855 68.2694 28.6897 68.1909 27.5303 68.06C26.0303 67.8905 25.29 68.4421 25.5124 70.029C25.918 72.9232 26.5292 75.768 27.3806 78.5676C27.6684 79.5139 28.2322 79.9931 29.1419 80.1216C31.5794 80.4659 34.02 80.7888 36.4603 81.1128C37.9127 81.3056 38.2988 80.5555 38.1077 79.2601C37.8619 77.5944 37.6389 75.9251 37.4215 74.2554C36.5717 67.7284 38.4027 69.0766 31.0177 68.3713ZM75.5231 71.3349C75.2543 73.9878 75.0048 76.6429 74.7087 79.2927C74.556 80.6597 75.1182 81.2394 76.4735 81.1313C78.9434 80.9341 81.3828 80.5563 83.7951 79.9871C84.4904 79.8231 84.9722 79.4871 85.1813 78.7818C86.0139 75.9729 86.7629 73.1502 87.0763 70.2219C87.2328 68.76 86.6393 68.1363 85.2219 68.237C82.7561 68.4122 80.2806 68.3323 77.8163 68.664C76.3342 68.8635 75.5281 69.4624 75.5231 71.3349ZM43.5489 29.5126C43.2696 30.7887 43.9692 31.1419 45.065 31.1173C47.6635 31.0592 50.2623 31.0108 52.8603 30.9344C53.777 30.9074 54.5586 30.6421 54.5619 29.5062C54.5744 25.2823 54.5783 21.0583 54.5909 16.8344C54.5941 15.7529 54.0521 15.4859 53.0758 15.7372C51.7179 16.0868 50.5754 16.7715 49.5713 17.7475C46.3154 20.9123 44.9678 25.0559 43.5489 29.5126ZM58.22 24.6557C58.2198 26.2185 58.2093 27.7813 58.2241 29.3439C58.2304 30.0029 58.2502 30.8289 59.0924 30.8609C62.4379 30.9877 65.7913 31.2948 69.133 30.956C69.0354 24.0506 63.272 15.8857 58.429 15.8041C57.6218 18.5898 58.5077 21.4535 58.22 24.6557ZM38.4479 36.7548C38.6109 35.5987 37.9026 35.4095 37.0165 35.5334C34.4457 35.8929 31.8799 36.2892 29.3121 36.6702C28.84 36.7402 28.3901 36.9038 28.2091 37.3673C26.9148 40.6804 25.9737 44.0725 25.776 47.8745C29.3075 47.5594 32.5968 47.2994 35.8773 46.9559C37.1062 46.8271 37.2761 45.8277 37.3953 44.7908C37.6917 42.2124 38.0557 39.6418 38.4479 36.7548ZM86.4347 43.7397C85.9236 41.9275 85.3912 40.1211 84.91 38.3011C84.6481 37.3106 84.1246 36.7671 83.0517 36.6273C80.8645 36.3423 78.6974 35.9053 76.5116 35.6065C74.533 35.3361 74.1654 35.7376 74.4304 37.6917C74.7792 40.2634 75.201 42.8271 75.4703 45.4069C75.589 46.5449 76.0446 47.001 77.1618 47.0525C79.2374 47.1481 81.3098 47.3224 83.382 47.4831C87.0873 47.7705 87.0868 47.7765 86.4347 43.7397ZM39.8768 98.139C41.3343 98.9991 42.6109 100.23 44.8214 100.574C42.071 95.7882 40.4271 90.9655 39.2891 85.9615C39.1598 85.393 38.7311 85.0357 38.2043 84.9586C35.3436 84.5401 32.4761 84.1681 29.2714 83.7341C31.584 89.6618 34.9258 94.3168 39.8768 98.139ZM77.1722 94.051C79.7068 91.0713 81.8057 87.8402 83.28 83.7716C80.4836 84.1418 78.0592 84.5654 75.6169 84.7469C74.187 84.8531 73.5504 85.4541 73.2364 86.7876C72.2484 90.9826 70.9488 95.073 68.8523 98.8717C68.6433 99.2504 68.3588 99.6893 69.0572 100.212C72.1635 98.9441 74.6505 96.7074 77.1722 94.051ZM12.1785 62.4327C14.5423 63.5004 17.1235 63.3735 19.6104 63.7421C20.7242 63.9072 21.3868 63.0921 21.2551 62.0563C20.9074 59.3207 21.3097 56.611 21.3668 53.8917C21.3948 52.5589 20.7822 52.1339 19.5823 52.3024C17.6569 52.5727 15.7367 52.8811 13.8102 53.1426C12.59 53.3083 11.9565 53.9925 11.8926 55.1966C11.7692 57.5249 11.5722 59.8557 12.1785 62.4327ZM91.5345 61.2781C91.645 63.7259 91.8813 63.9165 94.343 63.5997C94.923 63.525 95.5195 63.5498 96.0906 63.438C101.278 62.4224 100.918 63.4968 100.825 57.8382C100.809 56.8634 100.745 55.8883 100.672 54.9157C100.606 54.0347 100.133 53.4522 99.2504 53.2981C97.2675 52.9521 95.2821 52.6188 93.2923 52.3155C91.946 52.1103 91.3947 52.7386 91.4393 54.0866C91.5146 56.3616 91.5108 58.6392 91.5345 61.2781ZM19.1531 67.2282C17.6147 67.0172 16.0753 66.8135 14.5382 66.5933C12.7383 66.3354 12.3039 66.6975 12.6873 68.39C13.2165 70.7268 13.871 73.0346 14.8237 75.2438C15.0546 75.7792 15.237 76.4238 15.7966 76.6538C18.2818 77.6755 20.8189 78.5288 23.6761 78.8705C23.1296 75.6476 22.1809 72.7986 22.0017 69.8162C21.9055 68.2134 21.1272 67.3171 19.1531 67.2282ZM89.1896 77.9094C89.1277 79.1073 89.9919 78.7515 90.5311 78.606C92.4786 78.0804 94.4042 77.4727 96.3331 76.8796C96.8368 76.7246 97.3372 76.4932 97.5545 75.9752C98.8078 72.987 99.8867 69.9503 100.192 66.339C97.2614 66.7768 94.5838 67.1634 91.9114 67.5836C91.0206 67.7237 90.8739 68.4425 90.7928 69.1939C90.485 72.0471 89.8617 74.8425 89.1896 77.9094ZM38.4981 21.3595C34.963 24.3842 32.1635 27.9377 30.1438 32.7165C32.9658 32.3901 35.3154 32.0336 37.6782 31.8776C39.0431 31.7874 39.5714 31.1615 39.8704 29.9157C40.7979 26.0519 42.0767 22.313 44.2312 18.9289C44.4013 18.6618 44.6008 18.384 44.1883 17.8456C42.159 18.5438 40.4068 19.8146 38.4981 21.3595ZM73.0576 30.5722C73.2148 31.1498 73.3864 31.6907 74.126 31.7782C76.8654 32.1021 79.6026 32.4453 82.7069 32.8261C79.484 26.0787 75.2486 20.884 68.4191 18.1355C70.3096 22.0792 72.0207 26.0336 73.0576 30.5722ZM18.145 39.3319C17.4553 39.5224 16.6308 39.6122 16.2676 40.2668C14.6949 43.1008 13.6851 46.1396 12.8597 49.5603C15.807 49.3805 18.3314 48.8052 20.8691 48.3371C21.3419 48.2499 21.7578 47.9952 21.8684 47.5078C22.579 44.3763 23.2638 41.2389 23.9908 37.9509C21.8428 38.0232 20.1586 38.7196 18.145 39.3319ZM90.5635 38.1997C90.0191 38.1141 89.452 37.6854 88.8285 38.4518C89.4544 41.3114 90.1064 44.2862 90.7562 47.2615C90.9389 48.0977 91.5725 48.4078 92.3105 48.5328C93.9783 48.8155 95.6468 49.1097 97.326 49.3043C98.6276 49.4551 99.3269 48.8066 99.159 47.4627C99.0791 46.8239 98.8074 46.2116 98.6705 45.5769C97.7551 41.3317 95.4445 38.5855 90.5635 38.1997ZM32.0563 95.6255C29.4934 91.9198 27.188 88.0719 25.5402 83.8591C25.3184 83.292 24.9791 82.8117 24.3519 82.6574C22.25 82.1403 20.1439 81.6403 17.6492 81.0398C21.2333 87.2491 25.7073 92.0414 31.3839 95.7149C31.5851 95.8451 31.8126 96.0497 32.0563 95.6255ZM82.4087 94.9458C87.464 91.2966 91.6653 86.8803 95.0374 80.9617C92.3959 81.6645 90.2264 82.2329 88.0631 82.8241C87.5836 82.9551 87.3736 83.3747 87.1929 83.8083C85.4153 88.0727 83.2706 92.1332 80.0534 96.2348C81.0992 95.6882 81.65 95.4003 82.4087 94.9458ZM22.3583 30.6379C21.3414 32.0336 20.0806 33.2679 19.2969 35.1928C21.0229 34.7906 22.4964 34.3771 23.9966 34.1197C25.2082 33.9118 25.9145 33.3208 26.4241 32.1917C27.7319 29.2938 29.2702 26.5157 31.2072 23.9742C31.4428 23.665 31.9127 23.3482 31.4922 22.7522C27.9267 24.6567 25.2168 27.5247 22.3583 30.6379ZM82.2812 23.3409C81.7544 23.0327 81.2276 22.7245 80.7008 22.4164C82.2422 25.2817 84.1875 27.8054 85.556 30.6759C87.0733 33.8585 89.2538 35.0482 93.0622 34.5807C90.3425 30.0241 86.6475 26.5457 82.2812 23.3409Z" fill="url(#paint0_linear_19984_11472)"/>
+<g filter="url(#filter0_f_19984_11472)"><g clip-path="url(#clip0_19984_11472)"><path d="M71.9112 56.1053C72.0732 56.1053 72.2045 55.9871 72.2307 55.812C72.6073 52.8964 73.0187 52.4805 75.8687 52.1653C76.0482 52.1478 76.1751 52.0165 76.1751 51.8458C76.1751 51.675 76.0482 51.5437 75.8687 51.5218C73.0187 51.211 72.6073 50.7951 72.2307 47.8751C72.2045 47.7 72.0732 47.5862 71.9112 47.5862C71.7492 47.5862 71.6179 47.7 71.5916 47.8751C71.2151 50.7951 70.8036 51.211 67.9537 51.5218C67.7742 51.5437 67.6472 51.675 67.6472 51.8458C67.6472 52.0165 67.7742 52.1478 67.9537 52.1653C70.8036 52.5418 71.1888 52.9008 71.5916 55.812C71.6179 55.9871 71.7492 56.1053 71.9112 56.1053Z" fill="white"/></g></g>
+<g filter="url(#filter1_f_19984_11472)"><g clip-path="url(#clip1_19984_11472)"><path d="M39.9312 41.0421C40.0932 41.0421 40.2245 40.9239 40.2508 40.7488C40.6273 37.8332 41.0388 37.4173 43.8887 37.1021C44.0682 37.0846 44.1951 36.9533 44.1951 36.7825C44.1951 36.6118 44.0682 36.4805 43.8887 36.4586C41.0388 36.1477 40.6273 35.7319 40.2508 32.8119C40.2245 32.6368 40.0932 32.5229 39.9312 32.5229C39.7692 32.5229 39.6379 32.6368 39.6116 32.8119C39.2351 35.7319 38.8236 36.1477 35.9737 36.4586C35.7942 36.4805 35.6672 36.6118 35.6672 36.7825C35.6672 36.9533 35.7942 37.0846 35.9737 37.1021C38.8236 37.4786 39.2089 37.8376 39.6116 40.7488C39.6379 40.9239 39.7692 41.0421 39.9312 41.0421Z" fill="white"/></g></g>
+<g filter="url(#filter2_f_19984_11472)"><g clip-path="url(#clip2_19984_11472)"><path d="M54.6257 75.6571C54.7876 75.6571 54.919 75.5389 54.9452 75.3638C55.3217 72.4482 55.7332 72.0323 58.5831 71.7171C58.7626 71.6996 58.8896 71.5682 58.8896 71.3975C58.8896 71.2268 58.7626 71.0954 58.5831 71.0736C55.7332 70.7627 55.3217 70.3468 54.9452 67.4269C54.919 67.2518 54.7876 67.1379 54.6257 67.1379C54.4637 67.1379 54.3323 67.2518 54.3061 67.4269C53.9296 70.3468 53.5181 70.7627 50.6681 71.0736C50.4886 71.0954 50.3617 71.2268 50.3617 71.3975C50.3617 71.5682 50.4886 71.6996 50.6681 71.7171C53.5181 72.0936 53.9033 72.4526 54.3061 75.3638C54.3323 75.5389 54.4637 75.6571 54.6257 75.6571Z" fill="white"/></g></g>
+<path d="M49.2754 1.47266C60.8874 -0.150979 71.9033 1.83018 82.3252 7.18262C87.2339 9.70363 91.6554 12.9274 95.6221 16.8662V16.8672C105.362 26.6668 110.811 38.4054 112.156 52.0791C113.076 61.4331 111.309 70.4007 107.908 79.1562C104.894 86.917 100.606 94.0098 96.0078 101C90.4923 109.385 84.4487 117.399 78.0947 125.176C71.4447 133.315 64.5907 141.278 57.7998 149.33C57.3273 149.89 56.8699 150.074 56.5098 150.078C56.1513 150.082 55.6957 149.91 55.2197 149.362C48.265 141.355 41.3215 133.337 34.3779 125.319C34.1346 125.038 34.1068 124.89 34.1045 124.851C34.1276 124.817 34.2345 124.692 34.6191 124.564C40.3698 122.654 46.218 120.84 51.959 118.788C59.9329 115.938 67.7068 112.56 75.1055 108.368C84.4223 103.089 92.4823 96.2794 98.2422 87.0762C105.631 75.2704 107.955 62.3972 105.123 48.7412C103.023 38.613 98.409 29.7196 90.7812 22.5615C83.4595 15.6907 74.8327 11.278 64.8604 9.6748C52.7212 7.72333 41.3433 9.99349 30.8633 16.3643C21.8396 21.8497 15.1367 29.482 10.6211 39.0166C5.667 49.4772 4.43318 60.4506 5.73633 71.7949C6.20845 75.9048 7.00515 79.9344 7.92188 83.9219C4.98461 78.296 2.85047 72.39 1.73828 66.1279C0.210013 57.5227 0.844581 49.0588 3.49316 40.7334C7.10942 29.3666 13.582 19.9597 22.9424 12.583C30.6834 6.48256 39.513 2.83769 49.2754 1.47266Z" fill="url(#paint1_linear_19984_11472)" stroke="url(#paint2_linear_19984_11472)" stroke-width="1.84297"/>
+<defs>
+<filter id="filter0_f_19984_11472" x="67.0656" y="46.9917" width="9.87693" height="9.71042" filterUnits="userSpaceOnUse" color-interpolation-filters="sRGB"><feFlood flood-opacity="0" result="BackgroundImageFix"/><feBlend mode="normal" in="SourceGraphic" in2="BackgroundImageFix" result="shape"/><feGaussianBlur stdDeviation="0.296746" result="effect1_foregroundBlur_19984_11472"/></filter>
+<filter id="filter1_f_19984_11472" x="35.0757" y="31.9334" width="9.87693" height="9.71042" filterUnits="userSpaceOnUse" color-interpolation-filters="sRGB"><feFlood flood-opacity="0" result="BackgroundImageFix"/><feBlend mode="normal" in="SourceGraphic" in2="BackgroundImageFix" result="shape"/><feGaussianBlur stdDeviation="0.296746" result="effect1_foregroundBlur_19984_11472"/></filter>
+<filter id="filter2_f_19984_11472" x="49.7882" y="66.5481" width="9.87693" height="9.71042" filterUnits="userSpaceOnUse" color-interpolation-filters="sRGB"><feFlood flood-opacity="0" result="BackgroundImageFix"/><feBlend mode="normal" in="SourceGraphic" in2="BackgroundImageFix" result="shape"/><feGaussianBlur stdDeviation="0.296746" result="effect1_foregroundBlur_19984_11472"/></filter>
+<linearGradient id="paint0_linear_19984_11472" x1="56.314" y1="4.42725" x2="56.314" y2="102.944" gradientUnits="userSpaceOnUse"><stop stop-color="white"/><stop offset="1" stop-color="white"/></linearGradient>
+<linearGradient id="paint1_linear_19984_11472" x1="56.6599" y1="0" x2="56.6599" y2="151" gradientUnits="userSpaceOnUse"><stop offset="0.760008" stop-color="white"/><stop offset="1" stop-color="#ADADAD"/></linearGradient>
+<linearGradient id="paint2_linear_19984_11472" x1="22.2246" y1="6.40779" x2="84.7001" y2="129.331" gradientUnits="userSpaceOnUse"><stop offset="0.0673654" stop-color="white" stop-opacity="0.71"/><stop offset="0.103288" stop-color="white" stop-opacity="0"/></linearGradient>
+<clipPath id="clip0_19984_11472"><rect width="8.6899" height="8.52355" fill="white" transform="translate(67.6591 47.5852)"/></clipPath>
+<clipPath id="clip1_19984_11472"><rect width="8.6899" height="8.52355" fill="white" transform="translate(35.6692 32.5269)"/></clipPath>
+<clipPath id="clip2_19984_11472"><rect width="8.6899" height="8.52355" fill="white" transform="translate(50.3817 67.1416)"/></clipPath>
+</defs>
+</svg>`
+      build()
+    </script>
+  </body>
+</html>
