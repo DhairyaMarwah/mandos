@@ -1,0 +1,187 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Mandos — login variations</title>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/lottie-web/5.12.2/lottie.min.js"></script>
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700&display=swap" rel="stylesheet" />
+    <style>
+      * { margin: 0; padding: 0; box-sizing: border-box; }
+      :root { --accent: #f5851f; --gold: #ffb64a; --bg: #0e0d0d; color-scheme: dark; }
+      body { background: #101012; color: #e8e8ea; font-family: "Poppins", system-ui, -apple-system, sans-serif; padding: 34px 28px 70px; }
+      header { max-width: 1560px; margin: 0 auto; }
+      h1 { font-size: 20px; font-weight: 600; }
+      .subh { font-size: 13px; color: #8f8f98; margin-top: 4px; max-width: 680px; line-height: 1.55; }
+      .row { max-width: 1560px; margin: 34px auto 0; display: flex; flex-wrap: wrap; gap: 48px 40px; justify-content: center; align-items: flex-start; }
+      .item { width: 330px; }
+      .cap { margin: 0 0 12px 4px; }
+      .cap b { font-size: 14px; font-weight: 600; }
+      .cap span { display: block; font-size: 11.5px; color: #8f8f98; margin-top: 3px; line-height: 1.5; }
+
+      .phone { width: 100%; aspect-ratio: 428/928; position: relative; border-radius: 48px; padding: 4px;
+        background: linear-gradient(140deg,#6f6f77,#25252a 16%,#3b3b42 38%,#141416 62%,#4c4c56 84%,#1c1c20);
+        box-shadow: 0 26px 64px -18px rgba(0,0,0,.78), inset 0 1px 1px rgba(255,255,255,.14); }
+      .scr { position: absolute; inset: 4px; border-radius: 44px; overflow: hidden; background: var(--bg); }
+      .stat { position: absolute; top: 0; left: 0; right: 0; height: 34px; display: flex; align-items: center; justify-content: space-between; padding: 9px 22px 0; font-size: 12px; font-weight: 600; color: #fff; z-index: 40; }
+      .isl { position: absolute; top: 9px; left: 50%; transform: translateX(-50%); width: 84px; height: 22px; background: #000; border-radius: 14px; z-index: 45; }
+      .skip { position: absolute; top: 42px; right: 20px; z-index: 30; font-size: 14px; font-weight: 500; color: #fff; background: rgba(0,0,0,.28); padding: 5px 13px; border-radius: 999px; backdrop-filter: blur(6px); }
+
+      /* hero shell */
+      .hero { position: absolute; left: 0; right: 0; top: 0; height: 62%; overflow: hidden; z-index: 1; }
+      .brand { position: absolute; left: 0; right: 0; bottom: 22px; z-index: 8; text-align: center; padding: 0 26px; }
+      .brand .logo { width: 40px; margin: 0 auto 12px; display: block; filter: drop-shadow(0 3px 10px rgba(0,0,0,.5)); }
+      .brand h2 { font-size: 25px; font-weight: 600; }
+      .brand p { font-size: 12.5px; color: #c2c2c8; margin-top: 7px; line-height: 1.5; }
+
+      /* login sheet */
+      .sheet { position: absolute; left: 0; right: 0; bottom: 0; z-index: 20; background: #161619; border-radius: 28px 28px 0 0; padding: 22px 20px 16px; box-shadow: 0 -22px 46px rgba(0,0,0,.55); }
+      .sheet.glass { background: rgba(20,20,23,.72); backdrop-filter: blur(22px); border-top: 1px solid rgba(255,255,255,.08); }
+      .s-title { text-align: center; font-size: 18px; font-weight: 600; margin-bottom: 16px; }
+      .frow { display: flex; gap: 9px; margin-bottom: 12px; }
+      .cc { display: flex; align-items: center; gap: 7px; padding: 0 13px; height: 48px; border-radius: 12px; border: 1px solid rgba(255,255,255,.12); background: rgba(255,255,255,.03); font-size: 14px; font-weight: 500; }
+      .cc svg { width: 12px; height: 12px; color: #9a9aa2; }
+      .minput { flex: 1; height: 48px; border-radius: 12px; border: 1px solid rgba(255,255,255,.12); background: rgba(255,255,255,.03); display: flex; align-items: center; padding: 0 15px; color: #78787f; font-size: 14px; }
+      .continue { width: 100%; height: 50px; border-radius: 12px; border: 0; font: inherit; font-size: 14.5px; font-weight: 600; color: #1c1206; cursor: pointer; margin-bottom: 12px;
+        background: linear-gradient(120deg, var(--gold), var(--accent)); box-shadow: 0 12px 26px -8px rgba(245,133,31,.55); }
+      .terms { font-size: 10.5px; color: #8a8a92; line-height: 1.55; margin-bottom: 14px; }
+      .terms a { color: var(--accent); }
+      .ordiv { display: flex; align-items: center; gap: 12px; color: #77777f; font-size: 12px; margin-bottom: 14px; }
+      .ordiv::before, .ordiv::after { content: ""; flex: 1; height: 1px; background: rgba(255,255,255,.1); }
+      .social { display: flex; gap: 14px; justify-content: center; margin-bottom: 10px; }
+      .soc { width: 48px; height: 48px; border-radius: 50%; border: 1px solid rgba(255,255,255,.14); display: grid; place-items: center; background: rgba(255,255,255,.02); }
+      .soc svg, .soc img { width: 21px; height: 21px; }
+      .ver { text-align: center; font-size: 10.5px; color: #66666e; }
+
+      /* globe hero */
+      .h-globe { background: radial-gradient(circle at 50% 32%, #1c1712, var(--bg) 60%); }
+      .h-globe .floor { position: absolute; left: 50%; bottom: -60px; width: 380px; height: 240px; transform: translateX(-50%); background: radial-gradient(ellipse 50% 52% at 50% 50%, rgba(245,133,31,.32), transparent 68%); filter: blur(8px); }
+      .lot { position: absolute; left: 50%; top: 40%; transform: translate(-50%,-50%); width: 74%; aspect-ratio: 1; z-index: 4; }
+
+      /* cube wall (scrolling) */
+      .h-wall { background: #0b0b0c; }
+      .cols { position: absolute; inset: -30px 0 -30px; display: flex; gap: 6px; padding: 0 6px; z-index: 1; }
+      .col { flex: 1; display: flex; flex-direction: column; gap: 6px; animation: scrollUp 26s linear infinite; }
+      .col.b { animation-duration: 34s; animation-direction: reverse; }
+      .col.c { animation-duration: 30s; }
+      @keyframes scrollUp { from { transform: translateY(0); } to { transform: translateY(-50%); } }
+      .cube { width: 100%; aspect-ratio: 1; border-radius: 12px; overflow: hidden; flex: 0 0 auto; background: linear-gradient(135deg,#3a2214,#180f0b); }
+      .cube img { width: 100%; height: 100%; object-fit: cover; }
+      .scrim { position: absolute; inset: 0; z-index: 5; background: linear-gradient(180deg, rgba(11,11,12,.5) 0%, rgba(11,11,12,.2) 34%, rgba(14,13,13,.78) 78%, var(--bg) 100%); }
+      .scrim.soft { background: linear-gradient(180deg, rgba(11,11,12,.35), rgba(14,13,13,.7) 74%, var(--bg)); }
+
+      /* pulse grid */
+      .h-pulse { background: #0b0b0c; }
+      .pgrid { position: absolute; inset: 0; display: grid; grid-template-columns: repeat(4, 1fr); grid-auto-rows: 1fr; gap: 5px; padding: 5px; z-index: 1; }
+      .pc { border-radius: 9px; overflow: hidden; position: relative; background: #180f0b; animation: pulse 3.4s ease-in-out infinite; }
+      .pc img { width: 100%; height: 100%; object-fit: cover; }
+      @keyframes pulse { 0%,100% { filter: brightness(.4) saturate(.8); } 50% { filter: brightness(1.05) saturate(1.2); } }
+
+      /* split */
+      .h-split { height: 50%; background: radial-gradient(120% 90% at 50% 20%, #221812, #0e0d0d 66%); }
+      .h-split .floor { position: absolute; left: 50%; bottom: -30px; width: 360px; height: 200px; transform: translateX(-50%); background: radial-gradient(ellipse 50% 50% at 50% 50%, rgba(245,133,31,.28), transparent 66%); filter: blur(8px); }
+
+      /* spotlight */
+      .h-spot { background: radial-gradient(120% 60% at 50% 4%, #1a1613, #0e0d0d 60%); }
+      .lamp { position: absolute; left: 50%; top: -2px; width: 58px; height: 70px; transform: translateX(-50%); z-index: 5; border-radius: 4px 4px 15px 15px;
+        background: linear-gradient(180deg,#202024,#0c0b0b 52%,#34230f); box-shadow: 0 10px 20px rgba(0,0,0,.6), inset 0 -12px 16px rgba(0,0,0,.6), inset 0 2px 0 rgba(255,255,255,.08); }
+      .lamp .lens { position: absolute; left: 50%; bottom: -4px; transform: translateX(-50%); width: 42px; height: 15px; border-radius: 50%; background: radial-gradient(ellipse at 50% 36%, #fff0d6, #ffb057 50%, #a8500e); box-shadow: 0 0 30px 10px rgba(255,180,92,.8), 0 0 60px 22px rgba(255,150,70,.3); }
+      .cone { position: absolute; left: 50%; top: 58px; transform: translateX(-50%); z-index: 1; pointer-events: none; mix-blend-mode: screen; filter: blur(12px);
+        width: 420px; height: 460px; clip-path: polygon(47.6% 0, 52.4% 0, 86% 100%, 14% 100%);
+        background: linear-gradient(180deg, rgba(255,201,133,.4), rgba(255,170,90,.16) 32%, transparent 78%); }
+
+      /* full collage */
+      .h-coll { height: 100%; background: #0b0b0c; }
+      .h-coll .cgrid { position: absolute; inset: 0; display: grid; grid-template-columns: repeat(3, 1fr); grid-auto-rows: 1fr; gap: 4px; z-index: 1; }
+      .h-coll .cgrid div { overflow: hidden; background: #180f0b; }
+      .h-coll .cgrid img { width: 100%; height: 100%; object-fit: cover; filter: saturate(1.05); }
+      .h-coll .dim { position: absolute; inset: 0; z-index: 2; background: radial-gradient(80% 60% at 50% 34%, rgba(11,11,12,.36), rgba(11,11,12,.82)); }
+    </style>
+  </head>
+  <body>
+    <header>
+      <h1>Mandos — login variations</h1>
+      <div class="subh">Six takes on Login/Register — our disco-ball → pin Lottie as the globe hero, and the nightlife photos (the same ones from the WebGL ball) in cubes that scroll and pulse. Same login form throughout. Pick one.</div>
+    </header>
+    <div class="row" id="row"></div>
+
+    <script>
+      const IMGS = [
+        '1470229722913-7c0e2dbbafd3','1514525253161-7a46d19cd819','1516450360452-9312f5e86fc7','1492684223066-81342ee5ff30',
+        '1429962714451-bb934ecdc4ec','1533174072545-7a4b6ad7a6c3','1519214605650-76a613ee3245','1514933651103-005eec06c04b',
+        '1477959858617-67f85cf4f1df','1502920917128-1aa500764cbd','1545128485-c400e7702796','1566737236500-c8ac43014a67',
+        '1524368535928-5b5e00ddc76b','1506157786151-b8491531f063','1519671482749-fd09be7ccebf','1571266028243-d220c6a9b8a3',
+      ].map((id, i) => `https://images.unsplash.com/photo-${id}?w=360&h=360&fit=crop&q=60`)
+      const img = (i) => `<img src="${IMGS[i % IMGS.length]}" loading="lazy" alt="">`
+
+      const GOOGLE = '<svg viewBox="0 0 24 24"><path fill="#4285F4" d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92a5.06 5.06 0 0 1-2.2 3.32v2.76h3.56c2.08-1.92 3.28-4.74 3.28-8.09z"/><path fill="#34A853" d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.56-2.76c-.98.66-2.23 1.06-3.72 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84A11 11 0 0 0 12 23z"/><path fill="#FBBC05" d="M5.84 14.11a6.6 6.6 0 0 1 0-4.22V7.05H2.18a11 11 0 0 0 0 9.9l3.66-2.84z"/><path fill="#EA4335" d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15A11 11 0 0 0 12 1 11 11 0 0 0 2.18 7.05l3.66 2.84C6.71 7.3 9.14 5.38 12 5.38z"/></svg>'
+      const APPLE = '<svg viewBox="0 0 24 24" fill="#fff"><path d="M16.36 12.9c-.02-2.3 1.88-3.4 1.96-3.46-1.07-1.56-2.73-1.78-3.32-1.8-1.42-.14-2.76.83-3.48.83-.71 0-1.82-.81-2.99-.79-1.54.02-2.96.9-3.75 2.28-1.6 2.78-.41 6.9 1.15 9.16.76 1.11 1.67 2.35 2.86 2.3 1.15-.05 1.58-.74 2.97-.74 1.38 0 1.77.74 2.98.72 1.23-.02 2.01-1.12 2.76-2.24.87-1.28 1.23-2.53 1.25-2.6-.03-.01-2.4-.92-2.42-3.65zM14.13 5.6c.63-.77 1.06-1.83.94-2.9-.91.04-2.02.61-2.68 1.37-.59.67-1.1 1.75-.97 2.78 1.02.08 2.07-.52 2.71-1.25z"/></svg>'
+      const CHEV = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M6 9l6 6 6-6"/></svg>'
+      const PIN = `<svg class="logo" viewBox="0 0 114 151" xmlns="http://www.w3.org/2000/svg"><path d="M40.4 53.1c0-1.8.7-2.8 2.8-2.8 3 .1 6.1-.2 9.2-.3.7 0 1.5-.2 2 .4.2 4.5.2 8.6.2 12.8 0 1.8-.7 2.7-2.5 2.6-3.3-.2-6.5-.2-9.8-.3-1.2 0-1.9-.5-1.9-1.9.1-3.5 0-7 0-10.5zM58.2 52c0-1.5.4-2.1 1.9-2.1 3.4.2 6.9.3 10.3.4 1.3 0 1.7.6 1.7 1.8-.1 3.6-.1 7.1 0 10.7.1 2-.7 2.8-2.6 2.7-3.1-.1-6.2-.1-9.5.1-1.4.1-2-.5-2-1.9 0-3.9-.1-7.9.2-11.7zM40.7 70.8c.1-1.1.6-1.7 1.8-1.7 3.6.1 7.3.3 10.9.4 1 0 1.4.6 1.4 1.5v9.8c0 1.1-.6 1.5-1.6 1.5-3.2 0-6.5.1-9.7-.4-.8-.1-1.3-.4-1.4-1.3-.2-1.6-.5-3.2-.7-4.8-.2-1.9-.5-3.5-.7-5zM58.2 87.6c0-1 .5-1.6 1.6-1.7 2.6-.1 5.2-.2 7.8-.4 1.5-.1 2.2.5 1.8 2-1.2 4.5-2.5 8.9-5.6 12.5-.6.7-1.3 1.3-2 1.8-.8.6-1.8 1.4-2.8.9-1-.5-.8-1.8-.8-2.8.1-2.1.2-4.2.2-6.2 0-1.9-.1-3.9-.1-5.9zM58.2 36.1c0-.6.1-1.2.8-1.4 3.5-.1 6.7-.1 9.9.3 1 .1 1.6.4 1.7 1.5.3 2.6.7 5.3 1.1 7.9.2 1.5-.4 2.2-2 2.1-3.3-.2-6.6-.3-9.9-.4-1-.1-1.5-.4-1.5-1.4-.1-2.9-.1-5.8-.1-8.6zM54.4 50.4c-.1-4.5-.1-8.7-.2-13.2 0-1.1-.5-1.4-1.5-1.1-3.2 1-5.9 2.9-8 5.9-1.4 2-2.5 4.3-3.5 6.7-1 2.4-.7 4.5.5 6.8.9 1.7 2.1 3.2 3.6 4.5 1.4 1.2 2.9 2.2 4.6 2.9 1.4.6 2-.1 2-1.9.1-3.8.1-7.7 0-10.6z" fill="#fff"/><path d="M49.3 1.5C60.9-.2 71.9 1.8 82.3 7.2c4.9 2.5 9.3 5.7 13.3 9.7 9.7 9.8 15.2 21.5 16.5 35.2.9 9.4-.8 18.3-4.2 27.1-3 7.8-7.3 14.8-11.9 21.9-5.5 8.4-11.5 16.4-17.9 24.2-6.6 8.1-13.5 16.1-20.3 24.2-.5.6-.9.7-1.3.7-.4 0-.8-.2-1.3-.7-7-8-13.9-16-20.8-24-.2-.3-.3-.4-.3-.5 0-.1.1-.1.5-.3 5.8-1.9 11.6-3.7 17.4-5.8 8-2.8 15.7-6.2 23.1-10.4 9.3-5.3 17.4-12.1 23.1-21.3 7.4-11.8 9.7-24.7 6.9-38.3-2.1-10.1-6.7-19-14.3-26.2C82.3 15.7 73.7 11.3 63.7 9.7 51.5 7.7 40.1 10 29.6 16.4 20.6 21.8 13.9 29.5 9.4 39c-5 10.5-6.2 21.5-4.9 32.8.5 4.1 1.3 8.1 2.2 12.1C3.7 78.3 1.6 72.4.5 66.1c-1.5-8.6-.9-17 1.7-25.4C5.9 29.4 12.4 20 21.7 12.6 29.5 6.5 38.3 2.8 49.3 1.5z" fill="#fff"/></svg>`
+
+      const sheet = (glass) => `<div class="sheet${glass ? ' glass' : ''}">
+        <div class="s-title">Login or Register</div>
+        <div class="frow"><div class="cc">+91 ${CHEV}</div><div class="minput">Enter mobile number</div></div>
+        <button class="continue">Continue</button>
+        <div class="terms">By continuing, you agree to our <a>Terms &amp; Conditions</a> &amp; <a>Privacy Policy</a></div>
+        <div class="ordiv">Or</div>
+        <div class="social"><div class="soc">${GOOGLE}</div><div class="soc">${APPLE}</div></div>
+        <div class="ver">Version 1.1.5</div></div>`
+      const statusbar = `<div class="isl"></div><div class="stat"><span>1:40</span><span style="display:flex;gap:5px">
+        <svg width="17" height="11" viewBox="0 0 17 11" fill="currentColor"><rect x="0" y="7" width="3" height="4" rx="1"/><rect x="4.5" y="5" width="3" height="6" rx="1"/><rect x="9" y="2.5" width="3" height="8.5" rx="1"/><rect x="13.5" y="0" width="3" height="11" rx="1"/></svg>
+        <svg width="15" height="11" viewBox="0 0 16 12" fill="currentColor"><path d="M8 2.5c2.3 0 4.4.9 5.9 2.4l1.2-1.2A9.5 9.5 0 008 .8 9.5 9.5 0 00.9 3.7l1.2 1.2A8 8 0 018 2.5z"/><circle cx="8" cy="9.5" r="1.6"/></svg>
+        <svg width="22" height="11" viewBox="0 0 25 12" fill="none"><rect x="1" y="1" width="21" height="10" rx="2.5" stroke="currentColor" opacity=".5"/><rect x="3" y="3" width="15" height="6" rx="1.2" fill="currentColor"/></svg>
+      </span></div>`
+      const brand = (big) => `<div class="brand">${big ? PIN : ''}<h2>Welcome to Mandos</h2><p>Discover Hong Kong's hottest clubs, exclusive passes, and real-time events — all in one app.</p></div>`
+
+      const colImgs = (o) => Array.from({length: 8}, (_, k) => `<div class="cube">${img(o + k)}</div>`).join('')
+
+      const V = [
+        { title: 'Globe hero', lottie: true, note: 'The disco-ball → pin Lottie is the whole hero; warm floor glow, clean. Most on-brand.',
+          hero: `<div class="hero h-globe"><div class="floor"></div><div class="lot" data-lottie></div>${brand(false)}</div>`, sheet: sheet() },
+
+        { title: 'Cube wall', note: 'A wall of your event photos scrolling behind a dark scrim — energy without clutter. Wordmark on top.',
+          hero: `<div class="hero h-wall"><div class="cols"><div class="col">${colImgs(0)}</div><div class="col b">${colImgs(4)}</div><div class="col c">${colImgs(8)}</div></div><div class="scrim"></div>${brand(true)}</div>`, sheet: sheet() },
+
+        { title: 'Pulse grid', note: 'Photos pulse/brighten in sequence — the “color-pulsed images” look from the WebGL ball, as a grid.',
+          hero: `<div class="hero h-pulse"><div class="pgrid" data-pulse></div><div class="scrim soft"></div>${brand(true)}</div>`, sheet: sheet() },
+
+        { title: 'Split · globe', lottie: true, note: 'Globe Lottie in the top half over a warm gradient; a taller, calmer login card below.',
+          hero: `<div class="hero h-split"><div class="floor"></div><div class="lot" data-lottie></div>${brand(false)}</div>`, sheet: sheet() },
+
+        { title: 'Spotlight', lottie: true, note: 'Ties to the profile: a stage-light cone lands on the globe. Cohesive brand moment.',
+          hero: `<div class="hero h-spot"><div class="lamp"><div class="lens"></div></div><div class="cone"></div><div class="lot" data-lottie style="top:44%"></div>${brand(false)}</div>`, sheet: sheet() },
+
+        { title: 'Glass over collage', note: 'Full-bleed photo collage, dimmed, with a frosted-glass login sheet floating over it.',
+          hero: `<div class="hero h-coll" style="height:100%"><div class="cgrid" data-coll></div><div class="dim"></div>${brand(true)}</div>`, sheet: sheet(true) },
+      ]
+
+      let BASE = null
+      const row = document.getElementById('row')
+      const built = []
+      V.forEach((v) => {
+        const item = document.createElement('div'); item.className = 'item'
+        item.innerHTML = `<div class="cap"><b>${v.title}</b><span>${v.note}</span></div><div class="phone"><div class="scr">${statusbar}<div class="skip">Skip</div>${v.hero}${v.sheet}</div></div>`
+        row.appendChild(item); built.push({ v, item })
+      })
+      // fill pulse grids and collage
+      built.forEach(({ item }) => {
+        const pg = item.querySelector('[data-pulse]')
+        if (pg) pg.innerHTML = Array.from({length: 16}, (_, k) => `<div class="pc" style="animation-delay:${(k % 7) * .32}s">${img(k)}</div>`).join('')
+        const cg = item.querySelector('[data-coll]')
+        if (cg) cg.innerHTML = Array.from({length: 15}, (_, k) => `<div>${img(k)}</div>`).join('')
+      })
+      // lottie hero — strip the baked black BG solid so the globe is transparent over the hero
+      const strip = (d) => { d.layers = d.layers.filter((L) => L.ty !== 1); return d }
+      function spawnLotties() {
+        built.forEach(({ v, item }) => {
+          if (!v.lottie) return
+          const c = item.querySelector('[data-lottie]')
+          lottie.loadAnimation({ container: c, renderer: 'svg', loop: false, autoplay: true, animationData: strip(structuredClone(BASE)) })
+        })
+      }
+      fetch('./discoball-logo.json').then((r) => r.json()).then((d) => { BASE = d; spawnLotties() })
+    </script>
+  </body>
+</html>
