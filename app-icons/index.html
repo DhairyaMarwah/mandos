@@ -78,7 +78,6 @@
         { name: 'Amber Frost', bg: { t:'g', a:150, s:[[0,'#ff8f3a'],[1,'#ef5f1c']] }, logo:'#fff', inner:.42 },
         { name: 'Halo',        bg: { t:'s', c:'#f2601c' },                            logo:'#fff', glow:{ at:[.5,.42], color:'#ffd59a', alpha:.6, size:.5 } },
         { name: 'Solar',       bg: { t:'g', a:160, s:[[0,'#ff9e1f'],[1,'#ff6a00']] }, logo:'#fff', glow:{ at:[.5,.48], color:'#ffe08a', alpha:.45, size:.6 }, inner:.22 },
-        { name: 'Ember Deep',  bg: { t:'g', a:150, s:[[0,'#ff6a12'],[1,'#c9330a']] }, logo:'#fff', glow:{ at:[.5,1.15], color:'#ffbf6a', alpha:.85, size:.5 }, inner:.2 },
         { name: 'Copper Sheen',bg: { t:'g', a:150, s:[[0,'#ff8a2e'],[1,'#d95a12']] }, logo:'#fff', bd:{ t:'rgba(255,244,224,.8)', b:'rgba(120,50,0,.28)' }, inner:.18 },
         { name: 'Tangelo',     bg: { t:'g', a:145, s:[[0,'#ff7e29'],[1,'#f24d0e']] }, logo:'#fff', drop:1, inner:.16, glow:{ at:[.5,1.12], color:'#ffd08a', alpha:.7, size:.5 } },
         { name: 'Peach',       bg: { t:'g', a:150, s:[[0,'#ffb27a'],[1,'#ff7a3c']] }, logo:'#fff', inner:.3, bd:{ t:'rgba(255,255,255,.6)', b:'rgba(255,255,255,.05)' } },
@@ -108,12 +107,27 @@
         { name:'Iridescent', bg:{t:'g',a:130,s:[[0,'#12c2e9'],[.5,'#c471ed'],[1,'#f64f59']]}, logo:'#fff' },
       ]
 
+      // ── Ember Deep family — burnt-orange gradient + warm floor glow (from the app icon) ──
+      const EMBER_DEEP = [
+        { name: 'Ember Deep',        bg:{ t:'g', a:150, s:[[0,'#ff6a12'],[1,'#c9330a']] }, logo:'#fff', glow:{ at:[.5,1.15], color:'#ffbf6a', alpha:.85, size:.5 }, inner:.2 },
+        { name: 'Ember Deep II',     bg:{ t:'g', a:150, s:[[0,'#f0560e'],[1,'#a82806']] }, logo:'#fff', glow:{ at:[.5,1.15], color:'#ffb055', alpha:.8,  size:.5 }, inner:.2 },
+        { name: 'Ember Deep Bright', bg:{ t:'g', a:150, s:[[0,'#ff7a1a'],[1,'#d63a0a']] }, logo:'#fff', glow:{ at:[.5,1.13], color:'#ffd08a', alpha:.95, size:.56 }, inner:.2 },
+        { name: 'Ember Deep Night',  bg:{ t:'g', a:150, s:[[0,'#d94e0c'],[1,'#6e1a04']] }, logo:'#fff', glow:{ at:[.5,1.16], color:'#ff9e4a', alpha:.85, size:.48 }, inner:.18 },
+        { name: 'Ember Deep Halo',   bg:{ t:'g', a:150, s:[[0,'#ff6a12'],[1,'#c9330a']] }, logo:'#fff', glow:{ at:[.5,.44],  color:'#ffcf8a', alpha:.55, size:.5 }, inner:.16 },
+        { name: 'Ember Deep Frost',  bg:{ t:'g', a:150, s:[[0,'#ff7420'],[1,'#cf3a0d']] }, logo:'#fff', glow:{ at:[.5,1.15], color:'#ffbf6a', alpha:.5,  size:.5 }, inner:.42 },
+        { name: 'Ember Deep Rim',    bg:{ t:'g', a:150, s:[[0,'#ff6a12'],[1,'#c9330a']] }, logo:'#fff', glow:{ at:[.5,1.15], color:'#ffbf6a', alpha:.8,  size:.5 }, inner:.16, bd:{ t:'rgba(255,238,214,.78)', b:'rgba(120,44,4,.3)' } },
+        { name: 'Ember Deep Float',  bg:{ t:'g', a:150, s:[[0,'#ff6e14'],[1,'#c2300a']] }, logo:'#fff', glow:{ at:[.5,1.14], color:'#ffc57a', alpha:.75, size:.5 }, inner:.16, drop:1 },
+        { name: 'Ember Deep Ruby',   bg:{ t:'g', a:150, s:[[0,'#ff5a10'],[1,'#b52407']] }, logo:'#fff', glow:{ at:[.5,1.15], color:'#ffb060', alpha:.82, size:.5 }, inner:.2 },
+        { name: 'Ember Deep Gold',   bg:{ t:'g', a:150, s:[[0,'#ff8a1e'],[1,'#d24810']] }, logo:'#fff', glow:{ at:[.5,1.14], color:'#ffe0a0', alpha:.85, size:.54 }, inner:.2 },
+      ]
+
       const SECTIONS = [
+        ['Ember Deep · variations', EMBER_DEEP],
         ['Orange · glow, glass & light', ORANGE_FX],
         ['Orange · solid & gradient', ORANGE_FLAT],
         ['Other colours', OTHER],
       ]
-      const ALL = [...ORANGE_FX, ...ORANGE_FLAT, ...OTHER]
+      const ALL = [...EMBER_DEEP, ...ORANGE_FX, ...ORANGE_FLAT, ...OTHER]
 
       let LOGO = '', logoSize = 56
       const bgCss = (bg) => bg.t === 's' ? bg.c : `linear-gradient(${bg.a}deg, ${bg.s.map(([p,c]) => `${c} ${p*100}%`).join(', ')})`
