@@ -77,7 +77,7 @@
 
     <aside class="panel">
       <h1>Splash variations</h1>
-      <div class="sub">Disco ball → Mandos pin, across 10 Ember Deep colour beds. Click one to play it.</div>
+      <div class="sub">Disco ball → Mandos pin. Ember Deep variations, plus teal / rose / violet. Click one to play it.</div>
       <div class="grid" id="grid"></div>
     </aside>
 
@@ -102,6 +102,10 @@
         { name: 'Ember Deep Soft',   c: '#ff8a2e', base: bed('#5e2607', 42), glow: bloom('#ff8a2e', .5,  50), anchor: '#09090b', name_c: '#fff', tag: '#f5851f' },
         { name: 'Ember Deep Warm',   c: '#ffc57a', base: bed('#a83308', 58), glow: bloom('#ffc57a', .85, 58), anchor: '#09090b', name_c: '#fff', tag: '#ffd6a8' },
         { name: 'Ember Deep Amber',  c: '#ff8a2e', base: bed('#7c2e08', 56), glow: bloom('#ff8a2e', .8,  58), anchor: '#09090b', name_c: '#fff', tag: '#ffcf9a' },
+        // alternate hues (kept from before)
+        { name: 'Rose',   c: '#ff2f8f', base: bed('#4a0a28', 56), glow: bloom('#ff2f8f', .72, 58), anchor: '#09090b', name_c: '#fff', tag: '#ffa8d0' },
+        { name: 'Teal',   c: '#1fd6b0', base: bed('#06382f', 56), glow: bloom('#1fd6b0', .7,  58), anchor: '#09090b', name_c: '#fff', tag: '#a8f0e0' },
+        { name: 'Violet', c: '#8a3cff', base: bed('#26103f', 58), glow: bloom('#8a3cff', .74, 60), anchor: '#09090b', name_c: '#fff', tag: '#d8b8ff' },
       ]
       const bedCss = (v) => `${v.glow}, ${v.base}`
 

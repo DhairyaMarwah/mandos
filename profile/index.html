@@ -1,0 +1,196 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Mandos — profile empty state</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700&display=swap" rel="stylesheet" />
+    <style>
+      * { margin: 0; padding: 0; box-sizing: border-box; }
+      :root { --pw: 322px; --accent: #f5851f; --gold: #ffb64a; --bg: #0b0b0d; color-scheme: dark; }
+      body { background: #17171b; color: #e8e8ea; font-family: "Poppins", system-ui, -apple-system, sans-serif; padding: 34px 26px 70px; }
+      header { max-width: 1500px; margin: 0 auto 6px; }
+      h1 { font-size: 20px; font-weight: 600; }
+      .sub { font-size: 13px; color: #8f8f98; margin-top: 4px; max-width: 640px; }
+      .row { max-width: 1500px; margin: 30px auto 0; display: flex; flex-wrap: wrap; gap: 40px 34px; justify-content: center; }
+      .item { width: var(--pw); }
+      .cap { margin: 0 0 12px 4px; }
+      .cap b { font-size: 14px; font-weight: 600; }
+      .cap span { display: block; font-size: 11.5px; color: #8f8f98; margin-top: 2px; }
+
+      /* phone */
+      .phone { width: var(--pw); aspect-ratio: 428/928; position: relative; border-radius: 44px; padding: 4px;
+        background: linear-gradient(140deg,#6f6f77,#25252a 16%,#3b3b42 38%,#141416 62%,#4c4c56 84%,#1c1c20); box-shadow: 0 24px 60px -18px rgba(0,0,0,.75), inset 0 1px 1px rgba(255,255,255,.14); }
+      .scr { position: absolute; inset: 4px; border-radius: 40px; overflow: hidden; background: var(--bg); }
+      .stat { position: absolute; top: 0; left: 0; right: 0; height: 34px; display: flex; align-items: center; justify-content: space-between; padding: 8px 20px 0; font-size: 12px; font-weight: 600; color: #fff; z-index: 20; }
+      .stat .sbr { display: flex; gap: 5px; align-items: center; }
+      .isl { position: absolute; top: 9px; left: 50%; transform: translateX(-50%); width: 84px; height: 22px; background: #000; border-radius: 14px; z-index: 25; }
+
+      .acts { position: absolute; top: 40px; right: 16px; display: flex; gap: 9px; z-index: 15; }
+      .acts .b { width: 33px; height: 33px; border-radius: 50%; display: grid; place-items: center; color: #fff;
+        background: rgba(255,255,255,.10); backdrop-filter: blur(6px); border: 1px solid rgba(255,255,255,.14); }
+      .acts svg { width: 15px; height: 15px; }
+
+      .banner { position: relative; height: 210px; }
+      /* fade every banner into the page bg at the bottom */
+      .banner::after { content: ""; position: absolute; inset: 0; background: linear-gradient(180deg, transparent 34%, var(--bg)); }
+      .banner .bctl { position: absolute; z-index: 4; }
+
+      /* variant banners */
+      .b-aurora { background:
+        radial-gradient(58% 80% at 18% 6%, rgba(245,133,31,.55), transparent 60%),
+        radial-gradient(52% 74% at 88% 16%, rgba(201,51,10,.62), transparent 60%),
+        radial-gradient(80% 70% at 60% 116%, rgba(255,182,74,.42), transparent 62%),
+        #120a08; }
+      .b-spot { background: radial-gradient(62% 78% at 50% 122%, rgba(245,133,31,.5), transparent 66%), radial-gradient(90% 60% at 50% -10%, rgba(201,51,10,.3), transparent 60%), #0c0709; }
+      .b-tex { background:
+        radial-gradient(rgba(245,133,31,.20) 1.1px, transparent 1.3px) 0 0 / 15px 15px,
+        radial-gradient(70% 80% at 50% -6%, rgba(201,51,10,.5), transparent 60%), #0e0908; }
+      .b-line { height: 118px; background: linear-gradient(180deg, rgba(245,133,31,.20), rgba(201,51,10,.05) 55%, transparent 78%), #0c0809; }
+      .b-line::before { content: ""; position: absolute; top: 0; left: 0; right: 0; height: 2px; background: linear-gradient(90deg, transparent, var(--accent), var(--gold), transparent); z-index: 3; }
+
+      .headline { position: absolute; left: 0; right: 0; top: 66px; text-align: center; z-index: 4; }
+      .headline b { font-size: 18px; font-weight: 600; }
+      .headline b i { color: var(--accent); font-style: normal; }
+      .headline p { font-size: 11.5px; color: #c6c6cc; margin-top: 5px; line-height: 1.45; }
+
+      .cover-pill { display: inline-flex; align-items: center; gap: 7px; padding: 8px 15px; border-radius: 999px; font-size: 12.5px; font-weight: 500; color: #fff;
+        background: rgba(20,14,10,.5); border: 1px solid rgba(255,255,255,.2); backdrop-filter: blur(6px); }
+      .cover-pill svg { width: 15px; height: 15px; }
+      .cover-round { width: 40px; height: 40px; border-radius: 50%; display: grid; place-items: center; color: #fff; background: rgba(20,14,10,.45); border: 1px solid rgba(255,255,255,.2); backdrop-filter: blur(6px); }
+      .cover-round svg { width: 17px; height: 17px; }
+      .cover-ghost { display: inline-flex; align-items: center; gap: 8px; padding: 9px 17px; border-radius: 12px; font-size: 12.5px; font-weight: 500; color: var(--gold);
+        background: rgba(245,133,31,.10); border: 1px dashed rgba(245,133,31,.5); }
+      .cover-ghost svg { width: 15px; height: 15px; }
+
+      /* identity */
+      .body { position: relative; margin-top: -46px; z-index: 6; padding: 0 20px; text-align: center; }
+      .avatar { width: 92px; height: 92px; border-radius: 50%; margin: 0 auto; position: relative;
+        display: grid; place-items: center; font-size: 26px; font-weight: 700; color: #fff; letter-spacing: .02em;
+        background: linear-gradient(145deg,#ffc357,#f5851f 46%,#e0500e);
+        box-shadow: 0 10px 26px -8px rgba(245,133,31,.6), inset 0 1px 2px rgba(255,255,255,.5); }
+      .avatar.ring { border: 3px solid var(--bg); outline: 2px solid rgba(245,133,31,.9); }
+      .avatar.glow::before { content: ""; position: absolute; inset: -14px; border-radius: 50%; background: radial-gradient(circle, rgba(245,133,31,.5), transparent 70%); z-index: -1; }
+      .cam-badge { position: absolute; right: -2px; bottom: -2px; width: 30px; height: 30px; border-radius: 50%; display: grid; place-items: center;
+        background: #1c1c20; border: 2.5px solid var(--bg); color: #fff; }
+      .cam-badge svg { width: 14px; height: 14px; }
+
+      .name { font-size: 21px; font-weight: 600; margin-top: 13px; }
+      .chip-u { display: inline-flex; align-items: center; gap: 7px; margin-top: 11px; padding: 8px 15px; border-radius: 999px; font-size: 13px; font-weight: 500; color: #fff; background: rgba(255,255,255,.06); border: 1px solid rgba(255,255,255,.09); }
+      .chip-u svg { width: 15px; height: 15px; color: #9a9aa2; }
+      .chip-s { display: inline-flex; align-items: center; gap: 6px; margin-top: 10px; padding: 7px 15px; border-radius: 999px; font-size: 12.5px; color: #9a9aa2; background: rgba(255,255,255,.04); }
+      .chip-s svg { width: 13px; height: 13px; }
+
+      /* completion pill */
+      .complete { margin: 16px 4px 0; padding: 11px 14px; border-radius: 14px; text-align: left; background: rgba(255,255,255,.045); border: 1px solid rgba(255,255,255,.07); }
+      .complete .ct { display: flex; justify-content: space-between; font-size: 11.5px; color: #c6c6cc; margin-bottom: 8px; }
+      .complete .ct b { color: var(--gold); font-weight: 600; }
+      .cbar { height: 6px; border-radius: 4px; background: rgba(255,255,255,.09); overflow: hidden; }
+      .cbar i { display: block; height: 100%; border-radius: 4px; background: linear-gradient(90deg, var(--accent), var(--gold)); }
+
+      /* setup checklist */
+      .setup { margin: 16px 4px 0; padding: 14px; border-radius: 16px; text-align: left; background: rgba(255,255,255,.045); border: 1px solid rgba(255,255,255,.08); }
+      .setup .sh { display: flex; justify-content: space-between; align-items: center; font-size: 13px; font-weight: 600; margin-bottom: 10px; }
+      .setup .sh b { color: var(--gold); font-size: 12px; }
+      .setup .cbar { margin-bottom: 12px; }
+      .task { display: flex; align-items: center; gap: 11px; padding: 8px 0; border-top: 1px solid rgba(255,255,255,.06); }
+      .task:first-of-type { border-top: 0; }
+      .task .ti { width: 30px; height: 30px; border-radius: 9px; display: grid; place-items: center; color: var(--gold); background: rgba(245,133,31,.13); flex: 0 0 auto; }
+      .task .ti svg { width: 15px; height: 15px; }
+      .task .tt { flex: 1; font-size: 12.5px; font-weight: 500; }
+      .task .tt span { display: block; font-size: 10.5px; color: #86868e; font-weight: 400; margin-top: 1px; }
+      .task .add { width: 24px; height: 24px; border-radius: 50%; display: grid; place-items: center; color: var(--accent); background: rgba(245,133,31,.14); }
+      .task .add svg { width: 13px; height: 13px; }
+
+      /* stats */
+      .stats { display: flex; margin: 16px 4px 0; padding: 15px 0; border-radius: 16px; background: rgba(255,255,255,.045); border: 1px solid rgba(255,255,255,.07); }
+      .stats .st { flex: 1; text-align: center; }
+      .stats .st + .st { border-left: 1px solid rgba(255,255,255,.08); }
+      .stats .n { font-size: 18px; font-weight: 600; }
+      .stats .l { font-size: 11px; color: #9a9aa2; margin-top: 2px; }
+
+      /* bottom nav */
+      .nav { position: absolute; left: 0; right: 0; bottom: 0; height: 72px; z-index: 12; display: flex; align-items: center; justify-content: center; }
+      .nav .bar { display: flex; gap: 26px; padding: 11px 22px; border-radius: 999px; background: rgba(28,28,32,.86); border: 1px solid rgba(255,255,255,.08); backdrop-filter: blur(10px); }
+      .nav .n { width: 22px; height: 22px; color: #7f7f88; }
+      .nav .n.on { color: #fff; }
+      .homeind { position: absolute; bottom: 7px; left: 50%; transform: translateX(-50%); width: 110px; height: 4px; border-radius: 3px; background: rgba(255,255,255,.4); z-index: 13; }
+    </style>
+  </head>
+  <body>
+    <header>
+      <h1>Mandos — profile empty state</h1>
+      <div class="sub">Four takes on the "no photo / no banner yet" profile, all dark with warm orange–yellow. The goal: make the empty header feel designed and invite setup, instead of a blank orange banner.</div>
+    </header>
+    <div class="row" id="row"></div>
+
+    <script>
+      const IC = {
+        share:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 15V4"/><path d="M8 8l4-4 4 4"/><path d="M5 12v6a2 2 0 0 0 2 2h10a2 2 0 0 0 2-2v-6"/></svg>',
+        search:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><circle cx="11" cy="11" r="7"/><path d="M21 21l-4.2-4.2"/></svg>',
+        gear:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="3.2"/><path d="M12 3v2.4M12 18.6V21M3 12h2.4M18.6 12H21M5.6 5.6l1.7 1.7M16.7 16.7l1.7 1.7M18.4 5.6l-1.7 1.7M7.3 16.7l-1.7 1.7"/></svg>',
+        cam:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4.5 8h2.6l1.3-1.9h7l1.3 1.9h2.6a1.2 1.2 0 0 1 1.2 1.2v8.6a1.2 1.2 0 0 1-1.2 1.2H4.5a1.2 1.2 0 0 1-1.2-1.2V9.2A1.2 1.2 0 0 1 4.5 8z"/><circle cx="12" cy="13" r="3.1"/></svg>',
+        img:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="4" width="18" height="16" rx="2.5"/><circle cx="8.5" cy="9.5" r="1.7"/><path d="M4 17l4.5-4.5 4 3.5L16 12l4 4"/></svg>',
+        pen:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14.5 5.5l4 4M4 20l1-4L16 5a1.8 1.8 0 0 1 2.5 0l.5.5a1.8 1.8 0 0 1 0 2.5L8 19l-4 1z"/></svg>',
+        plus:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round"><path d="M12 5v14M5 12h14"/></svg>',
+        at:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><circle cx="12" cy="12" r="3.8"/><path d="M15.8 12v1.6a2.4 2.4 0 0 0 4.8 0V12a8.6 8.6 0 1 0-3.3 6.8"/></svg>',
+        chev:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M6 9l6 6 6-6"/></svg>',
+        chevR:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 6l6 6-6 6"/></svg>',
+        home:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 11l9-8 9 8"/><path d="M5 10v10h14V10"/></svg>',
+        ticket:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="6.5" width="18" height="11" rx="2.5"/><path d="M9 6.5v11"/></svg>',
+        chat:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 11.5a7.5 7.5 0 0 1-10.9 6.7L4 20l1.4-4.3A7.5 7.5 0 1 1 21 11.5z"/></svg>',
+        person:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="8" r="3.6"/><path d="M4.5 20c.7-4 3.8-6 7.5-6s6.8 2 7.5 6"/></svg>',
+      }
+
+      const statusbar = `<div class="isl"></div><div class="stat"><span>1:40</span><span class="sbr">
+        <svg width="17" height="11" viewBox="0 0 17 11" fill="currentColor"><rect x="0" y="7" width="3" height="4" rx="1"/><rect x="4.5" y="5" width="3" height="6" rx="1"/><rect x="9" y="2.5" width="3" height="8.5" rx="1"/><rect x="13.5" y="0" width="3" height="11" rx="1"/></svg>
+        <svg width="15" height="11" viewBox="0 0 16 12" fill="currentColor"><path d="M8 2.5c2.3 0 4.4.9 5.9 2.4l1.2-1.2A9.5 9.5 0 008 .8 9.5 9.5 0 00.9 3.7l1.2 1.2A8 8 0 018 2.5z"/><path d="M8 6c1.2 0 2.3.5 3.1 1.3l1.2-1.2A6 6 0 008 4.3a6 6 0 00-4.3 1.8l1.2 1.2A4.4 4.4 0 018 6z"/><circle cx="8" cy="9.5" r="1.6"/></svg>
+        <span style="display:inline-flex;align-items:center;gap:3px"><svg width="22" height="11" viewBox="0 0 25 12" fill="none"><rect x="1" y="1" width="21" height="10" rx="2.5" stroke="currentColor" opacity=".5"/><rect x="3" y="3" width="12" height="6" rx="1.2" fill="#3ddc6d"/><rect x="23" y="4" width="1.5" height="4" rx="1" fill="currentColor" opacity=".5"/></svg></span>
+      </span></div>`
+      const acts = `<div class="acts"><div class="b">${IC.share}</div><div class="b">${IC.search}</div><div class="b">${IC.gear}</div></div>`
+      const nav = `<div class="nav"><div class="bar"><span class="n">${IC.home}</span><span class="n">${IC.ticket}</span><span class="n">${IC.chat}</span><span class="n on">${IC.person}</span></div></div><div class="homeind"></div>`
+      const identity = `<div class="name">dhairya dhairya</div>
+        <div class="chip-u">${IC.at} Add username</div><br>
+        <div class="chip-s">Add Status ${IC.chev}</div>`
+      const stats = `<div class="stats"><div class="st"><div class="n">0</div><div class="l">Followers</div></div><div class="st"><div class="n">0</div><div class="l">Following</div></div></div>`
+      const complete = (p) => `<div class="complete"><div class="ct"><span>Complete your profile</span><b>${p}%</b></div><div class="cbar"><i style="width:${p}%"></i></div></div>`
+
+      // ── four variations ──
+      const V = [
+        { title: 'Aurora banner', note: 'A warm mesh-gradient banner so “empty” already looks designed; small Add-cover chip.',
+          banner: `<div class="banner b-aurora"><div class="bctl" style="right:14px;bottom:60px"><div class="cover-pill">${IC.cam} Add cover</div></div></div>`,
+          avatar: `<div class="avatar ring">DD<div class="cam-badge">${IC.cam}</div></div>`,
+          extra: complete(15) },
+
+        { title: 'Spotlight', note: 'On-brand: a warm light pools from below and lifts the avatar out of the dark. Ties to the splash.',
+          banner: `<div class="banner b-spot"><div class="headline" style="top:80px"><b>Make it <i>yours</i></b></div><div class="bctl" style="right:14px;bottom:60px"><div class="cover-pill">${IC.cam} Add cover</div></div></div>`,
+          avatar: `<div class="avatar ring glow">DD<div class="cam-badge">${IC.cam}</div></div>`,
+          extra: complete(15) },
+
+        { title: 'Brand texture', note: 'A subtle dotted brand texture reads as intentional, not blank; floating camera button.',
+          banner: `<div class="banner b-tex"><div class="bctl" style="right:14px;bottom:60px"><div class="cover-round">${IC.cam}</div></div></div>`,
+          avatar: `<div class="avatar ring">DD<div class="cam-badge">${IC.cam}</div></div>`,
+          extra: complete(15) },
+
+        { title: 'Guided setup', note: 'Turns the emptiness into a quick 3-step checklist with progress — clear next actions.',
+          banner: `<div class="banner b-line"></div>`,
+          avatar: `<div class="avatar ring">DD<div class="cam-badge">${IC.cam}</div></div>`,
+          extra: `<div class="setup"><div class="sh"><span>Finish your profile</span><b>15%</b></div><div class="cbar"><i style="width:15%"></i></div>
+            <div class="task"><div class="ti">${IC.cam}</div><div class="tt">Add a profile photo</div><div class="add">${IC.plus}</div></div>
+            <div class="task"><div class="ti">${IC.img}</div><div class="tt">Add a cover</div><div class="add">${IC.plus}</div></div>
+            <div class="task"><div class="ti">${IC.pen}</div><div class="tt">Write a short bio</div><div class="add">${IC.plus}</div></div>
+          </div>` },
+      ]
+
+      const row = document.getElementById('row')
+      V.forEach((v) => {
+        const item = document.createElement('div'); item.className = 'item'
+        item.innerHTML = `<div class="cap"><b>${v.title}</b><span>${v.note}</span></div>
+          <div class="phone"><div class="scr">${statusbar}${acts}${v.banner}
+            <div class="body">${v.avatar}${identity}${stats}${v.extra}</div>${nav}</div></div>`
+        row.appendChild(item)
+      })
+    </script>
+  </body>
+</html>
