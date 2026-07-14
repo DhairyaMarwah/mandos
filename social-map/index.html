@@ -142,6 +142,75 @@ body{font-family:-apple-system,BlinkMacSystemFont,"SF Pro Text","Segoe UI",Robot
 .help{max-width:390px;font-size:12px;color:#55555c;text-align:center;padding:14px 18px 0;line-height:1.5}
 #toast{position:absolute;bottom:30px;left:50%;transform:translateX(-50%) translateY(16px);background:#2b2b31;border:1px solid var(--line);color:#fff;font-size:13.5px;font-weight:600;padding:11px 18px;border-radius:99px;opacity:0;transition:.25s;z-index:80;white-space:nowrap;pointer-events:none;display:flex;align-items:center;gap:8px}
 #toast.show{opacity:1;transform:translateX(-50%) translateY(0)}
+
+/* ---- reward found ticket sheet ---- */
+.ghostbar{position:absolute;top:52px;left:50%;transform:translateX(-50%);display:flex;align-items:center;gap:8px;background:rgba(28,26,32,.85);backdrop-filter:blur(8px);border:1px solid var(--line);border-radius:99px;padding:9px 18px;font-size:13px;font-weight:600;z-index:40}
+.sheettop{display:flex;align-items:center;justify-content:space-between;margin-bottom:16px}
+.sheettop b{font-size:18px}
+.sbk{width:34px;height:34px;border-radius:50%;background:var(--card2);border:1px solid var(--line);color:#fff;display:flex;align-items:center;justify-content:center}
+.ticket{position:relative;background:linear-gradient(150deg,#f5851f 0%,#8a3d00 78%,#2e1200 130%);border-radius:20px;padding:22px;min-height:160px;overflow:hidden;
+  -webkit-mask:radial-gradient(circle 8px at 0 24px,#0000 8px,#000 0) 0 0/51% 48px repeat-y,radial-gradient(circle 8px at 100% 24px,#0000 8px,#000 0) 100% 0/51% 48px repeat-y;mask:radial-gradient(circle 8px at 0 24px,#0000 8px,#000 0) 0 0/51% 48px repeat-y,radial-gradient(circle 8px at 100% 24px,#0000 8px,#000 0) 100% 0/51% 48px repeat-y}
+.tchip2{display:inline-block;background:rgba(0,0,0,.28);border:1px solid rgba(255,255,255,.35);color:#fff;font-size:11px;font-weight:700;border-radius:99px;padding:4px 12px}
+.tk-title{font-size:34px;font-weight:800;color:#fff;margin-top:26px;line-height:1;text-shadow:0 2px 10px rgba(0,0,0,.3)}
+.tk-valid{font-size:12.5px;color:rgba(255,255,255,.8);margin-top:14px}
+.tk-gift{position:absolute;right:18px;bottom:14px;font-size:74px;line-height:1;filter:drop-shadow(0 6px 14px rgba(0,0,0,.4))}
+.about-h{font-size:19px;font-weight:700;margin:20px 0 12px}
+.terms2{margin:0}
+.terms2 li{counter-increment:none;padding-left:18px;position:relative}
+.terms2 li::before{content:"•";counter-reset:none;background:none;border:none;color:var(--dim);left:2px;top:-1px;width:auto;height:auto}
+.metaline{display:flex;align-items:center;gap:8px;font-size:12.5px;color:var(--dim);margin-top:16px}
+.metaline .gifted{margin-left:auto;background:rgba(245,133,31,.16);color:#ffb066;border-radius:99px;padding:3px 10px;font-weight:700;font-size:11px}
+.okring{width:64px;height:64px;border-radius:50%;background:rgba(48,209,88,.16);border:1.5px solid rgba(48,209,88,.5);display:flex;align-items:center;justify-content:center;margin:0 auto}
+
+/* ---- reward detail (bundle) ---- */
+.dhd{display:flex;align-items:center;gap:14px;padding:8px 18px 14px;font-size:20px;font-weight:700}
+.dhd .back{width:38px;height:38px;border-radius:50%;background:var(--card);border:1px solid #2a2a2e;display:flex;align-items:center;justify-content:center;flex:none}
+.dhd .back svg{width:16px;height:16px}
+.poster{aspect-ratio:16/10;border-radius:18px;background-size:cover;background-position:center;margin-bottom:16px;border:1px solid var(--line)}
+.detchip{display:inline-block;background:rgba(120,80,180,.18);border:1px solid rgba(185,140,255,.45);color:var(--purple);font-size:11px;font-weight:800;letter-spacing:.05em;border-radius:99px;padding:4px 12px}
+.detttl{font-size:25px;font-weight:800;line-height:1.15;margin:12px 0 10px}
+.desc{color:var(--dim);font-size:13.5px;line-height:1.7;margin-bottom:16px}
+.pricerow{display:flex;align-items:center;gap:14px;margin-bottom:18px}
+.hkbig{font-size:20px;font-weight:800}
+.pricerow .sep{color:var(--dim2)}
+.coinbig{display:flex;align-items:center;gap:7px;background:#1a160c;border:1px solid rgba(245,166,35,.4);border-radius:10px;padding:6px 12px;font-weight:800;font-size:15px}
+.card2{background:var(--card);border:1px solid var(--line);border-radius:16px;padding:16px;margin-bottom:14px}
+.c2h{font-size:16px;font-weight:700;margin-bottom:12px}
+.tiles{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+.tile{background:var(--card2);border:1px solid var(--line);border-radius:12px;padding:16px;text-align:center}
+.tile span{font-size:11px;letter-spacing:.08em;color:var(--dim);font-weight:700}
+.tile b{display:block;font-size:32px;font-weight:800;margin-top:4px}
+.qtyrow{display:flex;align-items:center;justify-content:space-between}
+.qtyrow b{font-size:24px;font-weight:800}
+.qbtn{width:48px;height:48px;border-radius:50%;background:var(--card2);border:1px solid var(--line);color:#fff;font-size:24px;display:flex;align-items:center;justify-content:center}
+.incrow{display:flex;align-items:center;gap:14px;padding:10px 0}
+.incrow+.incrow{border-top:1px solid var(--line)}
+.incrow .ici{width:44px;height:44px;border-radius:12px;background:var(--card2);display:flex;align-items:center;justify-content:center;font-size:20px;flex:none}
+.incrow b{font-size:15px}
+.incrow .sub{font-size:12.5px;color:var(--dim);margin-top:2px}
+.tcrow{display:flex;align-items:center;gap:12px;background:var(--card);border:1px solid var(--line);border-radius:14px;padding:15px 16px;font-size:15px;font-weight:600}
+.tcrow .chv{margin-left:auto;color:var(--dim2);font-size:20px}
+.stickyfoot{position:absolute;bottom:0;left:0;right:0;padding:14px 16px calc(16px + env(safe-area-inset-bottom));background:linear-gradient(transparent,var(--bg) 32%);z-index:20}
+.stickyfoot .cta{margin:0}
+
+/* ---- pass detail (maroon) ---- */
+.passbg{position:absolute;inset:0;display:flex;flex-direction:column;background:radial-gradient(120% 60% at 50% 0%,rgba(160,30,55,.5),transparent 55%),var(--bg)}
+.statuspill{display:inline-flex;align-items:center;gap:7px;background:rgba(0,0,0,.35);border:1px solid var(--line);border-radius:99px;padding:6px 14px;font-size:13px;font-weight:600}
+.statuspill i{width:8px;height:8px;border-radius:50%;background:#ff4d4d;display:inline-block}
+.passttl{font-size:30px;font-weight:800;margin-top:16px;line-height:1.1}
+.sech{font-size:19px;font-weight:700;margin:22px 0 12px}
+.benecard{background:var(--card);border:1px solid var(--line);border-radius:16px;padding:4px 16px}
+.benefit{display:flex;align-items:center;gap:12px;padding:16px 0}
+.benefit+.benefit{border-top:1px solid var(--line)}
+.benefit>div:first-child{flex:1}
+.benefit b{font-size:16px}
+.benefit .sub{font-size:12.5px;color:var(--dim);margin-top:3px}
+.benefit .beico{font-size:30px;flex:none}
+.partners{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+.partner{display:flex;align-items:center;gap:11px;background:var(--card);border:1px solid var(--line);border-radius:14px;padding:11px}
+.partner .pav{width:42px;height:42px;border-radius:10px;background-size:cover;background-position:center;flex:none}
+.partner b{font-size:14px}
+.partner .sub{font-size:11.5px;color:var(--dim);margin-top:1px}
 </style>
 </head>
 <body>
@@ -166,6 +235,8 @@ body{font-family:-apple-system,BlinkMacSystemFont,"SF Pro Text","Segoe UI",Robot
   <button onclick="showScreen('locoff',this)">Location off</button>
   <button onclick="showScreen('map',this)">Map · rewards</button>
   <button onclick="showScreen('drop',this)">Reward found</button>
+  <button onclick="showScreen('bundle',this)">Bundle detail</button>
+  <button onclick="showScreen('pass',this)">Pass detail</button>
   <button onclick="showScreen('shop',this)">Rewards shop</button>
 </div>
 
@@ -236,11 +307,70 @@ body{font-family:-apple-system,BlinkMacSystemFont,"SF Pro Text","Segoe UI",Robot
     </div>
   </section>
 
-  <!-- ===== REWARD FOUND (drop) sheet — replaces the old voucher-found ===== -->
+  <!-- ===== REWARD FOUND (map drop) — ticket-style sheet ===== -->
   <section class="screen" id="s-drop">
     <div class="map"></div>
+    <div class="ghostbar"><svg style="width:15px;height:15px"><use href="#i-eye"/></svg> Tai Kok Tsui · Ghost mode on</div>
     <div class="scrim"></div>
     <div class="sheet" id="dropSheet"></div>
+  </section>
+
+  <!-- ===== BUNDLE reward detail ===== -->
+  <section class="screen" id="s-bundle">
+    <div class="sbar"><span>12:02</span><span class="r">▮▮ ᯤ 26</span></div>
+    <div class="dhd"><div class="back" onclick="showScreen('shop',switchBtn(6))"><svg style="color:#fff"><use href="#i-back"/></svg></div><span>Reward Detail</span></div>
+    <div class="body" style="padding:0 16px 96px">
+      <div class="poster" style="background-image:url('${''}')" id="bnPoster"></div>
+      <span class="detchip">Bundle</span>
+      <h1 class="detttl">Versus — Monday Special · BOGO Deal</h1>
+      <p class="desc">Only valid at Versus Venue<br>Only valid on Mondays<br>This bundle includes:</p>
+      <div class="pricerow"><span class="hkbig">HK$100</span><span class="sep">|</span><span class="coinbig"><svg class="coin"><use href="#coin-hex"/></svg> 1,000</span></div>
+
+      <div class="card2">
+        <div class="c2h">Bundle includes</div>
+        <div class="tiles"><div class="tile"><span>ENTRY</span><b>0</b></div><div class="tile"><span>DRINK</span><b>2</b></div></div>
+      </div>
+      <div class="card2">
+        <div class="c2h">Bundle quantity</div>
+        <div class="qtyrow"><button class="qbtn" onclick="bnQty(-1)">−</button><b id="bnQtyV">1</b><button class="qbtn" onclick="bnQty(1)">+</button></div>
+      </div>
+      <div class="card2">
+        <div class="c2h">What's included</div>
+        <div class="incrow"><span class="ici">🎉</span><div><b>0 eligible events</b><div class="sub">Valid for special events</div></div></div>
+        <div class="incrow"><span class="ici"><svg style="width:18px;height:18px"><use href="#i-pin"/></svg></span><div><b>1 eligible venue</b><div class="sub">Hours vary by venue</div></div></div>
+      </div>
+      <div class="tcrow" onclick="toast('Full terms & conditions')"><svg style="width:17px;height:17px"><use href="#i-info"/></svg> Terms and Conditions <span class="chv">›</span></div>
+    </div>
+    <div class="stickyfoot"><button class="cta" onclick="proceedReward('Versus — Monday Special bundle')">Proceed</button></div>
+  </section>
+
+  <!-- ===== PASS reward detail ===== -->
+  <section class="screen" id="s-pass">
+    <div class="passbg">
+      <div class="sbar"><span>12:02</span><span class="r">▮▮ ᯤ 26</span></div>
+      <div class="dhd"><div class="back" onclick="showScreen('shop',switchBtn(6))"><svg style="color:#fff"><use href="#i-back"/></svg></div><span>Mandos Reward</span></div>
+      <div class="body" style="padding:0 18px 96px">
+        <div style="text-align:center;padding:22px 0 6px">
+          <span class="statuspill"><i></i> Inactive</span>
+          <h1 class="passttl">Lucky 20 Party Pass</h1>
+        </div>
+        <p class="desc" style="text-align:left">Get access to the hottest Friday-night party with DJ beats, dance-floor access and exclusive drink benefits. Limited-time pass for party lovers.</p>
+        <div class="pricerow" style="margin-bottom:6px"><span class="hkbig">HK$299</span><span class="sep">|</span><span class="coinbig"><svg class="coin"><use href="#coin-hex"/></svg> 3,000</span></div>
+        <div class="sech">Benefits</div>
+        <div class="benecard">
+          <div class="benefit"><div><b>Venue Entries</b><div class="sub">Available at 4 clubs · Max 1 per day</div></div><span class="beico">🎟️</span></div>
+          <div class="benefit"><div><b>Drink Coupons</b><div class="sub">Available at 4 clubs · Max 2 per day</div></div><span class="beico">🍸</span></div>
+        </div>
+        <div class="sech">Partners</div>
+        <div class="partners">
+          <div class="partner"><div class="pav" style="background-image:url('${''}')" id="pn1"></div><div><b>Ozone</b><div class="sub">Tsim Sha Tsui</div></div></div>
+          <div class="partner"><div class="pav" style="background-image:url('${''}')" id="pn2"></div><div><b>Versus</b><div class="sub">Hong Kong</div></div></div>
+          <div class="partner"><div class="pav" style="background-image:url('${''}')" id="pn3"></div><div><b>Jupiter</b><div class="sub">Wan Chai</div></div></div>
+          <div class="partner"><div class="pav" style="background-image:url('${''}')" id="pn4"></div><div><b>Boomerang</b><div class="sub">Central</div></div></div>
+        </div>
+      </div>
+      <div class="stickyfoot"><button class="cta" onclick="proceedReward('Lucky 20 Party Pass')">Buy · HK$299</button></div>
+    </div>
   </section>
 
   <!-- ===== REWARDS SHOP ===== -->
@@ -276,48 +406,61 @@ const IMG={dj:'photo-1516450360452-9312f5e86fc7',crowd:'photo-1470229722913-7c0e
 const img=id=>`https://images.unsplash.com/${IMG[id]}?auto=format&fit=crop&w=400&q=70`;
 const coin=`<svg class="coin sm"><use href="#coin-hex"/></svg>`;
 
+const SHOP_BTN=6;   // index of "Rewards shop" in the switcher
 function showScreen(id,btn){
   document.querySelectorAll('.screen').forEach(s=>s.classList.remove('on'));
   document.getElementById('s-'+id).classList.add('on');
   if(btn){document.querySelectorAll('.switch button').forEach(b=>b.classList.remove('on'));btn.classList.add('on');}
   if(id==='drop')renderDrop();
   if(id==='shop')shopTab('shop',document.querySelector('.rtoggle button'));
+  if(id==='bundle'){const p=document.getElementById('bnPoster');if(p)p.style.backgroundImage=`url('${img('neon')}')`;const v=document.getElementById('bnQtyV');if(v)v.textContent='1';}
+  if(id==='pass'){['dj','crowd','club','bar'].forEach((im,i)=>{const e=document.getElementById('pn'+(i+1));if(e)e.style.backgroundImage=`url('${img(im)}')`;});}
 }
 function switchBtn(i){const b=document.querySelectorAll('.switch button')[i];return b;}
 function toast(m,coinIcon){const t=document.getElementById('toast');t.innerHTML=(coinIcon?coin+' ':'')+m;t.classList.add('show');clearTimeout(t._h);t._h=setTimeout(()=>t.classList.remove('show'),2400);}
 
-/* ---- reward-found drop sheet (replaces voucher-found) ---- */
+/* open the right reward detail by type (from a shop card or a map drop) */
+function openReward(type){
+  if(type==='BUNDLE')showScreen('bundle',switchBtn(4));
+  else if(type==='PASS')showScreen('pass',switchBtn(5));
+  else showScreen('drop',switchBtn(3));       // coupon / entry / drink → found ticket
+}
+function goMine(){showScreen('shop',switchBtn(SHOP_BTN));shopTab('mine',document.querySelectorAll('.rtoggle button')[1]);}
+function bnQty(d){const v=document.getElementById('bnQtyV');let n=Math.max(1,Math.min(9,(+v.textContent||1)+d));v.textContent=n;}
+function proceedReward(nm){toast((nm||'Reward')+' added to My rewards');setTimeout(goMine,450);}
+
+/* ---- reward found (map drop) — ticket sheet ---- */
 function renderDrop(){
   document.getElementById('dropSheet').innerHTML=`
    <div class="grab"></div>
-   <div class="eyebrow" style="text-align:center">🎉 You found a reward</div>
-   <div class="rcard">
-     <div class="img" style="background-image:url('${img('bar')}')"><span class="tchip coupon">COUPON</span><span class="gift">Gifted by Mandos</span></div>
-     <div class="b">
-       <div class="ttl">Free Drink</div>
-       <div class="sub">${coin.replace('coin sm','coin sm')}<svg style="width:15px;height:15px;color:var(--dim)"><use href="#i-glass"/></svg> 1× Drink · Boomerang Club</div>
-       <ul class="terms">
-         <li>One per user · while stock lasts.</li>
-         <li>Valid till 30 Jun 2026 · not valid on special-event nights.</li>
-         <li>Can't be combined with other coupons or bundles.</li>
-       </ul>
-     </div>
+   <div class="sheettop"><button class="sbk" onclick="showScreen('map',switchBtn(2))"><svg style="width:15px"><use href="#i-back"/></svg></button><b>Reward Found</b><button class="sbk"><svg style="width:15px"><use href="#i-gift"/></svg></button></div>
+   <div class="ticket">
+     <span class="tchip2">Coupon</span>
+     <div class="tk-title">Free Drink</div>
+     <div class="tk-valid">Valid till 20th June 2026</div>
+     <div class="tk-gift">🎁</div>
    </div>
+   <div class="about-h">About this reward</div>
+   <ul class="terms terms2">
+     <li>One per user · while stock lasts.</li>
+     <li>Valid till 30 Jun 2026 · not valid on special-event nights.</li>
+     <li>Can't be combined with other coupons or bundles.</li>
+   </ul>
+   <div class="metaline"><svg style="width:15px;height:15px"><use href="#i-glass"/></svg> 1× Drink · Boomerang Club<span class="gifted">Gifted by Mandos</span></div>
    <div class="twoact">
-     <button class="cta dark" onclick="toast('Pick a friend to gift this to')"><svg style="width:16px;height:16px;vertical-align:-3px;color:#fff"><use href="#i-gift"/></svg> Send as a gift</button>
+     <button class="cta dark" onclick="toast('Pick a friend to gift this to')"><svg style="width:16px;height:16px;vertical-align:-3px;color:#fff"><use href="#i-gift"/></svg> Send as gift</button>
      <button class="cta" onclick="claimReward()">Add to my rewards</button>
-   </div>
-   <div style="text-align:center;color:var(--dim2);font-size:11.5px;margin-top:12px">Coupons live in <b style="color:var(--dim)">My rewards</b> · redeem at the venue by showing the QR.</div>`;
+   </div>`;
 }
 function claimReward(){
   document.getElementById('dropSheet').innerHTML=`
    <div class="grab"></div>
    <div style="text-align:center;padding:14px 0 4px">
-     <div style="width:64px;height:64px;border-radius:50%;background:rgba(48,209,88,.16);border:1.5px solid rgba(48,209,88,.5);display:flex;align-items:center;justify-content:center;margin:0 auto"><svg style="width:30px;height:30px;color:var(--green)"><use href="#i-check"/></svg></div>
+     <div class="okring"><svg style="width:30px;height:30px;color:var(--green)"><use href="#i-check"/></svg></div>
      <h2 style="text-align:center">Added to your rewards</h2>
      <p class="lead" style="text-align:center;max-width:300px;margin:0 auto">Your <b>Free Drink</b> coupon is in My rewards. Show its QR at Boomerang Club to redeem.</p>
    </div>
-   <button class="cta" onclick="showScreen('shop',switchBtn(4));shopTab('mine',document.querySelectorAll('.rtoggle button')[1])">View in My rewards</button>
+   <button class="cta" onclick="goMine()">View in My rewards</button>
    <button class="cta ghost" onclick="showScreen('map',switchBtn(2))">Back to map</button>`;
 }
 
@@ -353,7 +496,7 @@ const CATMAP={Bundles:'BUNDLE',Passes:'PASS',Coupons:'COUPON',Tickets:'ENTRY',Dr
 let SHOPCAT='All';
 const vstack=n=>n>1?`<span class="vstk">${Array.from({length:Math.min(n,2)}).map((_,i)=>`<i>${'TVBUK'[i]}</i>`).join('')}${n>2?`<i class="more">+${n-2}</i>`:''}</span>`:'';
 function rcard(r){
-  return `<div class="ritem">
+  return `<div class="ritem" onclick="openReward('${r.type}')" style="cursor:pointer">
      <div class="th" style="background-image:url('${img(r.img)}')"></div>
      <div class="info">
        <div style="display:flex;align-items:center;gap:8px"><span class="tc ${r.type.toLowerCase()}">${r.type}</span>${r.venues>1?vstack(r.venues):''}</div>
