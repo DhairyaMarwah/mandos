@@ -125,6 +125,14 @@ body{font-family:-apple-system,BlinkMacSystemFont,"SF Pro Text","Segoe UI",Robot
 .ritem .tc{font-size:10px;font-weight:800;letter-spacing:.05em;color:var(--purple);border:1px solid rgba(185,140,255,.45);background:rgba(120,80,180,.16);border-radius:99px;padding:2px 8px;display:inline-block}
 .ritem .tc.entry{color:var(--green);border-color:rgba(48,209,88,.45);background:rgba(48,209,88,.14)}
 .ritem .tc.drink{color:#ffb066;border-color:rgba(245,133,31,.5);background:rgba(245,133,31,.16)}
+.ritem .tc.bundle{color:var(--purple);border-color:rgba(185,140,255,.45);background:rgba(120,80,180,.16)}
+.ritem .tc.pass{color:var(--gold);border-color:rgba(245,166,35,.5);background:rgba(245,166,35,.14)}
+.ritem .tc.coupon{color:#ff7ac2;border-color:rgba(255,122,194,.45);background:rgba(255,122,194,.14)}
+.vstk{display:inline-flex;align-items:center;margin-left:auto}
+.vstk i{width:22px;height:22px;border-radius:6px;background:#fff;color:#141414;font-size:9px;font-weight:800;display:flex;align-items:center;justify-content:center;border:2px solid var(--card);margin-left:-6px;font-style:normal}
+.vstk i.more{background:var(--card2);color:var(--dim);border-color:var(--card)}
+.insidechips{display:flex;flex-wrap:wrap;gap:5px;margin-top:7px}
+.insidechips span{font-size:10.5px;font-weight:600;color:var(--dim);background:var(--card2);border:1px solid var(--line);border-radius:6px;padding:2px 7px}
 .ritem .nm{font-size:16px;font-weight:700;margin:6px 0 2px}
 .ritem .qty{font-size:12.5px;color:var(--dim)}
 .ritem .pr{display:flex;align-items:center;gap:12px;margin-top:8px}
@@ -314,41 +322,69 @@ function claimReward(){
 }
 
 /* ---- rewards shop ---- */
+/* the full reward catalogue — every type, several shapes each.
+   inside[] = what you actually get · venues = how many clubs/bars it works at */
 const SHOP=[
- {type:'COUPON',cls:'',    nm:'Zonal Drink',           qty:'1× Drink',  img:'dj',   hk:100,coins:1000},
- {type:'COUPON',cls:'',    nm:'Drink in Organization', qty:'1× Drink',  img:'neon', hk:100,coins:1000},
- {type:'BUNDLE',cls:'',    nm:'3× Drink and 3× Ticket',qty:'Bundle',    img:'crowd',hk:50, coins:100},
- {type:'ENTRY', cls:'entry',nm:'Boomerang Ticket',      qty:'1× Ticket', img:'club', hk:50, coins:100},
- {type:'DRINK', cls:'drink',nm:'Boomerang Drink',        qty:'1× Drink',  img:'bar',  hk:50, coins:100}
+ // ── Bundles (combos of drinks / tickets / entry) ──
+ {type:'BUNDLE',nm:'Versus — Monday Special',inside:['Buy 1 Get 1','All drinks'],venues:2,img:'crowd',hk:100,coins:1000},
+ {type:'BUNDLE',nm:'3× Drink + 3× Ticket',   inside:['3× Drink','3× Ticket'],   venues:3,img:'dj',   hk:50, coins:100},
+ {type:'BUNDLE',nm:'Club Hop Bundle',         inside:['1× Entry','2× Drink'],    venues:2,img:'neon', hk:180,coins:1800},
+ {type:'BUNDLE',nm:'Weekend x5 Drinks',       inside:['5× Drink','Any night'],   venues:1,img:'bar',  hk:220,coins:2200},
+ // ── Passes (time / access, one price) ──
+ {type:'PASS',  nm:'Weekend Party Pass',      inside:['Skip queue','Welcome drink','Fri–Sun'],venues:4,img:'club',hk:299,coins:3000},
+ {type:'PASS',  nm:'VIP Season Pass',         inside:['Priority entry','1 month'],venues:6,img:'neon', hk:899,coins:9000},
+ // ── Coupons (one concrete perk) ──
+ {type:'COUPON',nm:'Free Drink',              inside:['1× Drink'],               venues:1,img:'bar',  hk:100,coins:1000},
+ {type:'COUPON',nm:'Buy 1 Get 1 (Cocktail)',  inside:['2 cocktails, pay 1'],     venues:1,img:'dj',   hk:120,coins:1200},
+ {type:'COUPON',nm:'Free Entry',              inside:['1× Entry','All event days'],venues:1,img:'crowd',hk:0,coins:500},
+ // ── Tickets / Entry ──
+ {type:'ENTRY', nm:'Boomerang Ticket',        inside:['1× Ticket'],              venues:1,img:'club', hk:50, coins:100},
+ // ── Drinks ──
+ {type:'DRINK', nm:'Boomerang Drink',         inside:['1× Drink'],               venues:1,img:'bar',  hk:50, coins:100}
 ];
 const MINE=[
- {type:'COUPON',cls:'',    nm:'Free Drink',      qty:'1× Drink · Boomerang', img:'bar', gift:true},
- {type:'DRINK', cls:'drink',nm:'Welcome Drink',   qty:'1× Drink · Versus',    img:'club',gift:true},
- {type:'ENTRY', cls:'entry',nm:'Free Entry',      qty:'1× Entry · Gossip',    img:'neon',gift:true}
+ {type:'COUPON',nm:'Free Drink',   inside:['1× Drink · Boomerang'],   img:'bar', gift:true},
+ {type:'BUNDLE',nm:'Drink bundle', inside:['3× Drink','3× Ticket'],   img:'crowd',venues:2,gift:true},
+ {type:'DRINK', nm:'Welcome Drink',inside:['1× Drink · Versus'],      img:'club',gift:true},
+ {type:'ENTRY', nm:'Free Entry',   inside:['1× Entry · Gossip'],      img:'neon',gift:true}
 ];
+const CATS=['All','Bundles','Passes','Coupons','Tickets','Drinks'];
+const CATMAP={Bundles:'BUNDLE',Passes:'PASS',Coupons:'COUPON',Tickets:'ENTRY',Drinks:'DRINK'};
+let SHOPCAT='All';
+const vstack=n=>n>1?`<span class="vstk">${Array.from({length:Math.min(n,2)}).map((_,i)=>`<i>${'TVBUK'[i]}</i>`).join('')}${n>2?`<i class="more">+${n-2}</i>`:''}</span>`:'';
+function rcard(r){
+  return `<div class="ritem">
+     <div class="th" style="background-image:url('${img(r.img)}')"></div>
+     <div class="info">
+       <div style="display:flex;align-items:center;gap:8px"><span class="tc ${r.type.toLowerCase()}">${r.type}</span>${r.venues>1?vstack(r.venues):''}</div>
+       <div class="nm">${r.nm}</div>
+       <div class="insidechips">${r.inside.map(x=>`<span>${x}</span>`).join('')}</div>
+       <div class="pr" style="margin-top:9px">${r.gift?`<span class="cc free">${coin} Gifted · Free</span>`:`<span class="hk">${r.hk?'HK$'+r.hk:'Free'}</span><span class="cc">${coin} ${r.coins.toLocaleString()}</span>`}</div>
+     </div>
+   </div>`;
+}
 function shopTab(which,btn){
   if(btn){btn.parentElement.querySelectorAll('button').forEach(b=>b.classList.remove('on'));btn.classList.add('on');}
   const body=document.getElementById('shopBody');
-  const card=r=>`<div class="ritem">
-     <div class="th" style="background-image:url('${img(r.img)}')"></div>
-     <div class="info">
-       <span class="tc ${r.cls}">${r.type}</span>
-       <div class="nm">${r.nm}</div>
-       <div class="qty">${r.qty}</div>
-       <div class="pr">${r.gift?`<span class="cc free">${coin} Gifted · Free</span>`:`<span class="hk">HK$${r.hk}</span><span class="cc">${coin} ${r.coins.toLocaleString()}</span>`}</div>
-     </div>
-   </div>`;
   if(which==='mine'){
-    body.innerHTML=`<div class="sec">My rewards</div><div class="rlist">${MINE.map(card).join('')}</div>
-      <div class="help" style="text-align:left;padding:0 18px 24px">These were gifted by Mandos or claimed from the map — no charge. Show each coupon's QR at the venue to redeem.</div>`;
-  }else{
-    body.innerHTML=`
-      <div class="sec">Trending today</div>
-      <div class="rlist">${SHOP.slice(0,2).map(card).join('')}</div>
-      <div class="sec">All rewards</div>
-      <div class="cats"><button class="on">All</button><button>Bundles</button><button>Tickets</button><button>Drinks</button></div>
-      <div class="rlist">${SHOP.map(card).join('')}</div>`;
+    body.innerHTML=`<div class="sec">My rewards</div><div class="rlist">${MINE.map(rcard).join('')}</div>
+      <div class="help" style="text-align:left;padding:0 18px 24px">These were gifted by Mandos or claimed from the map — no charge. Show each one's QR at the venue to redeem.</div>`;
+    return;
   }
+  SHOPCAT='All';
+  body.innerHTML=`
+    <div class="sec">Trending today</div>
+    <div class="rlist">${SHOP.filter(r=>r.type==='BUNDLE'||r.type==='PASS').slice(0,2).map(rcard).join('')}</div>
+    <div class="sec">All rewards</div>
+    <div class="cats" id="shopCats">${CATS.map(c=>`<button class="${c==='All'?'on':''}" onclick="filterShop('${c}',this)">${c}</button>`).join('')}</div>
+    <div class="rlist" id="shopList"></div>`;
+  renderShopList();
+}
+function filterShop(c,btn){SHOPCAT=c;document.querySelectorAll('#shopCats button').forEach(b=>b.classList.toggle('on',b===btn));renderShopList();}
+function renderShopList(){
+  const list=document.getElementById('shopList');if(!list)return;
+  const items=SHOPCAT==='All'?SHOP:SHOP.filter(r=>r.type===CATMAP[SHOPCAT]);
+  list.innerHTML=items.length?items.map(rcard).join(''):`<div style="text-align:center;color:var(--dim2);padding:26px;font-size:13px">No ${SHOPCAT.toLowerCase()} right now.</div>`;
 }
 renderDrop();
 </script>
