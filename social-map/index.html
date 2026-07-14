@@ -1,0 +1,356 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Mandos — Social Map · Rewards & Location (mockups)</title>
+<style>
+:root{
+  --bg:#0b0b0d; --card:#17161b; --card2:#201e26; --line:#2c2b33;
+  --txt:#fff; --dim:#9a9aa4; --dim2:#6a6a72;
+  --gold:#f5a623; --orange:#f5851f; --green:#30d158;
+  --purple:#b98cff; --maroon1:#b3243f; --maroon2:#5f0f1f;
+}
+*{margin:0;padding:0;box-sizing:border-box;-webkit-tap-highlight-color:transparent}
+html,body{background:#050506;overflow-x:clip}
+body{font-family:-apple-system,BlinkMacSystemFont,"SF Pro Text","Segoe UI",Roboto,sans-serif;color:var(--txt);display:flex;flex-direction:column;align-items:center;min-height:100vh;padding:22px 0 60px}
+.switch{display:flex;gap:8px;flex-wrap:wrap;justify-content:center;max-width:440px;margin-bottom:20px;padding:0 12px}
+.switch button{background:#161619;border:1px solid #2a2a30;color:var(--dim);border-radius:99px;padding:9px 15px;font-size:13px;font-weight:600;cursor:pointer;font-family:inherit}
+.switch button.on{background:var(--orange);color:#1a1200;border-color:transparent}
+.phone{width:390px;max-width:94vw;height:800px;background:var(--bg);border-radius:44px;border:1px solid #24242a;position:relative;overflow:hidden;box-shadow:0 30px 80px rgba(0,0,0,.7)}
+.notch{position:absolute;top:0;left:50%;transform:translateX(-50%);width:130px;height:26px;background:#000;border-radius:0 0 16px 16px;z-index:60}
+.screen{position:absolute;inset:0;display:none;flex-direction:column;overflow:hidden}
+.screen.on{display:flex}
+.sbar{display:flex;justify-content:space-between;align-items:center;padding:14px 26px 6px;font-size:15px;font-weight:600;flex:none}
+.sbar .r{display:flex;gap:6px;align-items:center;font-size:12px}
+.body{flex:1;overflow-y:auto;overflow-x:hidden}
+.body::-webkit-scrollbar{width:0}
+
+/* header */
+.hd{display:flex;align-items:center;gap:14px;padding:8px 18px 12px}
+.back{width:38px;height:38px;border-radius:50%;background:var(--card);display:flex;align-items:center;justify-content:center;flex:none;border:1px solid #2a2a2e}
+.back svg{width:16px;height:16px}
+.hd .t{font-size:22px;font-weight:700;flex:1}
+.coinbal{display:flex;align-items:center;gap:7px;background:#1a160c;border:1px solid rgba(245,166,35,.5);border-radius:99px;padding:6px 14px 6px 8px;font-weight:700;box-shadow:0 0 16px rgba(245,166,35,.25)}
+
+/* mandos coin */
+.coin{width:20px;height:20px;flex:none}
+.coin.sm{width:16px;height:16px}.coin.lg{width:30px;height:30px}
+
+/* map */
+.map{position:absolute;inset:0;background:
+  radial-gradient(60% 40% at 30% 25%,rgba(120,40,160,.22),transparent 60%),
+  radial-gradient(50% 40% at 75% 60%,rgba(245,133,31,.14),transparent 60%),
+  linear-gradient(160deg,#141821,#0b0d12)}
+.map::before{content:"";position:absolute;inset:0;background-image:linear-gradient(rgba(255,255,255,.04) 1px,transparent 1px),linear-gradient(90deg,rgba(255,255,255,.04) 1px,transparent 1px);background-size:44px 44px}
+.pin{position:absolute;display:flex;flex-direction:column;align-items:center;gap:3px;transform:translate(-50%,-50%)}
+.pin .lbl{font-size:10px;font-weight:700;background:rgba(0,0,0,.7);border:1px solid var(--line);border-radius:99px;padding:2px 7px;white-space:nowrap}
+.pin .av{width:40px;height:40px;border-radius:50%;border:2px solid #fff;background-size:cover;box-shadow:0 4px 12px rgba(0,0,0,.5)}
+.pin .vp{width:34px;height:34px;border-radius:12px 12px 12px 3px;background:var(--orange);display:flex;align-items:center;justify-content:center;box-shadow:0 4px 12px rgba(0,0,0,.5)}
+.pin .vp svg{width:18px;height:18px}
+.coinpin{width:44px;height:44px;position:relative;cursor:pointer;filter:drop-shadow(0 4px 12px rgba(245,166,35,.5))}
+.coinpin .v{position:absolute;top:-8px;right:-14px;font-size:10px;font-weight:800;background:var(--gold);color:#231500;border-radius:99px;padding:1px 6px}
+.rewardpin{cursor:pointer}
+.rewardpin .gp{width:44px;height:44px;border-radius:14px;background:linear-gradient(150deg,#8a4bff,#5b1fd0);display:flex;align-items:center;justify-content:center;box-shadow:0 6px 16px rgba(120,50,220,.5);position:relative}
+.rewardpin .gp svg{width:22px;height:22px}
+.legend{position:absolute;left:12px;right:12px;bottom:18px;background:rgba(16,16,20,.92);backdrop-filter:blur(10px);border:1px solid var(--line);border-radius:16px;padding:12px 14px;display:flex;justify-content:space-around;z-index:40}
+.legend div{display:flex;flex-direction:column;align-items:center;gap:5px;font-size:10.5px;color:var(--dim)}
+.legend .d{width:26px;height:26px;border-radius:8px;display:flex;align-items:center;justify-content:center}
+.legend .d svg{width:15px;height:15px}
+.tapnote{position:absolute;left:50%;bottom:96px;transform:translateX(-50%);font-size:12px;color:var(--dim);background:rgba(0,0,0,.6);padding:7px 14px;border-radius:99px;border:1px solid var(--line);z-index:40}
+
+/* modal / sheet */
+.scrim{position:absolute;inset:0;background:rgba(4,4,6,.55);backdrop-filter:blur(3px);z-index:50}
+.sheet{position:absolute;left:0;right:0;bottom:0;background:var(--card);border-radius:24px 24px 0 0;border-top:1px solid #2e2d35;padding:10px 20px calc(22px + env(safe-area-inset-bottom));z-index:55;max-height:88%;overflow-y:auto}
+.grab{width:38px;height:4px;border-radius:99px;background:#3a3a42;margin:4px auto 14px}
+.eyebrow{font-size:11px;letter-spacing:.14em;text-transform:uppercase;color:var(--orange);font-weight:700}
+.sheet h2{font-size:24px;font-weight:700;letter-spacing:-.3px;margin:6px 0 8px;line-height:1.15}
+.sheet .lead{color:var(--dim);font-size:14px;line-height:1.6}
+.sheet .lead b{color:#fff;font-weight:600}
+.promises{list-style:none;margin:18px 0 6px;display:flex;flex-direction:column;gap:12px}
+.promises li{display:flex;gap:11px;font-size:13.5px;line-height:1.5;color:var(--dim)}
+.promises li b{color:#fff;font-weight:600}
+.pico{width:30px;height:30px;border-radius:9px;background:var(--card2);display:flex;align-items:center;justify-content:center;flex:none}
+.pico svg{width:16px;height:16px;color:var(--orange)}
+.cta{display:block;width:100%;background:var(--orange);color:#1a1200;border:none;border-radius:15px;padding:16px;font-size:16px;font-weight:700;cursor:pointer;font-family:inherit;margin-top:18px}
+.cta:active{transform:scale(.99)}
+.cta.ghost{background:transparent;color:var(--dim);margin-top:6px}
+.cta.dark{background:var(--card2);color:#fff;border:1px solid var(--line)}
+.twoact{display:flex;gap:10px;margin-top:18px}
+.twoact .cta{margin-top:0}
+
+/* location-off top bar */
+.locoff{position:absolute;top:44px;left:12px;right:12px;background:rgba(180,40,40,.16);border:1px solid rgba(255,90,79,.4);color:#ff9a92;border-radius:12px;padding:9px 14px;font-size:12.5px;font-weight:600;display:flex;align-items:center;gap:8px;z-index:40}
+.locoff svg{width:15px;height:15px;flex:none}
+
+/* reward card (the drop sheet) */
+.rcard{background:var(--card2);border:1px solid var(--line);border-radius:18px;overflow:hidden;margin-top:14px}
+.rcard .img{height:150px;background-size:cover;background-position:center;position:relative}
+.rcard .img::after{content:"";position:absolute;inset:0;background:linear-gradient(180deg,transparent 40%,rgba(0,0,0,.55))}
+.tchip{position:absolute;top:12px;left:12px;font-size:10.5px;font-weight:800;letter-spacing:.06em;padding:4px 10px;border-radius:99px;z-index:2}
+.tchip.coupon{background:rgba(120,80,180,.22);border:1px solid rgba(185,140,255,.5);color:var(--purple)}
+.tchip.bundle{background:rgba(120,80,180,.22);border:1px solid rgba(185,140,255,.5);color:var(--purple)}
+.tchip.entry{background:rgba(48,209,88,.16);border:1px solid rgba(48,209,88,.45);color:var(--green)}
+.tchip.drink{background:rgba(245,133,31,.18);border:1px solid rgba(245,133,31,.5);color:#ffb066}
+.gift{position:absolute;top:12px;right:12px;font-size:10.5px;font-weight:700;padding:4px 10px;border-radius:99px;background:rgba(245,133,31,.9);color:#1a1200;z-index:2}
+.rcard .b{padding:16px}
+.rcard .b .ttl{font-size:20px;font-weight:700}
+.rcard .b .sub{color:var(--dim);font-size:13px;margin-top:3px;display:flex;align-items:center;gap:6px}
+.terms{list-style:none;margin:16px 0 0;counter-reset:t}
+.terms li{counter-increment:t;position:relative;padding-left:26px;font-size:12.5px;color:var(--dim);line-height:1.5;margin-bottom:8px}
+.terms li::before{content:counter(t);position:absolute;left:0;top:-1px;width:18px;height:18px;border-radius:50%;background:var(--card2);border:1px solid var(--line);font-size:10px;font-weight:700;color:var(--dim);display:flex;align-items:center;justify-content:center}
+
+/* rewards shop */
+.rtoggle{display:flex;gap:12px;padding:2px 18px 14px}
+.rtoggle button{flex:1;background:var(--card);border:1px solid var(--line);border-radius:14px;padding:14px;display:flex;align-items:center;justify-content:center;gap:10px;font-size:15px;font-weight:700;color:var(--dim);cursor:pointer;font-family:inherit}
+.rtoggle button.on{color:#fff;border-color:rgba(245,133,31,.6);box-shadow:inset 0 -2px 0 var(--orange)}
+.rtoggle button svg{width:20px;height:20px}
+.feat{margin:0 18px 18px;border-radius:20px;padding:20px;background:linear-gradient(140deg,var(--maroon1),var(--maroon2));position:relative;overflow:hidden}
+.feat .st{position:absolute;top:18px;right:18px;font-size:11px;font-weight:700;background:rgba(0,0,0,.35);border-radius:99px;padding:5px 12px;display:flex;align-items:center;gap:6px}
+.feat .st i{width:7px;height:7px;border-radius:50%;background:var(--green);display:inline-block}
+.feat h3{font-size:24px;font-weight:800;max-width:70%;line-height:1.1}
+.feat p{font-size:13px;color:rgba(255,255,255,.82);margin:8px 0 0;line-height:1.5;max-width:88%}
+.feat .fr{display:flex;align-items:center;gap:14px;margin-top:16px;padding-top:16px;border-top:1px solid rgba(255,255,255,.18)}
+.feat .price{font-size:17px;font-weight:800}
+.feat .coinchip{display:flex;align-items:center;gap:6px;background:rgba(0,0,0,.28);border-radius:99px;padding:6px 12px;font-weight:700;font-size:14px}
+.feat .buy{margin-left:auto;background:#fff;color:#1a1200;border:none;border-radius:99px;padding:10px 18px;font-size:14px;font-weight:700;font-family:inherit;cursor:pointer}
+.sec{font-size:19px;font-weight:700;padding:6px 18px 12px}
+.cats{display:flex;gap:9px;padding:0 18px 14px;overflow-x:auto}
+.cats button{flex:none;background:var(--card);border:1px solid var(--line);border-radius:99px;padding:9px 18px;font-size:14px;font-weight:600;color:var(--dim);cursor:pointer;font-family:inherit}
+.cats button.on{background:var(--orange);color:#1a1200;border-color:transparent}
+.rlist{padding:0 18px 20px;display:flex;flex-direction:column;gap:14px}
+.ritem{display:flex;gap:14px;align-items:center;background:var(--card);border:1px solid var(--line);border-radius:16px;padding:12px}
+.ritem .th{width:78px;height:78px;border-radius:12px;background-size:cover;background-position:center;flex:none}
+.ritem .info{flex:1;min-width:0}
+.ritem .tc{font-size:10px;font-weight:800;letter-spacing:.05em;color:var(--purple);border:1px solid rgba(185,140,255,.45);background:rgba(120,80,180,.16);border-radius:99px;padding:2px 8px;display:inline-block}
+.ritem .tc.entry{color:var(--green);border-color:rgba(48,209,88,.45);background:rgba(48,209,88,.14)}
+.ritem .tc.drink{color:#ffb066;border-color:rgba(245,133,31,.5);background:rgba(245,133,31,.16)}
+.ritem .nm{font-size:16px;font-weight:700;margin:6px 0 2px}
+.ritem .qty{font-size:12.5px;color:var(--dim)}
+.ritem .pr{display:flex;align-items:center;gap:12px;margin-top:8px}
+.ritem .hk{font-size:14px;font-weight:600}
+.ritem .cc{display:flex;align-items:center;gap:6px;background:rgba(48,209,88,.12);border:1px solid rgba(48,209,88,.22);border-radius:8px;padding:4px 9px;font-weight:700;font-size:13px}
+.ritem .cc.free{background:rgba(245,133,31,.14);border-color:rgba(245,133,31,.3);color:#ffb066}
+.help{max-width:390px;font-size:12px;color:#55555c;text-align:center;padding:14px 18px 0;line-height:1.5}
+#toast{position:absolute;bottom:30px;left:50%;transform:translateX(-50%) translateY(16px);background:#2b2b31;border:1px solid var(--line);color:#fff;font-size:13.5px;font-weight:600;padding:11px 18px;border-radius:99px;opacity:0;transition:.25s;z-index:80;white-space:nowrap;pointer-events:none;display:flex;align-items:center;gap:8px}
+#toast.show{opacity:1;transform:translateX(-50%) translateY(0)}
+</style>
+</head>
+<body>
+
+<svg style="display:none"><defs>
+<symbol id="i-back" viewBox="0 0 24 24"><path d="M15 18l-6-6 6-6" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"/></symbol>
+<symbol id="i-pin" viewBox="0 0 24 24"><path d="M20 10c0 6-8 12-8 12s-8-6-8-12a8 8 0 0116 0z" fill="none" stroke="currentColor" stroke-width="1.8"/><circle cx="12" cy="10" r="2.6" fill="none" stroke="currentColor" stroke-width="1.8"/></symbol>
+<symbol id="i-eye" viewBox="0 0 24 24"><path d="M2.5 12S6 5.5 12 5.5 21.5 12 21.5 12 18 18.5 12 18.5 2.5 12 2.5 12z" fill="none" stroke="currentColor" stroke-width="1.8"/><circle cx="12" cy="12" r="3" fill="none" stroke="currentColor" stroke-width="1.8"/></symbol>
+<symbol id="i-clock" viewBox="0 0 24 24"><circle cx="12" cy="12" r="9" fill="none" stroke="currentColor" stroke-width="1.8"/><path d="M12 7v5l3 2" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/></symbol>
+<symbol id="i-ghost" viewBox="0 0 24 24"><path d="M5 21V10a7 7 0 0114 0v11l-3-2-2 2-2-2-2 2-2-2z" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linejoin="round"/><path d="M9.5 10h.01M14.5 10h.01" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></symbol>
+<symbol id="i-gift" viewBox="0 0 24 24"><path d="M4 11h16v9a1 1 0 01-1 1H5a1 1 0 01-1-1z" fill="none" stroke="#fff" stroke-width="1.8"/><path d="M3 7h18v4H3zM12 7v14" fill="none" stroke="#fff" stroke-width="1.8"/><path d="M12 7S9 3 7 4.5 8 8 12 7zM12 7s3-4 5-2.5S16 8 12 7z" fill="none" stroke="#fff" stroke-width="1.8"/></symbol>
+<symbol id="i-glass" viewBox="0 0 24 24"><path d="M6 3h12l-1.5 9a4.5 4.5 0 01-9 0z" fill="none" stroke="currentColor" stroke-width="1.8"/><path d="M12 16v4M8 20h8" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/></symbol>
+<symbol id="i-cal" viewBox="0 0 24 24"><rect x="3" y="5" width="18" height="16" rx="2" fill="none" stroke="#fff" stroke-width="1.8"/><path d="M3 9.5h18M8 3v4M16 3v4" stroke="#fff" stroke-width="1.8" stroke-linecap="round"/></symbol>
+<symbol id="i-shop" viewBox="0 0 24 24"><path d="M4 8h16l-1 12a2 2 0 01-2 2H7a2 2 0 01-2-2z" fill="none" stroke="currentColor" stroke-width="1.8"/><path d="M8 8a4 4 0 018 0" fill="none" stroke="currentColor" stroke-width="1.8"/></symbol>
+<symbol id="i-check" viewBox="0 0 24 24"><path d="M4 12.5l5 5L20 6.5" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"/></symbol>
+<symbol id="i-settings" viewBox="0 0 24 24"><circle cx="12" cy="12" r="3" fill="none" stroke="currentColor" stroke-width="1.8"/><path d="M19 12a7 7 0 00-.1-1.3l2-1.6-2-3.4-2.4 1a7 7 0 00-2.3-1.3L14 2h-4l-.3 2.4a7 7 0 00-2.3 1.3l-2.4-1-2 3.4 2 1.6A7 7 0 005 12a7 7 0 00.1 1.3l-2 1.6 2 3.4 2.4-1a7 7 0 002.3 1.3L10 22h4l.3-2.4a7 7 0 002.3-1.3l2.4 1 2-3.4-2-1.6c.06-.43.1-.86.1-1.3z" fill="none" stroke="currentColor" stroke-width="1.6"/></symbol>
+<symbol id="coin-hex" viewBox="0 0 24 24"><polygon points="12,1.6 21,6.6 21,17.4 12,22.4 3,17.4 3,6.6" fill="#f5a623" stroke="#c97e12" stroke-width="1"/><path d="M8 16V8.5l4 5 4-5V16" fill="none" stroke="#5a3a00" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></symbol>
+</defs></svg>
+
+<div class="switch">
+  <button class="on" onclick="showScreen('share',this)">Share location</button>
+  <button onclick="showScreen('locoff',this)">Location off</button>
+  <button onclick="showScreen('map',this)">Map · rewards</button>
+  <button onclick="showScreen('drop',this)">Reward found</button>
+  <button onclick="showScreen('shop',this)">Rewards shop</button>
+</div>
+
+<div class="phone">
+  <div class="notch"></div>
+
+  <!-- ===== SHARE LOCATION (reciprocal priming) ===== -->
+  <section class="screen on" id="s-share">
+    <div class="map"></div>
+    <div class="scrim"></div>
+    <div class="sheet">
+      <div class="grab"></div>
+      <div class="eyebrow">Live map</div>
+      <h2>See who's out — share to see</h2>
+      <p class="lead">Mandos shows friends and people near you, live. It's a two-way deal: <b>you'll see others on the map only while you're sharing your own location.</b> Stop sharing and you go invisible — and the map hides everyone else from you too.</p>
+      <ul class="promises">
+        <li><span class="pico"><svg><use href="#i-eye"/></svg></span><span>Others see only your <b>approximate area</b> + last-active time — never your exact spot.</span></li>
+        <li><span class="pico"><svg><use href="#i-clock"/></svg></span><span>Location is read <b>only when the map is open</b> — never in the background.</span></li>
+        <li><span class="pico"><svg><use href="#i-ghost"/></svg></span><span>Go invisible anytime with <b>Ghost mode</b> — browse events &amp; chat without sharing.</span></li>
+      </ul>
+      <button class="cta" onclick="showScreen('map',switchBtn(2))">Share my location</button>
+      <button class="cta ghost" onclick="showScreen('locoff',switchBtn(1))">Keep browsing without location</button>
+    </div>
+  </section>
+
+  <!-- ===== LOCATION OFF reminder ===== -->
+  <section class="screen" id="s-locoff">
+    <div class="map"></div>
+    <div class="locoff"><svg><use href="#i-pin"/></svg> Device location off · you're hidden</div>
+    <div class="scrim"></div>
+    <div class="sheet">
+      <div class="grab"></div>
+      <div class="eyebrow">Location off</div>
+      <h2>You're invisible on the map</h2>
+      <p class="lead">Your location's off, so you don't appear to anyone — and because it's a two-way deal, <b>you can't see where others are either.</b> Turn it on to see friends and people nearby light up.</p>
+      <ul class="promises">
+        <li><span class="pico"><svg><use href="#i-check"/></svg></span><span><b>Still works:</b> browse events near your saved venues, and join chats &amp; collabs.</span></li>
+        <li><span class="pico"><svg><use href="#i-eye"/></svg></span><span><b>What's off:</b> you're hidden from everyone, there's no "near me" distance, and the map won't show other people.</span></li>
+      </ul>
+      <button class="cta" onclick="showScreen('map',switchBtn(2))"><svg style="width:16px;height:16px;vertical-align:-3px"><use href="#i-settings"/></svg> Open Settings</button>
+      <button class="cta ghost" onclick="toast('Browsing without location')">Keep browsing without location</button>
+    </div>
+  </section>
+
+  <!-- ===== MAP with reward layer ===== -->
+  <section class="screen" id="s-map">
+    <div class="sbar"><span>2:04</span><span class="r">▮▮ ᯤ 72</span></div>
+    <div style="position:relative;flex:1">
+      <div class="map"></div>
+      <!-- people -->
+      <div class="pin" style="left:28%;top:30%"><div class="av" style="background-image:url('https://i.pravatar.cc/80?img=12')"></div><span class="lbl">You</span></div>
+      <div class="pin" style="left:62%;top:24%"><div class="av" style="background-image:url('https://i.pravatar.cc/80?img=45')"></div><span class="lbl">Mei · 12m</span></div>
+      <div class="pin" style="left:44%;top:52%"><div class="vp"><svg style="color:#fff"><use href="#i-glass"/></svg></div><span class="lbl">Boomerang</span></div>
+      <!-- coins (currency) -->
+      <div class="pin coinpin" style="left:72%;top:56%" onclick="toast('+50 Mandos Coins added',1)"><svg class="coin lg" style="width:44px;height:44px"><use href="#coin-hex"/></svg><span class="v">+50</span></div>
+      <div class="pin coinpin" style="left:22%;top:66%" onclick="toast('+20 Mandos Coins added',1)"><svg class="coin lg" style="width:38px;height:38px"><use href="#coin-hex"/></svg><span class="v">+20</span></div>
+      <!-- reward drop (admin-gifted coupon) -->
+      <div class="pin rewardpin" style="left:56%;top:74%" onclick="showScreen('drop',switchBtn(3))"><div class="gp"><svg><use href="#i-gift"/></svg></div><span class="lbl" style="color:#ffb066">Free drink</span></div>
+
+      <div class="coinbal" style="position:absolute;top:16px;right:16px;z-index:30"><svg class="coin"><use href="#coin-hex"/></svg>192</div>
+      <div class="tapnote">Tap a coin to collect · tap a gift for a reward</div>
+      <div class="legend">
+        <div><span class="d" style="background:rgba(245,133,31,.18)"><svg style="color:var(--orange)"><use href="#i-glass"/></svg></span>Clubs &amp; Bars</div>
+        <div><span class="d" style="background:rgba(255,255,255,.08)"><img src="https://i.pravatar.cc/40?img=5" style="width:18px;height:18px;border-radius:50%"></span>People</div>
+        <div><span class="d"><svg class="coin sm" style="width:18px;height:18px"><use href="#coin-hex"/></svg></span>Coins</div>
+        <div><span class="d" style="background:rgba(120,80,180,.25)"><svg style="color:#fff"><use href="#i-gift"/></svg></span>Rewards</div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ===== REWARD FOUND (drop) sheet — replaces the old voucher-found ===== -->
+  <section class="screen" id="s-drop">
+    <div class="map"></div>
+    <div class="scrim"></div>
+    <div class="sheet" id="dropSheet"></div>
+  </section>
+
+  <!-- ===== REWARDS SHOP ===== -->
+  <section class="screen" id="s-shop">
+    <div class="sbar"><span>2:04</span><span class="r">▮▮ ᯤ 72</span></div>
+    <div class="hd"><div class="back"><svg style="color:#fff"><use href="#i-back"/></svg></div><div class="t">Mandos Rewards</div><div class="coinbal"><svg class="coin"><use href="#coin-hex"/></svg>192</div></div>
+    <div class="body">
+      <div class="feat">
+        <div class="st"><i></i> Available</div>
+        <h3>Weekend Party Pass</h3>
+        <p>Skip the queue Fri–Sun and get a welcome drink on arrival. One pass, all weekend.</p>
+        <div class="fr">
+          <span class="price">HK$ 299</span>
+          <span class="coinchip"><svg class="coin sm"><use href="#coin-hex"/></svg> 3,000</span>
+          <button class="buy" onclick="toast('Added to cart')">Buy now</button>
+        </div>
+      </div>
+      <div class="rtoggle">
+        <button class="on" onclick="shopTab('shop',this)"><svg style="color:var(--orange)"><use href="#i-shop"/></svg> Shop</button>
+        <button onclick="shopTab('mine',this)"><svg style="color:#fff"><use href="#i-gift"/></svg> My rewards</button>
+      </div>
+      <div id="shopBody"></div>
+    </div>
+  </section>
+
+  <div id="toast"></div>
+</div>
+
+<div class="help">Social Map · updated reward + location mockups. Coins are the only currency; rewards are <b>Coupons</b>, <b>Bundles</b> &amp; <b>Passes</b> (drinks / tickets / entry) — no percent-off vouchers. Mandos admin can gift coins &amp; free coupons; users buy the rest from the shop. Location is a two-way deal: share to see.</div>
+
+<script>
+const IMG={dj:'photo-1516450360452-9312f5e86fc7',crowd:'photo-1470229722913-7c0e2dbbafd3',club:'photo-1574391884720-bbc3740c59d1',bar:'photo-1566737236500-c8ac43014a67',neon:'photo-1545128485-c400e7702796'};
+const img=id=>`https://images.unsplash.com/${IMG[id]}?auto=format&fit=crop&w=400&q=70`;
+const coin=`<svg class="coin sm"><use href="#coin-hex"/></svg>`;
+
+function showScreen(id,btn){
+  document.querySelectorAll('.screen').forEach(s=>s.classList.remove('on'));
+  document.getElementById('s-'+id).classList.add('on');
+  if(btn){document.querySelectorAll('.switch button').forEach(b=>b.classList.remove('on'));btn.classList.add('on');}
+  if(id==='drop')renderDrop();
+  if(id==='shop')shopTab('shop',document.querySelector('.rtoggle button'));
+}
+function switchBtn(i){const b=document.querySelectorAll('.switch button')[i];return b;}
+function toast(m,coinIcon){const t=document.getElementById('toast');t.innerHTML=(coinIcon?coin+' ':'')+m;t.classList.add('show');clearTimeout(t._h);t._h=setTimeout(()=>t.classList.remove('show'),2400);}
+
+/* ---- reward-found drop sheet (replaces voucher-found) ---- */
+function renderDrop(){
+  document.getElementById('dropSheet').innerHTML=`
+   <div class="grab"></div>
+   <div class="eyebrow" style="text-align:center">🎉 You found a reward</div>
+   <div class="rcard">
+     <div class="img" style="background-image:url('${img('bar')}')"><span class="tchip coupon">COUPON</span><span class="gift">Gifted by Mandos</span></div>
+     <div class="b">
+       <div class="ttl">Free Drink</div>
+       <div class="sub">${coin.replace('coin sm','coin sm')}<svg style="width:15px;height:15px;color:var(--dim)"><use href="#i-glass"/></svg> 1× Drink · Boomerang Club</div>
+       <ul class="terms">
+         <li>One per user · while stock lasts.</li>
+         <li>Valid till 30 Jun 2026 · not valid on special-event nights.</li>
+         <li>Can't be combined with other coupons or bundles.</li>
+       </ul>
+     </div>
+   </div>
+   <div class="twoact">
+     <button class="cta dark" onclick="toast('Pick a friend to gift this to')"><svg style="width:16px;height:16px;vertical-align:-3px;color:#fff"><use href="#i-gift"/></svg> Send as a gift</button>
+     <button class="cta" onclick="claimReward()">Add to my rewards</button>
+   </div>
+   <div style="text-align:center;color:var(--dim2);font-size:11.5px;margin-top:12px">Coupons live in <b style="color:var(--dim)">My rewards</b> · redeem at the venue by showing the QR.</div>`;
+}
+function claimReward(){
+  document.getElementById('dropSheet').innerHTML=`
+   <div class="grab"></div>
+   <div style="text-align:center;padding:14px 0 4px">
+     <div style="width:64px;height:64px;border-radius:50%;background:rgba(48,209,88,.16);border:1.5px solid rgba(48,209,88,.5);display:flex;align-items:center;justify-content:center;margin:0 auto"><svg style="width:30px;height:30px;color:var(--green)"><use href="#i-check"/></svg></div>
+     <h2 style="text-align:center">Added to your rewards</h2>
+     <p class="lead" style="text-align:center;max-width:300px;margin:0 auto">Your <b>Free Drink</b> coupon is in My rewards. Show its QR at Boomerang Club to redeem.</p>
+   </div>
+   <button class="cta" onclick="showScreen('shop',switchBtn(4));shopTab('mine',document.querySelectorAll('.rtoggle button')[1])">View in My rewards</button>
+   <button class="cta ghost" onclick="showScreen('map',switchBtn(2))">Back to map</button>`;
+}
+
+/* ---- rewards shop ---- */
+const SHOP=[
+ {type:'COUPON',cls:'',    nm:'Zonal Drink',           qty:'1× Drink',  img:'dj',   hk:100,coins:1000},
+ {type:'COUPON',cls:'',    nm:'Drink in Organization', qty:'1× Drink',  img:'neon', hk:100,coins:1000},
+ {type:'BUNDLE',cls:'',    nm:'3× Drink and 3× Ticket',qty:'Bundle',    img:'crowd',hk:50, coins:100},
+ {type:'ENTRY', cls:'entry',nm:'Boomerang Ticket',      qty:'1× Ticket', img:'club', hk:50, coins:100},
+ {type:'DRINK', cls:'drink',nm:'Boomerang Drink',        qty:'1× Drink',  img:'bar',  hk:50, coins:100}
+];
+const MINE=[
+ {type:'COUPON',cls:'',    nm:'Free Drink',      qty:'1× Drink · Boomerang', img:'bar', gift:true},
+ {type:'DRINK', cls:'drink',nm:'Welcome Drink',   qty:'1× Drink · Versus',    img:'club',gift:true},
+ {type:'ENTRY', cls:'entry',nm:'Free Entry',      qty:'1× Entry · Gossip',    img:'neon',gift:true}
+];
+function shopTab(which,btn){
+  if(btn){btn.parentElement.querySelectorAll('button').forEach(b=>b.classList.remove('on'));btn.classList.add('on');}
+  const body=document.getElementById('shopBody');
+  const card=r=>`<div class="ritem">
+     <div class="th" style="background-image:url('${img(r.img)}')"></div>
+     <div class="info">
+       <span class="tc ${r.cls}">${r.type}</span>
+       <div class="nm">${r.nm}</div>
+       <div class="qty">${r.qty}</div>
+       <div class="pr">${r.gift?`<span class="cc free">${coin} Gifted · Free</span>`:`<span class="hk">HK$${r.hk}</span><span class="cc">${coin} ${r.coins.toLocaleString()}</span>`}</div>
+     </div>
+   </div>`;
+  if(which==='mine'){
+    body.innerHTML=`<div class="sec">My rewards</div><div class="rlist">${MINE.map(card).join('')}</div>
+      <div class="help" style="text-align:left;padding:0 18px 24px">These were gifted by Mandos or claimed from the map — no charge. Show each coupon's QR at the venue to redeem.</div>`;
+  }else{
+    body.innerHTML=`
+      <div class="sec">Trending today</div>
+      <div class="rlist">${SHOP.slice(0,2).map(card).join('')}</div>
+      <div class="sec">All rewards</div>
+      <div class="cats"><button class="on">All</button><button>Bundles</button><button>Tickets</button><button>Drinks</button></div>
+      <div class="rlist">${SHOP.map(card).join('')}</div>`;
+  }
+}
+renderDrop();
+</script>
+</body>
+</html>

@@ -78,7 +78,7 @@
       <li><a href="#people" class="l2">People &amp; messaging</a></li>
       <li><a href="#presence" class="l2">Last-active status</a></li>
       <li><a href="#visibility" class="l2">Ghost mode</a></li>
-      <li><a href="#vouchers">Vouchers (Mandos Coin)</a></li>
+      <li><a href="#vouchers">Rewards (Coins &amp; Coupons)</a></li>
       <li><a href="#build">Build notes</a></li>
     </ol>
   </nav>
@@ -90,8 +90,9 @@
       <span class="eyebrow eyebrow-rule">Mandos · Social Map · Dev Handoff</span>
       <h1>The Social Map, <em>spec'd</em> for build</h1>
       <p class="lead">A location layer on top of Mandos: see friends who are out,
-        events, clubs, bars and claimable vouchers around Hong Kong — without ever
-        exposing anyone's exact spot. This is the concise, screen-by-screen brief
+        events, clubs, bars and collectable rewards (coins &amp; gifted coupons) around
+        Hong Kong — without ever exposing anyone's exact spot. This is the concise,
+        screen-by-screen brief
         for the dev team.</p>
       <div class="meta-strip">
         <span><b>Feature</b> &nbsp;Social Map</span>
@@ -108,13 +109,15 @@
     <div class="tldr">
       <span class="eyebrow">TL;DR</span>
       <p>One map shows four things: <strong>friends, events, clubs/bars, and
-        vouchers</strong>. Location is opt-in, sampled <strong>only while the map
-        is open</strong>, and other users only ever see an <strong>approximate
-        area + a "last active" time — never precise coordinates</strong>. Users can
-        go <strong>Ghost</strong> to hide while still browsing. Vouchers are a
-        Phase-1 experiment: <strong>tap-to-claim from anywhere</strong> today,
-        <strong>geofenced to the venue later</strong>. Vouchers are authored in a
-        web dashboard. People on the map are users who set an <strong>"Out
+        rewards</strong> (Mandos Coins + gifted coupons). Location is opt-in and
+        <strong>reciprocal — you see other people only while you're sharing your own
+        location</strong>; it's sampled <strong>only while the map is open</strong>, and
+        other users only ever see an <strong>approximate area + a "last active" time —
+        never precise coordinates</strong>. Users can go <strong>Ghost</strong> to hide
+        while still browsing. Rewards are <strong>coins</strong> (the currency) and
+        <strong>coupons / bundles / passes</strong> (concrete drinks, tickets, entry) —
+        <strong>not percent-off vouchers</strong>; admin can gift them and users buy the
+        rest in the shop. People on the map are users who set an <strong>"Out
         Tonight"</strong> status; their avatar ring fades as their presence goes
         stale, and pins <strong>cluster</strong> when zoomed out.</p>
     </div>
@@ -131,13 +134,14 @@
 
       <p>On a single dark map the user explores four kinds of pins — the friends
         they're already connected with, events happening nearby, the clubs and
-        bars themselves, and digital vouchers ("Mandos Coins"). They can filter to
+        bars themselves, and rewards ("Mandos Coins" to collect and gifted coupons to
+        claim). They can filter to
         any one type, jump to a date, open any pin for detail, and message
         friends. Everything sits on top of a strict privacy model: <strong>the map
         never reveals where a person exactly is.</strong></p>
 
       <div class="grid-3">
-        <div class="stat"><div class="stat-value">4</div><div class="stat-label">Pin types</div><div class="stat-sub">Friends · Events · Clubs/Bars · Vouchers</div></div>
+        <div class="stat"><div class="stat-value">4</div><div class="stat-label">Pin types</div><div class="stat-sub">Friends · Events · Clubs/Bars · Rewards</div></div>
         <div class="stat stat-success"><div class="stat-value">Opt-in</div><div class="stat-label">Location</div><div class="stat-sub">Foreground only, on map-open</div></div>
         <div class="stat"><div class="stat-value">~area</div><div class="stat-label">Shared precision</div><div class="stat-sub">Never exact coordinates</div></div>
       </div>
@@ -154,7 +158,7 @@
         change size.</p>
 
       <figure class="legend-grid">
-        <img src="markers-legend.png" alt="Map marker legend: Events, Clubs & Bars, Users, Vouchers" />
+        <img src="markers-legend.png" alt="Map marker legend: Events, Clubs & Bars, Users, Rewards" />
         <figcaption>markers-legend.png — the four pin styles</figcaption>
       </figure>
 
@@ -164,14 +168,14 @@
           <tr><td><strong>Events</strong></td><td>Event poster thumbnail with a date badge (e.g. <code>MAY 09</code>)</td><td><span class="badge badge-warn">Variable</span> — bigger = more popular</td><td>Poster, date, event name</td></tr>
           <tr><td><strong>Clubs &amp; Bars</strong></td><td>Rounded venue tile (e.g. Rnb Bar, Club Zentral)</td><td><span class="badge">Constant</span></td><td>Upcoming-event image or venue profile image + name</td></tr>
           <tr><td><strong>Users</strong></td><td>Circular avatar with a status pill under it ("I'm out!")</td><td><span class="badge">Constant</span></td><td>Avatar + status pill; own pin is highlighted as <code>You</code></td></tr>
-          <tr><td><strong>Vouchers</strong> <span class="mono faint">(Mandos Coin)</span></td><td>Hexagonal coin badge</td><td><span class="badge">Constant</span></td><td>Discount + distance (e.g. "20% OFF · 2km away")</td></tr>
+          <tr><td><strong>Rewards</strong> <span class="mono faint">(Coins &amp; gifts)</span></td><td>Hexagonal "M" coin badge, or a purple gift pin</td><td><span class="badge">Constant</span></td><td>Coin value (e.g. "+50") to collect, or a gifted coupon (e.g. "Free drink") to claim</td></tr>
         </tbody>
       </table>
 
       <div class="callout callout-info">
         <div class="callout-title">Popularity → size</div>
         <p>Event marker size scales with popularity so hot events read first at a
-          glance. Clubs, bars, users and vouchers are all a fixed size — a bigger
+          glance. Clubs, bars, users and reward pins are all a fixed size — a bigger
           pin never means a bigger venue.</p>
       </div>
     </section>
@@ -194,15 +198,18 @@
         <div class="stack-sm">
           <h3>Grant Access (first run)</h3>
           <p class="kv">Before the OS permission prompt, a priming sheet —
-            "<em>See what everyone's up to</em>" — states the privacy deal in plain
-            language. CTA: <strong>Accept and grant access</strong>, with an escape
-            hatch: <strong>Keep browsing without location</strong>.</p>
-          <p class="kv strong">The four promises shown to the user:</p>
+            "<em>See who's out — share to see</em>" — states the deal in plain
+            language, and the deal is <strong>reciprocal: you see other people on the
+            map only while you're sharing your own location.</strong> Turn sharing off
+            and you go invisible — and the map hides everyone else from you too. CTA:
+            <strong>Share my location</strong>, with an escape hatch:
+            <strong>Keep browsing without location</strong>.</p>
+          <p class="kv strong">The promises shown to the user:</p>
           <ul class="kv">
-            <li>Catch up with people &amp; see what's around you.</li>
-            <li>Discover places and posts tagged nearby.</li>
+            <li><strong>It's a two-way deal</strong> — share your location to see others; stop sharing and everyone hides from you.</li>
             <li><strong>Others only see your approximate area</strong> — a rough zone plus your last-active time, <strong>never your exact spot</strong>.</li>
             <li>Location is <strong>checked only when you open the map</strong> — it updates in-app, <strong>never in the background</strong>.</li>
+            <li>Go invisible anytime with <strong>Ghost mode</strong> — keep browsing events &amp; chat without sharing.</li>
           </ul>
         </div>
       </div>
@@ -210,6 +217,7 @@
       <div class="callout callout-danger">
         <div class="callout-title">Non-negotiable privacy rules for engineering</div>
         <ul>
+          <li><strong>Reciprocal visibility:</strong> a user receives other people's location markers <strong>only while their own location is being shared</strong>. No sharing → the people layer is hidden for them (venues, events, coins &amp; reward drops still show). This is the core deal — "share to see".</li>
           <li><strong>Never broadcast precise coordinates</strong> of a user to other users. Coarsen server-side (rough zone / rounded geohash) before it reaches another device.</li>
           <li>Other users see an <strong>approximate area label + a "last active" timestamp</strong> only (e.g. "Out around Fung Tea House · Central · Updated 12min ago"). This is the anti-stalking guarantee.</li>
           <li><strong>Foreground-only</strong> sampling: capture position when the map is opened/active. <strong>No background location tracking.</strong></li>
@@ -231,7 +239,9 @@
             location</strong>.</p>
           <p class="kv"><strong>Still works without location:</strong> browse events
             near saved venues, and send messages / join collabs. What's lost: you
-            don't appear to anyone, and there's no "near me" distance.</p>
+            don't appear to anyone, <strong>the map hides other people from you too</strong>
+            (it's reciprocal — no sharing, no people layer), and there's no "near me"
+            distance.</p>
         </div>
       </div>
     </section>
@@ -473,55 +483,79 @@
     <section class="section" id="vouchers">
       <div class="sec-head">
         <span class="idx">09</span>
-        <h2>Vouchers — "Mandos Coin"</h2>
-        <span class="count">Experimental</span>
+        <h2>Rewards — Coins, Coupons, Bundles &amp; Passes</h2>
+        <span class="count">Live</span>
       </div>
-      <p class="sec-intro">Claimable digital discounts scattered on the map.
-        Currently an <strong>exploration</strong> — we're testing the mechanic, not
-        shipping the final economy.</p>
+      <p class="sec-intro">Mandos has one currency — <strong>Mandos Coins</strong> — and a
+        small set of reward items: <strong>Coupons, Bundles and Passes</strong> for drinks,
+        tickets and entry. There is <strong>no percent-off "voucher"</strong>: a coupon grants
+        a concrete thing (a free drink, an entry, buy-1-get-1), not "20% off". True
+        percent-discount deals scoped to a venue are a <strong>future merchant feature</strong>,
+        not something the map drops today.</p>
 
-      <div class="screen">
-        <figure class="shot">
-          <img src="map-vouchers.png" alt="Map filtered to voucher coins" />
-          <figcaption>map-vouchers.png</figcaption>
-        </figure>
-        <div class="stack-sm">
-          <h3>Vouchers on the map</h3>
-          <p class="kv">Hexagonal coin pins show the discount and distance — "20%
-            OFF · 2km away", "10% OFF · 2km away". Filterable like any other pin
-            type. Tapping a coin opens the Voucher Found sheet.</p>
-        </div>
-      </div>
-
-      <div class="grid-2">
-        <figure class="shot">
-          <img src="voucher-found.png" alt="Voucher Found sheet, unclaimed" />
-          <figcaption>voucher-found.png — unclaimed</figcaption>
-        </figure>
-        <figure class="shot">
-          <img src="voucher-claimed.png" alt="Voucher claimed / used state" />
-          <figcaption>voucher-claimed.png — claimed / used</figcaption>
-        </figure>
+      <div class="callout callout-brand">
+        <div class="callout-title">Interactive mockups</div>
+        <p class="kv">See the updated screens rendered live in
+          <strong><a href="../social-map/">social-map/</a></strong> — the Reward Found sheet,
+          the Rewards shop (Coupon / Bundle / Pass with dual HK$ + Coins pricing), and the
+          reciprocal location sheets. These replace the old <span class="mono faint">voucher-found</span> /
+          <span class="mono faint">map-vouchers</span> screens.</p>
       </div>
 
       <div class="stack-sm" style="margin-top: var(--space-6);">
-        <h3>Voucher sheet</h3>
+        <h3>On the map — two kinds of drop, both authored by Mandos</h3>
         <ul class="kv">
-          <li><strong>Offer</strong> — e.g. "20% OFF on foods &amp; drinks", venue tag (Club Zentral), validity date.</li>
-          <li><strong>Unlocked at</strong> — the region it belongs to (e.g. "Midnight City").</li>
-          <li><strong>About / terms</strong> — numbered rules (not valid on special events/blackout dates, can't be combined with other offers, valid-till date).</li>
-          <li><strong>Actions:</strong> <span class="badge badge-oat">Send as a gift</span> and <span class="badge badge-brand">Claim Voucher</span>.</li>
-          <li><strong>Claimed state</strong> re-skins the coin (green) and shows "Used on &lt;date&gt;".</li>
+          <li><strong>Mandos Coins</strong> — the hexagonal "M" coin, labelled with a coin value
+            (<span class="mono">+50</span>), <em>not</em> a discount. Tap to collect it straight into
+            your balance.</li>
+          <li><strong>Gifted rewards</strong> — a gift pin (e.g. a free-drink coupon) that Mandos hands
+            out. Tap to open the <strong>Reward Found</strong> sheet and add it to <em>My rewards</em>.</li>
+          <li>Both are filterable like any other pin. (No "20% OFF · 2km" pins — that was the old
+            voucher model.)</li>
+        </ul>
+      </div>
+
+      <div class="stack-sm" style="margin-top: var(--space-6);">
+        <h3>Reward Found sheet</h3>
+        <ul class="kv">
+          <li><strong>Type</strong> — <span class="badge badge-brand">COUPON</span> /
+            <span class="badge badge-brand">BUNDLE</span> / <span class="badge badge-brand">PASS</span>
+            chip, plus what it grants ("1× Drink", "3× Drink + 3× Ticket", "1× Entry").</li>
+          <li><strong>Source</strong> — "Gifted by Mandos" (map drops are admin-gifted; the paid catalogue
+            is bought in the shop).</li>
+          <li><strong>Venue &amp; where it dropped</strong> — e.g. "Boomerang Club · Central".</li>
+          <li><strong>Terms</strong> — numbered (one per user, valid-till date, not on special-event nights,
+            not combinable).</li>
+          <li><strong>Actions:</strong> <span class="badge badge-oat">Send as a gift</span> and
+            <span class="badge badge-brand">Add to my rewards</span>. Owned coupons live in
+            <em>My rewards</em> and redeem by <strong>QR at the venue</strong>.</li>
+        </ul>
+      </div>
+
+      <div class="stack-sm" style="margin-top: var(--space-6);">
+        <h3>Rewards shop</h3>
+        <ul class="kv">
+          <li>Two tabs — <strong>Shop</strong> (buy) and <strong>My rewards</strong> (owned).</li>
+          <li>Every item carries a <strong>dual price — HK$ and Coins</strong> — and a category
+            (<em>Bundles / Tickets / Drinks</em>). Examples: Coupon "Zonal Drink · 1× Drink",
+            Bundle "3× Drink and 3× Ticket", Entry "Boomerang Ticket · 1× Ticket".</li>
+          <li>Admin-gifted items show <strong>"Gifted · Free"</strong> and skip payment; users buy the rest
+            with HK$ or redeem with Coins.</li>
         </ul>
       </div>
 
       <div class="callout callout-warn">
-        <div class="callout-title">⚑ Dev note — phasing &amp; authoring</div>
+        <div class="callout-title">⚑ Dev note — model &amp; authoring</div>
         <ul>
-          <li><strong>Phase 1 (now):</strong> pure digital exploration — a user can <strong>tap and claim from anywhere</strong>, no proximity check. Keep it simple.</li>
-          <li><strong>Phase 2 (later):</strong> <strong>geofencing</strong> — claim only unlocks when the user is physically near the venue/region. Design the voucher model now so the proximity gate can be switched on later without a rewrite.</li>
-          <li><strong>Authoring:</strong> all vouchers are created and managed in a <strong>web dashboard</strong> (offer, venue, region, validity, terms, blackout dates). The app only reads/claims them.</li>
-          <li>Model these states/attributes: available → claimed → used; validity window; blackout dates; "not combinable"; and <strong>gift transfer</strong> to another user.</li>
+          <li><strong>Coins are the only currency.</strong> Rewards are coupons / bundles / passes, each
+            granting a concrete thing (N drinks / tickets / entry) — never a % discount.</li>
+          <li><strong>Authoring:</strong> Mandos admin creates coupons &amp; bundles in the dashboard and can
+            <strong>gift them free</strong> (free-drink coupon, free-drink pass, coins) to users. Merchant-level
+            percent deals are a <em>separate, later</em> feature.</li>
+          <li><strong>States:</strong> available → owned (My rewards) → redeemed (QR at venue); validity window;
+            "not combinable"; and <strong>gift transfer</strong> to another user.</li>
+          <li><strong>Phase 2 (later):</strong> geofenced drops — a gifted reward only claimable near the
+            venue/region. Model it now so the proximity gate switches on without a rewrite.</li>
         </ul>
       </div>
     </section>
@@ -543,7 +577,7 @@
           <li><strong>Presence retention:</strong> shown indefinitely for now (small user base); <strong>2-week cap later</strong> — no activity in ~14 days → drop off the map.</li>
           <li><strong>Map population = "Out Tonight" users</strong> — same signal as the Discover page; open discovery, not just your connections.</li>
           <li><strong>Cluster</strong> markers when zoomed out (Supercluster or native), count + dominant-type glyph, tap-to-expand.</li>
-          <li>Vouchers: digital-claim now, geofenced later; authored via web dashboard.</li>
+          <li>Rewards: coins &amp; gifted coupons dropped on the map now, geofenced later; coupons/bundles authored via web dashboard.</li>
           <li>Map must stay browsable with location denied (self-hidden).</li>
         </ol>
       </div>
@@ -555,8 +589,8 @@
           <li><strong>Grant-access timing</strong> — confirm the priming screen shows on <em>first</em> Social Map open (before the OS prompt), and how often the location-off reminder re-surfaces after that.</li>
           <li><strong>Distance granularity</strong> — snap "km away" to buckets (e.g. 500 m / 1 km)? What's the coarsening radius for the area label?</li>
           <li><strong>Ghost vs location-off</strong> — both hide the user; confirm whether Ghost still requires location ON (to power "near me"), or is purely a broadcast toggle.</li>
-          <li><strong>Voucher gifting</strong> — how does "Send as a gift" transfer ownership, and does the recipient inherit the same validity/geofence?</li>
-          <li><strong>Claim limits</strong> — any per-user daily cap on voucher claims?</li>
+          <li><strong>Reward gifting</strong> — how does "Send as a gift" transfer ownership, and does the recipient inherit the same validity/geofence?</li>
+          <li><strong>Claim limits</strong> — any per-user daily cap on coin collection / coupon claims?</li>
         </ol>
       </div>
 
